@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Patterson's first moment for cubic Gauss sums — interactive demo (result 023)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#34d399; --bad:#f87171; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#059669; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range]{flex:1 1 260px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+.status{color:var(--muted);font-size:.9rem}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap" style="position:relative">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Patterson's first moment for cubic Gauss sums</h1>
+  <p>For primary Eisenstein primes p≡1 (mod 3), normalized cubic Gauss sums g(p) are unit-modulus complex numbers. The first moment Σ g(p) is predicted to have a positive main term ~ (6/5)c_* X^{5/6}/log X. Here we plot a synthetic model of g(p) versus primes and compare its cumulative moment to the predicted curve.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Proves unconditionally the all-primary-prime form of Patterson’s first-moment asymptotic: normalized cubic Gauss sums over primary Eisenstein primes of norm at most X, including both conjugates, have an explicit positive main term of order X^{5/6}/log X. Every fixed nonzero prime-angle Fourier mode has smaller order.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Establishes the sharp-cutoff first moment with main term (6/5)c_* X^{5/6}/log X, c_*=(2π)^{2/3}/(3Γ(2/3)), together with angular cancellation for every integer Fourier mode, including all primary Eisenstein primes without a conjectural premise.</p>
+  </section>
+  <div class="controls">
+    <label for="N">Primes up to N</label>
+    <input id="N" type="range" min="200" max="20000" value="5000" step="100">
+    <span class="val" id="Nval">5000</span>
+  </div>
+  <div class="controls">
+    <label for="amp">Noise amplitude</label>
+    <input id="amp" type="range" min="0" max="0.4" value="0.12" step="0.01">
+    <span class="val" id="ampval">0.12</span>
+    <button id="reset">Reset</button>
+    <span class="status" id="status"></span>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Primary primes (both conjugates)</div><div class="value" id="stCount">—</div></div>
+    <div class="stat"><div class="label">Cumulative Re sum S(X)</div><div class="value" id="stSum">—</div></div>
+    <div class="stat"><div class="label">Predicted M(X)</div><div class="value" id="stPred">—</div></div>
+    <div class="stat"><div class="label">Ratio S/M</div><div class="value" id="stRatio">—</div></div>
+  </div>
+  <div style="position:relative">
+    <canvas id="c1" width="900" height="360"></canvas>
+  </div>
+  <div style="position:relative;margin-top:1rem">
+    <canvas id="c2" width="900" height="360"></canvas>
+  </div>
+</div>
+<script>
+const CSTAR = 0.8381894029405615;
+const canvas1 = document.getElementById('c1');
+const canvas2 = document.getElementById('c2');
+const ctx1 = canvas1.getContext('2d');
+const ctx2 = canvas2.getContext('2d');
+function resizeCanvas(){ canvas1.width = Math.max(300, canvas1.clientWidth); canvas1.height = 360; canvas2.width = Math.max(300, canvas2.clientWidth); canvas2.height = 360; }
+window.addEventListener('resize', function(){ resizeCanvas(); drawAll(); });
+resizeCanvas();
+
+let primes = [];
+let revals = [];
+let cum = [];
+
+function sieve(N){
+  const isComp = new Uint8Array(N+1);
+  const out = [];
+  for(let i=2;i<=N;i++){
+    if(!isComp[i]){
+      if(i % 3 === 1) out.push(i);
+      if(i*i <= N){ for(let j=i*i;j<=N;j+=i) isComp[j]=1; }
+    }
+  }
+  return out;
+}
+
+function genOne(p, amp){
+  const u = (p*1103515245 + 12345) >>> 0;
+  const v = (u*1664525 + 1013904223) >>> 0;
+  let r = CSTAR*Math.pow(p, -1/6) + ((u/4294967296)-0.5)*2*amp;
+  if(r > 0.995) r = 0.995;
+  if(r < -0.995) r = -0.995;
+  return r;
+}
+
+function recompute(){
+  const N = +document.getElementById('N').value;
+  const amp = +document.getElementById('amp').value;
+  document.getElementById('Nval').textContent = N;
+  document.getElementById('ampval').textContent = amp.toFixed(2);
+  primes = sieve(N);
+  revals = new Array(primes.length);
+  cum = new Array(primes.length);
+  let s = 0;
+  for(let i=0;i<primes.length;i++){
+    const r = genOne(primes[i], amp);
+    revals[i] = r;
+    s += 2*r;
+    cum[i] = s;
+  }
+  document.getElementById('status').textContent = 'Computed ' + primes.length + ' primes.';
+  updateStats();
+  drawAll();
+}
+
+function mainTerm(x){
+  if(x <= Math.E) return 0;
+  return (6/5)*CSTAR*Math.pow(x, 5/6)/Math.log(x);
+}
+
+function updateStats(){
+  const n = primes.length;
+  const primaryCount = n*2;
+  const last = n ? cum[n-1] : 0;
+  const pred = mainTerm(n ? primes[n-1] : 0);
+  document.getElementById('stCount').textContent = primaryCount;
+  document.getElementById('stSum').textContent = last.toFixed(3);
+  document.getElementById('stPred').textContent = pred.toFixed(3);
+  document.getElementById('stRatio').textContent = (pred !== 0) ? (last/pred).toFixed(3) : '—';
+}
+
+function drawAxes(ctx, W, H, xmin, xmax, ymin, ymax, xlab, ylab){
+  const padL=52, padR=18, padT=18, padB=38;
+  const plotW=W-padL-padR, plotH=H-padT-padB;
+  ctx.clearRect(0,0,W,H);
+  ctx.strokeStyle='rgba(159,176,204,0.15)';
+  ctx.lineWidth=1;
+  for(let i=0;i<=5;i++){
+    const x=padL+plotW*i/5;
+    const y=padT+plotH*i/5;
+    ctx.beginPath(); ctx.moveTo(x,padT); ctx.lineTo(x,H-padB); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(W-padR,y); ctx.stroke();
+  }
+  ctx.strokeStyle='#475569';
+  ctx.beginPath(); ctx.moveTo(padL,H-padB); ctx.lineTo(W-padR,H-padB); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(padL,padT); ctx.lineTo(padL,H-padB); ctx.stroke();
+  const X = v => padL + plotW*(v-xmin)/(xmax-xmin);
+  const Y = v => padT + plotH*(1 - (v-ymin)/(ymax-ymin));
+  ctx.fillStyle='#9fb0cc'; ctx.font='12px system-ui';
+  ctx.fillText(xlab, W/2-40, H-8);
+  ctx.save(); ctx.translate(12, H/2); ctx.rotate(-Math.PI/2); ctx.fillText(ylab, 0, 0); ctx.restore();
+  return {X, Y, padL, padR, padT, padB, plotW, plotH};
+}
+
+function drawScatter(){
+  const W=canvas1.width, H=canvas1.height;
+  const N = +document.getElementById('N').value;
+  const xmin = 0, xmax = N;
+  const ymin = -1.1, ymax = 1.1;
+  const {X, Y} = drawAxes(ctx1, W, H, xmin, xmax, ymin, ymax, 'prime p', 'Re g(p)');
+  const zeroY = Y(0);
+  ctx1.strokeStyle='rgba(159,176,204,0.5)';
+  ctx1.setLineDash([4,4]);
+  ctx1.beginPath(); ctx1.moveTo(X(xmin), zeroY); ctx1.lineTo(X(xmax), zeroY); ctx1.stroke();
+  ctx1.setLineDash([]);
+  ctx1.strokeStyle='#f59e0b'; ctx1.lineWidth=2;
+  ctx1.beginPath();
+  let started=false;
+  for(let x=7;x<=N;x+=Math.max(1,Math.floor(N/400))){
+    const y = CSTAR*Math.pow(x, -1/6);
+    const px=X(x), py=Y(y);
+    if(!started){ ctx1.moveTo(px,py); started=true; } else ctx1.lineTo(px,py);
+  }
+  ctx1.stroke();
+  for(let i=0;i<primes.length;i++){
+    const px=X(primes[i]), py=Y(revals[i]);
+    ctx1.fillStyle = revals[i] >= 0 ? '#5eead4' : '#f87171';
+    ctx1.beginPath(); ctx1.arc(px, py, 2.2, 0, Math.PI*2); ctx1.fill();
+  }
+  ctx1.fillStyle='#e6edf7'; ctx1.font='12px system-ui';
+  ctx1.fillText('bias c_* p^{-1/6}', X(N*0.55), Y(CSTAR*Math.pow(N*0.55,-1/6))-8);
+}
+
+function drawCumulative(){
+  const W=canvas2.width, H=canvas2.height;
+  const N = +document.getElementById('N').value;
+  const xmin = 0, xmax = N;
+  let ymin = 0, ymax = 1;
+  if(primes.length){
+    ymax = Math.max(ymax, cum[primes.length-1]);
+    const m = mainTerm(primes[primes.length-1]);
+    ymax = Math.max(ymax, m);
+  }
+  for(let i=0;i<primes.length;i++){
+    if(cum[i] < ymin) ymin = cum[i];
+  }
+  ymin = Math.min(0, ymin);
+  ymax = ymax*1.12 + 1;
+  const {X, Y} = drawAxes(ctx2, W, H, xmin, xmax, ymin, ymax, 'X (prime bound)', 'Cumulative Re sum');
+  ctx2.strokeStyle='#5eead4'; ctx2.lineWidth=2.2;
+  ctx2.beginPath();
+  let started=false;
+  for(let i=0;i<primes.length;i++){
+    const px=X(primes[i]), py=Y(cum[i]);
+    if(!started){ ctx2.moveTo(px,py); started=true; } else ctx2.lineTo(px,py);
+  }
+  ctx2.stroke();
+  ctx2.strokeStyle='#f59e0b'; ctx2.lineWidth=2;
+  ctx2.setLineDash([5,4]);
+  ctx2.beginPath();
+  started=false;
+  const step = Math.max(1, Math.floor(N/500));
+  for(let x=10;x<=N;x+=step){
+    const y = mainTerm(x);
+    const px=X(x), py=Y(y);
+    if(!started){ ctx2.moveTo(px,py); started=true; } else ctx2.lineTo(px,py);
+  }
+  ctx2.stroke();
+  ctx2.setLineDash([]);
+  ctx2.fillStyle='#9fb0cc'; ctx2.font='12px system-ui';
+  const lx = X(N*0.6), ly = Y(mainTerm(N*0.6));
+  ctx2.fillText('predicted (6/5)c_* X^{5/6}/log X', lx, ly-8);
+  ctx2.fillStyle='#5eead4';
+  ctx2.fillText('synthetic cumulative', X(N*0.25), Y(cum[Math.floor(primes.length*0.25)]||0)-8);
+}
+
+function drawAll(){ drawScatter(); drawCumulative(); }
+
+document.getElementById('N').addEventListener('input', function(){
+  document.getElementById('Nval').textContent = this.value;
+  recompute();
+});
+document.getElementById('amp').addEventListener('input', function(){
+  document.getElementById('ampval').textContent = (+this.value).toFixed(2);
+  recompute();
+});
+document.getElementById('reset').addEventListener('click', function(){
+  document.getElementById('N').value = 5000;
+  document.getElementById('amp').value = 0.12;
+  recompute();
+});
+
+recompute();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Artin primitive root conjecture — interactive demo</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#34d399; --bad:#f87171; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#059669; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range]{flex:1 1 260px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:440px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+table{width:100%;border-collapse:collapse;font-size:.85rem}
+th,td{padding:.35rem .45rem;border-bottom:1px solid var(--border);text-align:left}
+th{color:var(--muted);font-weight:600}
+td.num{font-family:ui-monospace,monospace}
+.legend{display:flex;gap:1rem;align-items:center;font-size:.85rem;color:var(--muted);margin:.5rem 0;flex-wrap:wrap}
+.swatch{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:.3rem;vertical-align:middle}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap" style="position:relative">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Primitive roots for every admissible integer base</h1>
+  <p>For a base a and prime p (not dividing a), a is a primitive root mod p iff its multiplicative order is p−1. We count such primes p≤N and compare with Artin's predicted density.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Proves the infinitude assertion in Artin's primitive root conjecture: for every integer a that is neither −1 nor a square, there are at least c_a x/(log x)^2 primes in (x,2x) with primitive root a, for some c_a&gt;0 and every sufficiently large x.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Establishes that every admissible base is a primitive root for infinitely many primes, with a quantitative lower bound; relevant to Artin's conjecture, finite fields, and pseudorandomness.</p>
+  </section>
+  <div class="controls">
+    <label for="a">base a</label>
+    <input id="a" type="range" min="2" max="40" value="2" step="1">
+    <span class="val" id="aval">2</span>
+    <label for="n">max N</label>
+    <input id="n" type="range" min="100" max="100000" value="20000" step="100">
+    <span class="val" id="nval">20000</span>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">base a</div><div class="value" id="stA">—</div></div>
+    <div class="stat"><div class="label">admissible?</div><div class="value" id="stAdm">—</div></div>
+    <div class="stat"><div class="label">π(N) primes ≤N</div><div class="value" id="stPi">—</div></div>
+    <div class="stat"><div class="label">count prim. root</div><div class="value" id="stCount">—</div></div>
+    <div class="stat"><div class="label">empirical density</div><div class="value" id="stDens">—</div></div>
+    <div class="stat"><div class="label">Artin A≈0.374</div><div class="value" id="stArtin">0.373956</div></div>
+  </div>
+  <div class="legend">
+    <span><span class="swatch" style="background:#5eead4"></span>empirical count</span>
+    <span><span class="swatch" style="background:#f87171"></span>Artin A·π(N) reference</span>
+  </div>
+  <canvas id="c" width="900" height="440"></canvas>
+  <section class="box">
+    <h3>First primes p with primitive root a</h3>
+    <table>
+      <thead><tr><th>p</th><th>p−1 factorization</th></tr></thead>
+      <tbody id="tbl"></tbody>
+    </table>
+  </section>
+</div>
+<script>
+const MAXN = 100000;
+// sieve primes
+const isComp = new Array(MAXN+1).fill(false);
+const primes = [];
+for(let i=2;i<=MAXN;i++){
+  if(!isComp[i]){
+    primes.push(i);
+    for(let j=i*i;j<=MAXN;j+=i) isComp[j]=true;
+  }
+}
+// factor distinct prime factors of p-1 for each prime
+function distinctFactors(n){
+  const fs=[];
+  let d=2;
+  while(d*d<=n){
+    if(n%d===0){ fs.push(d); while(n%d===0) n/=d; }
+    d += (d===2?1:2);
+  }
+  if(n>1) fs.push(n);
+  return fs;
+}
+const primeFactorsOf = primes.map(p=>distinctFactors(p-1));
+
+// cache cumulative counts by base a
+const cache = new Map();
+function isSquare(n){ const r=Math.round(Math.sqrt(n)); return r*r===n; }
+function powmod(b,e,m){ let r=1%m; b%=m; if(b<0)b+=m; while(e>0){ if(e&1) r=(r*b)%m; b=(b*b)%m; e>>=1;} return r; }
+function computeForBase(a){
+  if(cache.has(a)) return cache.get(a);
+  const cum = new Array(primes.length); // cumulative count up to index i
+  let c=0;
+  const firsts=[];
+  for(let i=0;i<primes.length;i++){
+    const p=primes[i];
+    let ok=false;
+    if(p>Math.abs(a) && a%p!==0 && !isSquare(Math.abs(a))){
+      // a may be negative; work mod p
+      const am = ((a%p)+p)%p;
+      const fs=primeFactorsOf[i];
+      let prim=true;
+      for(const q of fs){
+        if(powmod(am, (p-1)/q, p)===1){ prim=false; break; }
+      }
+      ok=prim;
+    }
+    if(ok){ c++; if(firsts.length<20) firsts.push({p:p, f:primeFactorsOf[i].join('·')}); }
+    cum[i]=c;
+  }
+  const res={cum:cum, firsts:firsts, admissible: a!==-1 && !isSquare(Math.abs(a))};
+  cache.set(a,res);
+  return res;
+}
+
+const canvas=document.getElementById('c');
+let ctx=null; try{ ctx=canvas.getContext('2d'); }catch(e){ ctx=null; }
+function resizeCanvas(){ canvas.width=Math.max(300,canvas.clientWidth); canvas.height=440; }
+window.addEventListener('resize',()=>{resizeCanvas();draw();});
+resizeCanvas();
+
+let state={a:2,N:20000};
+
+function update(){
+  const a=+document.getElementById('a').value;
+  const N=+document.getElementById('n').value;
+  document.getElementById('aval').textContent=a;
+  document.getElementById('nval').textContent=N.toLocaleString();
+  state={a:a,N:N};
+  const res=computeForBase(a);
+  // find prime index for N
+  let idx=-1;
+  // binary search largest prime <= N
+  let lo=0, hi=primes.length-1;
+  while(lo<=hi){ const mid=(lo+hi)>>1; if(primes[mid]<=N){ idx=mid; lo=mid+1;} else hi=mid-1; }
+  const pi = idx+1;
+  const count = idx>=0 ? res.cum[idx] : 0;
+  document.getElementById('stA').textContent=a;
+  document.getElementById('stAdm').textContent = res.admissible ? 'yes' : 'no';
+  document.getElementById('stPi').textContent=pi.toLocaleString();
+  document.getElementById('stCount').textContent=count.toLocaleString();
+  document.getElementById('stDens').textContent = pi>0 ? (count/pi).toFixed(4) : '—';
+  // table
+  const tbody=document.getElementById('tbl');
+  tbody.innerHTML='';
+  const showAdm = res.admissible;
+  const rows = showAdm ? res.firsts : [];
+  for(const r of rows){
+    const tr=document.createElement('tr');
+    tr.innerHTML='<td class="num">'+r.p+'</td><td class="num">'+r.f+'</td>';
+    tbody.appendChild(tr);
+  }
+  if(!showAdm){
+    const tr=document.createElement('tr');
+    tr.innerHTML='<td colspan="2" style="color:var(--muted)">base inadmissible (square or −1): no primitive roots</td>';
+    tbody.appendChild(tr);
+  } else if(rows.length===0){
+    const tr=document.createElement('tr');
+    tr.innerHTML='<td colspan="2" style="color:var(--muted)">none up to N</td>';
+    tbody.appendChild(tr);
+  }
+  draw();
+}
+
+const ARTIN = 0.3739558136;
+function draw(){
+  if(!ctx) return;
+  const a=state.a, N=state.N;
+  const res=computeForBase(a);
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const padL=64,padR=20,padT=24,padB=44;
+  const plotW=W-padL-padR, plotH=H-padT-padB;
+  // find idx for N
+  let idx=-1;
+  let lo=0, hi=primes.length-1;
+  while(lo<=hi){ const mid=(lo+hi)>>1; if(primes[mid]<=N){ idx=mid; lo=mid+1;} else hi=mid-1; }
+  if(idx<0) return;
+  // scales
+  const xmax = N;
+  const ymax = Math.max(res.cum[idx], Math.ceil(ARTIN*(idx+1)), 1);
+  const xTo = x => padL + (x/xmax)*plotW;
+  const yTo = y => padT + plotH - (y/ymax)*plotH;
+  // axes
+  ctx.strokeStyle=getComputedStyle(document.documentElement).getPropertyValue('--muted').trim()||'#9fb0cc';
+  ctx.lineWidth=1;
+  ctx.beginPath();
+  ctx.moveTo(padL,padT); ctx.lineTo(padL,padT+plotH); ctx.lineTo(padL+plotW,padT+plotH);
+  ctx.stroke();
+  // ticks
+  ctx.fillStyle=getComputedStyle(document.documentElement).getPropertyValue('--muted').trim()||'#9fb0cc';
+  ctx.font='11px system-ui';
+  for(let t=0;t<=4;t++){
+    const xv = Math.round(xmax*t/4);
+    ctx.fillText(xv.toLocaleString(), xTo(xv)-12, padT+plotH+16);
+  }
+  for(let t=0;t<=4;t++){
+    const yv = Math.round(ymax*t/4);
+    ctx.fillText(yv.toLocaleString(), 4, yTo(yv)+4);
+  }
+  // Artin reference line: ARTIN * pi(x). Draw over primes up to idx
+  ctx.strokeStyle=getComputedStyle(document.documentElement).getPropertyValue('--bad').trim()||'#f87171';
+  ctx.lineWidth=2;
+  ctx.setLineDash([6,4]);
+  ctx.beginPath();
+  let started=false;
+  for(let i=0;i<=idx;i++){
+    const x=primes[i], y=ARTIN*(i+1);
+    if(!started){ ctx.moveTo(xTo(x),yTo(y)); started=true; }
+    else ctx.lineTo(xTo(x),yTo(y));
+  }
+  ctx.stroke();
+  ctx.setLineDash([]);
+  // empirical cumulative count
+  ctx.strokeStyle=getComputedStyle(document.documentElement).getPropertyValue('--accent').trim()||'#5eead4';
+  ctx.lineWidth=2.5;
+  ctx.beginPath();
+  started=false;
+  for(let i=0;i<=idx;i++){
+    const x=primes[i], y=res.cum[i];
+    if(!started){ ctx.moveTo(xTo(x),yTo(y)); started=true; }
+    else ctx.lineTo(xTo(x),yTo(y));
+  }
+  ctx.stroke();
+  // label
+  ctx.fillStyle=getComputedStyle(document.documentElement).getPropertyValue('--muted').trim()||'#9fb0cc';
+  ctx.font='12px system-ui';
+  ctx.fillText('N', padL+plotW/2-6, H-6);
+  ctx.save(); ctx.translate(14, padT+plotH/2); ctx.rotate(-Math.PI/2); ctx.fillText('count',0,0); ctx.restore();
+}
+
+const aSlider=document.getElementById('a');
+const nSlider=document.getElementById('n');
+aSlider.addEventListener('input',update);
+nSlider.addEventListener('input',update);
+update();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A cubic permanent–determinant lower bound (conceptual, result 108)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range]{flex:1 1 180px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:460px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+select{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text)}
+.toggle{display:inline-flex;align-items:center;gap:.4rem}
+.legend{display:flex;gap:1rem;align-items:center;font-size:.85rem;color:var(--muted);margin:.5rem 0;flex-wrap:wrap}
+.swatch{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:.3rem;vertical-align:middle}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>A cubic permanent–determinant lower bound (conceptual, result 108)</h1>
+  <p>The border determinantal complexity of the (m\times m) permanent over (\mathbb{C}) is (\Omega(m^3)). For (m\ge 1408), every affine-linear determinant representation, including coefficientwise limits, has size (n\ge m^3/(5529600e)). Slide the matrix size and a proposed representation size to test feasibility; vary the smooth initial form parameters (r,d) for the supporting bound ((r-1)(d-1)/(4e)).</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Proves an \(\Omega(m^3)\) lower bound for the border determinantal complexity of the \(m\times m\) permanent over \(\mathbb{C}\). Even coefficientwise limits of determinants of affine-linear matrices require matrix size at least \(cn^3\) (renaming \(m\)) for an absolute \(c>0) and all sufficiently large (m); the same bound holds for exact representations. For (m\ge 1408), the formalization gives the explicit estimate (n\ge m^3/(5529600e)). A supporting theorem applies to a polynomial in (d\ge 2) variables whose first nonzero homogeneous Taylor term has degree (r\ge 2) and has no nonzero singular zero: its exact and border determinantal sizes are at least ((r-1)(d-1)/(4e)). Algebraic-branching-program consequences are outside these statements.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">This is the first cubic lower bound for the permanent in the determinant model, including border (limit) representations, so it also rules out small exact determinantal expressions. It separates the permanent from determinant by a polynomial gap and constrains algebraic complexity measures tied to determinants. The smooth-initial-form estimate shows how a nondegenerate lowest-degree part alone forces a linear-in-((r-1)(d-1)) determinant-size barrier.</p>
+  </section>
+  <div class="controls">
+    <label for="m">Matrix size m</label>
+    <input id="m" type="range" min="1408" max="10000" value="2048" step="1">
+    <span class="val" id="mval">2048</span>
+    <label for="n">Proposed size n</label>
+    <input id="n" type="range" min="1" max="20000" value="1000" step="1">
+    <span class="val" id="nval">1000</span>
+    <label for="r">Degree r</label>
+    <input id="r" type="range" min="2" max="12" value="2" step="1">
+    <span class="val" id="rval">2</span>
+    <label for="d">Variables d</label>
+    <input id="d" type="range" min="2" max="20" value="2" step="1">
+    <span class="val" id="dval">2</span>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Matrix size m</div><div class="value" id="mstat">—</div></div>
+    <div class="stat"><div class="label">Lower bound L1</div><div class="value" id="l1stat">—</div></div>
+    <div class="stat"><div class="label">Proposed n</div><div class="value" id="nstat">—</div></div>
+    <div class="stat"><div class="label">Feasible?</div><div class="value" id="feasible">—</div></div>
+    <div class="stat"><div class="label">Margin n-L1</div><div class="value" id="margin">—</div></div>
+    <div class="stat"><div class="label">Supporting bound L2</div><div class="value" id="l2stat">—</div></div>
+    <div class="stat"><div class="label">Threshold m≥1408</div><div class="value" id="thresh">Yes</div></div>
+    <div class="stat"><div class="label">Cubic growth</div><div class="value" id="growth">—</div></div>
+  </div>
+  <div class="legend">
+    <span><span class="swatch" style="background:#ef4444"></span>Lower bound (m^3/(5529600e))</span>
+    <span><span class="swatch" style="background:#5eead4"></span>Proposed size (n)</span>
+    <span><span class="swatch" style="background:#f59e0b"></span>Current (m)</span>
+  </div>
+  <canvas id="c" width="900" height="460"></canvas>
+  <p style="font-size:.85rem;color:var(--muted);margin-top:.5rem">Left: the cubic lower bound as a function of (m), with the proposed size as a horizontal line; where the curve lies above the line, no representation of that size can exist. Right: the supporting smooth-initial-form bound ((r-1)(d-1)/(4e)) versus degree (r) for (d=2), the chosen (d), and (d=20).</p>
+</div>
+<script>
+const mSlider=document.getElementById('m');
+const nSlider=document.getElementById('n');
+const rSlider=document.getElementById('r');
+const dSlider=document.getElementById('d');
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+
+const mval=document.getElementById('mval');
+const nval=document.getElementById('nval');
+const rval=document.getElementById('rval');
+const dval=document.getElementById('dval');
+const mstat=document.getElementById('mstat');
+const l1stat=document.getElementById('l1stat');
+const nstat=document.getElementById('nstat');
+const feasible=document.getElementById('feasible');
+const margin=document.getElementById('margin');
+const l2stat=document.getElementById('l2stat');
+const growth=document.getElementById('growth');
+
+const E=Math.E;
+function L1(m){ return m*m*m/(5529600*E); }
+function L2(r,d){ return (r-1)*(d-1)/(4*E); }
+
+function fmt(x){
+  if(!isFinite(x)) return '—';
+  if(x>=1e6 || x<=1e-3) return x.toExponential(3);
+  return x.toFixed(2);
+}
+
+function updateStats(){
+  const m=+mSlider.value;
+  const n=+nSlider.value;
+  const r=+rSlider.value;
+  const d=+dSlider.value;
+  mval.textContent=m;
+  nval.textContent=n;
+  rval.textContent=r;
+  dval.textContent=d;
+  const l1=L1(m);
+  const l2=L2(r,d);
+  mstat.textContent=m;
+  l1stat.textContent=fmt(l1);
+  nstat.textContent=n;
+  const ok = n >= l1;
+  feasible.textContent = ok ? 'Yes' : 'No';
+  feasible.style.color = ok ? 'var(--good)' : 'var(--bad)';
+  margin.textContent = fmt(n-l1);
+  margin.style.color = ok ? 'var(--good)' : 'var(--bad)';
+  l2stat.textContent=fmt(l2);
+  growth.textContent = fmt(L1(2*m)-L1(m));
+}
+
+mSlider.addEventListener('input',function(){ updateStats(); render(); });
+nSlider.addEventListener('input',function(){ updateStats(); render(); });
+rSlider.addEventListener('input',function(){ updateStats(); render(); });
+dSlider.addEventListener('input',function(){ updateStats(); render(); });
+
+function resizeCanvas(){ canvas.width=Math.max(300,canvas.clientWidth); canvas.height=460; }
+window.addEventListener('resize',function(){ resizeCanvas(); render(); });
+resizeCanvas();
+
+function drawPanel(x0,y0,w,h, title){
+  ctx.strokeStyle='rgba(159,176,204,0.25)';
+  ctx.lineWidth=1;
+  ctx.strokeRect(x0,y0,w,h);
+  ctx.fillStyle='#9fb0cc';
+  ctx.font='12px system-ui';
+  ctx.textAlign='left';
+  ctx.fillText(title, x0+8, y0+16);
+}
+
+function render(){
+  updateStats();
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const m=+mSlider.value;
+  const n=+nSlider.value;
+  const r=+rSlider.value;
+  const d=+dSlider.value;
+
+  const pad=12;
+  const leftW=Math.floor((W-3*pad)/2);
+  const rightX=leftW+2*pad;
+  const rightW=W-rightX-pad;
+  const top=30;
+  const bottom=H-40;
+  const plotH=bottom-top;
+
+  // LEFT: cubic lower bound
+  const lx=pad, ly=top, lw=leftW, lh=plotH;
+  drawPanel(lx, ly-20, lw, lh+30, 'Lower bound L1(m)');
+
+  const mmin=1408, mmax=10000;
+  const ymax=Math.max(1000, L1(mmax)*1.05);
+  const ymin=0;
+  function xL(v){ return lx + (v-mmin)/(mmax-mmin)*lw; }
+  function yL(v){ return ly+lh - (v-ymin)/(ymax-ymin)*lh; }
+
+  // grid
+  ctx.strokeStyle='rgba(159,176,204,0.15)';
+  ctx.lineWidth=1;
+  for(let i=0;i<=5;i++){
+    const mv=mmin+(mmax-mmin)*i/5;
+    const x=xL(mv);
+    ctx.beginPath(); ctx.moveTo(x,ly); ctx.lineTo(x,ly+lh); ctx.stroke();
+    ctx.fillStyle='#9fb0cc'; ctx.font='10px system-ui'; ctx.textAlign='center';
+    ctx.fillText(Math.round(mv).toString(), x, ly+lh+14);
+  }
+  for(let i=0;i<=5;i++){
+    const vv=ymin+(ymax-ymin)*i/5;
+    const y=yL(vv);
+    ctx.beginPath(); ctx.moveTo(lx,y); ctx.lineTo(lx+lw,y); ctx.stroke();
+    ctx.fillStyle='#9fb0cc'; ctx.font='10px system-ui'; ctx.textAlign='right';
+    ctx.fillText(fmt(vv), lx-4, y+3);
+  }
+
+  // shaded feasible region above curve
+  ctx.beginPath();
+  ctx.moveTo(lx, ly);
+  for(let i=0;i<=200;i++){
+    const mv=mmin+(mmax-mmin)*i/200;
+    const x=xL(mv);
+    const y=yL(L1(mv));
+    ctx.lineTo(x,y);
+  }
+  ctx.lineTo(lx+lw, ly);
+  ctx.closePath();
+  ctx.fillStyle='rgba(94,234,212,0.08)';
+  ctx.fill();
+
+  // curve
+  ctx.strokeStyle='#ef4444';
+  ctx.lineWidth=2.5;
+  ctx.beginPath();
+  for(let i=0;i<=200;i++){
+    const mv=mmin+(mmax-mmin)*i/200;
+    const x=xL(mv);
+    const y=yL(L1(mv));
+    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  }
+  ctx.stroke();
+
+  // proposed n horizontal
+  const ny=yL(Math.min(ymax, Math.max(0,n)));
+  ctx.strokeStyle='#5eead4';
+  ctx.lineWidth=2;
+  ctx.setLineDash([6,4]);
+  ctx.beginPath();
+  ctx.moveTo(lx,ny); ctx.lineTo(lx+lw,ny);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // current m marker
+  const cx=xL(m);
+  const cy=yL(L1(m));
+  ctx.strokeStyle='#f59e0b';
+  ctx.lineWidth=1.5;
+  ctx.beginPath();
+  ctx.moveTo(cx, ly); ctx.lineTo(cx, ly+lh);
+  ctx.stroke();
+  ctx.fillStyle='#f59e0b';
+  ctx.beginPath();
+  ctx.arc(cx,cy,5,0,Math.PI*2);
+  ctx.fill();
+
+  // RIGHT: supporting bound
+  const rx=rightX, ry=top, rw=rightW, rh=plotH;
+  drawPanel(rx, ry-20, rw, rh+30, 'Supporting bound L2(r,d)');
+
+  const rmin=2, rmax=12;
+  const dmin=2, dmax=20;
+  // y range
+  const l2max=L2(rmax,dmax)*1.1;
+  const l2min=0;
+  function xR(v){ return rx + (v-rmin)/(rmax-rmin)*rw; }
+  function yR(v){ return ry+rh - (v-l2min)/(l2max-l2min)*rh; }
+
+  // grid
+  ctx.strokeStyle='rgba(159,176,204,0.15)';
+  ctx.lineWidth=1;
+  for(let i=0;i<=5;i++){
+    const rv=rmin+(rmax-rmin)*i/5;
+    const x=xR(rv);
+    ctx.beginPath(); ctx.moveTo(x,ry); ctx.lineTo(x,ry+rh); ctx.stroke();
+    ctx.fillStyle='#9fb0cc'; ctx.font='10px system-ui'; ctx.textAlign='center';
+    ctx.fillText(rv.toFixed(0), x, ry+rh+14);
+  }
+  for(let i=0;i<=5;i++){
+    const vv=l2min+(l2max-l2min)*i/5;
+    const y=yR(vv);
+    ctx.beginPath(); ctx.moveTo(rx,y); ctx.lineTo(rx+rw,y); ctx.stroke();
+    ctx.fillStyle='#9fb0cc'; ctx.font='10px system-ui'; ctx.textAlign='right';
+    ctx.fillText(fmt(vv), rx-4, y+3);
+  }
+
+  // curves for d=2, chosen d, d=20
+  const ds=[2, d, 20];
+  const colors=['#9fb0cc', '#5eead4', '#a78bfa'];
+  ds.forEach((dd, idx)=>{
+    ctx.strokeStyle=colors[idx];
+    ctx.lineWidth = (dd===d)?2.5:1.5;
+    ctx.beginPath();
+    for(let i=0;i<=100;i++){
+      const rv=rmin+(rmax-rmin)*i/100;
+      const x=xR(rv);
+      const y=yR(L2(rv,dd));
+      if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+  });
+
+  // current point
+  const px=xR(r);
+  const py=yR(L2(r,d));
+  ctx.fillStyle='#f59e0b';
+  ctx.beginPath();
+  ctx.arc(px,py,5,0,Math.PI*2);
+  ctx.fill();
+
+  // axis labels
+  ctx.fillStyle='#9fb0cc';
+  ctx.font='11px system-ui';
+  ctx.textAlign='center';
+  ctx.fillText('m', lx+lw/2, H-6);
+  ctx.fillText('r', rx+rw/2, H-6);
+  ctx.save();
+  ctx.translate(8, ly+lh/2);
+  ctx.rotate(-Math.PI/2);
+  ctx.fillText('L1', 0, 0);
+  ctx.restore();
+  ctx.save();
+  ctx.translate(rx-26, ry+rh/2);
+  ctx.rotate(-Math.PI/2);
+  ctx.fillText('L2', 0, 0);
+  ctx.restore();
+
+  // legend right
+  ctx.font='10px system-ui';
+  ctx.textAlign='left';
+  let lyg=ry+8;
+  [['d=2','#9fb0cc'],['d chosen','#5eead4'],['d=20','#a78bfa']].forEach(([lab,col])=>{
+    ctx.fillStyle=col;
+    ctx.fillRect(rx+8, lyg-8, 12, 3);
+    ctx.fillStyle='#9fb0cc';
+    ctx.fillText(lab, rx+24, lyg-4);
+    lyg+=14;
+  });
+}
+
+mSlider.dispatchEvent(new Event('input'));
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

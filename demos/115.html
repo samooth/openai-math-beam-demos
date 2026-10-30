@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sampling and counting contingency tables with arbitrary margins (conceptual, result 115)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range]{flex:1 1 180px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:460px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+select{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text)}
+table{width:100%;border-collapse:collapse;font-size:.85rem}
+th,td{padding:.35rem .45rem;border-bottom:1px solid var(--border);text-align:left}
+th{color:var(--muted);font-weight:600}
+td.num{font-family:ui-monospace,monospace}
+.margins{font-family:ui-monospace,monospace;font-size:.9rem;color:var(--text);margin:.5rem 0}
+.celltbl{margin:.5rem 0}
+.celltbl td{min-width:2.2rem;text-align:center}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Sampling and counting contingency tables with arbitrary margins (conceptual, result 115)</h1>
+  <p>Nonnegative integer matrices with prescribed row and column sums: exact uniform sampling in expected polynomial bit time, almost-uniform sampling in worst-case polynomial bit time, and an FPRAS for counts with arbitrary cell bounds.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">For nonnegative integer matrices with prescribed row and column sums, the result gives exact uniform sampling in expected polynomial bit time and almost-uniform sampling in worst-case polynomial bit time. The dimensions and binary-encoded margins are unrestricted. It also gives a fully polynomial randomized approximation scheme for counting such tables with arbitrary individual cell bounds, including structural zeros, with polynomial cost on every execution.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Uniform contingency tables with fixed margins are the combinatorial core of exact conditional inference, randomization tests, and Markov-chain Monte Carlo diagnostics. The new sampler removes dimension and margin restrictions, while the counting FPRAS handles cell bounds and structural zeros, making both exact sampling and approximate counting available in polynomial bit time.</p>
+  </section>
+  <div class="controls">
+    <label for="rows">Rows</label>
+    <select id="rows"><option value="2">2</option><option value="3" selected>3</option></select>
+    <label for="cols">Cols</label>
+    <select id="cols"><option value="2">2</option><option value="3" selected>3</option></select>
+    <label for="n">Total $N$</label>
+    <input id="n" type="range" min="2" max="8" value="5" step="1">
+    <span class="val" id="nval">5</span>
+    <label for="shape">Margins</label>
+    <select id="shape"><option value="random" selected>Random</option><option value="balanced">Balanced</option><option value="skewed">Skewed</option></select>
+    <label for="dens">Forbidden density</label>
+    <input id="dens" type="range" min="0" max="0.4" value="0.1" step="0.05">
+    <span class="val" id="densval">0.10</span>
+    <button id="regen">Regenerate</button>
+    <button id="sample">Sample uniform</button>
+  </div>
+  <div class="margins" id="margins">—</div>
+  <div id="celltable" class="celltbl"></div>
+  <div class="stats">
+    <div class="stat"><div class="label">Dimensions</div><div class="value" id="sdims">—</div></div>
+    <div class="stat"><div class="label">Total $N$</div><div class="value" id="stotal">—</div></div>
+    <div class="stat"><div class="label">Exact count</div><div class="value" id="scount">—</div></div>
+    <div class="stat"><div class="label">Stored tables</div><div class="value" id="sstored">—</div></div>
+    <div class="stat"><div class="label">Forbidden cells</div><div class="value" id="sforb">—</div></div>
+    <div class="stat"><div class="label">Acceptance (naive)</div><div class="value" id="sacc">—</div></div>
+    <div class="stat"><div class="label">Enumeration ms</div><div class="value" id="stime">—</div></div>
+  </div>
+  <canvas id="c" width="900" height="460"></canvas>
+  <section class="box">
+    <h3>Reading the picture</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">The grid shows one sampled table; cell color intensity is proportional to its entry, and forbidden (structurally zero) cells are marked $\times$. Row and column sums are the margins. The exact count enumerates all nonnegative integer matrices with those margins and bounds; for larger instances the result's FPRAS replaces exact enumeration by polynomial-time approximate counting.</p>
+  </section>
+</div>
+<script>
+const rowsSel=document.getElementById('rows');
+const colsSel=document.getElementById('cols');
+const nSlider=document.getElementById('n');
+const shapeSel=document.getElementById('shape');
+const densSlider=document.getElementById('dens');
+const regenBtn=document.getElementById('regen');
+const sampleBtn=document.getElementById('sample');
+
+const nval=document.getElementById('nval');
+const densval=document.getElementById('densval');
+const marginsEl=document.getElementById('margins');
+const cellTableEl=document.getElementById('celltable');
+
+const sdims=document.getElementById('sdims');
+const stotal=document.getElementById('stotal');
+const scount=document.getElementById('scount');
+const sstored=document.getElementById('sstored');
+const sforb=document.getElementById('sforb');
+const sacc=document.getElementById('sacc');
+const stime=document.getElementById('stime');
+
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+
+let R=3,C=3,N=5;
+let r=[0,0,0], c=[0,0,0];
+let ub=[];
+let tables=[];
+let enumCount=0;
+let enumAborted=false;
+let sampleTable=null;
+
+function randomComposition(n,k,mode){
+  if(mode==='balanced'){
+    const base=Math.floor(n/k); let rem=n-base*k;
+    const arr=Array(k).fill(base);
+    for(let i=0;i<rem;i++) arr[i]++;
+    return arr;
+  }
+  if(mode==='skewed'){
+    const arr=Array(k).fill(0);
+    arr[0]=Math.floor(0.6*n);
+    let rem=n-arr[0];
+    for(let t=0;t<rem;t++) arr[1+Math.floor(Math.random()*(k-1))]++;
+    return arr;
+  }
+  const cuts=[];
+  for(let i=0;i<k-1;i++) cuts.push(Math.floor(Math.random()*(n+1)));
+  cuts.sort((a,b)=>a-b);
+  const arr=[]; let prev=0;
+  for(const cut of cuts){ arr.push(cut-prev); prev=cut; }
+  arr.push(n-prev);
+  return arr;
+}
+
+function enumerateTables(rr,cc,ubm){
+  const R=rr.length, C=cc.length;
+  const rowRem=rr.slice(), colRem=cc.slice();
+  const out=[]; let count=0; let aborted=false;
+  const current=[];
+  function rec(k){
+    if(aborted) return;
+    if(k===R*C){
+      for(let i=0;i<R;i++) if(rowRem[i]!==0) return;
+      for(let j=0;j<C;j++) if(colRem[j]!==0) return;
+      count++;
+      if(count>200000){ aborted=true; return; }
+      if(out.length<5000) out.push(current.slice());
+      return;
+    }
+    const i=Math.floor(k/C), j=k%C;
+    const isLastCol=(j===C-1);
+    const maxVal=Math.min(rowRem[i],colRem[j],ubm[i][j]);
+    for(let v=0;v<=maxVal;v++){
+      if(isLastCol && v!==rowRem[i]) continue;
+      rowRem[i]-=v; colRem[j]-=v; current.push(v);
+      rec(k+1);
+      current.pop(); rowRem[i]+=v; colRem[j]+=v;
+      if(aborted) return;
+    }
+  }
+  rec(0);
+  return {count:aborted?200001:count, tables:out, aborted};
+}
+
+function generate(){
+  R=+rowsSel.value; C=+colsSel.value;
+  let NN=+nSlider.value;
+  if(R*C>4) NN=Math.min(NN,6);
+  N=NN;
+  nSlider.value=N; nval.textContent=N;
+  const mode=shapeSel.value;
+  r=randomComposition(N,R,mode);
+  c=randomComposition(N,C,mode);
+  const density=+densSlider.value;
+  densval.textContent=density.toFixed(2);
+  ub=Array.from({length:R},()=>Array(C).fill(Infinity));
+  for(let i=0;i<R;i++) for(let j=0;j<C;j++) if(Math.random()<density) ub[i][j]=0;
+  const t0=performance.now();
+  const res=enumerateTables(r,c,ub);
+  const t1=performance.now();
+  tables=res.tables; enumCount=res.count; enumAborted=res.aborted;
+  sampleTable=null;
+  marginsEl.textContent='rows = ['+r.join(', ')+']    cols = ['+c.join(', ')+']';
+  renderCellTable();
+  updateStats(t1-t0);
+  draw();
+}
+
+function renderCellTable(){
+  if(!sampleTable){ cellTableEl.innerHTML=''; return; }
+  let html='<table class="celltbl"><tr><th></th>';
+  for(let j=0;j<C;j++) html+='<th>'+c[j]+'</th>';
+  html+='</tr>';
+  for(let i=0;i<R;i++){
+    html+='<tr><th>'+r[i]+'</th>';
+    for(let j=0;j<C;j++){
+      const v=sampleTable[i*C+j];
+      const forb=ub[i][j]===0?' style="color:var(--bad)"':'';
+      html+='<td'+forb+'>'+v+'</td>';
+    }
+    html+='</tr>';
+  }
+  html+='</table>';
+  cellTableEl.innerHTML=html;
+}
+
+function updateStats(ms){
+  sdims.textContent=R+' x '+C;
+  stotal.textContent=N;
+  scount.textContent=enumAborted?'>200000':enumCount;
+  sstored.textContent=tables.length;
+  let forb=0; for(let i=0;i<R;i++) for(let j=0;j<C;j++) if(ub[i][j]===0) forb++;
+  sforb.textContent=forb;
+  const cells=R*C;
+  const totalMatrices=Math.pow(N+1,cells);
+  const acc=enumAborted?NaN:enumCount/totalMatrices;
+  sacc.textContent=isNaN(acc)?'—':(acc<1e-6?acc.toExponential(2):acc.toFixed(6));
+  stime.textContent=ms.toFixed(1);
+}
+
+function resizeCanvas(){ canvas.width=Math.max(300,canvas.clientWidth); canvas.height=460; }
+
+function draw(){
+  resizeCanvas();
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  if(!sampleTable){
+    ctx.fillStyle='rgba(159,176,204,0.9)';
+    ctx.font='16px system-ui';
+    ctx.textAlign='center';
+    ctx.fillText('Click "Sample uniform" to draw a table', W/2, H/2);
+    return;
+  }
+  const padL=60,padT=40,padR=20,padB=60;
+  const plotW=W-padL-padR, plotH=H-padT-padB;
+  const cw=plotW/C, ch=plotH/R;
+  let maxv=1;
+  for(let i=0;i<R;i++) for(let j=0;j<C;j++) maxv=Math.max(maxv,sampleTable[i*C+j]);
+  for(let i=0;i<R;i++){
+    for(let j=0;j<C;j++){
+      const x=padL+j*cw, y=padT+i*ch;
+      const v=sampleTable[i*C+j];
+      if(ub[i][j]===0){
+        ctx.fillStyle='rgba(239,68,68,0.18)';
+        ctx.fillRect(x+2,y+2,cw-4,ch-4);
+        ctx.strokeStyle='rgba(239,68,68,0.6)';
+        ctx.lineWidth=2;
+        ctx.beginPath(); ctx.moveTo(x+6,y+6); ctx.lineTo(x+cw-6,y+ch-6); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(x+cw-6,y+6); ctx.lineTo(x+6,y+ch-6); ctx.stroke();
+      } else {
+        const a=0.15+0.75*(v/maxv);
+        ctx.fillStyle='rgba(94,234,212,'+a+')';
+        ctx.fillRect(x+2,y+2,cw-4,ch-4);
+      }
+      ctx.strokeStyle='rgba(159,176,204,0.25)';
+      ctx.lineWidth=1;
+      ctx.strokeRect(x+2,y+2,cw-4,ch-4);
+      ctx.fillStyle='rgba(230,237,247,0.95)';
+      ctx.font='bold 18px system-ui';
+      ctx.textAlign='center';
+      ctx.textBaseline='middle';
+      ctx.fillText(String(v), x+cw/2, y+ch/2);
+    }
+  }
+  ctx.textBaseline='alphabetic';
+  ctx.fillStyle='rgba(159,176,204,0.9)';
+  ctx.font='12px system-ui';
+  ctx.textAlign='center';
+  for(let j=0;j<C;j++){
+    ctx.fillText('col '+j+': '+c[j], padL+j*cw+cw/2, padT-12);
+  }
+  ctx.textAlign='right';
+  for(let i=0;i<R;i++){
+    ctx.fillText('row '+i+': '+r[i], padL-8, padT+i*ch+ch/2+4);
+  }
+  ctx.textAlign='center';
+  ctx.fillStyle='rgba(159,176,204,0.8)';
+  ctx.font='13px system-ui';
+  ctx.fillText('Sampled table entries (color intensity ∝ value)', W/2, H-12);
+}
+
+window.addEventListener('resize',function(){ draw(); });
+
+rowsSel.addEventListener('change',generate);
+colsSel.addEventListener('change',generate);
+nSlider.addEventListener('input',function(){ nval.textContent=nSlider.value; });
+nSlider.addEventListener('change',generate);
+shapeSel.addEventListener('change',generate);
+densSlider.addEventListener('input',function(){ densval.textContent=(+densSlider.value).toFixed(2); });
+densSlider.addEventListener('change',generate);
+regenBtn.addEventListener('click',generate);
+sampleBtn.addEventListener('click',function(){
+  if(tables.length===0){ sampleTable=null; }
+  else { const idx=Math.floor(Math.random()*tables.length); sampleTable=tables[idx]; }
+  renderCellTable();
+  draw();
+});
+
+generate();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

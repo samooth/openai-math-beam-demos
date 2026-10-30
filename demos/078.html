@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The three-dimensional Bochner–Riesz conjecture (conceptual, result 078)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range]{flex:1 1 220px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:440px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+select{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text)}
+.toggle{display:inline-flex;align-items:center;gap:.4rem}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>The three-dimensional Bochner–Riesz conjecture (conceptual, result 078)</h1>
+  <p>The Bochner–Riesz multipliers of order \(\delta\) are bounded on \(L^p(\mathbb R^3)\) in the strict range \(\delta>\max\{3|1/p-1/2|-1/2,0\}\). The critical case is \(L^3\): boundedness holds for every \(\delta>0). Explore the admissible region and the radial multiplier profile.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Resolves the three-dimensional Bochner–Riesz conjecture in its strict-order formulation: the Bochner–Riesz multipliers of order \(\delta\) are bounded on \(L^p(\mathbb R^3)\) for every \(1\le p\le\infty\) whenever \(\delta>\max\{3|1/p-1/2|-1/2,0\}). The main new ingredient is boundedness on (L^3(\mathbb R^3)) for every positive order; interpolation and duality then give the full conjectured strict range.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Settles a central problem in harmonic analysis: the optimal (L^p) boundedness of radial Fourier multipliers supported on the unit ball in (\mathbb R^3). It fixes the threshold between bounded and unbounded behavior, confirms the critical (L^3) estimate with arbitrarily small positive loss, and feeds into restriction theory, local smoothing, and dispersive estimates for the wave equation.</p>
+  </section>
+  <div class="controls">
+    <label for="u">Reciprocal (1/p) (0 to 1)</label>
+    <input id="u" type="range" min="0" max="100" value="33" step="1">
+    <span class="val" id="uval">0.33</span>
+    <label for="d">Order (\delta)</label>
+    <input id="d" type="range" min="0" max="200" value="20" step="1">
+    <span class="val" id="dval">0.20</span>
+    <label for="view">View</label>
+    <select id="view">
+      <option value="region" selected>Admissible region</option>
+      <option value="profile">Multiplier profile</option>
+      <option value="critical">Critical curve</option>
+    </select>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">p</div><div class="value" id="pstat">—</div></div>
+    <div class="stat"><div class="label">1/p</div><div class="value" id="invpstat">—</div></div>
+    <div class="stat"><div class="label">(\delta)</div><div class="value" id="dstat">—</div></div>
+    <div class="stat"><div class="label">Critical (\delta_c)</div><div class="value" id="dcstat">—</div></div>
+    <div class="stat"><div class="label">Bounded?</div><div class="value" id="bstat">—</div></div>
+    <div class="stat"><div class="label">L^3 case</div><div class="value" id="l3stat">δ>0</div></div>
+  </div>
+  <canvas id="c" width="900" height="440"></canvas>
+</div>
+<script>
+const uSlider=document.getElementById('u');
+const dSlider=document.getElementById('d');
+const viewSel=document.getElementById('view');
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+
+const uval=document.getElementById('uval');
+const dval=document.getElementById('dval');
+const pstat=document.getElementById('pstat');
+const invpstat=document.getElementById('invpstat');
+const dstat=document.getElementById('dstat');
+const dcstat=document.getElementById('dcstat');
+const bstat=document.getElementById('bstat');
+
+function resizeCanvas(){ canvas.width=Math.max(300,canvas.clientWidth); canvas.height=440; }
+window.addEventListener('resize',function(){ resizeCanvas(); render(); });
+resizeCanvas();
+
+function criticalDelta(u){
+  const t=Math.abs(3*(u-0.5));
+  const val=t-0.5;
+  return Math.max(val,0);
+}
+
+function fmtP(u){
+  if(u<=0) return '∞';
+  return (1/u).toFixed(2);
+}
+
+function updateState(){
+  const u=+uSlider.value/100;
+  const delta=+dSlider.value/100;
+  const view=viewSel.value;
+  const dc=criticalDelta(u);
+  const bounded = delta > dc + 1e-12;
+  uval.textContent=u.toFixed(2);
+  dval.textContent=delta.toFixed(2);
+  pstat.textContent=fmtP(u);
+  invpstat.textContent=u.toFixed(3);
+  dstat.textContent=delta.toFixed(3);
+  dcstat.textContent=dc.toFixed(3);
+  bstat.textContent=bounded?'Yes':'No';
+  bstat.className='value '+(bounded?'good':'bad');
+  return {u,delta,view,dc,bounded};
+}
+
+function drawRegion(W,H,s){
+  const margin=60;
+  const x0=margin, y0=H-margin, x1=W-margin, y1=margin;
+  // axes
+  ctx.strokeStyle='rgba(159,176,204,0.35)'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(x0,y0); ctx.lineTo(x1,y0); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(x0,y0); ctx.lineTo(x0,y1); ctx.stroke();
+  ctx.fillStyle='#9fb0cc'; ctx.font='11px system-ui'; ctx.textAlign='center';
+  ctx.fillText('1/p', (x0+x1)/2, y0+28);
+  ctx.save(); ctx.translate(x0-34,(y0+y1)/2); ctx.rotate(-Math.PI/2); ctx.fillText('δ',0,0); ctx.restore();
+
+  // x ticks
+  for(let k=0;k<=10;k++){
+    const x=x0+(x1-x0)*k/10;
+    ctx.strokeStyle='rgba(159,176,204,0.18)';
+    ctx.beginPath(); ctx.moveTo(x,y0); ctx.lineTo(x,y0+5); ctx.stroke();
+    ctx.fillStyle='#9fb0cc'; ctx.font='10px system-ui'; ctx.textAlign='center';
+    ctx.fillText((k/10).toFixed(1), x, y0+16);
+  }
+  // y ticks
+  for(let k=0;k<=8;k++){
+    const y=y0-(y0-y1)*k/8;
+    ctx.strokeStyle='rgba(159,176,204,0.18)';
+    ctx.beginPath(); ctx.moveTo(x0-5,y); ctx.lineTo(x0,y); ctx.stroke();
+    ctx.fillStyle='#9fb0cc'; ctx.font='10px system-ui'; ctx.textAlign='right';
+    ctx.fillText((k*0.5).toFixed(1), x0-8, y+4);
+  }
+
+  // shaded admissible region: for each x, y > critical
+  const steps=200;
+  ctx.fillStyle='rgba(34,197,94,0.18)';
+  ctx.beginPath();
+  for(let i=0;i<=steps;i++){
+    const u=i/steps;
+    const xc=x0+(x1-x0)*u;
+    const dc=criticalDelta(u);
+    const yc=y0-(y0-y1)*Math.min(dc,4)/4; // scale 0..4
+    if(i===0) ctx.moveTo(xc, y1);
+    else ctx.lineTo(xc, y1);
+  }
+  // bottom boundary along critical
+  for(let i=steps;i>=0;i--){
+    const u=i/steps;
+    const xc=x0+(x1-x0)*u;
+    const dc=criticalDelta(u);
+    const yc=y0-(y0-y1)*Math.min(dc,4)/4;
+    ctx.lineTo(xc, yc);
+  }
+  ctx.closePath(); ctx.fill();
+
+  // critical curve
+  ctx.strokeStyle='#f59e0b'; ctx.lineWidth=2.5;
+  ctx.beginPath();
+  for(let i=0;i<=steps;i++){
+    const u=i/steps;
+    const xc=x0+(x1-x0)*u;
+    const dc=criticalDelta(u);
+    const yc=y0-(y0-y1)*Math.min(dc,4)/4;
+    if(i===0) ctx.moveTo(xc,yc); else ctx.lineTo(xc,yc);
+  }
+  ctx.stroke();
+
+  // current point
+  const px=x0+(x1-x0)*s.u;
+  const py=y0-(y0-y1)*Math.min(s.delta,4)/4;
+  ctx.fillStyle=s.bounded?'#22c55e':'#ef4444';
+  ctx.beginPath(); ctx.arc(px,py,7,0,Math.PI*2); ctx.fill();
+  ctx.strokeStyle='#e6edf7'; ctx.lineWidth=1.5; ctx.beginPath(); ctx.arc(px,py,7,0,Math.PI*2); ctx.stroke();
+
+  ctx.fillStyle='#e6edf7'; ctx.font='12px system-ui'; ctx.textAlign='left';
+  ctx.fillText('current (1/p, δ)', px+10, py-10);
+}
+
+function drawProfile(W,H,s){
+  const margin=60;
+  const x0=margin, y0=H-margin, x1=W-margin, y1=margin;
+  // axes
+  ctx.strokeStyle='rgba(159,176,204,0.35)'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(x0,y0); ctx.lineTo(x1,y0); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(x0,y0); ctx.lineTo(x0,y1); ctx.stroke();
+  ctx.fillStyle='#9fb0cc'; ctx.font='11px system-ui'; ctx.textAlign='center';
+  ctx.fillText('radial frequency r (normalized)', (x0+x1)/2, y0+28);
+  ctx.save(); ctx.translate(x0-34,(y0+y1)/2); ctx.rotate(-Math.PI/2); ctx.fillText('(1-r^2)^δ_+',0,0); ctx.restore();
+
+  const steps=300;
+  ctx.strokeStyle='#5eead4'; ctx.lineWidth=2.5;
+  ctx.beginPath();
+  for(let i=0;i<=steps;i++){
+    const t=i/steps;
+    const r=t;
+    let val=0;
+    if(r<1){
+      val=Math.pow(1-r*r, s.delta);
+    }
+    const x=x0+(x1-x0)*t;
+    const y=y0-(y0-y1)*val;
+    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  }
+  ctx.stroke();
+
+  // fill
+  ctx.fillStyle='rgba(94,234,212,0.12)';
+  ctx.beginPath();
+  ctx.moveTo(x0,y0);
+  for(let i=0;i<=steps;i++){
+    const t=i/steps;
+    const r=t;
+    let val=0;
+    if(r<1) val=Math.pow(1-r*r, s.delta);
+    const x=x0+(x1-x0)*t;
+    const y=y0-(y0-y1)*val;
+    ctx.lineTo(x,y);
+  }
+  ctx.lineTo(x1,y0);
+  ctx.closePath(); ctx.fill();
+
+  ctx.fillStyle='#9fb0cc'; ctx.font='12px system-ui'; ctx.textAlign='left';
+  ctx.fillText('δ = '+s.delta.toFixed(3), x0+10, y1+20);
+  ctx.fillText('support: unit ball in R^3', x0+10, y1+40);
+}
+
+function drawCritical(W,H,s){
+  const margin=60;
+  const x0=margin, y0=H-margin, x1=W-margin, y1=margin;
+  ctx.strokeStyle='rgba(159,176,204,0.35)'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(x0,y0); ctx.lineTo(x1,y0); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(x0,y0); ctx.lineTo(x0,y1); ctx.stroke();
+  ctx.fillStyle='#9fb0cc'; ctx.font='11px system-ui'; ctx.textAlign='center';
+  ctx.fillText('p', (x0+x1)/2, y0+28);
+  ctx.save(); ctx.translate(x0-34,(y0+y1)/2); ctx.rotate(-Math.PI/2); ctx.fillText('δ_c(p)',0,0); ctx.restore();
+
+  // map p from 1 to 10 (and beyond) horizontally; use u=1/p
+  // draw V in p-coordinate: p in [1,∞]; show p=1..10
+  const steps=200;
+  ctx.strokeStyle='#f59e0b'; ctx.lineWidth=2.5;
+  ctx.beginPath();
+  for(let i=0;i<=steps;i++){
+    const p=1 + (i/steps)*9; // 1..10
+    const u=1/p;
+    const dc=criticalDelta(u);
+    const x=x0+(x1-x0)*(i/steps);
+    const y=y0-(y0-y1)*Math.min(dc,4)/4;
+    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  }
+  ctx.stroke();
+
+  // mark p=3 (L^3 critical): delta=0
+  const p3x = x0+(x1-x0)*((3-1)/9);
+  ctx.strokeStyle='rgba(94,234,212,0.6)'; ctx.lineWidth=1.5;
+  ctx.beginPath(); ctx.moveTo(p3x,y1); ctx.lineTo(p3x,y0); ctx.stroke();
+  ctx.fillStyle='#5eead4'; ctx.font='11px system-ui'; ctx.textAlign='center';
+  ctx.fillText('p=3: δ_c=0', p3x, y1+14);
+
+  // current point in p coordinate
+  const pcur = s.u>0 ? 1/s.u : 100;
+  let frac=(pcur-1)/9;
+  frac=Math.max(0,Math.min(1,frac));
+  const cx=x0+(x1-x0)*frac;
+  const cy=y0-(y0-y1)*Math.min(s.dc,4)/4;
+  ctx.fillStyle=s.bounded?'#22c55e':'#ef4444';
+  ctx.beginPath(); ctx.arc(cx, (y0-(y0-y1)*Math.min(s.delta,4)/4), 7,0,Math.PI*2); ctx.fill();
+  ctx.strokeStyle='#e6edf7'; ctx.lineWidth=1.5; ctx.beginPath(); ctx.arc(cx, (y0-(y0-y1)*Math.min(s.delta,4)/4), 7,0,Math.PI*2); ctx.stroke();
+}
+
+function render(){
+  const s=updateState();
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='rgba(0,0,0,0)'; 
+  if(s.view==='region') drawRegion(W,H,s);
+  else if(s.view==='profile') drawProfile(W,H,s);
+  else drawCritical(W,H,s);
+}
+
+uSlider.addEventListener('input',render);
+dSlider.addEventListener('input',render);
+viewSel.addEventListener('change',render);
+render();
+
+function tick(){ render(); requestAnimationFrame(tick); }
+requestAnimationFrame(tick);
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

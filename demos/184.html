@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Coloring and independence in graphs with forbidden subgraphs (conceptual, result 184)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+select,button{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+input[type=range]{flex:1 1 180px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:420px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button:hover{filter:brightness(1.1)}
+.legend{display:flex;gap:1rem;align-items:center;font-size:.85rem;color:var(--muted);margin:.5rem 0;flex-wrap:wrap}
+.swatch{display:inline-block;width:14px;height:14px;border-radius:50%;margin-right:.3rem;vertical-align:middle}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Coloring and independence in graphs with forbidden subgraphs (conceptual, result 184)</h1>
+  <p>Compare the new bounds with trivial baselines: correspondence coloring of (F)-free graphs and independence in (K_r)-free graphs.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Proves the Alon--Krivelevich--Sudakov coloring conjecture in correspondence-coloring form: graphs avoiding any fixed subgraph (F) need (O_F(\Delta/\log\Delta)) colors when their maximum degree (\Delta) is sufficiently large. Also proves the Ajtai--Erdős--Komlós--Szemerédi independence conjecture: for fixed (r\ge4), every (n)-vertex (K_r)-free graph of average degree (d\ge2) has an independent set of size (\Omega_r(n\log d/d)).</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Supplies optimal (up to constants) coloring and independence bounds for graphs with forbidden subgraphs, improving classical greedy and random arguments and clarifying the role of forbidden structure in extremal graph theory.</p>
+  </section>
+  <div class="controls">
+    <label for="mode">Mode</label>
+    <select id="mode">
+      <option value="color">Coloring (forbidden (F))</option>
+      <option value="indep">Independence ((K_r)-free)</option>
+    </select>
+  </div>
+  <div id="colorBlock">
+    <div class="controls">
+      <label for="F">Forbidden (F)</label>
+      <select id="F">
+        <option value="K3">Triangle (K_3)</option>
+        <option value="K4">Clique (K_4)</option>
+        <option value="K5">Clique (K_5)</option>
+        <option value="F">General (F)</option>
+      </select>
+      <label for="Delta">Max degree (\Delta)</label>
+      <input id="Delta" type="range" min="10" max="200" value="80" step="1">
+      <span class="val" id="Dval">80</span>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="label">(\Delta)</div><div class="value" id="sD">—</div></div>
+      <div class="stat"><div class="label">Trivial colors (\Delta+1)</div><div class="value" id="sTriv">—</div></div>
+      <div class="stat"><div class="label">Bound (O(\Delta/\log\Delta))</div><div class="value" id="sBound">—</div></div>
+      <div class="stat"><div class="label">Ratio trivial/bound</div><div class="value" id="sRatio">—</div></div>
+      <div class="stat"><div class="label">Constant (C_F)</div><div class="value" id="sC">—</div></div>
+    </div>
+    <div class="legend">
+      <span><span class="swatch" style="background:#9fb0cc"></span>trivial (\Delta+1)</span>
+      <span><span class="swatch" style="background:#5eead4"></span>new bound (C_F\Delta/\log\Delta)</span>
+      <span><span class="swatch" style="background:#f59e0b"></span>current (\Delta)</span>
+    </div>
+  </div>
+  <div id="indepBlock" style="display:none">
+    <div class="controls">
+      <label for="n">Vertices (n)</label>
+      <input id="n" type="range" min="100" max="2000" value="500" step="50">
+      <span class="val" id="nval">500</span>
+      <label for="d">Avg degree (d)</label>
+      <input id="d" type="range" min="2" max="60" value="12" step="1">
+      <span class="val" id="dval">12</span>
+      <label for="r">Clique size (r)</label>
+      <select id="r">
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+      </select>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="label">(n)</div><div class="value" id="sn">—</div></div>
+      <div class="stat"><div class="label">(d)</div><div class="value" id="sd">—</div></div>
+      <div class="stat"><div class="label">(r)</div><div class="value" id="sr">—</div></div>
+      <div class="stat"><div class="label">Greedy (n/(d+1))</div><div class="value" id="sGreedy">—</div></div>
+      <div class="stat"><div class="label">New bound (\Omega(n\log d/d))</div><div class="value" id="sIndep">—</div></div>
+      <div class="stat"><div class="label">Improvement factor</div><div class="value" id="sImpr">—</div></div>
+    </div>
+    <div class="legend">
+      <span><span class="swatch" style="background:#9fb0cc"></span>greedy (n/(d+1))</span>
+      <span><span class="swatch" style="background:#5eead4"></span>new bound (c_r n\log d/d)</span>
+      <span><span class="swatch" style="background:#f59e0b"></span>current (d)</span>
+    </div>
+  </div>
+  <canvas id="c" width="900" height="420"></canvas>
+</div>
+<script>
+const modeSel=document.getElementById('mode');
+const colorBlock=document.getElementById('colorBlock');
+const indepBlock=document.getElementById('indepBlock');
+const Fsel=document.getElementById('F');
+const Delta=document.getElementById('Delta');
+const Dval=document.getElementById('Dval');
+const sD=document.getElementById('sD');
+const sTriv=document.getElementById('sTriv');
+const sBound=document.getElementById('sBound');
+const sRatio=document.getElementById('sRatio');
+const sC=document.getElementById('sC');
+const nSlider=document.getElementById('n');
+const dSlider=document.getElementById('d');
+const rval=document.getElementById('r');
+const nval=document.getElementById('nval');
+const dval=document.getElementById('dval');
+const sn=document.getElementById('sn');
+const sd=document.getElementById('sd');
+const sr=document.getElementById('sr');
+const sGreedy=document.getElementById('sGreedy');
+const sIndep=document.getElementById('sIndep');
+const sImpr=document.getElementById('sImpr');
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+
+const Cmap={K3:6,K4:10,K5:14,F:8};
+
+function resizeCanvas(){ canvas.width=Math.max(300, canvas.clientWidth); canvas.height=420; }
+
+function drawAxes(padL,padT,padR,padB,xmin,xmax,ymin,ymax,xlabel,ylabel){
+  const W=canvas.width,H=canvas.height;
+  const pw=W-padL-padR, ph=H-padT-padB;
+  ctx.strokeStyle='#243252'; ctx.lineWidth=1;
+  ctx.fillStyle='#9fb0cc'; ctx.font='11px system-ui'; ctx.textAlign='center';
+  for(let i=0;i<=5;i++){
+    const x=padL+pw*i/5;
+    const v=xmin+(xmax-xmin)*i/5;
+    ctx.beginPath(); ctx.moveTo(x,padT); ctx.lineTo(x,H-padB); ctx.stroke();
+    ctx.fillText(v.toFixed(0), x, H-padB+16);
+  }
+  for(let i=0;i<=5;i++){
+    const y=H-padB-ph*i/5;
+    const v=ymin+(ymax-ymin)*i/5;
+    ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(W-padR,y); ctx.stroke();
+    ctx.textAlign='right'; ctx.fillText(v.toFixed(0), padL-6, y+4); ctx.textAlign='center';
+  }
+  ctx.fillStyle='#9fb0cc'; ctx.font='12px system-ui';
+  ctx.fillText(xlabel, padL+pw/2, H-8);
+  ctx.save(); ctx.translate(12, padT+ph/2); ctx.rotate(-Math.PI/2); ctx.fillText(ylabel,0,0); ctx.restore();
+}
+
+function updateColor(){
+  const F=Fsel.value;
+  const D=+Delta.value;
+  Dval.textContent=D;
+  const C=Cmap[F];
+  const bound=C*D/Math.log(D);
+  const triv=D+1;
+  sD.textContent=D;
+  sTriv.textContent=triv.toFixed(1);
+  sBound.textContent=bound.toFixed(1);
+  sRatio.textContent=(triv/bound).toFixed(2);
+  sC.textContent=C;
+  resizeCanvas();
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const padL=58,padT=24,padR=18,padB=44;
+  const xmax=200,xmin=10,ymin=0,ymax=210;
+  drawAxes(padL,padT,padR,padB,xmin,xmax,ymin,ymax,'Max degree Δ','Colors');
+  const pw=W-padL-padR,ph=H-padT-padB;
+  function sx(x){return padL+(x-xmin)/(xmax-xmin)*pw;}
+  function sy(y){return H-padB-(y-ymin)/(ymax-ymin)*ph;}
+  ctx.lineWidth=2.5;
+  ctx.strokeStyle='#9fb0cc';
+  ctx.beginPath();
+  for(let x=xmin;x<=xmax;x++){
+    const y=x+1;
+    if(x===xmin) ctx.moveTo(sx(x),sy(y)); else ctx.lineTo(sx(x),sy(y));
+  }
+  ctx.stroke();
+  ctx.strokeStyle='#5eead4';
+  ctx.beginPath();
+  for(let x=xmin;x<=xmax;x++){
+    const y=C*x/Math.log(x);
+    if(x===xmin) ctx.moveTo(sx(x),sy(y)); else ctx.lineTo(sx(x),sy(y));
+  }
+  ctx.stroke();
+  const cx=sx(D), cy=sy(bound);
+  ctx.fillStyle='#f59e0b';
+  ctx.beginPath(); ctx.arc(cx,cy,6,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle='#9fb0cc'; ctx.font='11px system-ui'; ctx.textAlign='left';
+  ctx.fillText('current', cx+8, cy-6);
+}
+
+function updateIndep(){
+  const n=+nSlider.value;
+  const d=+dSlider.value;
+  const r=+rval.value;
+  nval.textContent=n; dval.textContent=d;
+  const greedy=n/(d+1);
+  const c=0.18/r;
+  const bound=c*n*Math.log(d)/d;
+  sn.textContent=n; sd.textContent=d; sr.textContent=r;
+  sGreedy.textContent=greedy.toFixed(1);
+  sIndep.textContent=bound.toFixed(1);
+  sImpr.textContent=(bound/greedy).toFixed(2);
+  resizeCanvas();
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const padL=58,padT=24,padR=18,padB=44;
+  const xmax=60,xmin=2,ymin=0,ymax=n;
+  drawAxes(padL,padT,padR,padB,xmin,xmax,ymin,ymax,'Average degree d','Independent set size');
+  const pw=W-padL-padR,ph=H-padT-padB;
+  function sx(x){return padL+(x-xmin)/(xmax-xmin)*pw;}
+  function sy(y){return H-padB-(y-ymin)/(ymax-ymin)*ph;}
+  const c2=0.18/r;
+  ctx.lineWidth=2.5;
+  ctx.strokeStyle='#9fb0cc';
+  ctx.beginPath();
+  for(let x=xmin;x<=xmax;x++){
+    const y=n/(x+1);
+    if(x===xmin) ctx.moveTo(sx(x),sy(y)); else ctx.lineTo(sx(x),sy(y));
+  }
+  ctx.stroke();
+  ctx.strokeStyle='#5eead4';
+  ctx.beginPath();
+  for(let x=xmin;x<=xmax;x++){
+    const y=c2*n*Math.log(x)/x;
+    if(x===xmin) ctx.moveTo(sx(x),sy(y)); else ctx.lineTo(sx(x),sy(y));
+  }
+  ctx.stroke();
+  const cx=sx(d), cy=sy(bound);
+  ctx.fillStyle='#f59e0b';
+  ctx.beginPath(); ctx.arc(cx,cy,6,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle='#9fb0cc'; ctx.font='11px system-ui'; ctx.textAlign='left';
+  ctx.fillText('current', cx+8, cy-6);
+}
+
+function update(){
+  if(modeSel.value==='color'){ colorBlock.style.display=''; indepBlock.style.display='none'; updateColor(); }
+  else { colorBlock.style.display='none'; indepBlock.style.display=''; updateIndep(); }
+}
+modeSel.addEventListener('change', update);
+Fsel.addEventListener('change', updateColor);
+Delta.addEventListener('input', updateColor);
+nSlider.addEventListener('input', updateIndep);
+dSlider.addEventListener('input', updateIndep);
+rval.addEventListener('change', updateIndep);
+window.addEventListener('resize', function(){ if(modeSel.value==='color') updateColor(); else updateIndep(); });
+update();
+</script>
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The geometric case of the Erdős similarity conjecture (conceptual, result 084)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range]{flex:1 1 220px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:440px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+select{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text)}
+.toggle{display:inline-flex;align-items:center;gap:.4rem}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>The geometric case of the Erdős similarity conjecture (conceptual, result 084)</h1>
+  <p>For every fixed (q\in(0,1)), constructs compact (E\subset[0,1]) of measure arbitrarily close to (1) containing no translated and nontrivially dilated copy of (\{q^n:n\ge1\}), with dilations of either sign. Tune the ratio (q), the removed measure, translation, and dilation; inspect the progression points and whether the chosen affine copy survives in (E).</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">For every fixed (q\in(0,1)), constructs compact subsets of ([0,1]) with measure arbitrarily close to one containing no translated and nontrivially dilated copy of (\{q^n:n\ge1\}), with dilations of either sign. This resolves the geometric-progression case of the Erdős similarity conjecture for every ratio. The construction removes, in a controlled way, one point from each possible affine copy while keeping the total removed measure small, and both signs of the dilation are handled.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">The Erdős similarity conjecture asks whether every infinite set of reals can be avoided by a set of positive measure under translations and dilations; geometric progressions are a central test family. Resolving them for every ratio (q\in(0,1)) gives a concrete, high-measure obstruction example and clarifies the interplay between exponential decay, affine invariance, and measure-theoretic largeness. It also feeds the broader program of pattern-avoiding sets, Salem-type constructions, and the limits of measure-theoretic Ramsey phenomena.</p>
+  </section>
+  <div class="controls">
+    <label for="q">Ratio q</label>
+    <input id="q" type="range" min="20" max="90" value="50" step="1">
+    <span class="val" id="qval">0.50</span>
+    <label for="eta">Target removed measure η</label>
+    <input id="eta" type="range" min="5" max="30" value="20" step="1">
+    <span class="val" id="etaval">0.12</span>
+    <label for="x">Translation x</label>
+    <input id="x" type="range" min="0" max="100" value="15" step="1">
+    <span class="val" id="xval">0.15</span>
+    <label for="s">Dilation s</label>
+    <input id="s" type="range" min="-100" max="100" value="60" step="1">
+    <span class="val" id="sval">0.60</span>
+    <label for="view">View</label>
+    <select id="view">
+      <option value="set" selected>Set and progression</option>
+      <option value="scan">Copy scan</option>
+      <option value="inv">Invariants</option>
+    </select>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Ratio q</div><div class="value" id="qstat">—</div></div>
+    <div class="stat"><div class="label">Measure of E</div><div class="value" id="measstat">—</div></div>
+    <div class="stat"><div class="label">Removed bins</div><div class="value" id="remstat">—</div></div>
+    <div class="stat"><div class="label">Tested copies</div><div class="value" id="testedstat">—</div></div>
+    <div class="stat"><div class="label">Intact copies</div><div class="value" id="intactstat">—</div></div>
+    <div class="stat"><div class="label">Translation x</div><div class="value" id="xstat">—</div></div>
+    <div class="stat"><div class="label">Dilation s</div><div class="value" id="sstat">—</div></div>
+    <div class="stat"><div class="label">Chosen copy intact?</div><div class="value" id="copystat">—</div></div>
+  </div>
+  <canvas id="c" width="900" height="440"></canvas>
+</div>
+<script>
+const qSlider=document.getElementById('q');
+const etaSlider=document.getElementById('eta');
+const xSlider=document.getElementById('x');
+const sSlider=document.getElementById('s');
+const viewSel=document.getElementById('view');
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+
+const qval=document.getElementById('qval');
+const etaval=document.getElementById('etaval');
+const xval=document.getElementById('xval');
+const sval=document.getElementById('sval');
+const qstat=document.getElementById('qstat');
+const measstat=document.getElementById('measstat');
+const remstat=document.getElementById('remstat');
+const testedstat=document.getElementById('testedstat');
+const intactstat=document.getElementById('intactstat');
+const xstat=document.getElementById('xstat');
+const sstat=document.getElementById('sstat');
+const copystat=document.getElementById('copystat');
+
+const M=240;
+let included=new Array(M).fill(true);
+let copies=[];
+let intactCount=0;
+
+function linspace(a,b,n){ const arr=[]; for(let i=0;i<n;i++) arr.push(a+(b-a)*i/(n-1)); return arr; }
+
+function buildCopies(q){
+  copies=[];
+  const xs=linspace(0,1,25);
+  const ss=[...linspace(-1,-0.06,18), ...linspace(0.06,1,18)];
+  for(const x of xs){
+    for(const s of ss){
+      if(Math.abs(s)<1e-9) continue;
+      const bins=new Set();
+      let pts=0;
+      for(let n=0;n<16;n++){
+        const p=x+s*Math.pow(q,n);
+        if(p<0 || p>1) continue;
+        let bi=Math.floor(p*M);
+        if(bi<0) bi=0;
+        if(bi>=M) bi=M-1;
+        bins.add(bi);
+        pts++;
+      }
+      if(pts>=3){
+        copies.push({bins:[...bins], x, s});
+      }
+    }
+  }
+}
+
+function intact(c){ return c.bins.every(b=>included[b]); }
+
+function constructE(){
+  const q=+qSlider.value/100;
+  const eta=+etaSlider.value/100;
+  included.fill(true);
+  buildCopies(q);
+  const maxRemoved=Math.floor(eta*M);
+  let removed=0;
+  while(removed<maxRemoved){
+    let target=null;
+    for(const c of copies){ if(intact(c)){ target=c; break; } }
+    if(!target) break;
+    let bestBin=target.bins[0];
+    let bestDeg=-1;
+    for(const b of target.bins){
+      if(!included[b]) continue;
+      let deg=0;
+      for(const c2 of copies){ if(intact(c2) && c2.bins.includes(b)) deg++; }
+      if(deg>bestDeg){ bestDeg=deg; bestBin=b; }
+    }
+    included[bestBin]=false;
+    removed++;
+  }
+  intactCount=copies.filter(intact).length;
+}
+
+function chosenBins(x,s,q){
+  const bins=new Set();
+  let pts=0;
+  for(let n=0;n<16;n++){
+    const p=x+s*Math.pow(q,n);
+    if(p<0 || p>1) continue;
+    let bi=Math.floor(p*M);
+    if(bi<0) bi=0;
+    if(bi>=M) bi=M-1;
+    bins.add(bi);
+    pts++;
+  }
+  return {bins:[...bins], pts};
+}
+
+function updateState(){
+  const q=+qSlider.value/100;
+  const eta=+etaSlider.value/100;
+  let x=+xSlider.value/100;
+  let raw=+sSlider.value;
+  let s=raw===0?0.05:raw/100;
+  qval.textContent=q.toFixed(2);
+  etaval.textContent=eta.toFixed(2);
+  xval.textContent=x.toFixed(2);
+  sval.textContent=s.toFixed(2);
+  qstat.textContent=q.toFixed(3);
+  xstat.textContent=x.toFixed(3);
+  sstat.textContent=s.toFixed(3);
+  // reconstruct if needed: rebuild on every update (cheap enough)
+  constructE();
+  const removed=included.filter(v=>!v).length;
+  const meas=included.filter(v=>v).length/M;
+  measstat.textContent=meas.toFixed(4);
+  remstat.textContent=removed;
+  testedstat.textContent=copies.length;
+  intactstat.textContent=intactCount;
+  const cb=chosenBins(x,s,q);
+  const copyIntact=cb.bins.length>0 && cb.bins.every(b=>included[b]);
+  copystat.textContent=copyIntact?'Yes (forbidden copy)':'No (broken)';
+  copystat.className='value '+(copyIntact?'bad':'good');
+  state={q,eta,x,s,view:viewSel.value,meas,removed,copyIntact,cb};
+}
+
+let state={};
+
+function resizeCanvas(){ canvas.width=Math.max(300,canvas.clientWidth); canvas.height=440; }
+window.addEventListener('resize',function(){ resizeCanvas(); render(); });
+resizeCanvas();
+
+function drawSet(W,H,s){
+  const pad=40;
+  const barY=H/2-20, barH=40;
+  const x0=pad, x1=W-pad;
+  // background track
+  ctx.fillStyle='rgba(159,176,204,0.15)';
+  ctx.fillRect(x0,barY,x1-x0,barH);
+  // E bins
+  const bw=(x1-x0)/M;
+  for(let i=0;i<M;i++){
+    if(included[i]){
+      ctx.fillStyle='rgba(34,197,94,0.75)';
+      ctx.fillRect(x0+i*bw,barY,bw+0.5,barH);
+    } else {
+      ctx.fillStyle='rgba(239,68,68,0.55)';
+      ctx.fillRect(x0+i*bw,barY,bw+0.5,barH);
+    }
+  }
+  // border
+  ctx.strokeStyle='rgba(159,176,204,0.5)'; ctx.lineWidth=1;
+  ctx.strokeRect(x0,barY,x1-x0,barH);
+  // ticks
+  ctx.fillStyle='#9fb0cc'; ctx.font='11px system-ui'; ctx.textAlign='center';
+  for(let v=0;v<=1;v+=0.25){
+    const px=x0+v*(x1-x0);
+    ctx.fillText(v.toFixed(2),px,barY+barH+16);
+    ctx.beginPath(); ctx.moveTo(px,barY+barH); ctx.lineTo(px,barY+barH+6); ctx.stroke();
+  }
+  ctx.fillStyle='#9fb0cc'; ctx.font='12px system-ui'; ctx.textAlign='left';
+  ctx.fillText('E subset [0,1] (green=in E, red=removed)', x0, barY-10);
+
+  // chosen progression points
+  const cb=s.cb;
+  for(let i=0;i<cb.bins.length;i++){
+    const n=i;
+    const p=s.x+s.s*Math.pow(s.q,n);
+    if(p<0||p>1) continue;
+    const px=x0+p*(x1-x0);
+    const inE=included[cb.bins[i]]?true:false;
+    ctx.fillStyle=inE?'#5eead4':'#ef4444';
+    ctx.beginPath(); ctx.arc(px,barY-18,6,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#e6edf7'; ctx.font='10px system-ui'; ctx.textAlign='center';
+    ctx.fillText('n='+(n+1),px,barY-30);
+  }
+  // note
+  ctx.fillStyle=s.copyIntact?'#ef4444':'#22c55e';
+  ctx.font='13px system-ui'; ctx.textAlign='center';
+  ctx.fillText(s.copyIntact?'Chosen copy intact: all points in E (forbidden)':'Chosen copy broken: at least one point removed', W/2, H-30);
+  ctx.fillStyle='#9fb0cc'; ctx.font='12px system-ui'; ctx.textAlign='center';
+  ctx.fillText('Points: p_n = x + s q^n', W/2, H-12);
+}
+
+function drawScan(W,H,s){
+  const pad=50;
+  const xs=linspace(0,1,25);
+  const ss=[...linspace(-1,-0.06,18), ...linspace(0.06,1,18)];
+  const cellW=(W-2*pad)/xs.length;
+  const cellH=(H-2*pad)/ss.length;
+  // axes
+  ctx.fillStyle='#9fb0cc'; ctx.font='11px system-ui'; ctx.textAlign='center';
+  ctx.fillText('translation x', W/2, H-12);
+  ctx.save(); ctx.translate(16,H/2); ctx.rotate(-Math.PI/2); ctx.fillText('dilation s',0,0); ctx.restore();
+  for(let i=0;i<xs.length;i++){
+    for(let j=0;j<ss.length;j++){
+      const c= copies.find(cc=>Math.abs(cc.x-xs[i])<1e-9 && Math.abs(cc.s-ss[j])<1e-9);
+      const intactC = c? intact(c) : false;
+      ctx.fillStyle = intactC ? 'rgba(239,68,68,0.85)' : 'rgba(34,197,94,0.55)';
+      ctx.fillRect(pad+i*cellW, pad+j*cellH, cellW-1, cellH-1);
+    }
+  }
+  // border
+  ctx.strokeStyle='rgba(159,176,204,0.4)'; ctx.lineWidth=1;
+  ctx.strokeRect(pad,pad,(W-2*pad),(H-2*pad));
+  ctx.fillStyle='#9fb0cc'; ctx.font='12px system-ui'; ctx.textAlign='center';
+  ctx.fillText('Red = intact forbidden copy, Green = broken by removed point', W/2, 24);
+  ctx.fillText('Tested copies: '+copies.length+'   Intact: '+intactCount, W/2, H-30);
+}
+
+function drawInv(W,H,s){
+  const x=40,y=50,dy=22;
+  const lines=[
+    'Result 084 — Geometric case of the Erdős similarity conjecture',
+    'Statement: for every fixed q in (0,1), exists compact E subset [0,1]',
+    'with measure > 1 - eta containing no affine copy of {q^n}.',
+    'Affine copy: points x + s q^n (s nonzero, either sign).',
+    'Construction (discrete greedy hitting set): remove one point',
+    'from each tested copy while keeping removed measure small.',
+    'Ratio q = '+s.q.toFixed(4),
+    'Target removed measure eta = '+s.eta.toFixed(4),
+    'Actual measure of E = '+s.meas.toFixed(4),
+    'Removed bins = '+s.removed+' of '+M,
+    'Tested copies = '+copies.length,
+    'Intact copies remaining = '+intactCount,
+    'Chosen x = '+s.x.toFixed(4)+'   s = '+s.s.toFixed(4),
+    'Chosen copy intact? '+(s.copyIntact?'YES':'NO'),
+    'Points in [0,1] for chosen copy = '+s.cb.pts,
+    'Interpretation: high-measure compact sets can avoid all',
+    'geometric-progression patterns under translations and dilations.',
+  ];
+  ctx.fillStyle='#e6edf7'; ctx.font='14px system-ui'; ctx.textAlign='left';
+  lines.forEach((l,i)=>{
+    if(i===0){ ctx.fillStyle='#5eead4'; ctx.font='16px system-ui'; }
+    else { ctx.fillStyle='#e6edf7'; ctx.font='14px system-ui'; }
+    ctx.fillText(l, x, y+i*dy);
+  });
+}
+
+function render(){
+  updateState();
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  if(state.view==='set') drawSet(W,H,state);
+  else if(state.view==='scan') drawScan(W,H,state);
+  else drawInv(W,H,state);
+}
+
+qSlider.addEventListener('input',render);
+etaSlider.addEventListener('input',render);
+xSlider.addEventListener('input',render);
+sSlider.addEventListener('input',render);
+viewSel.addEventListener('change',render);
+render();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gaussian free field limits throughout the balanced six-vertex regime (conceptual, result 225)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+select,button{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+input[type=range]{flex:1 1 160px}
+input[type=number]{width:6rem;padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text)}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:5ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:auto;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+.legend{display:flex;gap:1rem;align-items:center;font-size:.85rem;color:var(--muted);margin:.5rem 0;flex-wrap:wrap}
+.swatch{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:.3rem;vertical-align:middle}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['\(','\)']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Gaussian free field limits throughout the balanced six-vertex regime (conceptual, result 225)</h1>
+  <p>Balanced six-vertex height field with $a=b=1$, $0<c\le 2$: converge to a Gaussian free field; variance multiplier $1/\arcsin(c/2)$.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">The balanced square-lattice six-vertex height field with $a=b=1$ and $0<c\le 2$ converges to a Gaussian free field, including at the endpoint $c=2$. The plane state is defined by balanced-torus limits. For unit height increments and Green kernel $-(2\pi)^{-1}\log|x-y|$, the exact variance multiplier is $1/\arcsin(c/2)$.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Connects height fluctuations of the balanced six-vertex model to a universal log-correlated Gaussian free field, with an explicit variance multiplier depending on $c$. The interactive view samples a discrete Gaussian free field on a torus for a chosen $c$, visualizes its height landscape, and estimates the growth of squared height differences with distance against the predicted slope.</p>
+  </section>
+  <div class="controls">
+    <label for="c">parameter $c$</label>
+    <input id="c" type="range" min="0.05" max="2" value="1" step="0.01">
+    <span class="val" id="cval">1.00</span>
+    <label for="L">grid $L$</label>
+    <select id="L">
+      <option value="16">16</option>
+      <option value="32" selected>32</option>
+      <option value="48">48</option>
+      <option value="64">64</option>
+    </select>
+    <label for="seed">seed</label>
+    <input id="seed" type="number" value="42">
+    <button id="resample">Resample</button>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">parameter $c$</div><div class="value" id="sc">—</div></div>
+    <div class="stat"><div class="label">$\arcsin(c/2)$</div><div class="value" id="sasin">—</div></div>
+    <div class="stat"><div class="label">variance multiplier $m$</div><div class="value" id="sm">—</div></div>
+    <div class="stat"><div class="label">RMS height</div><div class="value" id="srms">—</div></div>
+    <div class="stat"><div class="label">empirical slope</div><div class="value" id="sslope">—</div></div>
+    <div class="stat"><div class="label">predicted slope $m/\pi$</div><div class="value" id="stheo">—</div></div>
+  </div>
+  <canvas id="field" width="512" height="512"></canvas>
+  <canvas id="plot" width="560" height="320"></canvas>
+  <div class="legend">
+    <span><span class="swatch" style="background:#2563eb"></span>low height</span>
+    <span><span class="swatch" style="background:#dc2626"></span>high height</span>
+    <span><span class="swatch" style="background:#5eead4"></span>empirical $E[(h(x)-h(y))^2]$</span>
+    <span><span class="swatch" style="background:#f59e0b"></span>predicted slope $m/\pi$</span>
+  </div>
+</div>
+<script>
+function mulberry32(a){ a|=0; return function(){ a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+function randn(rng){ let u=0,v=0; while(u===0) u=rng(); while(v===0) v=rng(); return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v); }
+
+let Lcur=32, mcur=1, field=new Float64Array(0);
+
+function generate(){
+  const c = parseFloat(document.getElementById('c').value);
+  const L = parseInt(document.getElementById('L').value,10);
+  const seed = parseInt(document.getElementById('seed').value,10) || 42;
+  const m = 1/Math.asin(c/2);
+  const rng = mulberry32(seed);
+  const re = new Float64Array(L*L);
+  const im = new Float64Array(L*L);
+  for(let u=0;u<L;u++){
+    for(let v=0;v<L;v++){
+      if(u===0 && v===0) continue;
+      const idx=u*L+v;
+      const lam = 4*Math.sin(Math.PI*u/L)**2 + 4*Math.sin(Math.PI*v/L)**2;
+      const std = Math.sqrt(m*L*L/(2*lam));
+      re[idx]=randn(rng)*std;
+      im[idx]=randn(rng)*std;
+    }
+  }
+  const H = new Float64Array(L*L);
+  for(let x=0;x<L;x++){
+    for(let y=0;y<L;y++){
+      let sum=0;
+      for(let u=0;u<L;u++){
+        for(let v=0;v<L;v++){
+          if(u===0 && v===0) continue;
+          const idx=u*L+v;
+          const ang = 2*Math.PI*(u*x+v*y)/L;
+          sum += re[idx]*Math.cos(ang) - im[idx]*Math.sin(ang);
+        }
+      }
+      H[x*L+y]=sum/(L*L);
+    }
+  }
+  Lcur=L; mcur=m; field=H;
+  updateStats();
+  drawField();
+  drawPlot();
+}
+
+function updateStats(){
+  const c = parseFloat(document.getElementById('c').value);
+  const m = mcur;
+  let sumsq=0;
+  for(let i=0;i<field.length;i++) sumsq += field[i]*field[i];
+  const rms = Math.sqrt(sumsq/field.length);
+  const pts = empirical();
+  const slope = fitSlope(pts);
+  document.getElementById('cval').textContent = c.toFixed(2);
+  document.getElementById('sc').textContent = c.toFixed(3);
+  document.getElementById('sasin').textContent = Math.asin(c/2).toFixed(4);
+  document.getElementById('sm').textContent = m.toFixed(4);
+  document.getElementById('srms').textContent = rms.toFixed(3);
+  document.getElementById('sslope').textContent = isFinite(slope) ? slope.toFixed(3) : '—';
+  document.getElementById('stheo').textContent = (m/Math.PI).toFixed(3);
+}
+
+function drawField(){
+  const cv = document.getElementById('field');
+  const ctx = cv.getContext('2d');
+  const W=cv.width, H=cv.height;
+  ctx.fillStyle='#1f2a44'; ctx.fillRect(0,0,W,H);
+  const L=Lcur;
+  const cell = Math.floor(Math.min(W,H)/L);
+  const offx = (W - cell*L)/2, offy = (H - cell*L)/2;
+  let mn=Infinity, mx=-Infinity;
+  for(let i=0;i<field.length;i++){ if(field[i]<mn) mn=field[i]; if(field[i]>mx) mx=field[i]; }
+  const range = mx-mn || 1;
+  for(let y=0;y<L;y++){
+    for(let x=0;x<L;x++){
+      const t = (field[y*L+x]-mn)/range;
+      const hue = (1-t)*240;
+      ctx.fillStyle = 'hsl('+hue.toFixed(1)+',70%,50%)';
+      ctx.fillRect(offx+x*cell, offy+y*cell, cell, cell);
+    }
+  }
+}
+
+function empirical(){
+  const L=Lcur, H=field;
+  const maxD = Math.floor(L/2);
+  const sum = new Float64Array(maxD+1);
+  const cnt = new Int32Array(maxD+1);
+  for(let dx=0; dx<=maxD; dx++){
+    for(let dy=0; dy<=maxD; dy++){
+      if(dx===0 && dy===0) continue;
+      const r = Math.hypot(dx,dy);
+      const ri = Math.round(r);
+      if(ri<1 || ri>maxD) continue;
+      let s=0, c=0;
+      for(let x=0;x<L;x++){
+        for(let y=0;y<L;y++){
+          const x2=(x+dx)%L, y2=(y+dy)%L;
+          const diff = H[x*L+y]-H[x2*L+y2];
+          s += diff*diff; c++;
+        }
+      }
+      sum[ri]+=s; cnt[ri]+=c;
+    }
+  }
+  const pts=[];
+  for(let ri=1; ri<=maxD; ri++){
+    if(cnt[ri]>0) pts.push({r:ri, v:sum[ri]/cnt[ri]});
+  }
+  return pts;
+}
+
+function fitSlope(pts){
+  const filtered = pts.filter(p=>p.r>=2 && p.r<=Lcur/4);
+  if(filtered.length<3) return NaN;
+  let n=filtered.length, sx=0, sy=0, sxx=0, sxy=0;
+  for(const p of filtered){
+    const x=Math.log(p.r), y=p.v;
+    sx+=x; sy+=y; sxx+=x*x; sxy+=x*y;
+  }
+  const denom = n*sxx - sx*sx;
+  if(denom===0) return NaN;
+  return (n*sxy - sx*sy)/denom;
+}
+
+function drawPlot(){
+  const cv = document.getElementById('plot');
+  const ctx = cv.getContext('2d');
+  const W=cv.width, H=cv.height;
+  ctx.clearRect(0,0,W,H);
+  const pts = empirical();
+  const xs = pts.map(p=>Math.log(p.r));
+  const ys = pts.map(p=>p.v);
+  const xmin = Math.min(...xs), xmax = Math.max(...xs);
+  let ymin = Math.min(...ys), ymax = Math.max(...ys);
+  if(!isFinite(ymin)||!isFinite(ymax)){ return; }
+  const pad=44;
+  function X(v){ return pad + (v-xmin)/(xmax-xmin)*(W-2*pad); }
+  function Y(v){ return H-pad - (v-ymin)/(ymax-ymin)*(H-2*pad); }
+  ctx.strokeStyle='#9fb0cc'; ctx.lineWidth=1;
+  ctx.beginPath();
+  ctx.moveTo(pad,H-pad); ctx.lineTo(W-pad,H-pad);
+  ctx.moveTo(pad,pad); ctx.lineTo(pad,H-pad);
+  ctx.stroke();
+  ctx.fillStyle='#9fb0cc'; ctx.font='12px system-ui';
+  ctx.fillText('ln r', W-pad-24, H-pad+16);
+  ctx.fillText('V(r)', pad-34, pad-8);
+  const slopeT = mcur/Math.PI;
+  const meanx = xs.reduce((a,b)=>a+b,0)/xs.length;
+  const meany = ys.reduce((a,b)=>a+b,0)/ys.length;
+  const intercept = meany - slopeT*meanx;
+  ctx.strokeStyle='#f59e0b'; ctx.lineWidth=2;
+  ctx.beginPath();
+  let started=false;
+  for(let i=0;i<=100;i++){
+    const x = xmin + (xmax-xmin)*i/100;
+    const y = slopeT*x + intercept;
+    if(!started){ ctx.moveTo(X(x),Y(y)); started=true; }
+    else ctx.lineTo(X(x),Y(y));
+  }
+  ctx.stroke();
+  ctx.fillStyle='#5eead4';
+  for(const p of pts){
+    ctx.fillRect(X(Math.log(p.r))-3, Y(p.v)-3, 6, 6);
+  }
+}
+
+const cSlider = document.getElementById('c');
+const LSelect = document.getElementById('L');
+const seedInput = document.getElementById('seed');
+cSlider.addEventListener('input', generate);
+LSelect.addEventListener('change', generate);
+seedInput.addEventListener('change', generate);
+document.getElementById('resample').addEventListener('click', ()=>{ seedInput.value = Math.floor(Math.random()*1e6); generate(); });
+
+generate();
+</script>
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

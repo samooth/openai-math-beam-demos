@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lech's multiplicity conjecture (conceptual, result 194)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+select{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+input[type=range]{flex:1 1 180px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:380px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+.legend{display:flex;gap:1rem;align-items:center;font-size:.85rem;color:var(--muted);margin:.5rem 0;flex-wrap:wrap}
+.swatch{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:.3rem;vertical-align:middle}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Lech's multiplicity conjecture (conceptual, result 194)</h1>
+  <p>For a flat local homomorphism (R\to S) of nonzero Noetherian local rings, Hilbert--Samuel multiplicity cannot decrease: (e(R)\le e(S)). The demo models the multiplicative factor (e(S)=e(R)\cdot e(S/\mathfrak mS)) and checks the inequality.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Proves (e(R)\le e(S)) for every flat local homomorphism of nonzero Noetherian local rings, where (e) is Hilbert--Samuel multiplicity. This resolves Lech's conjecture in every dimension and characteristic.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Shows multiplicity is monotone under flat local maps: the closed fiber contributes a multiplicity factor at least one, so the source multiplicity is a lower bound for the target. This gives a dimension- and characteristic-independent comparison tool in commutative algebra and algebraic geometry.</p>
+  </section>
+  <div class="controls">
+    <label for="d">dim R</label>
+    <input id="d" type="range" min="1" max="4" value="2" step="1">
+    <span class="val" id="dval">2</span>
+    <label for="eR">e(R)</label>
+    <input id="eR" type="range" min="1" max="8" value="3" step="1">
+    <span class="val" id="eRval">3</span>
+    <label for="f">fiber dim</label>
+    <input id="f" type="range" min="0" max="3" value="1" step="1">
+    <span class="val" id="fval">1</span>
+    <label for="eF">e(fiber)</label>
+    <input id="eF" type="range" min="1" max="8" value="2" step="1">
+    <span class="val" id="eFval">2</span>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">dim R</div><div class="value" id="sd">—</div></div>
+    <div class="stat"><div class="label">dim S</div><div class="value" id="sS">—</div></div>
+    <div class="stat"><div class="label">e(R)</div><div class="value" id="seR">—</div></div>
+    <div class="stat"><div class="label">e(fiber)</div><div class="value" id="seF">—</div></div>
+    <div class="stat"><div class="label">e(S)</div><div class="value" id="seS">—</div></div>
+    <div class="stat"><div class="label">Inequality e(R)≤e(S)?</div><div class="value" id="sver">—</div></div>
+  </div>
+  <canvas id="c" width="900" height="380"></canvas>
+  <section class="box">
+    <h3>Model</h3>
+    <p id="model" style="margin:0;font-size:1rem;line-height:1.6;font-family:ui-monospace,monospace;word-break:break-word">—</p>
+  </section>
+</div>
+<script>
+const dSlider=document.getElementById('d');
+const eRSlider=document.getElementById('eR');
+const fSlider=document.getElementById('f');
+const eFSlider=document.getElementById('eF');
+const dval=document.getElementById('dval');
+const eRval=document.getElementById('eRval');
+const fval=document.getElementById('fval');
+const eFval=document.getElementById('eFval');
+const sd=document.getElementById('sd');
+const sS=document.getElementById('sS');
+const seR=document.getElementById('seR');
+const seF=document.getElementById('seF');
+const seS=document.getElementById('seS');
+const sver=document.getElementById('sver');
+const model=document.getElementById('model');
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+
+function resizeCanvas(){ canvas.width=Math.max(300,canvas.clientWidth); canvas.height=380; }
+window.addEventListener('resize',function(){ resizeCanvas(); update(); });
+resizeCanvas();
+
+function update(){
+  const d=+dSlider.value;
+  const eR=+eRSlider.value;
+  const f=+fSlider.value;
+  const eF=+eFSlider.value;
+  const eS=eR*eF;
+  dval.textContent=d;
+  eRval.textContent=eR;
+  fval.textContent=f;
+  eFval.textContent=eF;
+  sd.textContent=d;
+  sS.textContent=d+f;
+  seR.textContent=eR;
+  seF.textContent=eF;
+  seS.textContent=eS;
+  const ok=eR<=eS;
+  sver.textContent=ok?'YES':'NO';
+  sver.style.color=ok?'var(--good)':'var(--bad)';
+  model.textContent='e(S)=e(R)*e(fiber)='+eR+'*'+eF+'='+eS+'; dim S=dim R+fiber dim='+d+'+'+f+'='+(d+f);
+  draw(eR,eF,eS);
+}
+
+function draw(eR,eF,eS){
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const padL=60,padR=30,padT=30,padB=50;
+  const plotW=W-padL-padR, plotH=H-padT-padB;
+  const vals=[eR,eF,eS];
+  const labels=['e(R)','e(fiber)','e(S)'];
+  const colors=['#5eead4','#f59e0b','#22c55e'];
+  const maxv=Math.max(...vals,1)*1.25;
+  const barW=plotW/vals.length;
+  for(let i=0;i<vals.length;i++){
+    const h=vals[i]/maxv*plotH;
+    const x=padL+i*barW+barW*0.18;
+    const w=barW*0.64;
+    const y=padT+plotH-h;
+    ctx.fillStyle=colors[i];
+    ctx.fillRect(x,y,w,h);
+    ctx.fillStyle='#9fb0cc'; ctx.font='12px system-ui'; ctx.textAlign='center';
+    ctx.fillText(labels[i],x+w/2,H-16);
+    ctx.fillText(String(vals[i]),x+w/2,y-8);
+  }
+  ctx.strokeStyle='rgba(159,176,204,0.2)'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(padL,padT); ctx.lineTo(padL,padT+plotH); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(padL,padT+plotH); ctx.lineTo(padL+plotW,padT+plotH); ctx.stroke();
+}
+
+dSlider.addEventListener('input',update);
+eRSlider.addEventListener('input',update);
+fSlider.addEventListener('input',update);
+eFSlider.addEventListener('input',update);
+update();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

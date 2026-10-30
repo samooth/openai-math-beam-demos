@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nagata's conjecture / Seshadri constants — interactive demo (result 039)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range]{flex:1 1 220px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:360px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+select{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text)}
+table{width:100%;border-collapse:collapse;font-size:.82rem}
+th,td{padding:.3rem .4rem;border-bottom:1px solid var(--border);text-align:left}
+th{color:var(--muted);font-weight:600}
+td.num{font-family:ui-monospace,monospace}
+.badge{display:inline-block;padding:.15rem .5rem;border-radius:6px;font-size:.75rem;font-weight:700}
+.ok{color:var(--good)} .bad{color:var(--bad)}
+.mrow{display:flex;flex-wrap:wrap;gap:.4rem;margin:.5rem 0}
+.mrow input{width:52px;padding:.25rem .3rem;border-radius:6px;border:1px solid var(--border);background:var(--chip);color:var(--text);font-family:ui-monospace,monospace;text-align:center}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Nagata's conjecture / Seshadri constants (result 039)</h1>
+  <p>For a nonzero effective plane curve of degree (d) through (r\ge 10) very general points with multiplicities (m_i), Nagata requires (\sum_i m_i < d\sqrt r\). Edit the multiplicities to test the inequality; the Seshadri panel gives the maximal constant \((L^n/r)^{1/n}\).</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Proves Nagata's strict inequality (\sum_i m_i < d\sqrt r\) for every nonzero effective plane curve of degree \(d\) through \(r\ge 10\) very general complex points, with arbitrary multiplicities \(m_i\). It also proves maximal multipoint Seshadri constants \((L^n/r)^{1/n}\) for every smooth polarized projective variety of dimension \(n\ge 2\) and all sufficiently large \(r\): at very general points over \(\mathbb C\), and at the geometric generic tuple over any algebraically closed field of positive characteristic.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Gives the sharp Nagata bound for plane curves with unequal multiplicities and reducible components, and shows multipoint Seshadri constants attain the volume upper bound ((L^n/r)^{1/n}) for large (r), a central positivity statement in higher-dimensional geometry.</p>
+  </section>
+  <div class="controls">
+    <label for="r">Points (r)</label>
+    <input id="r" type="range" min="1" max="16" value="10" step="1">
+    <span class="val" id="rval">10</span>
+    <label for="d">Degree (d)</label>
+    <input id="d" type="range" min="1" max="20" value="5" step="1">
+    <span class="val" id="dval">5</span>
+    <label for="mode">Multiplicity mode</label>
+    <select id="mode">
+      <option value="equal" selected>equal m</option>
+      <option value="custom">custom list</option>
+    </select>
+    <label for="meq">Equal (m)</label>
+    <input id="meq" type="range" min="0" max="10" value="2" step="1">
+    <span class="val" id="meqval">2</span>
+  </div>
+  <div id="custombox" style="display:none;margin:.5rem 0">
+    <div class="mrow" id="mrow"></div>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Points (r)</div><div class="value" id="rstat">—</div></div>
+    <div class="stat"><div class="label">Degree (d)</div><div class="value" id="dstats">—</div></div>
+    <div class="stat"><div class="label">Sum (m_i)</div><div class="value" id="sumstat">—</div></div>
+    <div class="stat"><div class="label">Bound (d\sqrt r)</div><div class="value" id="boundstat">—</div></div>
+    <div class="stat"><div class="label">Nagata status</div><div class="value" id="nagstatus">—</div></div>
+    <div class="stat"><div class="label">(r\ge 10)</div><div class="value" id="rcond">—</div></div>
+  </div>
+  <canvas id="c" width="900" height="360"></canvas>
+  <section class="box">
+    <h3>Seshadri constants</h3>
+    <div class="controls" style="margin:.5rem 0">
+      <label for="ndim">Dimension (n)</label>
+      <input id="ndim" type="range" min="2" max="6" value="2" step="1">
+      <span class="val" id="ndimval">2</span>
+      <label for="Lv">(L^n) value</label>
+      <input id="Lv" type="range" min="1" max="100" value="25" step="1">
+      <span class="val" id="Lvval">25</span>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="label">Dimension (n)</div><div class="value" id="nstat">—</div></div>
+      <div class="stat"><div class="label">Points (r)</div><div class="value" id="rstat2">—</div></div>
+      <div class="stat"><div class="label">Maximal constant ((L^n/r)^{1/n})</div><div class="value" id="seshstat">—</div></div>
+      <div class="stat"><div class="label">Volume upper bound</div><div class="value" id="volstat">—</div></div>
+    </div>
+  </section>
+</div>
+<script>
+const rSlider=document.getElementById('r');
+const dSlider=document.getElementById('d');
+const modeSel=document.getElementById('mode');
+const meqSlider=document.getElementById('meq');
+const custombox=document.getElementById('custombox');
+const mrow=document.getElementById('mrow');
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+
+const rval=document.getElementById('rval');
+const dval=document.getElementById('dval');
+const meqval=document.getElementById('meqval');
+const rstat=document.getElementById('rstat');
+const dstats=document.getElementById('dstats');
+const sumstat=document.getElementById('sumstat');
+const boundstat=document.getElementById('boundstat');
+const nagstatus=document.getElementById('nagstatus');
+const rcond=document.getElementById('rcond');
+
+const ndimSlider=document.getElementById('ndim');
+const LvSlider=document.getElementById('Lv');
+const ndimval=document.getElementById('ndimval');
+const Lvval=document.getElementById('Lvval');
+const nstat=document.getElementById('nstat');
+const rstat2=document.getElementById('rstat2');
+const seshstat=document.getElementById('seshstat');
+const volstat=document.getElementById('volstat');
+
+let mVals=[];
+function ensureM(n){
+  while(mVals.length<n) mVals.push(1);
+  if(mVals.length>n) mVals.length=n;
+}
+function currentM(){
+  const r=+rSlider.value;
+  ensureM(r);
+  if(modeSel.value==='equal'){
+    const meq=+meqSlider.value;
+    return Array(r).fill(meq);
+  }
+  const inputs=mrow.querySelectorAll('input');
+  const out=[];
+  for(let i=0;i<r;i++){
+    const v=inputs[i]? +inputs[i].value : (mVals[i]||0);
+    out.push(isNaN(v)?0:v);
+    mVals[i]=out[i];
+  }
+  return out;
+}
+function buildCustom(){
+  const r=+rSlider.value;
+  ensureM(r);
+  mrow.innerHTML='';
+  for(let i=0;i<r;i++){
+    const inp=document.createElement('input');
+    inp.type='number'; inp.min='0'; inp.max='10'; inp.value=mVals[i]||0;
+    inp.addEventListener('input', update);
+    mrow.appendChild(inp);
+  }
+}
+function resizeCanvas(){ canvas.width=Math.max(300,canvas.clientWidth); canvas.height=360; }
+window.addEventListener('resize',function(){ resizeCanvas(); update(); });
+resizeCanvas();
+
+function fmt(x){ return (Math.round(x*1000)/1000).toString(); }
+
+function update(){
+  const r=+rSlider.value;
+  const d=+dSlider.value;
+  rval.textContent=r;
+  dval.textContent=d;
+  meqval.textContent=meqSlider.value;
+  ndimval.textContent=ndimSlider.value;
+  Lvval.textContent=LvSlider.value;
+
+  if(modeSel.value==='custom'){
+    custombox.style.display='block';
+    if(mrow.children.length!==r) buildCustom();
+  } else {
+    custombox.style.display='none';
+  }
+
+  const ms=currentM();
+  const sum=ms.reduce((a,b)=>a+b,0);
+  const bound=d*Math.sqrt(r);
+  const ok = sum < bound + 1e-12;
+  rstat.textContent=r;
+  dstats.textContent=d;
+  sumstat.textContent=sum;
+  boundstat.textContent=fmt(bound);
+  nagstatus.textContent = (r>=10 ? (ok?'SATISFIES':'VIOLATES') : (ok?'SATISFIES (r<10)':'VIOLATES (r<10)'));
+  nagstatus.className='value '+(ok?'ok':'bad');
+  rcond.textContent = r>=10 ? 'yes' : 'no';
+
+  // seshadri
+  const n=+ndimSlider.value;
+  const Lv=+LvSlider.value;
+  const sesh=Math.pow(Lv/r,1/n);
+  nstat.textContent=n;
+  rstat2.textContent=r;
+  seshstat.textContent=fmt(sesh);
+  volstat.textContent=fmt(Math.pow(Lv/r,1/n));
+
+  draw(r,d,sum,bound,ms);
+}
+
+function draw(r,d,sum,bound,ms){
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const padL=50,padR=20,padT=24,padB=44;
+  const plotW=W-padL-padR, plotH=H-padT-padB;
+  // bars
+  const maxv=Math.max(sum,bound,1);
+  const barW=plotW*0.28;
+  const x1=padL+plotW*0.18;
+  const x2=padL+plotW*0.58;
+  const hSum=(sum/maxv)*plotH;
+  const hBound=(bound/maxv)*plotH;
+  ctx.fillStyle='rgba(239,68,68,0.75)';
+  ctx.fillRect(x1, padT+plotH-hSum, barW, hSum);
+  ctx.fillStyle='rgba(34,197,94,0.75)';
+  ctx.fillRect(x2, padT+plotH-hBound, barW, hBound);
+  ctx.fillStyle='#9fb0cc'; ctx.font='12px system-ui'; ctx.textAlign='center';
+  ctx.fillText('sum m_i', x1+barW/2, H-padB+16);
+  ctx.fillText('d√r', x2+barW/2, H-padB+16);
+  ctx.fillText(String(sum), x1+barW/2, padT+plotH-hSum-6);
+  ctx.fillText(fmt(bound), x2+barW/2, padT+plotH-hBound-6);
+
+  // points
+  const nPts=Math.min(r,16);
+  const cols=4;
+  const rows=Math.ceil(nPts/cols);
+  const cellW=plotW/cols;
+  const cellH=plotH/rows;
+  for(let i=0;i<nPts;i++){
+    const col=i%cols;
+    const row=Math.floor(i/cols);
+    const cx=padL+col*cellW+cellW/2;
+    const cy=padT+row*cellH+cellH/2;
+    const m=ms[i]||0;
+    const rad=4+Math.min(m,10)*1.2;
+    ctx.fillStyle='#5eead4';
+    ctx.beginPath(); ctx.arc(cx,cy,rad,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#0b1220'; ctx.font='10px system-ui'; ctx.textAlign='center';
+    ctx.fillText('m='+m, cx, cy+3);
+  }
+  // axes
+  ctx.strokeStyle='rgba(159,176,204,0.35)';
+  ctx.lineWidth=1;
+  ctx.beginPath();
+  ctx.moveTo(padL,padT); ctx.lineTo(padL,padT+plotH); ctx.lineTo(padL+plotW,padT+plotH); ctx.stroke();
+}
+
+rSlider.addEventListener('input', update);
+dSlider.addEventListener('input', update);
+modeSel.addEventListener('change', update);
+meqSlider.addEventListener('input', update);
+ndimSlider.addEventListener('input', update);
+LvSlider.addEventListener('input', update);
+update();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

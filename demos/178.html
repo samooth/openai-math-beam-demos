@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Deterministic nonbipartite Ramanujan graphs in every fixed degree (conceptual, result 178)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range]{flex:1 1 180px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:500px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+select{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+.legend{display:flex;gap:1rem;align-items:center;font-size:.85rem;color:var(--muted);margin:.5rem 0;flex-wrap:wrap}
+.swatch{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:.3rem;vertical-align:middle}
+.note{font-size:.9rem;color:var(--muted)}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Deterministic nonbipartite Ramanujan graphs in every fixed degree (conceptual, result 178)</h1>
+  <p>For fixed degree (d\ge 3), a (d)-regular graph is Ramanujan when every nontrivial adjacency eigenvalue lies in ((-2\sqrt{d-1},2\sqrt{d-1})). Adjust (d), (n), and the randomization level, then regenerate to compare a deterministic base graph with randomized regular graphs and inspect their spectra.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Result 178 proves that for every fixed (d\ge 3) there is a simple (d)-regular nonbipartite Ramanujan graph on every sufficiently large even number (n) of vertices: every nonconstant adjacency eigenvalue is strictly between (-2\sqrt{d-1}) and (2\sqrt{d-1}). Moreover a deterministic algorithm outputs the full adjacency list in polynomial bit time, with an exponent that may depend on (d). Thus explicit optimal expanders exist in every fixed degree, without relying on random graphs or unproved number-theoretic constructions.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Ramanujan graphs are optimal spectral expanders: their second eigenvalue is as small as possible, giving near-optimal mixing, hashing, error-correcting codes, and network routing. Making the construction deterministic and nonbipartite removes bipartition constraints and randomness, so these expanders can be generated reliably at any large even size. This demo visualizes the spectral gap and the Ramanujan bound for concrete (d) and (n).</p>
+  </section>
+  <div class="controls">
+    <label for="d">Degree d</label>
+    <input id="d" type="range" min="3" max="8" value="3" step="1">
+    <span class="val" id="dval">3</span>
+    <label for="n">Vertices n</label>
+    <input id="n" type="range" min="12" max="48" value="24" step="2">
+    <span class="val" id="nval">24</span>
+    <label for="swaps">Random swaps</label>
+    <input id="swaps" type="range" min="0" max="100" value="40" step="5">
+    <span class="val" id="swapsval">40</span>
+    <button id="regen">Regenerate</button>
+    <label for="base">Base</label>
+    <select id="base">
+      <option value="circulant" selected>Circulant</option>
+      <option value="random">Randomized</option>
+    </select>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">d</div><div class="value" id="sd">—</div></div>
+    <div class="stat"><div class="label">n</div><div class="value" id="sn">—</div></div>
+    <div class="stat"><div class="label">Bound (2\sqrt{d-1})</div><div class="value" id="sb">—</div></div>
+    <div class="stat"><div class="label">Trivial eigenvalue d</div><div class="value" id="striv">—</div></div>
+    <div class="stat"><div class="label">Min nontrivial</div><div class="value" id="smin">—</div></div>
+    <div class="stat"><div class="label">Max nontrivial</div><div class="value" id="smax">—</div></div>
+    <div class="stat"><div class="label">Outside bound</div><div class="value" id="sout">—</div></div>
+    <div class="stat"><div class="label">Ramanujan?</div><div class="value" id="sram">—</div></div>
+  </div>
+  <canvas id="canvas" width="900" height="500"></canvas>
+  <p class="note">Conceptual model: randomization uses degree-preserving edge swaps on a deterministic (d)-regular base graph. Eigenvalues are computed numerically from the adjacency matrix. The true result constructs (d)-regular nonbipartite Ramanujan graphs for all sufficiently large even (n); small (n) may fail the bound.</p>
+</div>
+<script>
+const dSlider=document.getElementById('d');
+const nSlider=document.getElementById('n');
+const swapsSlider=document.getElementById('swaps');
+const regenBtn=document.getElementById('regen');
+const baseSel=document.getElementById('base');
+const canvas=document.getElementById('canvas');
+const ctx=canvas.getContext('2d');
+
+const dval=document.getElementById('dval');
+const nval=document.getElementById('nval');
+const swapsval=document.getElementById('swapsval');
+const sd=document.getElementById('sd');
+const sn=document.getElementById('sn');
+const sb=document.getElementById('sb');
+const striv=document.getElementById('striv');
+const smin=document.getElementById('smin');
+const smax=document.getElementById('smax');
+const sout=document.getElementById('sout');
+const sram=document.getElementById('sram');
+
+function fmt(x){ if(!isFinite(x)) return '∞'; const a=Math.abs(x); if(a>=1e3||a<1e-3) return x.toExponential(3); return x.toFixed(4); }
+
+function resizeCanvas(){ canvas.width=Math.max(300,canvas.clientWidth); canvas.height=500; }
+window.addEventListener('resize',function(){ resizeCanvas(); render(); });
+resizeCanvas();
+
+function eigenvalues(A){
+  const n=A.length;
+  const M=A.map(r=>r.slice());
+  for(let sweep=0;sweep<80;sweep++){
+    let off=0;
+    for(let i=0;i<n;i++) for(let j=i+1;j<n;j++) off+=M[i][j]*M[i][j];
+    if(Math.sqrt(off) < 1e-12) break;
+    for(let p=0;p<n;p++){
+      for(let q=p+1;q<n;q++){
+        if(Math.abs(M[p][q]) < 1e-15) continue;
+        const theta=(M[q][q]-M[p][p])/(2*M[p][q]);
+        let t;
+        if(theta>=0) t=1/(theta+Math.sqrt(theta*theta+1));
+        else t=1/(theta-Math.sqrt(theta*theta+1));
+        const c=1/Math.sqrt(1+t*t);
+        const s=t*c;
+        for(let i=0;i<n;i++){
+          const a=M[i][p], b=M[i][q];
+          M[i][p]=c*a - s*b;
+          M[i][q]=s*a + c*b;
+        }
+        for(let j=0;j<n;j++){
+          const a=M[p][j], b=M[q][j];
+          M[p][j]=c*a - s*b;
+          M[q][j]=s*a + c*b;
+        }
+        M[p][q]=0; M[q][p]=0;
+      }
+    }
+  }
+  return M.map((r,i)=>r[i]);
+}
+
+function baseGraph(n,d){
+  const A=Array.from({length:n},()=>Array(n).fill(0));
+  const r=Math.floor(d/2);
+  for(let i=0;i<n;i++){
+    for(let j=1;j<=r;j++){
+      const k=(i+j)%n;
+      const l=(i-j+n)%n;
+      A[i][k]=1; A[k][i]=1;
+      A[i][l]=1; A[l][i]=1;
+    }
+  }
+  if(d%2===1){
+    // perfect matching i <-> i+n/2
+    for(let i=0;i<n/2;i++){
+      const j=i+n/2;
+      A[i][j]=1; A[j][i]=1;
+    }
+  }
+  // remove duplicate edges? For small n and large r may collide; guard by capping r
+  return A;
+}
+
+function adjacencyToEdges(A){
+  const n=A.length;
+  const edges=[];
+  const set=new Set();
+  for(let i=0;i<n;i++) for(let j=i+1;j<n;j++){
+    if(A[i][j]){
+      edges.push([i,j]);
+      set.add(i*n+j);
+    }
+  }
+  return {edges,set};
+}
+
+function edgesToAdjacency(n,edges){
+  const A=Array.from({length:n},()=>Array(n).fill(0));
+  edges.forEach(([u,v])=>{ A[u][v]=1; A[v][u]=1; });
+  return A;
+}
+
+function randomSwaps(A, swapsPct){
+  const n=A.length;
+  const {edges,set}=adjacencyToEdges(A);
+  const edgeList=edges.slice();
+  const E=edgeList.length;
+  const target=Math.round((swapsPct/100)*n*dApprox(n,A)*5 + (swapsPct/100)*n*5);
+  let tries=0;
+  const maxTries=Math.max(1000, target*20);
+  while(tries < maxTries && (swapsPct>0)){
+    tries++;
+    const i=Math.floor(Math.random()*E);
+    const j=Math.floor(Math.random()*E);
+    if(i===j) continue;
+    const [a,b]=edgeList[i];
+    const [c,dd]=edgeList[j];
+    // distinct endpoints
+    const endpoints=new Set([a,b,c,dd]);
+    if(endpoints.size<4) continue;
+    // new edges a-dd, c-b
+    if(a===dd || c===b) continue;
+    const e1key=Math.min(a,dd)*n+Math.max(a,dd);
+    const e2key=Math.min(c,b)*n+Math.max(c,b);
+    if(set.has(e1key) || set.has(e2key)) continue;
+    // apply swap
+    const old1=i, old2=j;
+    // remove old
+    set.delete(Math.min(a,b)*n+Math.max(a,b));
+    set.delete(Math.min(c,dd)*n+Math.max(c,dd));
+    // add new
+    set.add(e1key); set.add(e2key);
+    edgeList[i]=[a,dd]; edgeList[j]=[c,b];
+    if(tries>=target) break;
+  }
+  return edgesToAdjacency(n,edgeList);
+}
+
+function dApprox(n,A){ // degree
+  return A[0].reduce((a,b)=>a+b,0);
+}
+
+let currentGraph=null;
+let currentParams=null;
+
+function generate(){
+  const d=+dSlider.value;
+  const n=+nSlider.value;
+  const swaps=+swapsSlider.value;
+  const base=baseSel.value;
+  dval.textContent=d; nval.textContent=n; swapsval.textContent=swaps;
+  let A=baseGraph(n,d);
+  if(base==='random' || swaps>0){
+    A=randomSwaps(A, swaps);
+  }
+  currentGraph=A;
+  currentParams={d,n,swaps,base};
+  render();
+}
+
+function render(){
+  if(!currentGraph) { generate(); return; }
+  const d=+dSlider.value;
+  const n=+nSlider.value;
+  const A=currentGraph;
+  const B=2*Math.sqrt(d-1);
+  const vals=eigenvalues(A).sort((a,b)=>a-b);
+  // remove one trivial d
+  let idx=vals.map((v,i)=>({v,i})).reduce((best,o)=> Math.abs(o.v-d)<Math.abs(best.v-d)? o:best, {v:vals[0],i:0}).i;
+  const nontriv=vals.filter((_,i)=>i!==idx);
+  const minN=Math.min(...nontriv);
+  const maxN=Math.max(...nontriv);
+  const outside=nontriv.filter(v=>Math.abs(v)>B+1e-9).length;
+  const hasNegD=nontriv.some(v=>Math.abs(v+d)<1e-6);
+  sd.textContent=d; sn.textContent=n; sb.textContent=fmt(B); striv.textContent=fmt(d);
+  smin.textContent=fmt(minN); smax.textContent=fmt(maxN);
+  sout.textContent=outside;
+  sram.textContent = (outside===0 && !hasNegD) ? 'Yes' : 'No';
+
+  // canvas
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const padL=60,padR=20,padT=40,padB=50;
+  const xmin=-d-1, xmax=d+1;
+  function xOf(v){ return padL+(v-xmin)/(xmax-xmin)*(W-padL-padR); }
+  const yBase=H-padB;
+  // axes
+  ctx.strokeStyle='#9fb0cc'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(padL,padT); ctx.lineTo(padL,H-padB); ctx.lineTo(W-padR,H-padB); ctx.stroke();
+  // shaded bound interval
+  ctx.fillStyle='rgba(34,197,94,0.12)';
+  ctx.fillRect(xOf(-B),padT, xOf(B)-xOf(-B), H-padT-padB);
+  // bound lines
+  ctx.strokeStyle='#22c55e'; ctx.lineWidth=1.5; ctx.setLineDash([6,4]);
+  ctx.beginPath(); ctx.moveTo(xOf(-B),padT); ctx.lineTo(xOf(-B),H-padB); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(xOf(B),padT); ctx.lineTo(xOf(B),H-padB); ctx.stroke();
+  ctx.setLineDash([]);
+  // labels
+  ctx.fillStyle='#9fb0cc'; ctx.font='11px system-ui'; ctx.textAlign='center';
+  for(let v=Math.ceil(xmin); v<=xmax; v++){
+    const x=xOf(v); ctx.beginPath(); ctx.moveTo(x,H-padB); ctx.lineTo(x,H-padB+5); ctx.stroke(); ctx.fillText(v,x,H-padB+16);
+  }
+  // title
+  ctx.fillStyle='#e6edf7'; ctx.font='13px system-ui'; ctx.textAlign='left';
+  ctx.fillText('Spectrum of adjacency matrix (n='+n+', d='+d+')', padL, 24);
+  ctx.fillStyle='#22c55e'; ctx.font='11px system-ui';
+  ctx.fillText('Ramanujan interval [-2√(d-1), 2√(d-1)]', xOf(-B)+4, padT+14);
+
+  const allPoints=vals.map(v=>({v, trivial: Math.abs(v-d)<1e-6 }));
+  const sortedPts=allPoints.slice().sort((a,b)=>a.v-b.v);
+  const stackMap=new Map();
+  sortedPts.forEach(pt=>{
+    let found=null;
+    for(const s of stackMap.values()){
+      if(Math.abs(s.x0-pt.v)<1e-6){ found=s; break; }
+    }
+    if(!found){ found={x0:pt.v,n:0}; stackMap.set(pt.v,found); }
+    pt._stack=found.n++;
+  });
+  sortedPts.forEach(pt=>{
+    const x=xOf(pt.v);
+    const stackOffset=pt._stack;
+    const y=yBase - 8 - stackOffset*12;
+    const color = pt.trivial ? '#3b82f6' : (Math.abs(pt.v)>B+1e-9 ? '#ef4444' : '#5eead4');
+    ctx.fillStyle=color;
+    ctx.beginPath(); ctx.arc(x,y,5,0,Math.PI*2); ctx.fill();
+    ctx.strokeStyle='rgba(0,0,0,0.4)'; ctx.lineWidth=1; ctx.stroke();
+  });
+  // legend
+  ctx.font='12px system-ui'; ctx.textAlign='left';
+  const ly=H-18;
+  ctx.fillStyle='#3b82f6'; ctx.beginPath(); ctx.arc(padL,ly-4,5,0,Math.PI*2); ctx.fill(); ctx.fillStyle='#e6edf7'; ctx.fillText('trivial (d)',padL+10,ly);
+  ctx.fillStyle='#5eead4'; ctx.beginPath(); ctx.arc(padL+120,ly-4,5,0,Math.PI*2); ctx.fill(); ctx.fillStyle='#e6edf7'; ctx.fillText('within bound',padL+130,ly);
+  ctx.fillStyle='#ef4444'; ctx.beginPath(); ctx.arc(padL+260,ly-4,5,0,Math.PI*2); ctx.fill(); ctx.fillStyle='#e6edf7'; ctx.fillText('outside bound',padL+270,ly);
+}
+
+dSlider.addEventListener('input',function(){ dval.textContent=dSlider.value; generate(); });
+nSlider.addEventListener('input',function(){ nval.textContent=nSlider.value; generate(); });
+swapsSlider.addEventListener('input',function(){ swapsval.textContent=swapsSlider.value; });
+baseSel.addEventListener('change',generate);
+regenBtn.addEventListener('click',generate);
+generate();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sharp distortion of edit distance into ℓ₁ (conceptual, result 099)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range]{flex:1 1 180px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:460px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+select{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text)}
+.toggle{display:inline-flex;align-items:center;gap:.4rem}
+.legend{display:flex;gap:1rem;align-items:center;font-size:.85rem;color:var(--muted);margin:.5rem 0;flex-wrap:wrap}
+.swatch{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:.3rem;vertical-align:middle}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Sharp distortion of edit distance into ℓ₁ (conceptual, result 099)</h1>
+  <p>The least distortion of embedding unit-cost edit distance on words of length at most (d) into real (\ell_1) is (\exp(\Theta(\sqrt{\log d\log\log d}))). Insertions, deletions, and substitutions have unit cost. Slide the length cap and constants to watch the matching exponential lower and upper scales.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Determines the least distortion of embedding edit distance on words of length at most (d) into real (\ell_1): it is (\exp(\Theta(\sqrt{\log d\log\log d}))). Insertions, deletions and substitutions have unit cost. The constants are uniform over all finite alphabets with at least two symbols, even when the alphabet grows with (d); binary words already force the lower bound. The formalization gives finite-circle obstructions and histogram embeddings whose exponential scales agree up to absolute constants in the exponent.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Pins down the metric complexity of edit distance: no (\ell_1) representation of words up to length (d) can beat (\exp(c\sqrt{\log d\log\log d})) distortion, while histogram embeddings achieve (\exp(C\sqrt{\log d\log\log d})). This separates edit distance from (\ell_1)-type metrics and constrains sketching, nearest-neighbor search, and dimension-reduction approaches for strings.</p>
+  </section>
+  <div class="controls">
+    <label for="dlog">log₁₀ d</label>
+    <input id="dlog" type="range" min="1.2" max="8" value="4" step="0.01">
+    <span class="val" id="dlogval">4.00</span>
+    <label for="c">Lower c</label>
+    <input id="c" type="range" min="0.1" max="3" value="1" step="0.01">
+    <span class="val" id="cval">1.00</span>
+    <label for="C">Upper C</label>
+    <input id="C" type="range" min="0.5" max="5" value="2" step="0.01">
+    <span class="val" id="Cval">2.00</span>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Length cap d</div><div class="value" id="dstat">—</div></div>
+    <div class="stat"><div class="label">√(ln d·ln ln d)</div><div class="value" id="tstat">—</div></div>
+    <div class="stat"><div class="label">Lower exponent</div><div class="value" id="lestat">—</div></div>
+    <div class="stat"><div class="label">Upper exponent</div><div class="value" id="uestat">—</div></div>
+    <div class="stat"><div class="label">Lower distortion</div><div class="value" id="ldstat">—</div></div>
+    <div class="stat"><div class="label">Upper distortion</div><div class="value" id="udstat">—</div></div>
+    <div class="stat"><div class="label">Exponent gap</div><div class="value" id="gapstat">—</div></div>
+    <div class="stat"><div class="label">Distortion ratio</div><div class="value" id="ratiostat">—</div></div>
+  </div>
+  <div class="legend">
+    <span><span class="swatch" style="background:#ef4444"></span>Lower bound exp(c√(ln d ln ln d))</span>
+    <span><span class="swatch" style="background:#5eead4"></span>Upper bound exp(C√(ln d ln ln d))</span>
+    <span><span class="swatch" style="background:#f59e0b"></span>Selected length cap</span>
+  </div>
+  <canvas id="canvas" width="900" height="460"></canvas>
+  <p style="font-size:.85rem;color:var(--muted);margin-top:.5rem">The vertical axis is the natural logarithm of distortion; the horizontal axis is (\log_{10} d). The shaded band between the two curves is the allowed scale; its width is ((C-c)\sqrt{\log d\log\log d}).</p>
+</div>
+<script>
+const dlogSlider=document.getElementById('dlog');
+const cSlider=document.getElementById('c');
+const CSlider=document.getElementById('C');
+const canvas=document.getElementById('canvas');
+const ctx=canvas.getContext('2d');
+
+const dlogval=document.getElementById('dlogval');
+const cval=document.getElementById('cval');
+const Cval=document.getElementById('Cval');
+const dstat=document.getElementById('dstat');
+const tstat=document.getElementById('tstat');
+const lestat=document.getElementById('lestat');
+const uestat=document.getElementById('uestat');
+const ldstat=document.getElementById('ldstat');
+const udstat=document.getElementById('udstat');
+const gapstat=document.getElementById('gapstat');
+const ratiostat=document.getElementById('ratiostat');
+
+function dValue(){ return Math.pow(10, +dlogSlider.value); }
+function term(d){
+  const L=Math.log(d);
+  const LL=Math.log(L);
+  return Math.sqrt(L*LL);
+}
+
+function fmt(x){
+  if(!isFinite(x)) return '—';
+  if(x>=1e6 || x<=1e-4) return x.toExponential(3);
+  return x.toFixed(4);
+}
+
+function updateStats(){
+  dlogval.textContent=(+dlogSlider.value).toFixed(2);
+  cval.textContent=(+cSlider.value).toFixed(2);
+  Cval.textContent=(+CSlider.value).toFixed(2);
+  const d=dValue();
+  const t=term(d);
+  const c=+cSlider.value;
+  const C=+CSlider.value;
+  const le=c*t;
+  const ue=C*t;
+  dstat.textContent=fmt(d);
+  tstat.textContent=t.toFixed(4);
+  lestat.textContent=le.toFixed(4);
+  uestat.textContent=ue.toFixed(4);
+  ldstat.textContent=fmt(Math.exp(le));
+  udstat.textContent=fmt(Math.exp(ue));
+  gapstat.textContent=(ue-le).toFixed(4);
+  ratiostat.textContent=fmt(Math.exp(ue-le));
+}
+
+function resizeCanvas(){ canvas.width=Math.max(300,canvas.clientWidth); canvas.height=460; }
+window.addEventListener('resize',function(){ resizeCanvas(); render(); });
+resizeCanvas();
+
+function render(){
+  updateStats();
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const c=+cSlider.value;
+  const C=+CSlider.value;
+  const xmin=1.2,xmax=8;
+  const padL=58,padR=20,padT=24,padB=46;
+  const plotW=W-padL-padR;
+  const plotH=H-padT-padB;
+  // y range based on upper exponent at xmax
+  const dmax=Math.pow(10,xmax);
+  const tmax=term(dmax);
+  const ymax=Math.max(10, C*tmax+4);
+  const ymin=0;
+  function xOf(ld){ return padL + (ld-xmin)/(xmax-xmin)*plotW; }
+  function yOf(e){ return padT + plotH - (e-ymin)/(ymax-ymin)*plotH; }
+
+  // grid
+  ctx.strokeStyle='rgba(159,176,204,0.18)';
+  ctx.lineWidth=1;
+  for(let i=0;i<=6;i++){
+    const ld=xmin + (xmax-xmin)*i/6;
+    const x=xOf(ld);
+    ctx.beginPath(); ctx.moveTo(x,padT); ctx.lineTo(x,H-padB); ctx.stroke();
+    ctx.fillStyle='#9fb0cc';
+    ctx.font='11px system-ui';
+    ctx.textAlign='center';
+    ctx.fillText(ld.toFixed(1), x, H-padB+16);
+  }
+  for(let i=0;i<=6;i++){
+    const e=ymin + (ymax-ymin)*i/6;
+    const y=yOf(e);
+    ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(W-padR,y); ctx.stroke();
+    ctx.fillStyle='#9fb0cc';
+    ctx.textAlign='right';
+    ctx.fillText(e.toFixed(1), padL-6, y+4);
+  }
+  // axis labels
+  ctx.fillStyle='#9fb0cc';
+  ctx.font='12px system-ui';
+  ctx.textAlign='center';
+  ctx.fillText('log10 d', (padL+W-padR)/2, H-8);
+  ctx.save();
+  ctx.translate(14,(padT+H-padB)/2);
+  ctx.rotate(-Math.PI/2);
+  ctx.fillText('ln distortion', 0, 0);
+  ctx.restore();
+
+  // shaded band between curves
+  ctx.beginPath();
+  // upper curve forward
+  for(let i=0;i<=200;i++){
+    const ld=xmin+(xmax-xmin)*i/200;
+    const d=Math.pow(10,ld);
+    const t=term(d);
+    const x=xOf(ld);
+    const y=yOf(C*t);
+    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  }
+  // lower curve backward
+  for(let i=200;i>=0;i--){
+    const ld=xmin+(xmax-xmin)*i/200;
+    const d=Math.pow(10,ld);
+    const t=term(d);
+    const x=xOf(ld);
+    const y=yOf(c*t);
+    ctx.lineTo(x,y);
+  }
+  ctx.closePath();
+  ctx.fillStyle='rgba(94,234,212,0.12)';
+  ctx.fill();
+
+  // lower curve
+  ctx.strokeStyle='#ef4444';
+  ctx.lineWidth=2.5;
+  ctx.beginPath();
+  for(let i=0;i<=200;i++){
+    const ld=xmin+(xmax-xmin)*i/200;
+    const d=Math.pow(10,ld);
+    const t=term(d);
+    const x=xOf(ld);
+    const y=yOf(c*t);
+    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  }
+  ctx.stroke();
+
+  // upper curve
+  ctx.strokeStyle='#5eead4';
+  ctx.lineWidth=2.5;
+  ctx.beginPath();
+  for(let i=0;i<=200;i++){
+    const ld=xmin+(xmax-xmin)*i/200;
+    const d=Math.pow(10,ld);
+    const t=term(d);
+    const x=xOf(ld);
+    const y=yOf(C*t);
+    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  }
+  ctx.stroke();
+
+  // selected d marker
+  const ld=+dlogSlider.value;
+  const d=dValue();
+  const t=term(d);
+  const x=xOf(ld);
+  const yl=yOf(c*t);
+  const yu=yOf(C*t);
+  ctx.strokeStyle='#f59e0b';
+  ctx.lineWidth=1.5;
+  ctx.setLineDash([4,4]);
+  ctx.beginPath(); ctx.moveTo(x,padT); ctx.lineTo(x,H-padB); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle='#ef4444';
+  ctx.beginPath(); ctx.arc(x,yl,5,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle='#5eead4';
+  ctx.beginPath(); ctx.arc(x,yu,5,0,Math.PI*2); ctx.fill();
+}
+
+dlogSlider.addEventListener('input',render);
+cSlider.addEventListener('input',render);
+CSlider.addEventListener('input',render);
+render();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

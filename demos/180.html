@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Barnette's Hamiltonian-cycle conjecture (conceptual, result 180)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+select,button{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+input[type=range]{flex:1 1 180px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:520px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+.legend{display:flex;gap:1rem;align-items:center;font-size:.85rem;color:var(--muted);margin:.5rem 0;flex-wrap:wrap}
+.swatch{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:.3rem;vertical-align:middle}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Barnette's Hamiltonian-cycle conjecture (conceptual, result 180)</h1>
+  <p>Tests Hamiltonicity on cubic bipartite planar 3-vertex-connected graphs: every such graph contains a cycle visiting each vertex exactly once, and even one avoiding a prescribed edge.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Barnette's conjecture asks whether every finite simple cubic bipartite planar (3)-vertex-connected graph is Hamiltonian. Result 180 proves it: every such graph has a Hamiltonian cycle. Equivalently, in the dual triangulation the vertices can be partitioned into two sets, each inducing a tree; this also gives single-edge avoidance, so a Hamiltonian cycle exists that avoids any specified edge, and every three-edge path in a finite simple cubic (3)-vertex-connected Pfaffian bipartite graph lies in a Hamiltonian cycle. The proof works for all face sizes and does not assume bounded face lengths.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">This resolves a classical polyhedral Hamiltonicity problem and separates it from Tait's disproved conjecture for general cubic polyhedral graphs. It turns a long-standing existence question into a theorem with a single-edge strengthening, useful for cycle covers, facet enumeration, and structural graph theory. The demo illustrates the property on prism graphs, which are cubic, bipartite, planar, and (3)-connected, and verifies Hamiltonicity and edge avoidance constructively.</p>
+  </section>
+  <div class="controls">
+    <label for="n">Ring size n (even)</label>
+    <input id="n" type="range" min="4" max="12" value="6" step="2">
+    <span class="val" id="nval">6</span>
+    <label for="avoid">Avoid an edge</label>
+    <input id="avoid" type="checkbox">
+    <label for="seed">Seed</label>
+    <input id="seed" type="range" min="1" max="99" value="7" step="1">
+    <span class="val" id="seedval">7</span>
+  </div>
+  <div class="controls">
+    <button id="find">Find Hamiltonian cycle</button>
+    <button id="clear">Clear cycle</button>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Vertices</div><div class="value" id="sv">—</div></div>
+    <div class="stat"><div class="label">Edges</div><div class="value" id="se">—</div></div>
+    <div class="stat"><div class="label">Degree</div><div class="value" id="sd">3</div></div>
+    <div class="stat"><div class="label">Bipartition</div><div class="value" id="sb">—</div></div>
+    <div class="stat"><div class="label">Cycle length</div><div class="value" id="sc">—</div></div>
+    <div class="stat"><div class="label">Avoided edge</div><div class="value" id="sa">none</div></div>
+    <div class="stat"><div class="label">Verified</div><div class="value" id="sver">—</div></div>
+  </div>
+  <div class="legend">
+    <span><span class="swatch" style="background:#94a3b8"></span>Graph edge</span>
+    <span><span class="swatch" style="background:#5eead4"></span>Cycle edge</span>
+    <span><span class="swatch" style="background:#f59e0b"></span>Avoided edge</span>
+    <span><span class="swatch" style="background:#3b82f6"></span>Color A</span>
+    <span><span class="swatch" style="background:#ef4444"></span>Color B</span>
+  </div>
+  <canvas id="c" width="900" height="520"></canvas>
+  <p id="reason" style="font-size:.9rem;color:var(--muted);margin-top:.5rem"></p>
+</div>
+<script>
+const nSlider=document.getElementById('n');
+const avoidBox=document.getElementById('avoid');
+const seedSlider=document.getElementById('seed');
+const nval=document.getElementById('nval');
+const seedval=document.getElementById('seedval');
+const sv=document.getElementById('sv');
+const se=document.getElementById('se');
+const sb=document.getElementById('sb');
+const sc=document.getElementById('sc');
+const sa=document.getElementById('sa');
+const sver=document.getElementById('sver');
+const reason=document.getElementById('reason');
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+
+let cycle=null;
+let avoided=null;
+
+function build(n){
+  const N=2*n;
+  const adj=Array.from({length:N},()=>[]);
+  const add=(u,v)=>{adj[u].push(v);adj[v].push(u);};
+  for(let i=0;i<n;i++){add(i,(i+1)%n); add(n+i,n+(i+1)%n); add(i,n+i);}
+  return {n,N,adj};
+}
+
+function key(u,v){return u<v?u+'-'+v:v+'-'+u;}
+
+function findCycle(adj,N,avoidKey){
+  const visited=new Array(N).fill(false);
+  const path=[];
+  function dfs(u){
+    if(path.length===N){
+      if(adj[u].includes(0) && key(u,0)!==avoidKey) return true;
+      return false;
+    }
+    for(const v of adj[u]){
+      if(v===0 && path.length!==N-1) continue;
+      if(visited[v]) continue;
+      if(key(u,v)===avoidKey) continue;
+      visited[v]=true;
+      path.push(v);
+      if(dfs(v)) return true;
+      path.pop();
+      visited[v]=false;
+    }
+    return false;
+  }
+  visited[0]=true;
+  path.push(0);
+  if(dfs(0)) return path.slice();
+  return null;
+}
+
+function verify(adj,N,cyc,avoidKey){
+  if(!cyc || cyc.length!==N) return false;
+  const set=new Set(cyc);
+  if(set.size!==N) return false;
+  for(let i=0;i<N;i++){
+    const u=cyc[i], v=cyc[(i+1)%N];
+    if(!adj[u].includes(v)) return false;
+    if(key(u,v)===avoidKey) return false;
+  }
+  return true;
+}
+
+function coords(n){
+  const W=canvas.width,H=canvas.height;
+  const cx=W/2,cy=H/2;
+  const R1=Math.min(W,H)*0.18;
+  const R2=Math.min(W,H)*0.38;
+  const pts=[];
+  for(let i=0;i<n;i++){
+    const a=-Math.PI/2 + (2*Math.PI*i)/n;
+    pts.push([cx+R1*Math.cos(a), cy+R1*Math.sin(a)]);
+  }
+  for(let i=0;i<n;i++){
+    const a=-Math.PI/2 + (2*Math.PI*i)/n;
+    pts.push([cx+R2*Math.cos(a), cy+R2*Math.sin(a)]);
+  }
+  return pts;
+}
+
+function render(){
+  const n=+nSlider.value;
+  nval.textContent=n;
+  seedval.textContent=seedSlider.value;
+  const g=build(n);
+  const N=g.N;
+  sv.textContent=N;
+  se.textContent=g.adj.reduce((a,b)=>a+b.length,0)/2;
+  sb.textContent=n+' / '+n;
+  let avoidedKey=null;
+  if(avoidBox.checked){
+    const edges=[];
+    for(let u=0;u<N;u++) for(const v of g.adj[u]) if(u<v) edges.push(key(u,v));
+    const idx=(+seedSlider.value*37+edges.length) % edges.length;
+    avoidedKey=edges[idx];
+    avoided=avoidedKey;
+    sa.textContent=avoidedKey;
+  } else {
+    avoided=null;
+    sa.textContent='none';
+  }
+  if(cycle && cycle.length===N){
+    // keep if valid
+    if(!verify(g.adj,N,cycle,avoidedKey)){ cycle=null; }
+  }
+  const cycLen = cycle?cycle.length:0;
+  sc.textContent = cycle?cycLen:'—';
+  const ok = cycle?verify(g.adj,N,cycle,avoidedKey):false;
+  sver.textContent = cycle?(ok?'Yes':'No'):'—';
+  sver.style.color = cycle?(ok?'var(--good)':'var(--bad)'):'var(--text)';
+  reason.textContent = cycle? ('Found Hamiltonian cycle of length '+cycLen+(avoidedKey?' avoiding edge '+avoidedKey:'')+'.') : 'No cycle computed yet.';
+
+  const pts=coords(n);
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  // draw graph edges
+  const edgeSet=new Set();
+  for(let u=0;u<N;u++) for(const v of g.adj[u]) if(u<v) edgeSet.add(key(u,v));
+  for(const k of edgeSet){
+    const [a,b]=k.split('-').map(Number);
+    ctx.strokeStyle = (k===avoidedKey)? '#f59e0b' : 'rgba(148,163,184,0.55)';
+    ctx.lineWidth = (k===avoidedKey)? 3 : 1.5;
+    ctx.beginPath();
+    ctx.moveTo(pts[a][0],pts[a][1]);
+    ctx.lineTo(pts[b][0],pts[b][1]);
+    ctx.stroke();
+  }
+  // draw cycle
+  if(cycle){
+    ctx.strokeStyle='#5eead4';
+    ctx.lineWidth=3;
+    for(let i=0;i<cycle.length;i++){
+      const u=cycle[i], v=cycle[(i+1)%cycle.length];
+      ctx.beginPath();
+      ctx.moveTo(pts[u][0],pts[u][1]);
+      ctx.lineTo(pts[v][0],pts[v][1]);
+      ctx.stroke();
+    }
+  }
+  // draw vertices
+  for(let i=0;i<N;i++){
+    ctx.fillStyle = (i<n)?'#3b82f6':'#ef4444';
+    // adjust bipartition coloring by parity instead:
+    ctx.fillStyle = ((Math.floor(i/n)+ (i%n))%2===0)?'#3b82f6':'#ef4444';
+    ctx.beginPath();
+    ctx.arc(pts[i][0],pts[i][1],7,0,Math.PI*2);
+    ctx.fill();
+    ctx.strokeStyle='rgba(255,255,255,0.4)';
+    ctx.lineWidth=1;
+    ctx.stroke();
+    ctx.fillStyle='#e6edf7';
+    ctx.font='10px system-ui';
+    ctx.textAlign='center';
+    ctx.fillText(String(i),pts[i][0],pts[i][1]-10);
+  }
+}
+
+document.getElementById('find').addEventListener('click',()=>{
+  const n=+nSlider.value;
+  const g=build(n);
+  let avoidKey=null;
+  if(avoidBox.checked){
+    const edges=[];
+    for(let u=0;u<g.N;u++) for(const v of g.adj[u]) if(u<v) edges.push(key(u,v));
+    const idx=(+seedSlider.value*37+edges.length) % edges.length;
+    avoidKey=edges[idx];
+  }
+  cycle=findCycle(g.adj,g.N,avoidKey);
+  avoided=avoidKey;
+  render();
+});
+document.getElementById('clear').addEventListener('click',()=>{cycle=null;render();});
+
+nSlider.addEventListener('input',()=>{cycle=null;render();});
+avoidBox.addEventListener('change',()=>{cycle=null;render();});
+seedSlider.addEventListener('input',render);
+render();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A counterexample to the small Cohen–Macaulay module conjecture (conceptual, result 195)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+select{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+input[type=range]{flex:1 1 180px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+.legend{display:flex;gap:1rem;align-items:center;font-size:.85rem;color:var(--muted);margin:.5rem 0;flex-wrap:wrap}
+.swatch{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:.3rem;vertical-align:middle}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>A counterexample to the small Cohen–Macaulay module conjecture (conceptual, result 195)</h1>
+  <p>A small Cohen–Macaulay module over a Noetherian local ring ((R,\mathfrak m)) is a nonzero finitely generated (R)-module (M) with (\depth_R M=\dim R). Result 195 produces a three-dimensional complete Noetherian normal local domain over (\mathbb C) with no such module.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">The domain form of the small Cohen–Macaulay module conjecture asked whether every complete Noetherian local domain has a nonzero finitely generated maximal Cohen–Macaulay module. Result 195 answers negatively: for the surface-cone ring \(R(X,H)\), if a small Cohen–Macaulay module existed then Theorem 1.2 would require \(K_X^2-2c_2(X)\le 6H^2\). The explicit Hirzebruch–Kummer cover with prime \(n=7\) has \(K_X^2-2c_2(X)=7^3(7^2-10)=13377\) and \(H^2=5\cdot 7^3=1715\), hence \(6H^2=10290\). Since \(13377>10290), no such module exists.</p>
+
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">This separates finite modules from big Cohen–Macaulay modules and module-finite extensions: big Cohen–Macaulay algebras exist in equal characteristic, while finite generation can fail. It also gives a counterexample essentially of finite type over (\mathbb C), resolving the affine-local existence problem in dimension three over an algebraically closed field of characteristic zero.</p>
+  </section>
+  <div class="controls">
+    <label for="n">Prime (n)</label>
+    <select id="n">
+      <option value="3">3</option>
+      <option value="5">5</option>
+      <option value="7" selected>7</option>
+      <option value="11">11</option>
+    </select>
+    <span class="val" id="nval">7</span>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">(d=n^5)</div><div class="value" id="sd">—</div></div>
+    <div class="stat"><div class="label">(H^2=5n^3)</div><div class="value" id="sh">—</div></div>
+    <div class="stat"><div class="label">(K^2-2c_2=n^3(n^2-10))</div><div class="value" id="sq">—</div></div>
+    <div class="stat"><div class="label">(6H^2=30n^3)</div><div class="value" id="sb">—</div></div>
+    <div class="stat"><div class="label">Verdict</div><div class="value" id="sv">—</div></div>
+  </div>
+  <div class="legend">
+    <span><span class="swatch" style="background:#5eead4"></span>(K^2-2c_2)</span>
+    <span><span class="swatch" style="background:#ef4444"></span>(6H^2) bound</span>
+  </div>
+  <canvas id="c" width="900" height="300"></canvas>
+  <p id="info" style="font-size:.9rem;color:var(--muted);margin-top:.5rem">The obstruction applies when \(n^3(n^2-10)>30n^3\), i.e. \(n^2>40). For (n=7) this gives the counterexample; for (n=3,5) the inequality does not obstruct.</p>
+</div>
+<script>
+const nSel=document.getElementById('n');
+const nval=document.getElementById('nval');
+const sd=document.getElementById('sd');
+const sh=document.getElementById('sh');
+const sq=document.getElementById('sq');
+const sb=document.getElementById('sb');
+const sv=document.getElementById('sv');
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+
+function update(){
+  const n=+nSel.value;
+  nval.textContent=n;
+  const d=Math.pow(n,5);
+  const H2=5*Math.pow(n,3);
+  const Q=Math.pow(n,3)*(n*n-10);
+  const bound=6*H2;
+  sd.textContent=d;
+  sh.textContent=H2;
+  sq.textContent=Q;
+  sb.textContent=bound;
+  const obstruct=Q>bound;
+  sv.textContent=obstruct?'obstructed: no MCM':'not obstructed';
+  sv.style.color=obstruct?'var(--bad)':'var(--good)';
+  draw(n,Q,bound);
+}
+
+function draw(n,Q,bound){
+  const H=canvas.height;
+  canvas.width=Math.max(300,canvas.clientWidth);
+  const w=canvas.width;
+  ctx.clearRect(0,0,w,H);
+  const pad=50;
+  const maxv=Math.max(Q,bound,1);
+  const bw=(w-2*pad)/2;
+  const bars=[{v:Q,color:'#5eead4',label:'K²-2c₂'},{v:bound,color:'#ef4444',label:'6H²'}];
+  bars.forEach((b,i)=>{
+    const x=pad+i*bw+bw*0.15;
+    const bw2=bw*0.7;
+    const h=b.v/maxv*(H-2*pad-30);
+    const y=H-pad-h;
+    ctx.fillStyle=b.color;
+    ctx.fillRect(x,y,bw2,h);
+    ctx.fillStyle='#9fb0cc'; ctx.font='14px system-ui'; ctx.textAlign='center';
+    ctx.fillText(b.label,x+bw2/2,H-12);
+    ctx.fillText(String(b.v),x+bw2/2,y-6);
+  });
+  ctx.fillStyle='#9fb0cc'; ctx.font='14px system-ui'; ctx.textAlign='left';
+  ctx.fillText('n='+n,pad,20);
+}
+
+nSel.addEventListener('change',update);
+window.addEventListener('resize',update);
+update();
+</script>
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

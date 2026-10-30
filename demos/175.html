@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Talagrand’s conjectures and graph decompositions at expectation thresholds (conceptual, result 175)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+select{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+input[type=range]{flex:1 1 180px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:520px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+.legend{display:flex;gap:1rem;align-items:center;font-size:.85rem;color:var(--muted);margin:.5rem 0;flex-wrap:wrap}
+.swatch{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:.3rem;vertical-align:middle}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Talagrand’s conjectures and graph decompositions at expectation thresholds (conceptual, result 175)</h1>
+  <p>Compares integral and fractional expectation thresholds on the increasing family of subsets of size at least (k), and illustrates the associated (p)-small covers, discrete convexity, and graph decomposition into a bounded number of pieces.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">For a finite ground set (X) and a nonempty proper increasing family (\mathcal F\subseteq 2^X), Talagrand's expectation-threshold conjecture asks whether the fractional and integral expectation thresholds are comparable by an absolute constant. Result 175 proves (q_f(\mathcal F)\le 25\cdot 512^4q(\mathcal F)), with both thresholds using cover budget (1/2). It also resolves Talagrand's discrete-convexity conjecture with (k=2^{75}): if a family has Bernoulli-(p) measure at least (1-1/k), then the sets not contained in a union of (k) members form a (p)-small family with containment cover cost at most (1/2). An application proves the Ascoli--He--Park--Talagrand graph-decomposition conjecture: every graph's edges split into a universally bounded number of fixed pieces, each with containment threshold at most a universal constant times the original graph's integral expectation threshold; the pieces' embeddings need not agree on shared vertices.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">This turns fractional certificates into integral ones at only a universal loss, preserving the (1/2) covering budget. It separates the random-set threshold from the certificate threshold, explains why singleton and low-cardinality fractional covers can be rounded, and supplies the discrete-convexity step needed for graph decompositions. The demo uses the standard threshold family (\{H\subseteq X:|H|\ge k\}), where the integral cover consists of (k)-subsets and the fractional cover uses singleton weights (1/k), making the two thresholds explicit and comparable.</p>
+  </section>
+  <div class="controls">
+    <label for="n">Ground set size n</label>
+    <input id="n" type="range" min="4" max="12" value="6" step="1">
+    <span class="val" id="nval">6</span>
+    <label for="k">Minimal size k</label>
+    <input id="k" type="range" min="1" max="6" value="3" step="1">
+    <span class="val" id="kval">3</span>
+    <label for="p">Probability p</label>
+    <input id="p" type="range" min="0" max="1" value="0.35" step="0.01">
+    <span class="val" id="pval">0.35</span>
+  </div>
+  <div class="controls">
+    <label for="pieces">Graph pieces m</label>
+    <input id="pieces" type="range" min="1" max="8" value="3" step="1">
+    <span class="val" id="piecesval">3</span>
+    <label for="seed">Seed</label>
+    <input id="seed" type="range" min="1" max="99" value="7" step="1">
+    <span class="val" id="seedval">7</span>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">n</div><div class="value" id="sn">—</div></div>
+    <div class="stat"><div class="label">k</div><div class="value" id="sk">—</div></div>
+    <div class="stat"><div class="label">C(n,k)</div><div class="value" id="scnk">—</div></div>
+    <div class="stat"><div class="label">Integral threshold q</div><div class="value" id="sq">—</div></div>
+    <div class="stat"><div class="label">Fractional threshold q_f</div><div class="value" id="sqf">—</div></div>
+    <div class="stat"><div class="label">Ratio q_f/q</div><div class="value" id="sratio">—</div></div>
+    <div class="stat"><div class="label">Integral cost at p</div><div class="value" id="sicost">—</div></div>
+    <div class="stat"><div class="label">Fractional cost at p</div><div class="value" id="sfcost">—</div></div>
+    <div class="stat"><div class="label">Integral p-small?</div><div class="value" id="sipsmall">—</div></div>
+    <div class="stat"><div class="label">Fractional p-small?</div><div class="value" id="sfpsmall">—</div></div>
+    <div class="stat"><div class="label">Universal constant</div><div class="value" id="sconst">25·512^4</div></div>
+    <div class="stat"><div class="label">Graph pieces m</div><div class="value" id="spm">—</div></div>
+  </div>
+  <div class="legend">
+    <span><span class="swatch" style="background:#5eead4"></span>Included in R</span>
+    <span><span class="swatch" style="background:#9fb0cc"></span>Not included</span>
+    <span><span class="swatch" style="background:#f59e0b"></span>Integral generator</span>
+    <span><span class="swatch" style="background:#22c55e"></span>Property holds</span>
+  </div>
+  <canvas id="c" width="900" height="520"></canvas>
+  <p style="font-size:.85rem;color:var(--muted);margin-top:.5rem">Conceptual model: the threshold family consists of all subsets of size at least (k). An integral cover uses all (k)-subsets as generators, with cost (\binom{n}{k}p^k); a fractional cover uses singleton weights (1/k), with cost (np/k). The left panel shows a sampled subset (R) and one integral generator; the right panel shows a graph whose edges are colored by one of (m) decomposition pieces.</p>
+</div>
+<script>
+function nCr(n,k){
+  if(k<0||k>n) return 0;
+  let r=1;
+  for(let i=1;i<=k;i++){ r=r*(n-i+1)/i; }
+  return r;
+}
+const nSlider=document.getElementById('n');
+const kSlider=document.getElementById('k');
+const pSlider=document.getElementById('p');
+const piecesSlider=document.getElementById('pieces');
+const seedSlider=document.getElementById('seed');
+
+const nval=document.getElementById('nval');
+const kval=document.getElementById('kval');
+const pval=document.getElementById('pval');
+const piecesval=document.getElementById('piecesval');
+const seedval=document.getElementById('seedval');
+
+const sn=document.getElementById('sn');
+const sk=document.getElementById('sk');
+const scnk=document.getElementById('scnk');
+const sq=document.getElementById('sq');
+const sqf=document.getElementById('sqf');
+const sratio=document.getElementById('sratio');
+const sicost=document.getElementById('sicost');
+const sfcost=document.getElementById('sfcost');
+const sipsmall=document.getElementById('sipsmall');
+const sfpsmall=document.getElementById('sfpsmall');
+const spm=document.getElementById('spm');
+
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+
+function resizeCanvas(){ canvas.width=Math.max(300,canvas.clientWidth); canvas.height=520; }
+window.addEventListener('resize',function(){ resizeCanvas(); render(); });
+resizeCanvas();
+
+function render(){
+  const n=+nSlider.value;
+  const k=Math.min(+kSlider.value,n);
+  kSlider.max=n;
+  if(+kSlider.value>n){ kSlider.value=n; }
+  const kk=+kSlider.value;
+  const p=+pSlider.value;
+  const m=+piecesSlider.value;
+  const seed=+seedSlider.value;
+
+  nval.textContent=n;
+  kval.textContent=kk;
+  pval.textContent=p.toFixed(2);
+  piecesval.textContent=m;
+  seedval.textContent=seed;
+
+  const cnk=nCr(n,kk);
+  const q=Math.min(1, Math.pow(1/(2*cnk),1/kk));
+  const qf=Math.min(1, kk/(2*n));
+  const ratio=q>0 ? qf/q : Infinity;
+  const icost=cnk*Math.pow(p,kk);
+  const fcost=n*p/kk;
+  const ipsmall = icost<=0.5+1e-12;
+  const fpsmall = fcost<=0.5+1e-12;
+
+  sn.textContent=n;
+  sk.textContent=kk;
+  scnk.textContent=cnk.toLocaleString();
+  sq.textContent=q.toFixed(4);
+  sqf.textContent=qf.toFixed(4);
+  sratio.textContent=isFinite(ratio)?ratio.toFixed(3):'∞';
+  sicost.textContent=icost.toFixed(4);
+  sfcost.textContent=fcost.toFixed(4);
+  sipsmall.textContent=ipsmall?'Yes':'No';
+  sipsmall.className='value '+(ipsmall?'good':'bad');
+  sfpsmall.textContent=fpsmall?'Yes':'No';
+  sfpsmall.className='value '+(fpsmall?'good':'bad');
+  spm.textContent=m;
+
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const half=W/2;
+  const cx=half/2, cy=H/2;
+  const scale=Math.min(half,H)*0.32;
+  const includedCount=Math.round(p*n);
+  // left: ground set
+  const pts=[];
+  for(let i=0;i<n;i++){
+    const ang=2*Math.PI*i/n - Math.PI/2;
+    pts.push([cx+scale*Math.cos(ang), cy+scale*Math.sin(ang)]);
+  }
+  // random-ish subset: first includedCount after rotating by seed
+  const included=new Set();
+  for(let i=0;i<includedCount;i++){ included.add((i*7+seed*3)%n); }
+  // draw circle
+  ctx.strokeStyle='rgba(159,176,204,0.35)';
+  ctx.lineWidth=1;
+  ctx.beginPath();
+  ctx.arc(cx,cy,scale,0,Math.PI*2);
+  ctx.stroke();
+  // integral generator: first k nodes
+  const gen=new Set();
+  for(let i=0;i<kk;i++){ gen.add(i); }
+  // highlight generator edges
+  ctx.strokeStyle='rgba(245,158,11,0.35)';
+  ctx.lineWidth=2;
+  ctx.beginPath();
+  let first=true;
+  gen.forEach(i=>{
+    const [x,y]=pts[i];
+    if(first){ ctx.moveTo(x,y); first=false; } else { ctx.lineTo(x,y); }
+  });
+  ctx.closePath();
+  ctx.stroke();
+  pts.forEach((pt,i)=>{
+    const [x,y]=pt;
+    ctx.fillStyle=included.has(i)?'#5eead4':'#9fb0cc';
+    ctx.beginPath();
+    ctx.arc(x,y,7,0,Math.PI*2);
+    ctx.fill();
+    if(gen.has(i)){
+      ctx.strokeStyle='#f59e0b';
+      ctx.lineWidth=2;
+      ctx.stroke();
+    }
+    ctx.fillStyle='#e6edf7';
+    ctx.font='11px system-ui';
+    ctx.textAlign='center';
+    ctx.fillText(String(i+1),x,y-12);
+  });
+  // property label
+  const prop=includedCount>=kk;
+  ctx.fillStyle=prop?'#22c55e':'#ef4444';
+  ctx.font='bold 14px system-ui';
+  ctx.textAlign='center';
+  ctx.fillText(prop?'|R|≥k: in F':'|R|<k: not in F', cx, cy+scale+34);
+  ctx.fillStyle='#9fb0cc';
+  ctx.font='12px system-ui';
+  ctx.fillText('Sampled |R|='+includedCount, cx, cy+scale+52);
+
+  // right: graph
+  const gx=half+half/2, gy=H/2;
+  const gscale=Math.min(half,H)*0.34;
+  const gpts=[];
+  for(let i=0;i<n;i++){
+    const ang=2*Math.PI*i/n - Math.PI/2;
+    gpts.push([gx+gscale*Math.cos(ang), gy+gscale*Math.sin(ang)]);
+  }
+  // edges: cycle + a few chords
+  const edges=[];
+  for(let i=0;i<n;i++){ edges.push([i,(i+1)%n]); }
+  for(let i=0;i<n;i++){ if(i%2===0) edges.push([i,(i+2)%n]); }
+  const colors=['#5eead4','#f59e0b','#ef4444','#a78bfa','#22c55e','#f472b6','#38bdf8','#fbbf24'];
+  edges.forEach(([a,b],idx)=>{
+    const [x1,y1]=gpts[a], [x2,y2]=gpts[b];
+    ctx.strokeStyle=colors[idx%m];
+    ctx.lineWidth=2;
+    ctx.beginPath();
+    ctx.moveTo(x1,y1);
+    ctx.lineTo(x2,y2);
+    ctx.stroke();
+  });
+  gpts.forEach((pt,i)=>{
+    const [x,y]=pt;
+    ctx.fillStyle='#16203a';
+    ctx.beginPath();
+    ctx.arc(x,y,8,0,Math.PI*2);
+    ctx.fill();
+    ctx.strokeStyle='#5eead4';
+    ctx.lineWidth=1.5;
+    ctx.stroke();
+    ctx.fillStyle='#e6edf7';
+    ctx.font='10px system-ui';
+    ctx.textAlign='center';
+    ctx.fillText(String(i+1),x,y+3);
+  });
+  ctx.fillStyle='#9fb0cc';
+  ctx.font='12px system-ui';
+  ctx.textAlign='center';
+  ctx.fillText('Edges colored by decomposition piece', gx, gy+gscale+30);
+}
+
+[nSlider,kSlider,pSlider,piecesSlider,seedSlider].forEach(el=>el.addEventListener('input',render));
+render();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

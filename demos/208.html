@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Finite symmetric tensor categories and the Verlinde tower — interactive demo</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --warn:#f59e0b; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --warn:#b45309; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+select,input[type=range]{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+input[type=range]{flex:1 1 180px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:4ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+svg{width:100%;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+table{width:100%;border-collapse:collapse;font-size:.85rem}
+th,td{padding:.35rem .45rem;border-bottom:1px solid var(--border);text-align:left}
+th{color:var(--muted);font-weight:600}
+td.num{font-family:ui-monospace,monospace}
+.legend{display:flex;gap:1rem;align-items:center;font-size:.85rem;color:var(--muted);margin:.5rem 0;flex-wrap:wrap}
+.swatch{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:.3rem;vertical-align:middle}
+.note{font-size:.9rem;color:var(--muted)}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Finite symmetric tensor categories and the Verlinde tower</h1>
+  <p>Conceptual interactive view of the tower ( \mathrm{Ver}_{p}(k)\subset \mathrm{Ver}_{p^2}(k)\subset \cdots ) and a fiber functor from a finite symmetric tensor category (\mathcal C) to a finite level (\mathrm{Ver}_{p^n}(k)). The level may depend on (\mathcal C).</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Proves that every finite symmetric tensor category over an algebraically closed field \(k\) of characteristic \(p>0) admits a (k)-linear exact faithful strong symmetric monoidal fiber functor to a higher Verlinde category (\mathrm{Ver}_{p^n}(k)). The level may depend on the category, and the theorem includes characteristic two, resolving the finite case of the Benson–Etingof–Ostrik conjecture.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Classifies finite incompressible symmetric tensor categories as (possibly plus) higher Verlinde categories, and in characteristic two gives uniqueness of the fiber functor into the union of the tower.</p>
+  </section>
+  <div class="controls">
+    <label for="p">Prime (p)</label>
+    <select id="p">
+      <option value="2">2</option>
+      <option value="3">3</option>
+      <option value="5">5</option>
+      <option value="7">7</option>
+    </select>
+    <label for="n">Target level (n)</label>
+    <input id="n" type="range" min="1" max="6" value="2" step="1">
+    <span class="val" id="nval">2</span>
+    <label for="variant">Variant</label>
+    <select id="variant">
+      <option value="full">Ver_{p^n}</option>
+      <option value="plus">Ver_{p^n}^+</option>
+    </select>
+  </div>
+  <div class="controls">
+    <label for="complexity">Hypothetical (\mathcal C) complexity</label>
+    <input id="complexity" type="range" min="1" max="6" value="3" step="1">
+    <span class="val" id="cval">3</span>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Prime (p)</div><div class="value" id="statp">—</div></div>
+    <div class="stat"><div class="label">Target level (n)</div><div class="value" id="statn">—</div></div>
+    <div class="stat"><div class="label">Target category</div><div class="value" id="stattarget">—</div></div>
+    <div class="stat"><div class="label">First-level simples (p-1)</div><div class="value" id="statsimples">—</div></div>
+    <div class="stat"><div class="label">Minimal level for (\mathcal C)</div><div class="value" id="statmin">—</div></div>
+    <div class="stat"><div class="label">Functor status</div><div class="value" id="statstatus">—</div></div>
+  </div>
+  <svg id="diagram" viewBox="0 0 900 520" preserveAspectRatio="xMidYMid meet"></svg>
+  <p class="note">Conceptual diagram: tower levels increase upward; the arrow is a (k)-linear exact faithful strong symmetric monoidal fiber functor. Higher levels need not be semisimple.</p>
+  <section class="box">
+    <h3>Selected target</h3>
+    <p id="selinfo" style="margin:0;font-size:1.05rem;line-height:1.6">—</p>
+  </section>
+  <section class="box">
+    <h3>Incompressible classification (by (p))</h3>
+    <table>
+      <thead><tr><th>Prime</th><th>Incompressible finite symmetric tensor categories</th></tr></thead>
+      <tbody id="classtbl"></tbody>
+    </table>
+  </section>
+</div>
+<script>
+const pSel = document.getElementById('p');
+const nSlider = document.getElementById('n');
+const nval = document.getElementById('nval');
+const variantSel = document.getElementById('variant');
+const cSlider = document.getElementById('complexity');
+const cval = document.getElementById('cval');
+const svg = document.getElementById('diagram');
+const selinfo = document.getElementById('selinfo');
+const classtbl = document.getElementById('classtbl');
+
+const statp = document.getElementById('statp');
+const statn = document.getElementById('statn');
+const stattarget = document.getElementById('stattarget');
+const statsimples = document.getElementById('statsimples');
+const statmin = document.getElementById('statmin');
+const statstatus = document.getElementById('statstatus');
+
+function targetName(p,n,variant){
+  const base = 'Ver_{' + p + '^' + n + '}';
+  if(variant === 'plus') return base + '^+(k)';
+  return base + '(k)';
+}
+
+function lowLevelNote(p,n,variant){
+  if(p===2 && n===1) return 'Ver_2(k) is equivalent to Vec_k.';
+  if(p===3 && n===1 && variant==='full') return 'Ver_3(k) is equivalent to sVec_k.';
+  if(p===3 && n===1 && variant==='plus') return 'Ver_3^+(k) is equivalent to Vec_k.';
+  if(n===1) return 'First level: semisimplification of Rep_k(Z/p); simples are Jordan blocks of lengths 1,...,p-1.';
+  return 'Higher level: finite abelian envelope; need not be semisimple.';
+}
+
+function draw(){
+  svg.innerHTML='';
+  const ns='http://www.w3.org/2000/svg';
+  const p=+pSel.value;
+  const n=+nSlider.value;
+  const variant=variantSel.value;
+  const maxN=6;
+  const levels=[];
+  for(let i=1;i<=maxN;i++) levels.push(i);
+  const x0=120, yBottom=470, stepY=62;
+  const nodeX=260;
+  const nodes=[];
+  levels.forEach((lvl,i)=>{
+    const y=yBottom - (lvl-1)*stepY;
+    nodes.push({lvl,y});
+  });
+  nodes.forEach(nd=>{
+    const isTarget = nd.lvl===n;
+    const rect=document.createElementNS(ns,'rect');
+    rect.setAttribute('x',nodeX-95); rect.setAttribute('y',nd.y-24);
+    rect.setAttribute('width',190); rect.setAttribute('height',48);
+    rect.setAttribute('rx',10);
+    rect.setAttribute('fill', isTarget ? 'var(--accent)' : 'var(--chip)');
+    rect.setAttribute('stroke','var(--accent)');
+    rect.setAttribute('stroke-width', isTarget ? '3' : '1.5');
+    rect.setAttribute('opacity', nd.lvl>n ? '0.35' : '1');
+    svg.appendChild(rect);
+    const t=document.createElementNS(ns,'text');
+    t.setAttribute('x',nodeX); t.setAttribute('y',nd.y+4);
+    t.setAttribute('text-anchor','middle');
+    t.setAttribute('fill', isTarget ? '#00130f' : 'var(--text)');
+    t.setAttribute('font-size','13');
+    t.setAttribute('font-family','ui-monospace,monospace');
+    t.textContent = 'Ver_{' + p + '^' + nd.lvl + '}(k)';
+    svg.appendChild(t);
+    if(isTarget && variant==='plus'){
+      const t2=document.createElementNS(ns,'text');
+      t2.setAttribute('x',nodeX); t2.setAttribute('y',nd.y+18);
+      t2.setAttribute('text-anchor','middle');
+      t2.setAttribute('fill','#00130f');
+      t2.setAttribute('font-size','10');
+      t2.setAttribute('font-family','ui-monospace,monospace');
+      t2.textContent = '(plus variant selected)';
+      svg.appendChild(t2);
+    }
+  });
+  for(let i=1;i<maxN;i++){
+    const y1=yBottom-(i-1)*stepY-24;
+    const y2=yBottom-i*stepY+24;
+    const line=document.createElementNS(ns,'line');
+    line.setAttribute('x1',nodeX); line.setAttribute('y1',y1);
+    line.setAttribute('x2',nodeX); line.setAttribute('y2',y2);
+    line.setAttribute('stroke','rgba(94,234,212,0.4)');
+    line.setAttribute('stroke-width','2');
+    svg.appendChild(line);
+  }
+  const srcX=620, srcY=260;
+  const targetY=yBottom-(n-1)*stepY;
+  const g=document.createElementNS(ns,'g');
+  const srcRect=document.createElementNS(ns,'rect');
+  srcRect.setAttribute('x',srcX-110); srcRect.setAttribute('y',srcY-32);
+  srcRect.setAttribute('width',220); srcRect.setAttribute('height',64);
+  srcRect.setAttribute('rx',12);
+  srcRect.setAttribute('fill','var(--card)'); srcRect.setAttribute('stroke','var(--warn)');
+  srcRect.setAttribute('stroke-width','2');
+  svg.appendChild(srcRect);
+  const st=document.createElementNS(ns,'text');
+  st.setAttribute('x',srcX); st.setAttribute('y',srcY-6);
+  st.setAttribute('text-anchor','middle'); st.setAttribute('fill','var(--text)');
+  st.setAttribute('font-size','14'); st.setAttribute('font-weight','600');
+  st.textContent='Finite symmetric';
+  svg.appendChild(st);
+  const st2=document.createElementNS(ns,'text');
+  st2.setAttribute('x',srcX); st2.setAttribute('y',srcY+14);
+  st2.setAttribute('text-anchor','middle'); st2.setAttribute('fill','var(--text)');
+  st2.setAttribute('font-size','14'); st2.setAttribute('font-weight','600');
+  st2.textContent='tensor category C';
+  svg.appendChild(st2);
+  const arrow=document.createElementNS(ns,'line');
+  arrow.setAttribute('x1',srcX-110); arrow.setAttribute('y1',srcY);
+  arrow.setAttribute('x2',nodeX+95); arrow.setAttribute('y2',targetY);
+  arrow.setAttribute('stroke','var(--warn)'); arrow.setAttribute('stroke-width','2.5');
+  svg.appendChild(arrow);
+  const head=document.createElementNS(ns,'polygon');
+  const hx=nodeX+95, hy=targetY;
+  head.setAttribute('points', (hx-10)+','+(hy-6)+' '+hx+','+hy+' '+(hx-10)+','+(hy+6));
+  head.setAttribute('fill','var(--warn)');
+  svg.appendChild(head);
+  const lbl=document.createElementNS(ns,'text');
+  lbl.setAttribute('x',(srcX-110+nodeX+95)/2); lbl.setAttribute('y',(srcY+targetY)/2-8);
+  lbl.setAttribute('text-anchor','middle'); lbl.setAttribute('fill','var(--warn)');
+  lbl.setAttribute('font-size','12');
+  lbl.textContent='fiber functor';
+  svg.appendChild(lbl);
+  const top=document.createElementNS(ns,'text');
+  top.setAttribute('x',450); top.setAttribute('y',24);
+  top.setAttribute('text-anchor','middle'); top.setAttribute('fill','var(--muted)');
+  top.setAttribute('font-size','13');
+  top.textContent='Verlinde tower (height may depend on C)';
+  svg.appendChild(top);
+}
+
+function updateClassTable(){
+  const p=+pSel.value;
+  let rows=[];
+  if(p===2){
+    rows.push(['2','Ver_{2^m}(k) (m≥1), Ver_{2^m}^+(k) (m≥2)']);
+  } else if(p===3){
+    rows.push(['3','Ver_{3^m}(k), Ver_{3^m}^+(k) (m≥1)']);
+  } else {
+    rows.push([String(p),'Vec_k, sVec_k, Ver_{p^m}(k), Ver_{p^m}^+(k) (m≥1)']);
+  }
+  classtbl.innerHTML='';
+  rows.forEach(r=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML = '<td class="num">'+r[0]+'</td><td>'+r[1]+'</td>';
+    classtbl.appendChild(tr);
+  });
+}
+
+function update(){
+  const p=+pSel.value;
+  const n=+nSlider.value;
+  const variant=variantSel.value;
+  const complexity=+cSlider.value;
+  nval.textContent=n;
+  cval.textContent=complexity;
+  statp.textContent=p;
+  statn.textContent=n;
+  stattarget.textContent=targetName(p,n,variant);
+  statsimples.textContent=(p-1);
+  statmin.textContent=complexity;
+  if(n>=complexity){
+    statstatus.textContent='valid: n≥minimal level';
+  } else {
+    statstatus.textContent='invalid: need higher level';
+  }
+  const note=lowLevelNote(p,n,variant);
+  selinfo.innerHTML = 'Target ( \mathrm{'+ (variant==='plus' ? 'Ver_{p^n}^+' : 'Ver_{p^n}') + '(k)} ) at level (n='+n+'), prime (p='+p+'). '+note+' The fiber functor is (k)-linear, exact, faithful, and strong symmetric monoidal. For characteristic two, the functor into the union ( \mathrm{Ver}_{2^\infty}(k)) is unique up to monoidal natural isomorphism.';
+  updateClassTable();
+  draw();
+}
+
+pSel.addEventListener('change', update);
+nSlider.addEventListener('input', update);
+variantSel.addEventListener('change', update);
+cSlider.addEventListener('input', update);
+
+update();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Polynomial-time scheduling on three identical machines (conceptual, result 124)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range]{flex:1 1 180px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+.legend{display:flex;gap:1rem;align-items:center;font-size:.85rem;color:var(--muted);margin:.5rem 0;flex-wrap:wrap}
+.swatch{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:.3rem;vertical-align:middle}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Polynomial-time scheduling on three identical machines (conceptual, result 124)</h1>
+  <p>Unit-length jobs with arbitrary precedence constraints are scheduled on three identical machines. Adjust the job count, precedence density, and deadline; regenerate random instances and inspect the exact feasibility decision and an optimal makespan schedule.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">The problem is the three-processor unit-execution-time scheduling problem of Garey and Johnson: nonpreemptive unit-length jobs, arbitrary precedence constraints, three identical parallel machines. The result gives a deterministic polynomial-time algorithm that minimizes makespan. For an explicitly given precedence graph, it decides deadline feasibility exactly and constructs a feasible schedule. The conceptual model here uses a small instance and an exact backtracking search over available-job subsets at each time step, which is feasible for the displayed sizes and illustrates the exact decision procedure.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">This resolves a long-standing open scheduling problem by showing that minimizing makespan for unit jobs on three identical machines is polynomial, rather than NP-hard. It has direct consequences for deterministic scheduling, deadline feasibility checking, and the complexity boundary between polynomial and NP-hard parallel scheduling, since the same problem becomes NP-hard for four or more machines.</p>
+  </section>
+  <div class="controls">
+    <label for="n">Jobs n</label>
+    <input id="n" type="range" min="4" max="10" value="8" step="1">
+    <span class="val" id="nval">8</span>
+    <label for="dens">Precedence density</label>
+    <input id="dens" type="range" min="0.05" max="0.35" value="0.18" step="0.01">
+    <span class="val" id="densval">0.18</span>
+    <label for="dl">Deadline D</label>
+    <input id="dl" type="range" min="3" max="10" value="5" step="1">
+    <span class="val" id="dlval">5</span>
+    <button id="regen" type="button">Regenerate</button>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Jobs n</div><div class="value" id="sn">—</div></div>
+    <div class="stat"><div class="label">Precedence edges</div><div class="value" id="se">—</div></div>
+    <div class="stat"><div class="label">Critical chain</div><div class="value" id="sc">—</div></div>
+    <div class="stat"><div class="label">Machine lower bound</div><div class="value" id="slb">—</div></div>
+    <div class="stat"><div class="label">Optimal makespan</div><div class="value" id="smk">—</div></div>
+    <div class="stat"><div class="label">Selected deadline</div><div class="value" id="sdl">—</div></div>
+    <div class="stat"><div class="label">Feasible by D?</div><div class="value" id="sfeas">—</div></div>
+  </div>
+  <div class="legend">
+    <span><span class="swatch" style="background:#5eead4"></span>Critical chain job</span>
+    <span><span class="swatch" style="background:#22c55e"></span>Scheduled job</span>
+    <span><span class="swatch" style="background:#1f2a44"></span>Idle slot</span>
+  </div>
+  <canvas id="gantt" width="900" height="260"></canvas>
+  <canvas id="dag" width="900" height="360"></canvas>
+  <p style="font-size:.85rem;color:var(--muted);margin-top:.5rem">Conceptual model: exact feasibility for small instances via subset search; the polynomial algorithm scales to large precedence graphs.</p>
+</div>
+<script>
+const nSlider=document.getElementById('n');
+const densSlider=document.getElementById('dens');
+const dlSlider=document.getElementById('dl');
+const nval=document.getElementById('nval');
+const densval=document.getElementById('densval');
+const dlval=document.getElementById('dlval');
+const regenBtn=document.getElementById('regen');
+
+const sn=document.getElementById('sn');
+const se=document.getElementById('se');
+const sc=document.getElementById('sc');
+const slb=document.getElementById('slb');
+const smk=document.getElementById('smk');
+const sdl=document.getElementById('sdl');
+const sfeas=document.getElementById('sfeas');
+
+const gantt=document.getElementById('gantt');
+const dag=document.getElementById('dag');
+const gctx=gantt.getContext('2d');
+const dctx=dag.getContext('2d');
+
+let n=8;
+let preds=[];
+let succs=[];
+let schedule=null;
+let minMakespan=null;
+let critical=new Set();
+
+function resizeCanvases(){ gantt.width=Math.max(300,gantt.clientWidth); dag.width=Math.max(300,dag.clientWidth); }
+window.addEventListener('resize',function(){ resizeCanvases(); renderAll(); });
+resizeCanvases();
+
+function genGraph(){
+  n=+nSlider.value;
+  const dens=+densSlider.value;
+  preds=Array.from({length:n},()=>[]);
+  succs=Array.from({length:n},()=>[]);
+  for(let i=1;i<n;i++){
+    for(let j=0;j<i;j++){
+      if(Math.random()<dens){
+        preds[i].push(j);
+        succs[j].push(i);
+      }
+    }
+  }
+  const lb=Math.ceil(n/3);
+  dlSlider.min=lb;
+  dlSlider.max=n;
+  if(+dlSlider.value<lb) dlSlider.value=lb;
+  if(+dlSlider.value>n) dlSlider.value=n;
+  computeCritical();
+  solveAll();
+  renderAll();
+}
+
+function computeCritical(){
+  const dist=Array(n).fill(0);
+  for(let i=0;i<n;i++){
+    for(const p of preds[i]) dist[i]=Math.max(dist[i],dist[p]+1);
+    if(preds[i].length===0) dist[i]=Math.max(dist[i],0);
+  }
+  // dist as nodes count along chain
+  const ndist=Array(n).fill(1);
+  for(let i=0;i<n;i++){
+    for(const p of preds[i]) ndist[i]=Math.max(ndist[i],ndist[p]+1);
+  }
+  let best=0;
+  for(let i=0;i<n;i++) if(ndist[i]>ndist[best]) best=i;
+  critical.clear();
+  let cur=best;
+  // backtrack one critical chain
+  const chain=[];
+  while(true){
+    chain.push(cur);
+    const ps=preds[cur];
+    if(ps.length===0) break;
+    let nxt=ps[0];
+    for(const p of ps) if(ndist[p]+1===ndist[cur] && ndist[p]>ndist[nxt]) nxt=p;
+    // ensure progress
+    if(ndist[nxt]+1!==ndist[cur]) break;
+    cur=nxt;
+  }
+  chain.forEach(x=>critical.add(x));
+}
+
+function available(mask){
+  const res=[];
+  for(let i=0;i<n;i++){
+    if(!(mask&(1<<i)) && preds[i].every(p=>mask&(1<<p))) res.push(i);
+  }
+  return res;
+}
+
+function dfsSolve(D,mask,time,memo,chosen){
+  const all=(1<<n)-1;
+  if(mask===all) return true;
+  if(time===D) return false;
+  const key=time+":"+mask;
+  if(memo.has(key)) return false;
+  const avail=available(mask);
+  if(avail.length===0){ memo.add(key); return false; }
+  const combos=[];
+  function combine(start,cur){
+    if(cur.length>0) combos.push(cur.slice());
+    if(cur.length===3) return;
+    for(let i=start;i<avail.length;i++){
+      cur.push(avail[i]);
+      combine(i+1,cur);
+      cur.pop();
+    }
+  }
+  combine(0,[]);
+  combos.sort((a,b)=>b.length-a.length);
+  for(const subset of combos){
+    const newMask=subset.reduce((m,j)=>m|(1<<j),mask);
+    if(dfsSolve(D,newMask,time+1,memo,chosen)){
+      chosen[time]=subset.slice();
+      return true;
+    }
+  }
+  memo.add(key);
+  return false;
+}
+
+function solveFor(D){
+  const memo=new Set();
+  const chosen=Array(D).fill(null);
+  const ok=dfsSolve(D,0,0,memo,chosen);
+  if(ok){
+    for(let t=0;t<D;t++) if(!chosen[t]) chosen[t]=[];
+    return chosen;
+  }
+  return null;
+}
+
+function solveAll(){
+  const lb=Math.ceil(n/3);
+  // minimal makespan
+  minMakespan=null;
+  schedule=null;
+  for(let D=lb;D<=n;D++){
+    const s=solveFor(D);
+    if(s){ minMakespan=D; schedule=s; break; }
+  }
+  // feasibility for selected D
+  updateStats();
+}
+
+function updateStats(){
+  const edges=preds.reduce((a,p)=>a+p.length,0);
+  const ndist=Array(n).fill(1);
+  for(let i=0;i<n;i++) for(const p of preds[i]) ndist[i]=Math.max(ndist[i],ndist[p]+1);
+  const chain=Math.max(...ndist);
+  const D=+dlSlider.value;
+  nval.textContent=n;
+  densval.textContent=(+densSlider.value).toFixed(2);
+  dlval.textContent=D;
+  sn.textContent=n;
+  se.textContent=edges;
+  sc.textContent=chain;
+  slb.textContent=Math.ceil(n/3);
+  smk.textContent=minMakespan===null?'—':minMakespan;
+  sdl.textContent=D;
+  const feas = minMakespan!==null && D>=minMakespan;
+  sfeas.textContent=feas?'Yes':'No';
+  sfeas.style.color=feas?'var(--good)':'var(--bad)';
+}
+
+function renderGantt(){
+  const ctx=gctx;
+  const W=gantt.width,H=gantt.height;
+  ctx.clearRect(0,0,W,H);
+  if(!schedule){ 
+    ctx.fillStyle='rgba(159,176,204,0.9)'; ctx.font='16px system-ui'; ctx.fillText('No schedule',20,30); return;
+  }
+  const D=schedule.length;
+  const machines=3;
+  const padL=50,padT=30,padR=10,padB=20;
+  const plotW=W-padL-padR;
+  const plotH=H-padT-padB;
+  const cellW=plotW/D;
+  const cellH=plotH/machines;
+  // grid
+  ctx.strokeStyle='rgba(159,176,204,0.25)';
+  ctx.lineWidth=1;
+  for(let m=0;m<=machines;m++){
+    const y=padT+m*cellH;
+    ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(padL+plotW,y); ctx.stroke();
+  }
+  for(let t=0;t<=D;t++){
+    const x=padL+t*cellW;
+    ctx.beginPath(); ctx.moveTo(x,padT); ctx.lineTo(x,padT+plotH); ctx.stroke();
+  }
+  // labels
+  ctx.fillStyle='rgba(159,176,204,0.9)';
+  ctx.font='12px system-ui';
+  ctx.textAlign='right';
+  for(let m=0;m<machines;m++) ctx.fillText('M'+(m+1),padL-6,padT+m*cellH+cellH/2+4);
+  ctx.textAlign='center';
+  for(let t=0;t<D;t++) ctx.fillText(String(t),padL+t*cellW+cellW/2,padT+plotH+14);
+  // jobs
+  for(let t=0;t<D;t++){
+    const subset=schedule[t]||[];
+    for(let mi=0;mi<machines;mi++){
+      const j=mi<subset.length?subset[mi]:-1;
+      const x=padL+t*cellW+2;
+      const y=padT+mi*cellH+2;
+      const w=cellW-4;
+      const h=cellH-4;
+      if(j>=0){
+        ctx.fillStyle=critical.has(j)?'#5eead4':'#22c55e';
+        ctx.fillRect(x,y,w,h);
+        ctx.fillStyle='#0b1220';
+        ctx.font='bold 12px system-ui';
+        ctx.textAlign='center';
+        ctx.fillText('J'+j,x+w/2,y+h/2+4);
+      } else {
+        ctx.fillStyle='#1f2a44';
+        ctx.fillRect(x,y,w,h);
+      }
+    }
+  }
+  ctx.textAlign='left';
+}
+
+function renderDAG(){
+  const ctx=dctx;
+  const W=dag.width,H=dag.height;
+  ctx.clearRect(0,0,W,H);
+  // levels
+  const level=Array(n).fill(0);
+  for(let i=0;i<n;i++) for(const p of preds[i]) level[i]=Math.max(level[i],level[p]+1);
+  const maxLevel=Math.max(...level);
+  const groups=Array.from({length:maxLevel+1},()=>[]);
+  for(let i=0;i<n;i++) groups[level[i]].push(i);
+  const padX=40,padY=40;
+  const usableW=W-2*padX;
+  const usableH=H-2*padY;
+  const pos=Array(n).fill(null);
+  for(let lv=0;lv<=maxLevel;lv++){
+    const g=groups[lv];
+    const x=padX+(maxLevel===0?0:(lv/maxLevel)*usableW);
+    for(let k=0;k<g.length;k++){
+      const y=padY+(g.length===1?usableH/2: (k/(g.length-1))*usableH);
+      pos[g[k]]={x,y};
+    }
+  }
+  // edges
+  ctx.strokeStyle='rgba(159,176,204,0.4)';
+  ctx.lineWidth=1.5;
+  for(let i=0;i<n;i++){
+    for(const p of preds[i]){
+      if(!pos[p]||!pos[i]) continue;
+      ctx.beginPath();
+      ctx.moveTo(pos[p].x,pos[p].y);
+      ctx.lineTo(pos[i].x,pos[i].y);
+      ctx.stroke();
+    }
+  }
+  // nodes
+  for(let i=0;i<n;i++){
+    const {x,y}=pos[i];
+    ctx.beginPath();
+    ctx.arc(x,y,16,0,Math.PI*2);
+    ctx.fillStyle=critical.has(i)?'#5eead4':'#16203a';
+    ctx.fill();
+    ctx.strokeStyle='#243252';
+    ctx.lineWidth=2;
+    ctx.stroke();
+    ctx.fillStyle=critical.has(i)?'#00130f':'#e6edf7';
+    ctx.font='bold 12px system-ui';
+    ctx.textAlign='center';
+    ctx.fillText(String(i),x,y+4);
+  }
+  ctx.textAlign='left';
+}
+
+function renderAll(){ updateStats(); renderGantt(); renderDAG(); }
+
+nSlider.addEventListener('input',function(){ nval.textContent=nSlider.value; genGraph(); });
+densSlider.addEventListener('input',function(){ densval.textContent=(+densSlider.value).toFixed(2); genGraph(); });
+dlSlider.addEventListener('input',function(){ dlval.textContent=dlSlider.value; updateStats(); });
+regenBtn.addEventListener('click',genGraph);
+
+genGraph();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

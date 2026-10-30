@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Squarefree quartics — interactive demo</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range]{flex:1 1 260px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:440px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+table{width:100%;border-collapse:collapse;font-size:.9rem}
+th,td{padding:.4rem .5rem;border-bottom:1px solid var(--border);text-align:left}
+th{color:var(--muted);font-weight:600}
+td.num{font-family:ui-monospace,monospace}
+.coeffs{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center}
+.coeffs input{width:70px;padding:.3rem;border-radius:6px;border:1px solid var(--border);background:var(--chip);color:var(--text)}
+.status{color:var(--muted);font-size:.9rem}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap" style="position:relative">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Squarefree quartics: density of squarefree polynomial values</h1>
+  <p>For an irreducible quartic with no fixed prime-square divisor, the density of n such that f(n) is squarefree is predicted by an Euler product. Here we compute it empirically up to N and compare to 1/ζ(2)=6/π².</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Proves the squarefree-values conjecture for irreducible integer quartics with no fixed prime-square divisor: squarefree values on positive integers have the predicted positive Euler-product density. More generally, establishes the (d−2)-power-free density for irreducible integer polynomials of degrees four through eight under the necessary local condition.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Settles squarefree values for quartics and, with Browning's higher-degree theorem, power-free values for every degree d≥4.</p>
+  </section>
+  <div class="controls">
+    <label>Polynomial f(x)=</label>
+    <div class="coeffs">
+      <input id="a" type="number" value="1"> x⁴ +
+      <input id="b" type="number" value="0"> x³ +
+      <input id="c" type="number" value="0"> x² +
+      <input id="d" type="number" value="0"> x +
+      <input id="e" type="number" value="1">
+    </div>
+  </div>
+  <div class="controls">
+    <label for="N">N</label>
+    <input id="N" type="range" min="100" max="3000" value="800" step="100">
+    <span class="val" id="Nval">800</span>
+    <button id="reset">Reset</button>
+    <span class="status" id="status"></span>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">N</div><div class="value" id="stN">—</div></div>
+    <div class="stat"><div class="label">Squarefree count</div><div class="value" id="stCount">—</div></div>
+    <div class="stat"><div class="label">Empirical density</div><div class="value" id="stDens">—</div></div>
+    <div class="stat"><div class="label">6/π²</div><div class="value" id="stRef">—</div></div>
+    <div class="stat"><div class="label">Difference</div><div class="value" id="stDiff">—</div></div>
+  </div>
+  <div style="position:relative">
+    <canvas id="canvas" width="900" height="440"></canvas>
+  </div>
+  <section class="box">
+    <h3>First values</h3>
+    <table>
+      <thead><tr><th>n</th><th>f(n)</th><th>squarefree?</th></tr></thead>
+      <tbody id="tbl"></tbody>
+    </table>
+  </section>
+</div>
+<script>
+const PI = Math.PI;
+const REF = 6/(PI*PI);
+
+// BigInt helpers
+function gcd(a,b){ while(b!==0n){const t=a%b; a=b; b=t;} return a<0n?-a:a; }
+function modpow(base,exp,mod){ let r=1n%mod; base=base%mod; while(exp>0n){ if(exp&1n) r=(r*base)%mod; base=(base*base)%mod; exp>>=1n;} return r; }
+function isPrime(n){
+  if(n<2n) return false;
+  const small=[2n,3n,5n,7n,11n,13n,17n,19n,23n,29n,31n,37n];
+  for(const p of small){ if(n===p) return true; if(n%p===0n) return false; }
+  let d=n-1n, r=0n;
+  while(d%2n===0n){ d/=2n; r++; }
+  for(const a of [2n,3n,5n,7n,11n,13n,17n]){
+    let x=modpow(a,d,n);
+    if(x===1n||x===n-1n) continue;
+    let comp=true;
+    for(let i=0;i<Number(r)-1;i++){
+      x=(x*x)%n;
+      if(x===n-1n){ comp=false; break; }
+    }
+    if(comp) return false;
+  }
+  return true;
+}
+function pollard(n){
+  if(n%2n===0n) return 2n;
+  if(n%3n===0n) return 3n;
+  let x=2n,y=2n,d=1n,c=1n;
+  while(true){
+    x=(x*x+c)%n;
+    y=(y*y+c)%n;
+    y=(y*y+c)%n;
+    let diff=x>y?x-y:y-x;
+    d=gcd(diff,n);
+    if(d===n){ c++; x=2n; y=2n; d=1n; }
+    else if(d!==1n) return d;
+  }
+}
+function factor(n,out){
+  if(n===1n) return;
+  if(isPrime(n)){ out.push(n); return; }
+  const d=pollard(n);
+  factor(d,out);
+  factor(n/d,out);
+}
+function isSquarefree(m){
+  if(m<0n) m=-m;
+  if(m===0n) return false;
+  if(m===1n) return true;
+  const fs=[];
+  factor(m,fs);
+  fs.sort((a,b)=> a<b?-1:(a>b?1:0));
+  for(let i=0;i<fs.length-1;i++) if(fs[i]===fs[i+1]) return false;
+  return true;
+}
+
+const canvas=document.getElementById('canvas');
+const ctx=canvas.getContext('2d');
+function resizeCanvas(){ canvas.width=Math.max(300,canvas.clientWidth); canvas.height=440; }
+window.addEventListener('resize',()=>{resizeCanvas();draw();});
+resizeCanvas();
+
+let coeffs={a:1n,b:0n,c:0n,d:0n,e:1n};
+let computed=0;
+let sq=[]; // 1-indexed
+let cum=[]; // cumulative density
+let count=0;
+let computing=false;
+
+function readCoeffs(){
+  coeffs.a=BigInt(document.getElementById('a').value||0);
+  coeffs.b=BigInt(document.getElementById('b').value||0);
+  coeffs.c=BigInt(document.getElementById('c').value||0);
+  coeffs.d=BigInt(document.getElementById('d').value||0);
+  coeffs.e=BigInt(document.getElementById('e').value||0);
+}
+function fval(n){
+  const x=BigInt(n);
+  return coeffs.a*x*x*x*x + coeffs.b*x*x*x + coeffs.c*x*x + coeffs.d*x + coeffs.e;
+}
+
+function resetData(){
+  readCoeffs();
+  computed=0; sq=[false]; cum=[0]; count=0;
+  document.getElementById('status').textContent='Computing...';
+  computeTo(+document.getElementById('N').value);
+}
+
+function computeTo(target){
+  if(target<=computed) return;
+  // chunk
+  const chunk=200;
+  let n=computed+1;
+  function step(){
+    const end=Math.min(n+chunk-1,target);
+    for(; n<=end; n++){
+      const sf=isSquarefree(fval(n));
+      sq[n]=sf;
+      if(sf) count++;
+      cum[n]=count/n;
+    }
+    if(n<=target){
+      document.getElementById('status').textContent='Computing '+n+'/'+target+'...';
+      setTimeout(step,0);
+    } else {
+      computed=target;
+      document.getElementById('status').textContent='';
+      update();
+    }
+  }
+  step();
+}
+
+function update(){
+  const N=+document.getElementById('N').value;
+  document.getElementById('Nval').textContent=N;
+  if(N>computed){ computeTo(N); return; }
+  document.getElementById('stN').textContent=N.toLocaleString();
+  document.getElementById('stCount').textContent=count.toLocaleString();
+  const dens = count/N;
+  document.getElementById('stDens').textContent=dens.toFixed(6);
+  document.getElementById('stRef').textContent=REF.toFixed(6);
+  document.getElementById('stDiff').textContent=(dens-REF).toFixed(6);
+  draw();
+  // table first 20
+  const tbody=document.getElementById('tbl');
+  tbody.innerHTML='';
+  for(let i=1;i<=Math.min(20,N);i++){
+    const tr=document.createElement('tr');
+    tr.innerHTML='<td class="num">'+i+'</td><td class="num">'+fval(i).toString()+'</td><td>'+(sq[i]?'yes':'no')+'</td>';
+    tbody.appendChild(tr);
+  }
+}
+
+function draw(){
+  const N=+document.getElementById('N').value;
+  if(N>computed) return;
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const padL=60,padR=20,padT=20,padB=44;
+  const plotW=W-padL-padR, plotH=H-padT-padB;
+  // grid
+  ctx.strokeStyle='rgba(159,176,204,0.15)'; ctx.lineWidth=1;
+  for(let i=0;i<=5;i++){
+    const y=padT+plotH*i/5;
+    ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(W-padR,y); ctx.stroke();
+    const x=padL+plotW*i/5;
+    ctx.beginPath(); ctx.moveTo(x,padT); ctx.lineTo(x,H-padB); ctx.stroke();
+  }
+  ctx.strokeStyle='#475569'; ctx.lineWidth=1.5;
+  ctx.beginPath(); ctx.moveTo(padL,H-padB); ctx.lineTo(W-padR,H-padB); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(padL,padT); ctx.lineTo(padL,H-padB); ctx.stroke();
+  ctx.fillStyle='#9fb0cc'; ctx.font='12px system-ui';
+  ctx.fillText('n', W/2-5, H-8);
+  ctx.save(); ctx.translate(16,H/2+40); ctx.rotate(-Math.PI/2); ctx.fillText('density',0,0); ctx.restore();
+
+  // y range around [0.4,0.8]
+  const ymin=0.4, ymax=0.8;
+  const X=v=>padL+plotW*(v-1)/(N-1||1);
+  const Y=v=>padT+plotH*(1-(v-ymin)/(ymax-ymin));
+  // reference line
+  ctx.strokeStyle='rgba(94,234,212,0.7)'; ctx.setLineDash([6,6]); ctx.lineWidth=2;
+  ctx.beginPath(); ctx.moveTo(padL,Y(REF)); ctx.lineTo(W-padR,Y(REF)); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle='#5eead4'; ctx.font='11px system-ui';
+  ctx.fillText('6/π²', W-padR-45, Y(REF)-6);
+  // cumulative density curve (sample)
+  const step=Math.max(1,Math.floor(N/800));
+  ctx.strokeStyle='#f59e0b'; ctx.lineWidth=2.5;
+  ctx.beginPath();
+  let first=true;
+  for(let i=1;i<=N;i+=step){
+    const x=X(i), y=Y(cum[i]);
+    if(first){ctx.moveTo(x,y);first=false;} else ctx.lineTo(x,y);
+  }
+  if(N%step!==0){ const x=X(N),y=Y(cum[N]); ctx.lineTo(x,y);}
+  ctx.stroke();
+}
+
+const nSlider=document.getElementById('N');
+nSlider.addEventListener('input',update);
+document.getElementById('reset').addEventListener('click',()=>{ document.getElementById('N').value=800; document.getElementById('Nval').textContent=800; resetData(); });
+document.querySelectorAll('.coeffs input').forEach(inp=>inp.addEventListener('change',resetData));
+
+resetData();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Critical and quenched near-critical universality for Poisson–Voronoi percolation (conceptual, result 224)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range]{flex:1 1 160px}
+input[type=number]{width:6rem;padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text)}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:auto;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+.legend{display:flex;gap:1rem;align-items:center;font-size:.85rem;color:var(--muted);margin:.5rem 0;flex-wrap:wrap}
+.swatch{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:.3rem;vertical-align:middle}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Critical and quenched near-critical universality for Poisson–Voronoi percolation (conceptual, result 224)</h1>
+  <p>Conceptual view of critical Poisson–Voronoi percolation: Cardy crossing probabilities in quadrilaterals, normalized near-critical thresholds, and the $\varepsilon^{-3/4}$ pivotal amplitude.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Proves Cardy's formula for annealed crossing probabilities in critical planar Poisson–Voronoi percolation in every bounded Jordan quadrilateral, and establishes quenched near-critical universality: conditional on the Poisson tessellation, normalized crossing-threshold laws for rational polygonal quads converge in environment probability to the triangular-lattice reference law. Each model is normalized by its own expected number of color-pivotal sites for a unit-square crossing. The expected number of color-pivotal cells for a unit-square crossing is asymptotic to a positive constant times $\varepsilon^{-3/4}$, where the point intensity is $\varepsilon^{-2}$.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Places Poisson–Voronoi percolation in the same universality class as triangular-lattice percolation, with a model-dependent pivotal amplitude, supporting conformal invariance and near-critical scaling in random planar media.</p>
+  </section>
+  <div class="controls">
+    <label for="N">sites $N$</label>
+    <input id="N" type="range" min="30" max="140" value="70" step="1">
+    <span class="val" id="nval">70</span>
+    <label for="p">color prob $p$</label>
+    <input id="p" type="range" min="0" max="1" value="0.5" step="0.01">
+    <span class="val" id="pval">0.50</span>
+  </div>
+  <div class="controls">
+    <label for="seed">seed</label>
+    <input id="seed" type="number" value="42">
+    <button id="resamplePts">Resample points</button>
+    <button id="resampleCols">Resample colors</button>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Sites $N$</div><div class="value" id="sitesStat">—</div></div>
+    <div class="stat"><div class="label">Crossing (L–R)</div><div class="value" id="crossStat">—</div></div>
+    <div class="stat"><div class="label">Pivotal count</div><div class="value" id="pivStat">—</div></div>
+    <div class="stat"><div class="label">Aspect ratio $r$</div><div class="value" id="rval">1.00</div></div>
+  </div>
+  <div class="layout">
+    <div class="left">
+      <canvas id="vor" width="360" height="360"></canvas>
+      <div class="legend">
+        <span><span class="swatch" style="background:#22c55e"></span>color A (crossing)</span>
+        <span><span class="swatch" style="background:#1f2a44"></span>color B</span>
+        <span><span class="swatch" style="background:#5eead4"></span>site</span>
+      </div>
+      <canvas id="cardy" width="560" height="300"></canvas>
+      <canvas id="scaling" width="560" height="300"></canvas>
+    </div>
+    <div class="right">
+      <canvas id="thresh" width="340" height="300"></canvas>
+    </div>
+  </div>
+</div>
+<script>
+const SIZE = 320;
+let rng = mulberry32(42);
+function mulberry32(a){ a|=0; return function(){ a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+function rand(){ return rng(); }
+
+let sites = []; // {x,y,color}
+let siteOf = new Int16Array(SIZE*SIZE);
+let colors = [];
+
+function genPoints(){
+  const N = parseInt(document.getElementById('N').value,10);
+  const seed = parseInt(document.getElementById('seed').value,10) || 42;
+  rng = mulberry32(seed);
+  sites = [];
+  for(let i=0;i<N;i++) sites.push({x: rand()*SIZE, y: rand()*SIZE});
+  genColors();
+}
+
+function genColors(){
+  const p = parseFloat(document.getElementById('p').value);
+  const seed = parseInt(document.getElementById('seed').value,10) || 42;
+  // deterministic colors from a separate rng seeded by seed+1
+  let r = mulberry32(seed+999);
+  colors = sites.map(()=> (r() < p) ? 1 : 0);
+  computeSiteOf();
+  renderVoronoi();
+  updateStats();
+}
+
+function computeSiteOf(){
+  // for each pixel find nearest site index
+  for(let y=0;y<SIZE;y++){
+    for(let x=0;x<SIZE;x++){
+      let best=0, bd=Infinity;
+      for(let i=0;i<sites.length;i++){
+        const dx=x-sites[i].x, dy=y-sites[i].y;
+        const d=dx*dx+dy*dy;
+        if(d<bd){ bd=d; best=i; }
+      }
+      siteOf[y*SIZE+x]=best;
+    }
+  }
+}
+
+function pixelColor(idx){ return colors[siteOf[idx]]; }
+
+function crossing(colorsArr){
+  // flood fill color 1 from left boundary to right
+  const visited = new Uint8Array(SIZE*SIZE);
+  const stack = [];
+  for(let y=0;y<SIZE;y++){
+    const idx = y*SIZE+0;
+    if(colorsArr[siteOf[idx]]===1 && !visited[idx]){ visited[idx]=1; stack.push(idx); }
+  }
+  while(stack.length){
+    const idx = stack.pop();
+    const x = idx % SIZE;
+    if(x === SIZE-1) return true;
+    const y = (idx/SIZE)|0;
+    // neighbors
+    if(x>0){ const n=idx-1; if(!visited[n] && colorsArr[siteOf[n]]===1){ visited[n]=1; stack.push(n);} }
+    if(x<SIZE-1){ const n=idx+1; if(!visited[n] && colorsArr[siteOf[n]]===1){ visited[n]=1; stack.push(n);} }
+    if(y>0){ const n=idx-SIZE; if(!visited[n] && colorsArr[siteOf[n]]===1){ visited[n]=1; stack.push(n);} }
+    if(y<SIZE-1){ const n=idx+SIZE; if(!visited[n] && colorsArr[siteOf[n]]===1){ visited[n]=1; stack.push(n);} }
+  }
+  return false;
+}
+
+function countPivotal(){
+  const base = crossing(colors);
+  let cnt=0;
+  for(let i=0;i<sites.length;i++){
+    const old=colors[i];
+    colors[i]=old?0:1;
+    const c = crossing(colors);
+    if(c !== base) cnt++;
+    colors[i]=old;
+  }
+  return cnt;
+}
+
+function renderVoronoi(){
+  const cv = document.getElementById('vor');
+  const ctx = cv.getContext('2d');
+  const W = cv.width, H = cv.height;
+  const sx = W/SIZE, sy = H/SIZE;
+  // draw cells by sampling siteOf
+  const img = ctx.createImageData(W,H);
+  for(let y=0;y<H;y++){
+    for(let x=0;x<W;x++){
+      const si = siteOf[(Math.floor(y/sy)*SIZE + Math.floor(x/sx))];
+      const col = colors[si];
+      const i = (y*W+x)*4;
+      if(col===1){ img.data[i]=34; img.data[i+1]=197; img.data[i+2]=94; img.data[i+3]=200; }
+      else { img.data[i]=31; img.data[i+1]=42; img.data[i+2]=68; img.data[i+3]=200; }
+    }
+  }
+  ctx.putImageData(img,0,0);
+  // draw sites
+  ctx.fillStyle = '#5eead4';
+  for(const s of sites){
+    ctx.beginPath(); ctx.arc(s.x*sx, s.y*sy, 2.5, 0, Math.PI*2); ctx.fill();
+  }
+}
+
+function updateStats(){
+  const N = sites.length;
+  const cross = crossing(colors);
+  const piv = countPivotal();
+  document.getElementById('nval').textContent = N;
+  document.getElementById('pval').textContent = parseFloat(document.getElementById('p').value).toFixed(2);
+  document.getElementById('sitesStat').textContent = N;
+  document.getElementById('crossStat').textContent = cross ? 'YES' : 'NO';
+  document.getElementById('crossStat').style.color = cross ? 'var(--good)' : 'var(--bad)';
+  document.getElementById('pivStat').textContent = piv;
+  document.getElementById('rval').textContent = '1.00';
+  drawCardy();
+  drawScaling(N, piv);
+  drawThresh();
+}
+
+function drawCardy(){
+  const cv = document.getElementById('cardy');
+  const ctx = cv.getContext('2d');
+  const W = cv.width, H = cv.height;
+  ctx.clearRect(0,0,W,H);
+  const pad=40;
+  const xmin=0.2, xmax=5;
+  const ymin=0, ymax=1;
+  function X(v){ return pad + (Math.log(v)-Math.log(xmin))/(Math.log(xmax)-Math.log(xmin))*(W-2*pad); }
+  function Y(v){ return H-pad - (v-ymin)/(ymax-ymin)*(H-2*pad); }
+  ctx.strokeStyle='#9fb0cc'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(pad,H-pad); ctx.lineTo(W-pad,H-pad); ctx.moveTo(pad,pad); ctx.lineTo(pad,H-pad); ctx.stroke();
+  ctx.fillStyle='#9fb0cc'; ctx.font='12px system-ui';
+  ctx.fillText('aspect ratio r', W/2-40, H-8);
+  ctx.fillText('P_cross', 4, pad-8);
+  // ticks
+  for(const r of [0.2,0.5,1,2,5]){
+    ctx.beginPath(); ctx.moveTo(X(r),H-pad); ctx.lineTo(X(r),H-pad+4); ctx.stroke();
+    ctx.fillText(r.toString(), X(r)-8, H-pad+16);
+  }
+  for(const t of [0,0.25,0.5,0.75,1]){
+    ctx.beginPath(); ctx.moveTo(pad-4,Y(t)); ctx.lineTo(pad,Y(t)); ctx.stroke();
+    ctx.fillText(t.toFixed(2), pad-34, Y(t)+4);
+  }
+  // Cardy-like sigmoid: P = 1/(1+exp(2*log r)) roughly, midpoint at r=1
+  ctx.strokeStyle='#5eead4'; ctx.lineWidth=2;
+  ctx.beginPath();
+  let started=false;
+  for(let i=0;i<=200;i++){
+    const r = xmin*Math.pow(xmax/xmin, i/200);
+    const P = 1/(1+Math.exp(1.8*Math.log(r)));
+    if(!started){ ctx.moveTo(X(r),Y(P)); started=true; } else ctx.lineTo(X(r),Y(P));
+  }
+  ctx.stroke();
+  // current point at r=1
+  ctx.fillStyle='#22c55e';
+  ctx.beginPath(); ctx.arc(X(1),Y(0.5),5,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle='#9fb0cc'; ctx.font='11px system-ui';
+  ctx.fillText('Cardy (conceptual)', pad+6, pad+12);
+}
+
+function drawScaling(N, piv){
+  const cv = document.getElementById('scaling');
+  const ctx = cv.getContext('2d');
+  const W = cv.width, H = cv.height;
+  ctx.clearRect(0,0,W,H);
+  const pad=44;
+  const xmin=1, xmax=1e3;
+  const ymin=1, ymax=1e3;
+  function X(v){ return pad + (Math.log10(v)-Math.log10(xmin))/(Math.log10(xmax)-Math.log10(xmin))*(W-2*pad); }
+  function Y(v){ return H-pad - (Math.log10(v)-Math.log10(ymin))/(Math.log10(ymax)-Math.log10(ymin))*(H-2*pad); }
+  ctx.strokeStyle='#9fb0cc'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(pad,H-pad); ctx.lineTo(W-pad,H-pad); ctx.moveTo(pad,pad); ctx.lineTo(pad,H-pad); ctx.stroke();
+  ctx.fillStyle='#9fb0cc'; ctx.font='12px system-ui';
+  ctx.fillText('1/ε ~ sqrt(N)', W/2-50, H-8);
+  ctx.fillText('pivotal count', 4, pad-8);
+  // reference slope 3/4
+  ctx.strokeStyle='rgba(94,234,212,0.6)'; ctx.lineWidth=2; ctx.setLineDash([6,4]);
+  ctx.beginPath();
+  const x0=10, y0=2;
+  ctx.moveTo(X(x0),Y(y0));
+  ctx.lineTo(X(1000),Y(y0*Math.pow(1000/x0,0.75)));
+  ctx.stroke();
+  ctx.setLineDash([]);
+  // current point
+  const epsInv = Math.sqrt(N);
+  ctx.fillStyle='#ef4444';
+  ctx.beginPath(); ctx.arc(X(epsInv),Y(Math.max(1,piv)),6,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle='#9fb0cc'; ctx.font='11px system-ui';
+  ctx.fillText('reference slope 3/4', pad+6, pad+12);
+}
+
+function drawThresh(){
+  const cv = document.getElementById('thresh');
+  const ctx = cv.getContext('2d');
+  const W = cv.width, H = cv.height;
+  ctx.clearRect(0,0,W,H);
+  const pad=36;
+  const xmin=-3, xmax=3;
+  const ymin=0, ymax=1;
+  function X(v){ return pad + (v-xmin)/(xmax-xmin)*(W-2*pad); }
+  function Y(v){ return H-pad - (v-ymin)/(ymax-ymin)*(H-2*pad); }
+  ctx.strokeStyle='#9fb0cc'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(pad,H-pad); ctx.lineTo(W-pad,H-pad); ctx.moveTo(pad,pad); ctx.lineTo(pad,H-pad); ctx.stroke();
+  ctx.fillStyle='#9fb0cc'; ctx.font='11px system-ui';
+  ctx.fillText('normalized threshold', W/2-60, H-6);
+  ctx.fillText('CDF', 4, pad-6);
+  // standard normal CDF
+  function erf(x){ // Abramowitz approx
+    const s=Math.sign(x); x=Math.abs(x);
+    const t=1/(1+0.3275911*x);
+    const y=1-Math.exp(-x*x)*(0.254829592*t-0.284496736*t*t+1.421413741*t*t*t-1.453152027*t*t*t*t+1.061405429*t*t*t*t*t);
+    return s*y;
+  }
+  function Phi(x){ return 0.5*(1+erf(x/Math.sqrt(2))); }
+  ctx.strokeStyle='#5eead4'; ctx.lineWidth=2;
+  ctx.beginPath();
+  let started=false;
+  for(let i=0;i<=200;i++){
+    const t = xmin + (xmax-xmin)*i/200;
+    const cdf = Phi(t);
+    if(!started){ ctx.moveTo(X(t),Y(cdf)); started=true; } else ctx.lineTo(X(t),Y(cdf));
+  }
+  ctx.stroke();
+  ctx.fillStyle='#9fb0cc'; ctx.font='11px system-ui';
+  ctx.fillText('quenched threshold law (conceptual)', pad+4, pad+12);
+}
+
+const Nsl = document.getElementById('N');
+const psl = document.getElementById('p');
+Nsl.addEventListener('input', ()=>{ document.getElementById('nval').textContent = Nsl.value; genPoints(); });
+psl.addEventListener('input', ()=>{ document.getElementById('pval').textContent = parseFloat(psl.value).toFixed(2); genColors(); });
+document.getElementById('seed').addEventListener('change', genPoints);
+document.getElementById('resamplePts').addEventListener('click', ()=>{ document.getElementById('seed').value = Math.floor(Math.random()*1e6); genPoints(); });
+document.getElementById('resampleCols').addEventListener('click', genColors);
+
+genPoints();
+</script>
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

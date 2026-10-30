@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Petty projection-volume (conceptual, result 088)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range]{flex:1 1 220px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:440px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+select{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text)}
+.toggle{display:inline-flex;align-items:center;gap:.4rem}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Petty projection-volume (conceptual, result 088)</h1>
+  <p>For a convex body (K\subset\mathbb R^n), Petty's inequality says (\frac{|\Pi K|}{|K|^{n-1}}\ge \kappa_{n-1}^n\kappa_n^{2-n}), with equality exactly for ellipsoids when (n\ge4). Compare body types, dimensions, and the simplex counterexample.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Proves Petty's projection-volume conjecture in dimensions \(n\ge4\): ellipsoids uniquely minimize projection-body volume at fixed body volume. Also establishes the full Lutwak--Petty projection inequalities. In contrast, products of simplices exceed Brannen's proposed simplex maximum for normalized projection-body volume by an exponential factor in every sufficiently large dimension; in dimension \(20\), a product of two \(10\)-simplices beats a \(20\)-simplex by \(22355476/22020096>1).</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Gives the sharp lower bound (|\Pi K|/|K|^{n-1}\ge \kappa_{n-1}^n\kappa_n^{2-n}) with equality exactly for ellipsoids, completing the projection-body inequality family. Shows normalized projection-body volume is not maximized by simplices in high dimensions, via explicit product-of-simplices counterexamples. These affine-invariant comparisons govern convex geometry, projection-body theory, and extremal volume problems.</p>
+  </section>
+  <div class="controls">
+    <label for="n">Dimension n</label>
+    <input id="n" type="range" min="2" max="8" value="4" step="1">
+    <span class="val" id="nval">4</span>
+    <label for="body">Body</label>
+    <select id="body">
+      <option value="ellipsoid" selected>Ellipsoid</option>
+      <option value="box">Box (parallelotope)</option>
+      <option value="simplex">Simplex</option>
+    </select>
+    <label for="a">Anisotropy</label>
+    <input id="a" type="range" min="0" max="100" value="50" step="1">
+    <span class="val" id="aval">0.50</span>
+    <label for="view">View</label>
+    <select id="view">
+      <option value="ineq" selected>Inequality</option>
+      <option value="counter">Counterexample</option>
+      <option value="inv">Invariants</option>
+    </select>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Dimension (n)</div><div class="value" id="nstat">—</div></div>
+    <div class="stat"><div class="label">Petty constant C(n)</div><div class="value" id="cstat">—</div></div>
+    <div class="stat"><div class="label">Body ratio R(K)</div><div class="value" id="rstat">—</div></div>
+    <div class="stat"><div class="label">Margin R-C</div><div class="value" id="mstat">—</div></div>
+    <div class="stat"><div class="label">Box ratio 2^n</div><div class="value" id="boxstat">—</div></div>
+    <div class="stat"><div class="label">Simplex ratio</div><div class="value" id="simpstat">—</div></div>
+    <div class="stat"><div class="label">Body type</div><div class="value" id="bodystat">—</div></div>
+    <div class="stat"><div class="label">Anisotropy</div><div class="value" id="anisstat">—</div></div>
+  </div>
+  <canvas id="c" width="900" height="440"></canvas>
+</div>
+<script>
+const nSlider=document.getElementById('n');
+const bodySel=document.getElementById('body');
+const aSlider=document.getElementById('a');
+const viewSel=document.getElementById('view');
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+
+const nval=document.getElementById('nval');
+const aval=document.getElementById('aval');
+const nstat=document.getElementById('nstat');
+const cstat=document.getElementById('cstat');
+const rstat=document.getElementById('rstat');
+const mstat=document.getElementById('mstat');
+const boxstat=document.getElementById('boxstat');
+const simpstat=document.getElementById('simpstat');
+const bodystat=document.getElementById('bodystat');
+const anisstat=document.getElementById('anisstat');
+
+function factorial(x){ let r=1; for(let i=2;i<=x;i++) r*=i; return r; }
+function ballVolumes(maxN){
+  const v=[0,maxN+2];
+  v[0]=1; if(maxN>=1) v[1]=2;
+  for(let j=2;j<=maxN;j++) v[j]=2*Math.PI/j * v[j-2];
+  return v;
+}
+const VOLS=ballVolumes(20);
+
+function pettyConstant(n){ return Math.pow(VOLS[n-1],n)*Math.pow(VOLS[n],2-n); }
+function simplexRatio(n){ return (n+1)*Math.pow(n,n-1)/factorial(n-1); }
+function boxRatio(n){ return Math.pow(2,n); }
+
+function bodyRatio(n,type){
+  if(type==='ellipsoid') return pettyConstant(n);
+  if(type==='box') return boxRatio(n);
+  return simplexRatio(n);
+}
+
+let state={};
+
+function updateState(){
+  const n=+nSlider.value;
+  const type=bodySel.value;
+  const a=+aSlider.value/100;
+  const view=viewSel.value;
+  const C=pettyConstant(n);
+  const R=bodyRatio(n,type);
+  state={n,type,a,view,C,R,margin:R-C};
+}
+
+function updateStats(){
+  const s=state;
+  nval.textContent=s.n;
+  aval.textContent=s.a.toFixed(2);
+  nstat.textContent=s.n;
+  cstat.textContent=s.C.toExponential(4);
+  rstat.textContent=s.R.toExponential(4);
+  mstat.textContent=s.margin.toExponential(4);
+  boxstat.textContent=boxRatio(s.n).toExponential(4);
+  simpstat.textContent=simplexRatio(s.n).toExponential(4);
+  bodystat.textContent=s.type;
+  anisstat.textContent=s.a.toFixed(2);
+}
+
+function resizeCanvas(){ canvas.width=Math.max(300,canvas.clientWidth); canvas.height=440; }
+window.addEventListener('resize',function(){ resizeCanvas(); render(); });
+resizeCanvas();
+
+function drawIneq(W,H,s){
+  const pad=50;
+  // axes
+  ctx.strokeStyle='rgba(159,176,204,0.35)'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(pad,H-pad); ctx.lineTo(W-pad,H-pad); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(pad,pad); ctx.lineTo(pad,H-pad); ctx.stroke();
+  ctx.fillStyle='#9fb0cc'; ctx.font='11px system-ui'; ctx.textAlign='center';
+  ctx.fillText('dimension n', W/2, H-12);
+  ctx.save(); ctx.translate(16,H/2); ctx.rotate(-Math.PI/2); ctx.fillText('normalized ratio',0,0); ctx.restore();
+
+  const ns=[]; for(let n=2;n<=8;n++) ns.push(n);
+  const vals=ns.map(n=>pettyConstant(n));
+  const maxV=Math.max(...vals, s.R, boxRatio(s.n), simplexRatio(s.n))*1.15;
+  function mx(n){ return pad+(n-2)/(8-2)*(W-2*pad); }
+  function my(v){ return H-pad - v/maxV*(H-2*pad); }
+
+  // curve C(n)
+  ctx.strokeStyle='#5eead4'; ctx.lineWidth=2.5;
+  ctx.beginPath();
+  ns.forEach((n,i)=>{
+    const x=mx(n), y=my(vals[i]);
+    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  });
+  ctx.stroke();
+  ctx.fillStyle='#5eead4'; ctx.font='11px system-ui'; ctx.textAlign='left';
+  ctx.fillText('Petty constant C(n)', mx(2)+6, my(vals[0])-8);
+
+  // selected body point
+  const px=mx(s.n), py=my(s.R);
+  ctx.fillStyle='#f59e0b';
+  ctx.beginPath(); ctx.arc(px,py,8,0,Math.PI*2); ctx.fill();
+  ctx.strokeStyle='#e6edf7'; ctx.lineWidth=1.5; ctx.beginPath(); ctx.arc(px,py,8,0,Math.PI*2); ctx.stroke();
+  ctx.fillStyle='#e6edf7'; ctx.font='12px system-ui'; ctx.textAlign='left';
+  ctx.fillText(s.type+' at n='+s.n, px+12, py-8);
+
+  // box/simplex reference lines at selected n
+  ctx.setLineDash([6,4]);
+  ctx.strokeStyle='rgba(245,158,11,0.6)'; ctx.lineWidth=1.5;
+  ctx.beginPath(); ctx.moveTo(mx(s.n),my(boxRatio(s.n))); ctx.lineTo(W-pad,my(boxRatio(s.n))); ctx.stroke();
+  ctx.strokeStyle='rgba(239,68,68,0.6)';
+  ctx.beginPath(); ctx.moveTo(mx(s.n),my(simplexRatio(s.n))); ctx.lineTo(W-pad,my(simplexRatio(s.n))); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle='#f59e0b'; ctx.font='10px system-ui'; ctx.textAlign='right';
+  ctx.fillText('box 2^n', W-pad, my(boxRatio(s.n))-4);
+  ctx.fillStyle='#ef4444'; ctx.font='10px system-ui'; ctx.textAlign='right';
+  ctx.fillText('simplex', W-pad, my(simplexRatio(s.n))-4);
+
+  ctx.fillStyle='#9fb0cc'; ctx.font='10px system-ui'; ctx.textAlign='center';
+  for(let n=2;n<=8;n++) ctx.fillText(n, mx(n), H-pad+14);
+}
+
+function drawCounter(W,H){
+  const pad=50;
+  const simp=simplexRatio(20);
+  const prod=simp*22355476/22020096;
+  const maxV=Math.max(simp,prod)*1.2;
+  function bar(x,w,v,color,label){
+    const h=v/maxV*(H-2*pad);
+    const y=H-pad-h;
+    ctx.fillStyle=color;
+    ctx.fillRect(x,y,w,h);
+    ctx.fillStyle='#e6edf7'; ctx.font='11px system-ui'; ctx.textAlign='center';
+    ctx.fillText(label, x+w/2, H-pad+16);
+    ctx.fillText(v.toExponential(3), x+w/2, y-6);
+  }
+  const w=(W-2*pad)/3;
+  bar(pad, w, simp, '#ef4444', '20-simplex');
+  bar(pad+w+20, w, prod, '#f59e0b', 'product of 10-simplices');
+  ctx.fillStyle='#9fb0cc'; ctx.font='12px system-ui'; ctx.textAlign='center';
+  ctx.fillText('Dimension 20 comparison: product exceeds simplex by factor 22355476/22020096', W/2, pad-10);
+  ctx.fillStyle='#9fb0cc'; ctx.font='11px system-ui'; ctx.textAlign='center';
+  ctx.fillText('factor = '+(22355476/22020096).toFixed(6), W/2, pad+6);
+}
+
+function drawInv(W,H,s){
+  const x=40,y=50,dy=24;
+  const lines=[
+    'Result 088 — Petty projection-volume and simplex counterexamples',
+    'Inequality: |ΠK|/|K|^{n-1} ≥ κ_{n-1}^n κ_n^{2-n}',
+    'κ_j = volume of Euclidean unit ball in R^j',
+    'Equality: ellipsoids (n≥4); centrally symmetric bodies (n=2)',
+    'Box (parallelotope) ratio: 2^n',
+    'Simplex ratio: (n+1)n^{n-1}/(n-1)!',
+    'Dimension n = '+s.n+'   constant = '+s.C.toExponential(4),
+    'Body = '+s.type+'   ratio = '+s.R.toExponential(4),
+    'Margin = '+s.margin.toExponential(4),
+    'Counterexample: product of two 10-simplices in dim 20',
+    '  beats 20-simplex by 22355476/22020096 > 1',
+  ];
+  ctx.fillStyle='#e6edf7'; ctx.font='14px system-ui'; ctx.textAlign='left';
+  lines.forEach((l,i)=>{
+    if(i===0){ ctx.fillStyle='#5eead4'; ctx.font='16px system-ui'; }
+    else { ctx.fillStyle='#e6edf7'; ctx.font='14px system-ui'; }
+    ctx.fillText(l, x, y+i*dy);
+  });
+}
+
+function render(){
+  updateState();
+  updateStats();
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  if(state.view==='ineq') drawIneq(W,H,state);
+  else if(state.view==='counter') drawCounter(W,H);
+  else drawInv(W,H,state);
+}
+
+nSlider.addEventListener('input',render);
+bodySel.addEventListener('change',render);
+aSlider.addEventListener('input',render);
+viewSel.addEventListener('change',render);
+render();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

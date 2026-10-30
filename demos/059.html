@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Zariski’s multiplicity conjecture: counterexample (conceptual, result 059)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range]{flex:1 1 220px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:420px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+select{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text)}
+table{width:100%;border-collapse:collapse;font-size:.85rem}
+th,td{padding:.35rem .45rem;border-bottom:1px solid var(--border);text-align:left}
+th{color:var(--muted);font-weight:600}
+td.num{font-family:ui-monospace,monospace}
+.badge{display:inline-block;padding:.15rem .5rem;border-radius:6px;font-size:.75rem;font-weight:700}
+.ok{color:var(--good)} .bad{color:var(--bad)} .warn{color:var(--warn)}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Zariski’s multiplicity conjecture: counterexample (conceptual, result 059)</h1>
+  <p>A reduced holomorphic hypersurface germ with an isolated critical point has a multiplicity: the degree of its tangent cone. Zariski conjectured that ambient homeomorphism of such germs forces equal multiplicity. The counterexamples keep the ambient topological type fixed while changing that tangent-cone degree.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Disproves Zariski's multiplicity conjecture by constructing reduced holomorphic hypersurface germs that are ambiently homeomorphic but have different multiplicities. The examples include hypersurfaces in (\mathbb C^4) with isolated critical points and multiplicities four and five.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Shows that multiplicity is not determined by the ambient topology of a hypersurface germ: two germs can be ambiently homeomorphic while their tangent cones have different degrees. This motivates stronger invariants, such as Lipschitz geometry or metric tangent cones, for analytic classification.</p>
+  </section>
+  <div class="controls">
+    <label for="topo">Topological type</label>
+    <select id="topo">
+      <option value="one" selected>One link component</option>
+      <option value="two">Two link components</option>
+    </select>
+    <label for="ma">Multiplicity A</label>
+    <input id="ma" type="range" min="2" max="8" value="4" step="1">
+    <span class="val" id="maval">4</span>
+    <label for="mb">Multiplicity B</label>
+    <input id="mb" type="range" min="2" max="8" value="5" step="1">
+    <span class="val" id="mbval">5</span>
+    <button id="pair45">Known pair 4 / 5</button>
+    <button id="pair23">Known pair 2 / 3</button>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Ambient space</div><div class="value">(\mathbb C^4)</div></div>
+    <div class="stat"><div class="label">Critical point</div><div class="value">isolated</div></div>
+    <div class="stat"><div class="label">Topological type</div><div class="value" id="topost">same</div></div>
+    <div class="stat"><div class="label">Multiplicity A</div><div class="value" id="mast">4</div></div>
+    <div class="stat"><div class="label">Multiplicity B</div><div class="value" id="mbst">5</div></div>
+    <div class="stat"><div class="label">Zariski prediction</div><div class="value" id="predst">equal</div></div>
+    <div class="stat"><div class="label">Counterexample?</div><div class="value" id="counterst">yes</div></div>
+  </div>
+  <canvas id="c" width="900" height="420"></canvas>
+  <section class="box">
+    <h3>Known counterexample pairs</h3>
+    <table>
+      <thead><tr><th>Pair</th><th>Ambient setting</th><th>Critical point</th><th>Multiplicities</th><th>Ambiently homeomorphic?</th></tr></thead>
+      <tbody>
+        <tr><td>Isolated hypersurface germs</td><td>holomorphic hypersurfaces</td><td>isolated</td><td class="num">2 and 3</td><td class="ok">Yes</td></tr>
+        <tr><td>Isolated hypersurface germs</td><td>(\mathbb C^4)</td><td>isolated</td><td class="num">4 and 5</td><td class="ok">Yes</td></tr>
+      </tbody>
+    </table>
+  </section>
+  <section class="box">
+    <h3>Reading the picture</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Each panel shows the same topological link (same number of components) on a small sphere around the origin. The radial segments at the center represent the tangent cone: their count is the multiplicity. The ambient homeomorphism preserves the link but need not preserve that count.</p>
+  </section>
+</div>
+<script>
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+const topoSel = document.getElementById('topo');
+const maSlider = document.getElementById('ma');
+const mbSlider = document.getElementById('mb');
+const maval = document.getElementById('maval');
+const mbval = document.getElementById('mbval');
+const mast = document.getElementById('mast');
+const mbst = document.getElementById('mbst');
+const topost = document.getElementById('topost');
+const predst = document.getElementById('predst');
+const counterst = document.getElementById('counterst');
+
+function sync(){
+  const ma = +maSlider.value;
+  const mb = +mbSlider.value;
+  maval.textContent = ma;
+  mbval.textContent = mb;
+  mast.textContent = ma;
+  mbst.textContent = mb;
+  topost.textContent = topoSel.value === 'one' ? 'one component' : 'two components';
+  predst.textContent = 'equal';
+  predst.className = '';
+  if (ma !== mb){
+    counterst.textContent = 'yes';
+    counterst.className = 'bad';
+  } else {
+    counterst.textContent = 'no (equal)';
+    counterst.className = 'ok';
+  }
+  draw();
+}
+
+function drawLink(cx, cy, R, type, color){
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 2.5;
+  ctx.beginPath();
+  if (type === 'one'){
+    for (let i=0;i<=240;i++){
+      const t = i/240*Math.PI*2;
+      const r = R*(1 + 0.12*Math.sin(5*t));
+      const x = cx + r*Math.cos(t);
+      const y = cy + r*Math.sin(t);
+      if (i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    }
+  } else {
+    for (let k=0;k<2;k++){
+      const ox = k===0 ? -R*0.35 : R*0.35;
+      ctx.beginPath();
+      for (let i=0;i<=120;i++){
+        const t = i/120*Math.PI*2;
+        const r = R*0.32;
+        const x = cx + ox + r*Math.cos(t);
+        const y = cy + r*Math.sin(t);
+        if (i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+      }
+      ctx.stroke();
+    }
+  }
+  ctx.stroke();
+}
+
+function drawTangent(cx, cy, m, color){
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 2;
+  for (let i=0;i<m;i++){
+    const a = (i/m)*Math.PI*2;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx + 58*Math.cos(a), cy + 58*Math.sin(a));
+    ctx.stroke();
+  }
+  ctx.fillStyle = color;
+  ctx.beginPath();
+  ctx.arc(cx, cy, 4, 0, Math.PI*2);
+  ctx.fill();
+}
+
+function draw(){
+  const w = canvas.width, h = canvas.height;
+  ctx.clearRect(0,0,w,h);
+  const cy = h/2;
+  const leftX = w*0.28;
+  const rightX = w*0.72;
+  const R = 95;
+  const ma = +maSlider.value;
+  const mb = +mbSlider.value;
+  const type = topoSel.value;
+
+  // spheres
+  ctx.strokeStyle = 'rgba(159,176,204,0.35)';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.arc(leftX, cy, R, 0, Math.PI*2); ctx.stroke();
+  ctx.beginPath(); ctx.arc(rightX, cy, R, 0, Math.PI*2); ctx.stroke();
+
+  drawLink(leftX, cy, R*0.72, type, '#5eead4');
+  drawLink(rightX, cy, R*0.72, type, '#5eead4');
+
+  drawTangent(leftX, cy, ma, '#f59e0b');
+  drawTangent(rightX, cy, mb, '#f59e0b');
+
+  // labels
+  ctx.fillStyle = '#e6edf7';
+  ctx.font = '16px system-ui, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('Germ A', leftX, 30);
+  ctx.fillText('Germ B', rightX, 30);
+  ctx.font = '14px ui-monospace, monospace';
+  ctx.fillStyle = '#9fb0cc';
+  ctx.fillText('multiplicity ' + ma, leftX, h-28);
+  ctx.fillText('multiplicity ' + mb, rightX, h-28);
+
+  // homeomorphism arrow
+  ctx.strokeStyle = '#9fb0cc';
+  ctx.lineWidth = 1.5;
+  const yArrow = 48;
+  ctx.beginPath();
+  ctx.moveTo(leftX+R+10, yArrow);
+  ctx.lineTo(rightX-R-10, yArrow);
+  ctx.stroke();
+  // arrowhead
+  ctx.beginPath();
+  ctx.moveTo(rightX-R-10, yArrow);
+  ctx.lineTo(rightX-R-20, yArrow-6);
+  ctx.lineTo(rightX-R-20, yArrow+6);
+  ctx.closePath();
+  ctx.fillStyle = '#9fb0cc';
+  ctx.fill();
+  ctx.fillStyle = '#9fb0cc';
+  ctx.font = '12px system-ui, sans-serif';
+  ctx.fillText('ambient homeomorphism (topology preserved)', (leftX+rightX)/2, yArrow-10);
+}
+
+topoSel.addEventListener('change', sync);
+maSlider.addEventListener('input', sync);
+mbSlider.addEventListener('input', sync);
+document.getElementById('pair45').addEventListener('click', function(){ maSlider.value=4; mbSlider.value=5; sync(); });
+document.getElementById('pair23').addEventListener('click', function(){ maSlider.value=2; mbSlider.value=3; sync(); });
+
+sync();
+
+window.addEventListener('resize', function(){ draw(); });
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

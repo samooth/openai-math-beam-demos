@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Campana’s abelianity conjecture and special varieties (conceptual, result 057)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range]{flex:1 1 220px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:420px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+select{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text)}
+table{width:100%;border-collapse:collapse;font-size:.85rem}
+th,td{padding:.35rem .45rem;border-bottom:1px solid var(--border);text-align:left}
+th{color:var(--muted);font-weight:600}
+td.num{font-family:ui-monospace,monospace}
+.badge{display:inline-block;padding:.15rem .5rem;border-radius:6px;font-size:.75rem;font-weight:700}
+.ok{color:var(--good)} .bad{color:var(--bad)} .warn{color:var(--warn)}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Campana’s abelianity conjecture and special varieties (conceptual, result 057)</h1>
+  <p>Special compact Kähler manifolds have virtually abelian fundamental groups; special quasi-projective varieties have two-step nilpotent monodromy. Choose a geometry and see how Campana-specialness forces abelianity or nilpotency.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Proves Campana's abelianity conjecture: special compact Kähler manifolds have virtually abelian fundamental groups. Using this theorem, establishes the same conclusion for order-two root orbifolds of smooth projective complex fourfolds along one nonempty smooth connected divisor, when special in the stated differential-line sense. For smooth special complex quasi-projective varieties, proves that every finite-dimensional complex linear representation of the fundamental group has virtually nilpotent image of class at most two.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Links Campana's notion of specialness (no general-type quotient) to the algebraic structure of (\pi_1): special manifolds cannot carry complicated fundamental groups, and their finite-dimensional monodromy is at most 2-step nilpotent. This constrains non-abelian Hodge, moduli of varieties, and orbifold fundamental groups, and separates special varieties from general-type or hyperbolic ones.</p>
+  </section>
+  <div class="controls">
+    <label for="mode">Case</label>
+    <select id="mode">
+      <option value="compact" selected>Compact Kähler</option>
+      <option value="orbifold">Fourfold root orbifold</option>
+      <option value="quasiproj">Quasi-projective representation</option>
+    </select>
+    <label for="geom">Geometry</label>
+    <select id="geom"></select>
+    <label for="special">Campana-special?</label>
+    <select id="special">
+      <option value="yes">Yes</option>
+      <option value="no">No</option>
+    </select>
+    <label for="n">Dimension (n)</label>
+    <input id="n" type="range" min="1" max="6" value="2" step="1">
+    <span class="val" id="nval">2</span>
+    <label for="d">Rep dimension (d)</label>
+    <input id="d" type="range" min="2" max="8" value="3" step="1">
+    <span class="val" id="dval">3</span>
+    <label for="view">View</label>
+    <select id="view">
+      <option value="specialness" selected>Specialness test</option>
+      <option value="group">Fundamental group</option>
+      <option value="monodromy">Monodromy image</option>
+    </select>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Case</div><div class="value" id="modest">—</div></div>
+    <div class="stat"><div class="label">Geometry</div><div class="value" id="geomst">—</div></div>
+    <div class="stat"><div class="label">Special?</div><div class="value" id="specialst">—</div></div>
+    <div class="stat"><div class="label">(\pi_1) type</div><div class="value" id="pi1st">—</div></div>
+    <div class="stat"><div class="label">Virtually abelian?</div><div class="value" id="abst">—</div></div>
+    <div class="stat"><div class="label">Representation image</div><div class="value" id="repst">—</div></div>
+    <div class="stat"><div class="label">Nilpotency class</div><div class="value" id="nilpst">—</div></div>
+    <div class="stat"><div class="label">Orbifold base (\kappa)</div><div class="value" id="kappast">—</div></div>
+  </div>
+  <canvas id="c" width="900" height="420"></canvas>
+  <section class="box">
+    <h3>Examples</h3>
+    <table>
+      <thead><tr><th>Geometry</th><th>Special?</th><th>(\pi_1)</th><th>Conclusion</th></tr></thead>
+      <tbody>
+        <tr><td>Complex torus</td><td class="ok">Yes</td><td class="num">(\mathbb Z^{2n})</td><td class="ok">Virtually abelian</td></tr>
+        <tr><td>Rationally connected Fano</td><td class="ok">Yes</td><td class="num">trivial</td><td class="ok">Virtually abelian</td></tr>
+        <tr><td>K3 / Calabi–Yau</td><td class="ok">Yes</td><td class="num">trivial / finite</td><td class="ok">Virtually abelian</td></tr>
+        <tr><td>General-type hypersurface</td><td class="bad">No</td><td class="num">surface group</td><td class="bad">Not forced</td></tr>
+        <tr><td>Product: special (\times) general type</td><td class="bad">No</td><td class="num">product</td><td class="bad">Not forced</td></tr>
+        <tr><td>Special fourfold pair (order 2)</td><td class="ok">Yes</td><td class="num">orbifold (\pi_1)</td><td class="ok">Virtually abelian</td></tr>
+      </tbody>
+    </table>
+  </section>
+</div>
+<script>
+const modeSel=document.getElementById('mode');
+const geomSel=document.getElementById('geom');
+const specialSel=document.getElementById('special');
+const nSlider=document.getElementById('n');
+const dSlider=document.getElementById('d');
+const viewSel=document.getElementById('view');
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+
+const nval=document.getElementById('nval');
+const dval=document.getElementById('dval');
+const modest=document.getElementById('modest');
+const geomst=document.getElementById('geomst');
+const specialst=document.getElementById('specialst');
+const pi1st=document.getElementById('pi1st');
+const abst=document.getElementById('abst');
+const repst=document.getElementById('repst');
+const nilpst=document.getElementById('nilpst');
+const kappast=document.getElementById('kappast');
+
+const presets={
+ compact:[
+  {id:'torus',label:'Complex torus',spec:true},
+  {id:'fano',label:'Rationally connected Fano',spec:true},
+  {id:'k3',label:'K3 / Calabi–Yau',spec:true},
+  {id:'hyp',label:'General-type (hyperbolic)',spec:false},
+  {id:'prod',label:'Product special × general type',spec:false}
+ ],
+ orbifold:[
+  {id:'orb-special',label:'Special fourfold pair',spec:true},
+  {id:'orb-general',label:'General-type fourfold pair',spec:false},
+  {id:'orb-rc',label:'Rationally connected pair',spec:true}
+ ],
+ quasiproj:[
+  {id:'qp-special',label:'Special quasi-projective variety',spec:true},
+  {id:'qp-general',label:'General-type variety',spec:false},
+  {id:'qp-rc',label:'Rationally connected variety',spec:true}
+ ]
+};
+
+const presetSpec={};
+const presetLabel={};
+Object.keys(presets).forEach(function(mode){
+  presets[mode].forEach(function(p){
+    presetSpec[p.id]=p.spec;
+    presetLabel[p.id]=p.label;
+  });
+});
+
+function modeLabel(m){
+ if(m==='compact') return 'Compact Kähler';
+ if(m==='orbifold') return 'Fourfold root orbifold';
+ return 'Quasi-projective';
+}
+
+function populateGeom(){
+ const mode=modeSel.value;
+ geomSel.innerHTML='';
+ presets[mode].forEach(function(p){
+  const o=document.createElement('option');
+  o.value=p.id;
+  o.textContent=p.label;
+  geomSel.appendChild(o);
+ });
+ const first=presets[mode][0];
+ specialSel.value=first.spec?'yes':'no';
+}
+
+function resizeCanvas(){ canvas.width=Math.max(300,canvas.clientWidth); canvas.height=420; }
+window.addEventListener('resize',function(){ resizeCanvas(); update(); });
+resizeCanvas();
+
+function drawSpecialness(W,H,cx,cy,n,special){
+ ctx.clearRect(0,0,W,H);
+ const bw=Math.min(280,W*0.42), bh=120;
+ const x0=cx-bw/2, y0=cy-bh/2-50;
+ ctx.fillStyle='rgba(94,234,212,0.08)';
+ ctx.fillRect(x0,y0,bw,bh);
+ ctx.strokeStyle='#5eead4'; ctx.lineWidth=2;
+ ctx.strokeRect(x0,y0,bw,bh);
+ ctx.fillStyle='#e6edf7'; ctx.font='14px system-ui'; ctx.textAlign='center';
+ ctx.fillText('X  (dim '+n+')',cx,y0+bh/2+4);
+ if(special){
+  ctx.fillStyle='#9fb0cc'; ctx.font='12px system-ui'; ctx.textAlign='center';
+  ctx.fillText('No fibration with general-type base',cx,y0-18);
+  const step=18; const cols=8, rows=5;
+  const ox=cx-cols*step/2, oy=y0+bh+28;
+  ctx.strokeStyle='rgba(34,197,94,0.35)'; ctx.lineWidth=1;
+  for(let i=0;i<=cols;i++){ ctx.beginPath(); ctx.moveTo(ox+i*step,oy); ctx.lineTo(ox+i*step,oy+rows*step); ctx.stroke(); }
+  for(let j=0;j<=rows;j++){ ctx.beginPath(); ctx.moveTo(ox,oy+j*step); ctx.lineTo(ox+cols*step,oy+j*step); ctx.stroke(); }
+  ctx.fillStyle='#22c55e'; ctx.font='12px system-ui'; ctx.textAlign='center';
+  ctx.fillText('π₁ virtually abelian',cx,oy+rows*step+18);
+ } else {
+  ctx.fillStyle='#9fb0cc'; ctx.font='12px system-ui'; ctx.textAlign='center';
+  ctx.fillText('A general-type quotient exists',cx,y0-18);
+  ctx.strokeStyle='#ef4444'; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.moveTo(cx,y0+bh); ctx.lineTo(cx,cy+70); ctx.stroke();
+  ctx.beginPath(); ctx.ellipse(cx,cy+105,95,32,0,0,Math.PI*2);
+  ctx.fillStyle='rgba(239,68,68,0.15)'; ctx.fill();
+  ctx.strokeStyle='#ef4444'; ctx.lineWidth=2; ctx.stroke();
+  ctx.fillStyle='#ef4444'; ctx.font='12px system-ui'; ctx.textAlign='center';
+  ctx.fillText('general-type base Y',cx,cy+109);
+  ctx.fillStyle='#9fb0cc'; ctx.font='12px system-ui';
+  ctx.fillText('π₁ not forced to be abelian',cx,H-18);
+ }
+}
+
+function drawGroup(W,H,cx,cy,special){
+ ctx.clearRect(0,0,W,H);
+ if(special){
+  const step=22; const cols=12, rows=8;
+  const ox=cx-cols*step/2, oy=cy-rows*step/2;
+  ctx.strokeStyle='rgba(34,197,94,0.35)'; ctx.lineWidth=1;
+  for(let i=0;i<=cols;i++){ ctx.beginPath(); ctx.moveTo(ox+i*step,oy); ctx.lineTo(ox+i*step,oy+rows*step); ctx.stroke(); }
+  for(let j=0;j<=rows;j++){ ctx.beginPath(); ctx.moveTo(ox,oy+j*step); ctx.lineTo(ox+cols*step,oy+j*step); ctx.stroke(); }
+  ctx.fillStyle='#22c55e'; ctx.font='14px system-ui'; ctx.textAlign='center';
+  ctx.fillText('Virtually abelian: polynomial growth',cx,oy+rows*step+24);
+  ctx.fillStyle='#9fb0cc'; ctx.font='12px system-ui';
+  ctx.fillText('Finite-index subgroup ≅ ℤʳ',cx,oy+rows*step+42);
+ } else {
+  function branch(x,y,len,ang,depth){
+   if(depth===0) return;
+   const x2=x+len*Math.cos(ang), y2=y+len*Math.sin(ang);
+   ctx.beginPath(); ctx.moveTo(x,y); ctx.lineTo(x2,y2); ctx.stroke();
+   branch(x2,y2,len*0.68,ang-0.45,depth-1);
+   branch(x2,y2,len*0.68,ang+0.45,depth-1);
+  }
+  ctx.strokeStyle='#ef4444'; ctx.lineWidth=1.6;
+  branch(cx,H-30,72,-Math.PI/2,7);
+  ctx.fillStyle='#ef4444'; ctx.font='14px system-ui'; ctx.textAlign='center';
+  ctx.fillText('Nonabelian growth: exponential',cx,24);
+  ctx.fillStyle='#9fb0cc'; ctx.font='12px system-ui';
+  ctx.fillText('π₁ may be non-virtually-abelian',cx,42);
+ }
+}
+
+function drawMonodromy(W,H,cx,cy,mode,special,d){
+ ctx.clearRect(0,0,W,H);
+ if(special && mode==='quasiproj'){
+  const bw=300,bh=150; const x0=cx-bw/2, y0=cy-bh/2;
+  ctx.strokeStyle='#5eead4'; ctx.lineWidth=2;
+  ctx.strokeRect(x0,y0,bw,bh);
+  ctx.fillStyle='#9fb0cc'; ctx.font='12px system-ui'; ctx.textAlign='center';
+  ctx.fillText('Image of π₁ in GL_'+d+'(ℂ)',cx,y0-12);
+  ctx.strokeStyle='#22c55e'; ctx.lineWidth=2;
+  ctx.strokeRect(cx-70,cy-22,140,44);
+  ctx.fillStyle='#22c55e'; ctx.font='12px system-ui'; ctx.textAlign='center';
+  ctx.fillText('center ℤᵃ',cx,cy+4);
+  ctx.fillStyle='#9fb0cc'; ctx.font='12px system-ui'; ctx.textAlign='center';
+  ctx.fillText('quotient ℤᵇ (abelian)',cx,y0+bh+20);
+  ctx.fillStyle='#9fb0cc'; ctx.font='12px system-ui'; ctx.textAlign='center';
+  ctx.fillText('commutator [g,h] lies in center  ⇒  class ≤ 2',cx,H-18);
+ } else if(special){
+  ctx.fillStyle='#22c55e'; ctx.font='14px system-ui'; ctx.textAlign='center';
+  ctx.fillText('Monodromy image is abelian (class 1)',cx,cy);
+  ctx.fillStyle='#9fb0cc'; ctx.font='12px system-ui'; ctx.textAlign='center';
+  ctx.fillText('π₁ virtually abelian ⇒ finite-dim representations have abelian image',cx,cy+24);
+ } else {
+  const bw=260,bh=120; const x0=cx-bw/2, y0=cy-bh/2;
+  ctx.strokeStyle='#ef4444'; ctx.lineWidth=2;
+  ctx.strokeRect(x0,y0,bw,bh);
+  ctx.fillStyle='#9fb0cc'; ctx.font='12px system-ui'; ctx.textAlign='center';
+  ctx.fillText('Image of π₁ in GL_'+d+'(ℂ)',cx,y0-12);
+  ctx.beginPath();
+  ctx.moveTo(x0+20,y0+bh-20); ctx.lineTo(x0+bw-20,y0+20);
+  ctx.strokeStyle='#ef4444'; ctx.lineWidth=2; ctx.stroke();
+  ctx.fillStyle='#ef4444'; ctx.font='12px system-ui'; ctx.textAlign='center';
+  ctx.fillText('Not constrained: non-nilpotent image possible',cx,H-18);
+ }
+}
+
+function draw(mode,geom,n,d,special,view){
+ const W=canvas.width,H=canvas.height;
+ const cx=W/2,cy=H/2;
+ if(view==='specialness'){ drawSpecialness(W,H,cx,cy,n,special); }
+ else if(view==='group'){ drawGroup(W,H,cx,cy,special); }
+ else { drawMonodromy(W,H,cx,cy,mode,special,d); }
+}
+
+function update(){
+ const mode=modeSel.value;
+ const geom=geomSel.value;
+ const n=+nSlider.value;
+ const d=+dSlider.value;
+ const special=specialSel.value==='yes';
+ const view=viewSel.value;
+ nval.textContent=n;
+ dval.textContent=d;
+ modest.textContent=modeLabel(mode);
+ geomst.textContent=presetLabel[geom]||geom;
+ specialst.textContent=special?'Yes':'No';
+ specialst.className='value '+(special?'ok':'bad');
+ let pi1;
+ if(special){
+  if(mode==='compact') pi1='Virtually abelian (forced)';
+  else if(mode==='orbifold') pi1='Virtually abelian (forced)';
+  else pi1='π₁ constrained via monodromy';
+ } else {
+  pi1='Not forced by theorem';
+ }
+ pi1st.textContent=pi1;
+ pi1st.className='value '+(special?'ok':'bad');
+ abst.textContent=special?'Yes':'No';
+ abst.className='value '+(special?'ok':'bad');
+ let rep;
+ if(mode==='quasiproj'){
+  rep=special?'Virtually nilpotent, class ≤ 2':'Not constrained';
+ } else if(special){
+  rep='Abelian image (class 1)';
+ } else {
+  rep='Not constrained';
+ }
+ repst.textContent=rep;
+ repst.className='value '+(special?'ok':'bad');
+ let cls;
+ if(special && mode==='quasiproj') cls='≤ 2';
+ else if(special) cls='1 (abelian)';
+ else cls='—';
+ nilpst.textContent=cls;
+ nilpst.className='value '+(special?'ok':'muted');
+ kappast.textContent=special?'< dim (not general type)':'dim (general type)';
+ kappast.className='value '+(special?'ok':'bad');
+ draw(mode,geom,n,d,special,view);
+}
+
+modeSel.addEventListener('change',function(){ populateGeom(); update(); });
+geomSel.addEventListener('change',function(){
+ const p=presetSpec[geomSel.value];
+ if(p!==undefined) specialSel.value=p?'yes':'no';
+ update();
+});
+specialSel.addEventListener('change',update);
+nSlider.addEventListener('input',update);
+dSlider.addEventListener('input',update);
+viewSel.addEventListener('change',update);
+
+populateGeom();
+update();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

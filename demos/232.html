@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gaussian fields and SLE interfaces for Lipschitz heights (conceptual, result 232)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+select,button{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+input[type=range]{flex:1 1 160px}
+input[type=number]{width:6rem;padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text)}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:auto;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+.legend{display:flex;gap:1rem;align-items:center;font-size:.85rem;color:var(--muted);margin:.5rem 0;flex-wrap:wrap}
+.swatch{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:.3rem;vertical-align:middle}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Gaussian fields and SLE interfaces for Lipschitz heights (conceptual, result 232)</h1>
+  <p>Conceptual view of triangular-lattice Lipschitz height models: Gaussian free field limits and a chordal (\mathrm{SLE}_4) interface at a tuned boundary amplitude.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Proves Gaussian free field limits on bounded smooth simply connected domains for triangular-lattice height models: uniform odd heights with increments (0,\pm2) and two-arc boundary values (\pm1), and zero-boundary integer Lipschitz heights weighted by fixed (x\in[1/\sqrt2,1]). Uniform real Lipschitz heights also converge to a Gaussian field; at a tuned opposite-boundary amplitude, their interface converges to chordal (\mathrm{SLE}_4), establishing Schramm’s real-field/interface predictions.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Connects discrete triangular-lattice height models to continuum Gaussian free fields and conformally invariant curves, giving rigorous normalization and variance constants and confirming the field/interface picture predicted by Schramm for random surfaces.</p>
+  </section>
+  <div class="controls">
+    <label for="xw">weight (x)</label>
+    <input id="xw" type="range" min="0.7071" max="1" value="0.85" step="0.001">
+    <span class="val" id="xval">0.850</span>
+    <label for="amp">boundary amplitude</label>
+    <input id="amp" type="range" min="0.5" max="2" value="1" step="0.01">
+    <span class="val" id="aval">1.00</span>
+  </div>
+  <div class="controls">
+    <label for="N">grid size (N)</label>
+    <input id="N" type="range" min="24" max="72" value="48" step="1">
+    <span class="val" id="nval">48</span>
+    <label for="kappa">interface (\kappa)</label>
+    <input id="kappa" type="range" min="2" max="8" value="4" step="0.1">
+    <span class="val" id="kval">4.0</span>
+    <label for="seed">seed</label>
+    <input id="seed" type="number" value="7">
+    <button id="resample">Resample</button>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Weight (x)</div><div class="value" id="xs">—</div></div>
+    <div class="stat"><div class="label">Regime</div><div class="value" id="regime">GFF limit</div></div>
+    <div class="stat"><div class="label">Boundary amplitude</div><div class="value" id="as">—</div></div>
+    <div class="stat"><div class="label">Interface dimension (1+\kappa/8)</div><div class="value" id="dim">—</div></div>
+    <div class="stat"><div class="label">Grid (N)</div><div class="value" id="ns">—</div></div>
+    <div class="stat"><div class="label">Field range</div><div class="value" id="rng">—</div></div>
+  </div>
+  <canvas id="field" width="560" height="420"></canvas>
+  <canvas id="iface" width="560" height="300"></canvas>
+  <div class="legend">
+    <span><span class="swatch" style="background:#3b82f6"></span>low height</span>
+    <span><span class="swatch" style="background:#f8fafc"></span>zero</span>
+    <span><span class="swatch" style="background:#ef4444"></span>high height</span>
+    <span><span class="swatch" style="background:#5eead4"></span>interface</span>
+  </div>
+</div>
+<script>
+function mulberry32(a){ a|=0; return function(){ a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+function randn(rng){ let u=0,v=0; while(u===0) u=rng(); while(v===0) v=rng(); return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v); }
+
+let rng = mulberry32(7);
+let H = [];
+let noise = [];
+let curve = [];
+
+const xSlider = document.getElementById('xw');
+const ampSlider = document.getElementById('amp');
+const NSlider = document.getElementById('N');
+const kappaSlider = document.getElementById('kappa');
+const seedInput = document.getElementById('seed');
+const fieldCanvas = document.getElementById('field');
+const ifaceCanvas = document.getElementById('iface');
+const fctx = fieldCanvas.getContext('2d');
+const ictx = ifaceCanvas.getContext('2d');
+
+function resample(){
+  const seed = parseInt(seedInput.value,10) || 7;
+  rng = mulberry32(seed);
+  const N = parseInt(NSlider.value,10);
+  const xw = parseFloat(xSlider.value);
+  const A = parseFloat(ampSlider.value);
+  H = Array.from({length:N+1}, ()=>Array(N+1).fill(0));
+  noise = Array.from({length:N+1}, ()=>Array(N+1).fill(0));
+  for(let i=0;i<=N;i++) for(let j=0;j<=N;j++) noise[i][j] = randn(rng);
+  for(let i=0;i<=N;i++){
+    H[0][i] = A;
+    H[N][i] = -A;
+  }
+  for(let j=0;j<=N;j++){
+    H[j][0] = 0;
+    H[j][N] = 0;
+  }
+  const scale = 0.35 + 0.65*xw;
+  const iters = 260;
+  for(let t=0;t<iters;t++){
+    for(let i=1;i<N;i++){
+      for(let j=1;j<N;j++){
+        H[i][j] = 0.25*(H[i-1][j]+H[i+1][j]+H[i][j-1]+H[i][j+1]) + 0.22*scale*noise[i][j]/Math.sqrt(N);
+      }
+    }
+  }
+  generateCurve();
+  updateStats();
+  drawField();
+  drawIface();
+}
+
+function generateCurve(){
+  const kappa = parseFloat(kappaSlider.value);
+  const M = 240;
+  const inc = new Array(M);
+  for(let i=0;i<M;i++) inc[i] = randn(rng);
+  const B = new Array(M+1);
+  B[0] = 0;
+  for(let i=1;i<=M;i++) B[i] = B[i-1] + inc[i-1]/Math.sqrt(M);
+  const end = B[M];
+  for(let i=0;i<=M;i++) B[i] -= end*i/M;
+  const amp = 0.12*Math.sqrt(kappa);
+  curve = [];
+  for(let i=0;i<=M;i++){
+    const x = i/M;
+    const y = Math.max(0.001, amp*B[i]);
+    curve.push({x:x, y:y});
+  }
+}
+
+function updateStats(){
+  const xw = parseFloat(xSlider.value);
+  const A = parseFloat(ampSlider.value);
+  const N = parseInt(NSlider.value,10);
+  const kappa = parseFloat(kappaSlider.value);
+  document.getElementById('xval').textContent = xw.toFixed(3);
+  document.getElementById('aval').textContent = A.toFixed(2);
+  document.getElementById('nval').textContent = N.toString();
+  document.getElementById('kval').textContent = kappa.toFixed(1);
+  document.getElementById('xs').textContent = xw.toFixed(3);
+  document.getElementById('as').textContent = A.toFixed(2);
+  document.getElementById('ns').textContent = N.toString();
+  document.getElementById('dim').textContent = (1+kappa/8).toFixed(3);
+  let mn = Infinity, mx = -Infinity;
+  for(let i=0;i<H.length;i++) for(let j=0;j<H[i].length;j++){ if(H[i][j]<mn) mn=H[i][j]; if(H[i][j]>mx) mx=H[i][j]; }
+  document.getElementById('rng').textContent = mn.toFixed(2)+' to '+mx.toFixed(2);
+}
+
+function colorFor(v, mn, mx){
+  const t = (v-mn)/(mx-mn || 1);
+  const r = Math.round(255*(0.15 + 0.85*t));
+  const g = Math.round(255*(0.15 + 0.35*(1-Math.abs(2*t-1))));
+  const b = Math.round(255*(0.95 - 0.85*t));
+  return 'rgb('+r+','+g+','+b+')';
+}
+
+function drawField(){
+  const N = H.length-1;
+  const W = fieldCanvas.width, Hc = fieldCanvas.height;
+  fctx.clearRect(0,0,W,Hc);
+  const pad = 18;
+  const cell = Math.min((W-2*pad)/N, (Hc-2*pad)/N);
+  const ox = (W - cell*N)/2;
+  const oy = (Hc - cell*N)/2;
+  let mn = Infinity, mx = -Infinity;
+  for(let i=0;i<=N;i++) for(let j=0;j<=N;j++){ if(H[i][j]<mn) mn=H[i][j]; if(H[i][j]>mx) mx=H[i][j]; }
+  for(let i=0;i<N;i++){
+    for(let j=0;j<N;j++){
+      const v = 0.25*(H[i][j]+H[i+1][j]+H[i][j+1]+H[i+1][j+1]);
+      fctx.fillStyle = colorFor(v, mn, mx);
+      fctx.fillRect(ox + i*cell, oy + (N-1-j)*cell, cell+0.5, cell+0.5);
+    }
+  }
+  fctx.strokeStyle = 'rgba(159,176,204,0.35)';
+  fctx.lineWidth = 1;
+  fctx.strokeRect(ox, oy, N*cell, N*cell);
+}
+
+function drawIface(){
+  const W = ifaceCanvas.width, Hc = ifaceCanvas.height;
+  ictx.clearRect(0,0,W,Hc);
+  const pad = 36;
+  function X(v){ return pad + v*(W-2*pad); }
+  function Y(v){ return Hc - pad - v*(Hc-2*pad)*0.8; }
+  ictx.strokeStyle = '#9fb0cc';
+  ictx.lineWidth = 1;
+  ictx.beginPath();
+  ictx.moveTo(pad, Hc-pad);
+  ictx.lineTo(W-pad, Hc-pad);
+  ictx.moveTo(pad, pad);
+  ictx.lineTo(pad, Hc-pad);
+  ictx.stroke();
+  ictx.fillStyle = '#9fb0cc';
+  ictx.font = '12px system-ui';
+  ictx.fillText('x', W-pad+4, Hc-pad+4);
+  ictx.fillText('y', pad-16, pad-4);
+  ictx.strokeStyle = '#5eead4';
+  ictx.lineWidth = 2;
+  ictx.beginPath();
+  ictx.moveTo(X(curve[0].x), Y(curve[0].y));
+  for(let i=1;i<curve.length;i++) ictx.lineTo(X(curve[i].x), Y(curve[i].y));
+  ictx.stroke();
+  const kappa = parseFloat(kappaSlider.value);
+  ictx.fillStyle = '#9fb0cc';
+  ictx.font = '12px ui-monospace,monospace';
+  ictx.fillText('kappa = '+kappa.toFixed(1), pad+6, pad+12);
+}
+
+xSlider.addEventListener('input', ()=>{ document.getElementById('xval').textContent = parseFloat(xSlider.value).toFixed(3); });
+ampSlider.addEventListener('input', ()=>{ document.getElementById('aval').textContent = parseFloat(ampSlider.value).toFixed(2); });
+NSlider.addEventListener('input', ()=>{ document.getElementById('nval').textContent = NSlider.value; });
+kappaSlider.addEventListener('input', ()=>{ document.getElementById('kval').textContent = parseFloat(kappaSlider.value).toFixed(1); });
+seedInput.addEventListener('change', resample);
+document.getElementById('resample').addEventListener('click', ()=>{ seedInput.value = Math.floor(Math.random()*1e6); resample(); });
+
+xSlider.addEventListener('change', resample);
+ampSlider.addEventListener('change', resample);
+NSlider.addEventListener('change', resample);
+kappaSlider.addEventListener('change', resample);
+
+resample();
+</script>
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

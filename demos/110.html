@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Optimal-order randomized k-server on arbitrary metrics (conceptual, result 110)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range]{flex:1 1 200px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:460px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+.legend{display:flex;gap:1rem;align-items:center;font-size:.85rem;color:var(--muted);margin:.5rem 0;flex-wrap:wrap}
+.swatch{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:.3rem;vertical-align:middle}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Optimal-order randomized $k$-server on arbitrary metrics (conceptual, result 110)</h1>
+  <p>A randomized $k$-server policy achieves competitive ratio $O(\log^2(k+1))$ on every metric space, matching the worst-case lower-bound order. One policy serves every finite oblivious request sequence, including on infinite and unbounded metrics.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">The formalization proves a randomized competitive ratio $O((\log(k+1))^2)$ for $k$-server against oblivious finite request sequences. For every $k\ge 2$, every metric space containing at least $k+1$ points, and every initial configuration, one policy works for all request sequences, including in infinite and unbounded spaces. The universal multiplicative constant is independent of the metric and $k$; the additive movement constant depends on the initial configuration and is zero when the initial server positions are distinct. On finite rational metrics, a uniform randomized bit algorithm has polynomial preprocessing and per-request bit cost polynomial in the encoded input length and $\log(t+1)$ at request $t$, with a finite instance-dependent additive movement constant.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">This matches the worst-case lower-bound order for randomized $k$-server, settling the optimal asymptotic competitive ratio on arbitrary metrics. It removes metric dependence from the multiplicative factor and handles infinite, unbounded spaces. The uniform implementation gives polynomial-time preprocessing and request processing, returning a legal server index for every request, while the additive movement constant is not claimed to be polynomially bounded.</p>
+  </section>
+  <div class="controls">
+    <label for="k">k</label>
+    <input id="k" type="range" min="2" max="64" value="16" step="1">
+    <span class="val" id="kval">16</span>
+    <label for="n">Metric points n</label>
+    <input id="n" type="range" min="3" max="256" value="40" step="1">
+    <span class="val" id="nval">40</span>
+    <label for="c">Lower constant c</label>
+    <input id="c" type="range" min="0.05" max="3" value="0.5" step="0.01">
+    <span class="val" id="cval">0.50</span>
+    <label for="C">Upper constant C</label>
+    <input id="C" type="range" min="0.5" max="6" value="2" step="0.01">
+    <span class="val" id="Cval">2.00</span>
+  </div>
+  <div class="controls">
+    <label for="opt">Offline optimum OPT</label>
+    <input id="opt" type="range" min="1" max="1000" value="100" step="1">
+    <span class="val" id="optval">100</span>
+    <label for="add">Additive constant A</label>
+    <input id="add" type="range" min="0" max="500" value="0" step="1">
+    <span class="val" id="addval">0</span>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">k</div><div class="value" id="sk">—</div></div>
+    <div class="stat"><div class="label">n</div><div class="value" id="sn">—</div></div>
+    <div class="stat"><div class="label">log2(k+1)</div><div class="value" id="slog">—</div></div>
+    <div class="stat"><div class="label">Deterministic lower bound k</div><div class="value" id="sdet">—</div></div>
+    <div class="stat"><div class="label">Randomized lower c log²</div><div class="value" id="slow">—</div></div>
+    <div class="stat"><div class="label">Randomized upper C log²</div><div class="value" id="sup">—</div></div>
+    <div class="stat"><div class="label">Expected online cost</div><div class="value" id="scost">—</div></div>
+  </div>
+  <div class="legend">
+    <span><span class="swatch" style="background:#ef4444"></span>Deterministic lower bound</span>
+    <span><span class="swatch" style="background:#5eead4"></span>Randomized upper bound</span>
+    <span><span class="swatch" style="background:#f59e0b"></span>Randomized lower bound</span>
+  </div>
+  <canvas id="canvas" width="900" height="460"></canvas>
+  <p style="font-size:.85rem;color:var(--muted);margin-top:.5rem">Conceptual model: competitive ratios as functions of $k$. The randomized squared-logarithmic bounds remain polynomially smaller than the classical deterministic linear bound.</p>
+</div>
+<script>
+const kSlider=document.getElementById('k');
+const nSlider=document.getElementById('n');
+const cSlider=document.getElementById('c');
+const CSlider=document.getElementById('C');
+const optSlider=document.getElementById('opt');
+const addSlider=document.getElementById('add');
+
+const kval=document.getElementById('kval');
+const nval=document.getElementById('nval');
+const cval=document.getElementById('cval');
+const Cval=document.getElementById('Cval');
+const optval=document.getElementById('optval');
+const addval=document.getElementById('addval');
+
+const sk=document.getElementById('sk');
+const sn=document.getElementById('sn');
+const slog=document.getElementById('slog');
+const sdet=document.getElementById('sdet');
+const slow=document.getElementById('slow');
+const sup=document.getElementById('sup');
+const scost=document.getElementById('scost');
+
+const canvas=document.getElementById('canvas');
+const ctx=canvas.getContext('2d');
+
+function resizeCanvas(){ canvas.width=Math.max(300,canvas.clientWidth); canvas.height=460; }
+window.addEventListener('resize',function(){ resizeCanvas(); render(); });
+resizeCanvas();
+
+function log2(x){ return Math.log(x)/Math.log(2); }
+
+function updateStats(){
+  const k=+kSlider.value;
+  const n=+nSlider.value;
+  const c=+cSlider.value;
+  const C=+CSlider.value;
+  const opt=+optSlider.value;
+  const add=+addSlider.value;
+  kval.textContent=k;
+  nval.textContent=n;
+  cval.textContent=c.toFixed(2);
+  Cval.textContent=C.toFixed(2);
+  optval.textContent=opt;
+  addval.textContent=add;
+  const L=log2(k+1);
+  const L2=L*L;
+  sk.textContent=k;
+  sn.textContent=n;
+  slog.textContent=L.toFixed(3);
+  sdet.textContent=k.toFixed(0);
+  slow.textContent=(c*L2).toFixed(3);
+  sup.textContent=(C*L2).toFixed(3);
+  scost.textContent=(C*L2*opt+add).toFixed(1);
+}
+
+function render(){
+  updateStats();
+  const k=+kSlider.value;
+  const c=+cSlider.value;
+  const C=+CSlider.value;
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const padL=52,padR=20,padT=30,padB=46;
+  const plotW=W-padL-padR;
+  const plotH=H-padT-padB;
+  const kMin=2,kMax=64;
+  function xOf(kk){ return padL+(kk-kMin)/(kMax-kMin)*plotW; }
+  const ymax=Math.max(80, C*Math.pow(log2(kMax+1),2)*1.15, kMax*1.05);
+  function yOf(v){ return padT+plotH - (v/ymax)*plotH; }
+
+  ctx.strokeStyle='rgba(159,176,204,0.35)';
+  ctx.lineWidth=1;
+  for(let i=0;i<=5;i++){
+    const y=padT+i*plotH/5;
+    ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(padL+plotW,y); ctx.stroke();
+  }
+  for(let i=0;i<=4;i++){
+    const x=padL+i*plotW/4;
+    ctx.beginPath(); ctx.moveTo(x,padT); ctx.lineTo(x,padT+plotH); ctx.stroke();
+  }
+
+  ctx.fillStyle='rgba(159,176,204,0.9)';
+  ctx.font='12px system-ui';
+  ctx.textAlign='center';
+  for(let kk of [2,16,32,64]){
+    ctx.fillText(String(kk), xOf(kk), H-padB+18);
+  }
+  ctx.textAlign='right';
+  for(let i=0;i<=5;i++){
+    const v=ymax*(1-i/5);
+    ctx.fillText(v.toFixed(0), padL-8, padT+i*plotH/5+4);
+  }
+  ctx.save();
+  ctx.translate(16, padT+plotH/2);
+  ctx.rotate(-Math.PI/2);
+  ctx.textAlign='center';
+  ctx.fillText('competitive ratio',0,0);
+  ctx.restore();
+  ctx.fillText('k', padL+plotW/2, H-8);
+
+  function drawCurve(fn,color,width){
+    ctx.strokeStyle=color;
+    ctx.lineWidth=width;
+    ctx.beginPath();
+    for(let i=0;i<=200;i++){
+      const kk=kMin+(kMax-kMin)*i/200;
+      const x=xOf(kk);
+      const y=yOf(fn(kk));
+      if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+  }
+  drawCurve(kk=>kk, '#ef4444', 2.5);
+  drawCurve(kk=>C*Math.pow(log2(kk+1),2), '#5eead4', 2.5);
+  drawCurve(kk=>c*Math.pow(log2(kk+1),2), '#f59e0b', 2);
+
+  const xk=xOf(k);
+  ctx.strokeStyle='rgba(255,255,255,0.35)';
+  ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(xk,padT); ctx.lineTo(xk,padT+plotH); ctx.stroke();
+
+  function dot(kk,val,color){
+    ctx.fillStyle=color;
+    ctx.beginPath();
+    ctx.arc(xOf(kk), yOf(val), 5, 0, Math.PI*2);
+    ctx.fill();
+  }
+  dot(k, k, '#ef4444');
+  dot(k, C*Math.pow(log2(k+1),2), '#5eead4');
+  dot(k, c*Math.pow(log2(k+1),2), '#f59e0b');
+}
+
+kSlider.addEventListener('input',render);
+nSlider.addEventListener('input',render);
+cSlider.addEventListener('input',render);
+CSlider.addEventListener('input',render);
+optSlider.addEventListener('input',render);
+addSlider.addEventListener('input',render);
+render();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Benjamini–Schramm nonuniqueness conjecture (conceptual, result 214)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+select,button,input[type=range],input[type=number]{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+input[type=range]{flex:1 1 180px}
+input[type=number]{width:7rem}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+canvas{width:100%;height:560px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.legend{display:flex;gap:1rem;align-items:center;font-size:.85rem;color:var(--muted);margin:.5rem 0;flex-wrap:wrap}
+.swatch{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:.3rem;vertical-align:middle}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>The Benjamini–Schramm nonuniqueness conjecture (conceptual, result 214)</h1>
+  <p>Simulates Bernoulli bond percolation on a finite truncation of a regular tree, the Cayley graph of a free group. Edges are open with probability $p$; clusters reaching the bottom boundary approximate infinite clusters. The tree has exact thresholds $p_c=1/b$ and $p_u=1/\sqrt b$ for branching number $b$.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Bernoulli bond percolation on an infinite connected locally finite nonamenable quasi-transitive graph opens each edge independently with probability $p$. Let $p_c$ be the critical probability for the existence of an infinite open cluster and $p_u$ the uniqueness threshold. Result 214 proves $p_c<p_u$ for every such graph, resolving the Benjamini–Schramm nonuniqueness conjecture. Hence there is a nonempty interval $(p_c,p_u)$ in which infinitely many infinite clusters occur almost surely. The proof also establishes the critical triangle condition, a finite triangle diagram, exponential decay of connection probabilities below $p_{2\to2}$, and the associated critical laws such as susceptibility of order $(p_c-p)^{-1}$.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Distinguishes nonamenable geometry from amenable graphs such as $\mathbb Z^d$, where there is at most one infinite cluster for every $p>p_c$. The interval $(p_c,p_u)$ is a genuine multiple-cluster phase, with consequences for random walks, harmonic measure, and percolation on groups. The interactive model uses a regular tree with branching number $b$; its thresholds are $p_c=1/b$ and $p_u=1/\sqrt b$. Varying $b$, depth, and $p$ shows how boundary clusters proliferate precisely in the nonunique phase, while finite depth rounds the sharp thresholds.</p>
+  </section>
+  <div class="controls">
+    <label for="b">branching $b$</label>
+    <select id="b">
+      <option value="2">2</option>
+      <option value="3" selected>3</option>
+      <option value="4">4</option>
+      <option value="5">5</option>
+    </select>
+    <label for="depth">depth $L$</label>
+    <input id="depth" type="range" min="4" max="7" value="6" step="1">
+    <span class="val" id="dval">6</span>
+    <label for="p">probability $p$</label>
+    <input id="p" type="range" min="0" max="1" value="0.45" step="0.01">
+    <span class="val" id="pval">0.45</span>
+  </div>
+  <div class="controls">
+    <label for="trials">trials</label>
+    <input id="trials" type="range" min="20" max="300" value="100" step="10">
+    <span class="val" id="tval">100</span>
+    <label for="seed">seed</label>
+    <input id="seed" type="number" value="2026">
+    <button id="resample">Resample</button>
+    <button id="runtrials">Run trials</button>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">$p_c=1/b$</div><div class="value" id="spc">—</div></div>
+    <div class="stat"><div class="label">$p_u=1/\sqrt b$</div><div class="value" id="spu">—</div></div>
+    <div class="stat"><div class="label">Phase</div><div class="value" id="sphase">—</div></div>
+    <div class="stat"><div class="label">Boundary clusters (one sample)</div><div class="value" id="sbc">—</div></div>
+    <div class="stat"><div class="label">Trial avg. boundary clusters</div><div class="value" id="savgb">—</div></div>
+    <div class="stat"><div class="label">Trials with $>1$ cluster</div><div class="value" id="smulti">—</div></div>
+    <div class="stat"><div class="label">Nodes</div><div class="value" id="snodes">—</div></div>
+    <div class="stat"><div class="label">Leaves</div><div class="value" id="sleaves">—</div></div>
+  </div>
+  <div class="legend">
+    <span><span class="swatch" style="background:#5eead4"></span>open edge in a boundary cluster</span>
+    <span><span class="swatch" style="background:rgba(159,176,204,0.18)"></span>closed or non-boundary edge</span>
+    <span><span class="swatch" style="background:#22c55e"></span>root touches boundary</span>
+    <span><span class="swatch" style="background:#ef4444"></span>multiple boundary clusters</span>
+  </div>
+  <canvas id="cv" width="900" height="560"></canvas>
+</div>
+<script>
+const bSel=document.getElementById('b');
+const depthSlider=document.getElementById('depth');
+const pSlider=document.getElementById('p');
+const trialsSlider=document.getElementById('trials');
+const seedInput=document.getElementById('seed');
+const dval=document.getElementById('dval');
+const pval=document.getElementById('pval');
+const tval=document.getElementById('tval');
+const spc=document.getElementById('spc');
+const spu=document.getElementById('spu');
+const sphase=document.getElementById('sphase');
+const sbc=document.getElementById('sbc');
+const savgb=document.getElementById('savgb');
+const smulti=document.getElementById('smulti');
+const snodes=document.getElementById('snodes');
+const sleaves=document.getElementById('sleaves');
+const cv=document.getElementById('cv');
+const ctx=cv.getContext('2d');
+
+const palette=['#5eead4','#f472b6','#fbbf24','#a78bfa','#34d399','#fb7185','#60a5fa','#f97316'];
+
+let tree=null;
+let sample=null;
+let trialAvg=null;
+let trialMulti=null;
+
+function mulberry32(a){ a|=0; return function(){ a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; };
+
+function buildTree(b,L){
+  const levels=[[]];
+  levels[0].push(0);
+  const parent=[-1];
+  const nodeLevel=[0];
+  const children=[[]];
+  let next=1;
+  for(let l=0;l<L;l++){
+    const level=[];
+    for(const u of levels[l]){
+      for(let k=0;k<b;k++){
+        const v=next++;
+        parent.push(u);
+        nodeLevel.push(l+1);
+        level.push(v);
+        children[u].push(v);
+        children.push([]);
+      }
+    }
+    levels.push(level);
+  }
+  return {b,L,N:next,levels,parent,nodeLevel,children};
+}
+
+function sampleTree(p,rng){
+  const open=new Uint8Array(tree.N);
+  for(let v=1;v<tree.N;v++) open[v]=rng()<p?1:0;
+  const touches=new Uint8Array(tree.N);
+  for(let l=tree.L;l>=0;l--){
+    for(const u of tree.levels[l]){
+      if(l===tree.L){ touches[u]=1; continue; }
+      let t=0;
+      for(const c of tree.children[u]) if(open[c] && touches[c]){ t=1; break; }
+      touches[u]=t;
+    }
+  }
+  const comp=new Int32Array(tree.N).fill(-1);
+  let cid=0;
+  if(touches[0]) comp[0]=cid++;
+  for(let l=1;l<=tree.L;l++){
+    for(const v of tree.levels[l]){
+      if(!touches[v]) continue;
+      if(open[v] && touches[tree.parent[v]] && comp[tree.parent[v]]!==-1){
+        comp[v]=comp[tree.parent[v]];
+      } else {
+        comp[v]=cid++;
+      }
+    }
+  }
+  return {open,touches,comp,boundaryClusters:cid};
+}
+
+function regenerate(){
+  const b=+bSel.value;
+  const L=+depthSlider.value;
+  const p=+pSlider.value;
+  const seed=+seedInput.value || 1;
+  dval.textContent=L;
+  pval.textContent=p.toFixed(2);
+  tree=buildTree(b,L);
+  const rng=mulberry32(seed);
+  sample=sampleTree(p,rng);
+  trialAvg=null;
+  trialMulti=null;
+  updateStats();
+  draw();
+}
+
+function updateStats(){
+  const b=+bSel.value;
+  const p=+pSlider.value;
+  const pc=1/b;
+  const pu=1/Math.sqrt(b);
+  spc.textContent=pc.toFixed(4);
+  spu.textContent=pu.toFixed(4);
+  let phase='—';
+  if(p < pc - 1e-12) phase='subcritical';
+  else if(Math.abs(p-pc) < 1e-9) phase='critical';
+  else if(p < pu - 1e-12) phase='nonunique (many clusters)';
+  else if(Math.abs(p-pu) < 1e-9) phase='uniqueness threshold';
+  else phase='unique (one cluster)';
+  sphase.textContent=phase;
+  sphase.style.color = (p>pc && p<pu) ? 'var(--bad)' : ((p<pc) ? 'var(--good)' : 'var(--accent)');
+  sbc.textContent=sample.boundaryClusters.toString();
+  sbc.style.color = sample.boundaryClusters>1 ? 'var(--bad)' : 'var(--good)';
+  if(trialAvg===null){
+    savgb.textContent='—';
+    smulti.textContent='—';
+  } else {
+    savgb.textContent=trialAvg.toFixed(2);
+    smulti.textContent=(trialMulti*100).toFixed(1)+'%';
+  }
+  snodes.textContent=tree.N.toLocaleString();
+  sleaves.textContent=Math.pow(b,tree.L).toLocaleString();
+}
+
+function runTrials(){
+  const p=+pSlider.value;
+  const T=+trialsSlider.value;
+  const baseSeed=+seedInput.value || 1;
+  let sum=0, multi=0;
+  for(let t=0;t<T;t++){
+    const rng=mulberry32(baseSeed + t*7919 + 1);
+    const open=new Uint8Array(tree.N);
+    for(let v=1;v<tree.N;v++) open[v]=rng()<p?1:0;
+    const touches=new Uint8Array(tree.N);
+    for(let l=tree.L;l>=0;l--){
+      for(const u of tree.levels[l]){
+        if(l===tree.L){ touches[u]=1; continue; }
+        let tt=0;
+        for(const c of tree.children[u]) if(open[c] && touches[c]){ tt=1; break; }
+        touches[u]=tt;
+      }
+    }
+    const comp=new Int32Array(tree.N).fill(-1);
+    let cid=0;
+    if(touches[0]) comp[0]=cid++;
+    for(let l=1;l<=tree.L;l++){
+      for(const v of tree.levels[l]){
+        if(!touches[v]) continue;
+        if(open[v] && touches[tree.parent[v]] && comp[tree.parent[v]]!==-1) comp[v]=comp[tree.parent[v]];
+        else comp[v]=cid++;
+      }
+    }
+    sum += cid;
+    if(cid>1) multi++;
+  }
+  trialAvg=sum/T;
+  trialMulti=multi/T;
+  updateStats();
+}
+
+function resize(){
+  const w=Math.max(300, Math.min(960, cv.clientWidth || 900));
+  cv.width=w;
+  cv.height=560;
+}
+
+function draw(){
+  resize();
+  const W=cv.width,H=cv.height;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='#1f2a44';
+  ctx.fillRect(0,0,W,H);
+  const L=tree.L;
+  const N=tree.N;
+  const posx=new Float64Array(N);
+  const posy=new Float64Array(N);
+  const margin=24;
+  const usableW=W-2*margin;
+  for(let l=0;l<=L;l++){
+    const count=tree.levels[l].length;
+    const y=40 + l*(H-90)/L;
+    tree.levels[l].forEach((u,i)=>{
+      posx[u]=margin + (i+0.5)/count*usableW;
+      posy[u]=y;
+    });
+  }
+  const open=sample.open;
+  const comp=sample.comp;
+  const touches=sample.touches;
+  for(let v=1;v<N;v++){
+    const u=tree.parent[v];
+    ctx.beginPath();
+    ctx.moveTo(posx[u],posy[u]);
+    ctx.lineTo(posx[v],posy[v]);
+    if(open[v] && comp[v]!==-1){
+      ctx.strokeStyle=palette[comp[v] % palette.length];
+      ctx.lineWidth=1.5;
+      ctx.globalAlpha=0.9;
+    } else if(open[v]){
+      ctx.strokeStyle='rgba(159,176,204,0.35)';
+      ctx.lineWidth=1.2;
+      ctx.globalAlpha=0.6;
+    } else {
+      ctx.strokeStyle='rgba(159,176,204,0.10)';
+      ctx.lineWidth=1;
+      ctx.globalAlpha=0.5;
+    }
+    ctx.stroke();
+    ctx.globalAlpha=1;
+  }
+  const r = N>8000 ? 1.3 : (N>2000 ? 2.2 : 3.4);
+  for(let v=0;v<N;v++){
+    ctx.beginPath();
+    ctx.arc(posx[v],posy[v],r,0,Math.PI*2);
+    if(comp[v]!==-1){
+      ctx.fillStyle=palette[comp[v] % palette.length];
+    } else if(touches[v]){
+      ctx.fillStyle='rgba(159,176,204,0.7)';
+    } else {
+      ctx.fillStyle='rgba(159,176,204,0.16)';
+    }
+    ctx.fill();
+  }
+  if(touches[0]){
+    ctx.fillStyle='#22c55e';
+    ctx.beginPath(); ctx.arc(posx[0],posy[0],Math.max(r+2,5),0,Math.PI*2); ctx.fill();
+  }
+  ctx.fillStyle='#9fb0cc';
+  ctx.font='13px system-ui';
+  ctx.textAlign='left';
+  ctx.fillText('depth 0 (root)', margin, 26);
+  ctx.fillText('depth '+L+' (boundary)', margin, H-70);
+  const b=+bSel.value;
+  const pc=1/b;
+  const pu=1/Math.sqrt(b);
+  const p=+pSlider.value;
+  const barY=H-34;
+  const barX=margin;
+  const barW=W-2*margin;
+  ctx.strokeStyle='rgba(159,176,204,0.4)';
+  ctx.lineWidth=2;
+  ctx.beginPath();
+  ctx.moveTo(barX,barY);
+  ctx.lineTo(barX+barW,barY);
+  ctx.stroke();
+  function mark(q,color,label){
+    const x=barX+q*barW;
+    ctx.strokeStyle=color;
+    ctx.lineWidth=2;
+    ctx.beginPath();
+    ctx.moveTo(x,barY-8);
+    ctx.lineTo(x,barY+8);
+    ctx.stroke();
+    ctx.fillStyle=color;
+    ctx.font='11px ui-monospace,monospace';
+    ctx.textAlign='center';
+    ctx.fillText(label,x,barY-12);
+  }
+  mark(pc,'#22c55e','p_c');
+  mark(pu,'#f59e0b','p_u');
+  const xp=barX+p*barW;
+  ctx.fillStyle='#5eead4';
+  ctx.beginPath(); ctx.arc(xp,barY,5,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle='#9fb0cc';
+  ctx.font='12px system-ui';
+  ctx.textAlign='center';
+  ctx.fillText('p='+p.toFixed(2),xp,barY+22);
+}
+
+bSel.addEventListener('change',regenerate);
+depthSlider.addEventListener('input',regenerate);
+pSlider.addEventListener('input',regenerate);
+seedInput.addEventListener('change',regenerate);
+document.getElementById('resample').addEventListener('click',function(){
+  seedInput.value=Math.floor(Math.random()*1e6);
+  regenerate();
+});
+trialsSlider.addEventListener('input',function(){ tval.textContent=trialsSlider.value; });
+document.getElementById('runtrials').addEventListener('click',runTrials);
+window.addEventListener('resize',function(){ draw(); });
+
+regenerate();
+</script>
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

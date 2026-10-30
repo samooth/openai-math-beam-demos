@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Superexponential van der Waerden numbers (conceptual, result 160)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range]{flex:1 1 180px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+select{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:520px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+.legend{display:flex;gap:1rem;align-items:center;font-size:.85rem;color:var(--muted);margin:.5rem 0;flex-wrap:wrap}
+.swatch{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:.3rem;vertical-align:middle}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Superexponential van der Waerden numbers (conceptual, result 160)</h1>
+  <p>Colors an initial interval with (r) colors, searches for monochromatic (k)-term arithmetic progressions, and compares the observed progression-free length with the superexponential lower bound (k^{c k\lfloor\log_2 r\rfloor}).</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Resolves Erdős's superexponential-growth question for van der Waerden numbers. If \(W_r(k)\) is the least interval length forcing a monochromatic \(k\)-term progression in every \(r\)-coloring, then \(W_r(k)>k^{c k\lfloor\log_2 r\rfloor}\) for an absolute \(c>0), all (r\ge 2) and sufficiently large (k), uniformly in (r). In particular, (W_r(k)^{1/k}\to\infty) for each fixed (r).</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Places all two-or-more colorings in the superexponential regime, giving a quantitative positive resolution of Erdős's question and distinguishing growth in progression length from growth in the number of colors. The uniformity in (r) shows that the superexponential limit is not an artifact of fixing the number of colors.</p>
+  </section>
+  <div class="controls">
+    <label for="r">Colors r</label>
+    <select id="r">
+      <option value="2">2</option>
+      <option value="3">3</option>
+      <option value="4">4</option>
+      <option value="5">5</option>
+      <option value="6">6</option>
+      <option value="8">8</option>
+    </select>
+    <label for="k">Progression length k</label>
+    <input id="k" type="range" min="3" max="8" value="4" step="1">
+    <span class="val" id="kval">4</span>
+    <label for="N">Interval length N</label>
+    <input id="N" type="range" min="20" max="180" value="80" step="1">
+    <span class="val" id="Nval">80</span>
+  </div>
+  <div class="controls">
+    <label for="scheme">Coloring</label>
+    <select id="scheme">
+      <option value="random">Random</option>
+      <option value="cyclic">Cyclic</option>
+      <option value="blocks">Blocks</option>
+      <option value="pairs">Paired</option>
+    </select>
+    <label for="seed">Seed</label>
+    <input id="seed" type="range" min="1" max="99" value="7" step="1">
+    <span class="val" id="seedval">7</span>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Colors r</div><div class="value" id="sr">—</div></div>
+    <div class="stat"><div class="label">floor(log2 r)</div><div class="value" id="sfloor">—</div></div>
+    <div class="stat"><div class="label">k</div><div class="value" id="sk">—</div></div>
+    <div class="stat"><div class="label">N</div><div class="value" id="sN">—</div></div>
+    <div class="stat"><div class="label">Lower bound L</div><div class="value" id="sL">—</div></div>
+    <div class="stat"><div class="label">log10 L</div><div class="value" id="slogL">—</div></div>
+    <div class="stat"><div class="label">Mono k-APs</div><div class="value" id="sap">—</div></div>
+    <div class="stat"><div class="label">Marked terms</div><div class="value" id="sterms">—</div></div>
+    <div class="stat"><div class="label">Progression-free?</div><div class="value" id="spf">—</div></div>
+    <div class="stat"><div class="label">Regime</div><div class="value" id="sreg">—</div></div>
+  </div>
+  <div class="legend">
+    <span><span class="swatch" style="background:#5eead4"></span>Color 0</span>
+    <span><span class="swatch" style="background:#f59e0b"></span>Color 1</span>
+    <span><span class="swatch" style="background:#ef4444"></span>Term in mono k-AP</span>
+  </div>
+  <canvas id="c" width="900" height="520"></canvas>
+  <p style="font-size:.85rem;color:var(--muted);margin-top:.5rem">Conceptual model: a random coloring of a short interval almost always contains monochromatic progressions, while the theorem guarantees a progression-free coloring exists up to length (k^{c k\lfloor\log_2 r\rfloor}). The lower curve is the proved avoidable length; the marked strip shows the actual coloring and any detected progressions.</p>
+</div>
+<script>
+const rSel=document.getElementById('r');
+const kSlider=document.getElementById('k');
+const NSlider=document.getElementById('N');
+const schemeSel=document.getElementById('scheme');
+const seedSlider=document.getElementById('seed');
+
+const kval=document.getElementById('kval');
+const Nval=document.getElementById('Nval');
+const seedval=document.getElementById('seedval');
+
+const sr=document.getElementById('sr');
+const sfloor=document.getElementById('sfloor');
+const sk=document.getElementById('sk');
+const sN=document.getElementById('sN');
+const sL=document.getElementById('sL');
+const slogL=document.getElementById('slogL');
+const sap=document.getElementById('sap');
+const sterms=document.getElementById('sterms');
+const spf=document.getElementById('spf');
+const sreg=document.getElementById('sreg');
+
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+
+function resizeCanvas(){ canvas.width=Math.max(300,canvas.clientWidth); canvas.height=520; }
+window.addEventListener('resize',function(){ resizeCanvas(); render(); });
+resizeCanvas();
+
+function mulberry(a){ return function(){ a=(a*1664525+1013904223)>>>0; return a/4294967296; }; }
+
+function buildColoring(N,r,scheme,seed){
+  const rnd=mulberry(seed*9973+11);
+  const col=new Array(N);
+  if(scheme==='random'){
+    for(let i=0;i<N;i++) col[i]=Math.floor(rnd()*r);
+  } else if(scheme==='cyclic'){
+    for(let i=0;i<N;i++) col[i]=i%r;
+  } else if(scheme==='blocks'){
+    const b=5;
+    for(let i=0;i<N;i++) col[i]=Math.floor(i/b)%r;
+  } else {
+    for(let i=0;i<N;i++) col[i]=Math.floor(i/2)%r;
+  }
+  return col;
+}
+
+function countAPs(col,N,k){
+  let count=0;
+  const marked=new Set();
+  for(let a=0;a<N;a++){
+    const maxd=Math.floor((N-1-a)/(k-1));
+    for(let d=1;d<=maxd;d++){
+      const c=col[a];
+      let ok=true;
+      for(let t=1;t<k;t++){ if(col[a+t*d]!==c){ ok=false; break; } }
+      if(ok){
+        count++;
+        for(let t=0;t<k;t++) marked.add(a+t*d);
+      }
+    }
+  }
+  return {count,marked};
+}
+
+function lowerBound(k,r){
+  const c=1e-5;
+  return Math.pow(k, c*k*Math.floor(Math.log2(r)));
+}
+
+function fmt(x){
+  if(!isFinite(x)) return '∞';
+  if(Math.abs(x)>=1e4 || (Math.abs(x)>0 && Math.abs(x)<1e-3)) return x.toExponential(2);
+  return x.toFixed(3);
+}
+
+function updateStats(){
+  const r=+rSel.value;
+  const k=+kSlider.value;
+  const N=+NSlider.value;
+  const scheme=schemeSel.value;
+  const seed=+seedSlider.value;
+  kval.textContent=k;
+  Nval.textContent=N;
+  seedval.textContent=seed;
+
+  const col=buildColoring(N,r,scheme,seed);
+  const res=countAPs(col,N,k);
+  const L=lowerBound(k,r);
+  sr.textContent=r;
+  sfloor.textContent=Math.floor(Math.log2(r));
+  sk.textContent=k;
+  sN.textContent=N;
+  sL.textContent=fmt(L);
+  slogL.textContent=Math.log10(L).toFixed(3);
+  sap.textContent=res.count;
+  sterms.textContent=res.marked.size;
+  if(res.count===0){ spf.textContent='Yes'; spf.className='value good'; }
+  else { spf.textContent='No'; spf.className='value bad'; }
+  if(res.count===0){ sreg.textContent='Progression-free'; sreg.className='value good'; }
+  else { sreg.textContent='Contains mono k-AP'; sreg.className='value bad'; }
+  window._state={r,k,N,scheme,seed,col,res,L};
+}
+
+function colorFor(v,r){
+  const hues=[94,234,212,245,158,11,239,68,68,168,85,247,192,132,252,211,39,234,212];
+  const h=hues[v % hues.length];
+  return 'hsl('+h+',70%,55%)';
+}
+
+function render(){
+  updateStats();
+  const st=window._state;
+  const {r,k,N,scheme,seed,col,res,L}=st;
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+
+  const padL=50,padR=20,padT=24,padB=40;
+  const stripY=padT;
+  const stripH=90;
+  const cellW=(W-padL-padR)/N;
+  for(let i=0;i<N;i++){
+    const x=padL+i*cellW;
+    ctx.fillStyle=colorFor(col[i],r);
+    ctx.fillRect(x,stripY,Math.max(1,cellW-1),stripH);
+    if(res.marked.has(i)){
+      ctx.strokeStyle='#ef4444';
+      ctx.lineWidth=2;
+      ctx.strokeRect(x+1,stripY+1,Math.max(1,cellW-3),stripH-2);
+    }
+  }
+  ctx.fillStyle='rgba(159,176,204,0.9)';
+  ctx.font='12px system-ui'; ctx.textAlign='center';
+  for(let i=0;i<=N;i+=Math.max(1,Math.floor(N/10))){
+    const x=padL+i*cellW;
+    ctx.fillText(String(i),x,stripY+stripH+14);
+  }
+  ctx.textAlign='left';
+  ctx.fillStyle='#e6edf7'; ctx.font='13px system-ui';
+  ctx.fillText('Coloring of [1,N]',padL,stripY-6);
+
+  const plotTop=stripY+stripH+34;
+  const plotH=H-plotTop-padB;
+  const plotW=W-padL-padR;
+  const kMin=3, kMax=60;
+  const logMin=0;
+  let logMax=1;
+  for(let kk=kMin;kk<=kMax;kk++){
+    const ll=Math.log10(lowerBound(kk,r));
+    if(ll>logMax) logMax=ll;
+  }
+  if(logMax<1) logMax=1;
+  function xOf(kk){ return padL + ((kk-kMin)/(kMax-kMin))*plotW; }
+  function yOf(logv){ return plotTop + plotH - (logv/logMax)*plotH; }
+
+  ctx.strokeStyle='rgba(159,176,204,0.35)';
+  ctx.lineWidth=1;
+  for(let j=0;j<=4;j++){
+    const yy=plotTop + plotH*(1-j/4);
+    ctx.beginPath(); ctx.moveTo(padL,yy); ctx.lineTo(W-padR,yy); ctx.stroke();
+    ctx.fillStyle='rgba(159,176,204,0.9)'; ctx.font='11px system-ui'; ctx.textAlign='right';
+    ctx.fillText((logMax*j/4).toFixed(1),padL-6,yy+4);
+  }
+  ctx.textAlign='center';
+  for(let kk=kMin;kk<=kMax;kk+=Math.max(1,Math.floor((kMax-kMin)/8))){
+    const x=xOf(kk);
+    ctx.beginPath(); ctx.moveTo(x,plotTop); ctx.lineTo(x,H-padB); ctx.stroke();
+    ctx.fillText(String(kk),x,H-18);
+  }
+  ctx.fillStyle='#e6edf7'; ctx.font='12px system-ui'; ctx.textAlign='center';
+  ctx.fillText('progression length k',padL+plotW/2,H-4);
+  ctx.save(); ctx.translate(16,plotTop+plotH/2); ctx.rotate(-Math.PI/2); ctx.fillText('log10 lower bound',0,0); ctx.restore();
+
+  ctx.strokeStyle='#5eead4'; ctx.lineWidth=2.5;
+  ctx.beginPath();
+  for(let kk=kMin;kk<=kMax;kk++){
+    const logv=Math.log10(lowerBound(kk,r));
+    const x=xOf(kk), y=yOf(logv);
+    if(kk===kMin) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  }
+  ctx.stroke();
+
+  const xk=xOf(k);
+  ctx.strokeStyle='#f59e0b'; ctx.lineWidth=1.5; ctx.setLineDash([6,4]);
+  ctx.beginPath(); ctx.moveTo(xk,plotTop); ctx.lineTo(xk,H-padB); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle='#f59e0b'; ctx.font='12px system-ui'; ctx.textAlign='center';
+  ctx.fillText('k='+k,xk,plotTop-6);
+
+  ctx.fillStyle='rgba(159,176,204,0.9)'; ctx.font='12px system-ui'; ctx.textAlign='left';
+  ctx.fillText('Lower bound L = k^{c k floor(log2 r)}',padL+8,plotTop+14);
+}
+
+rSel.addEventListener('change',render);
+kSlider.addEventListener('input',render);
+NSlider.addEventListener('input',render);
+schemeSel.addEventListener('change',render);
+seedSlider.addEventListener('input',render);
+render();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

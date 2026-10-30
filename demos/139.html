@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Subpolynomial queries for log-concave sampling (conceptual, result 139)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range]{flex:1 1 180px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:460px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+.legend{display:flex;gap:1rem;align-items:center;font-size:.85rem;color:var(--muted);margin:.5rem 0;flex-wrap:wrap}
+.swatch{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:.3rem;vertical-align:middle}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Subpolynomial queries for log-concave sampling (conceptual, result 139)</h1>
+  <p>For \(C^2\) potentials with a supplied minimizer and \(I\preceq\nabla^2V\preceq2I\), sampling within total variation \(1/10\) requires only \(C_\varepsilon d^\varepsilon\) exact value-and-gradient queries for every fixed \(\varepsilon>0).</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Proves that for \(C^2\) potentials on \(\mathbb R^d\) with a supplied minimizer and Hessian bounded by \(I\preceq\nabla^2 V\preceq 2I\), sampling the associated log-concave distribution within total variation \(1/10\) uses only \(C_\varepsilon d^\varepsilon\) exact value-and-gradient oracle queries for every fixed \(\varepsilon>0). The bound holds on every run, with unrestricted computation between queries. A logarithmic lower bound also holds, so the optimal power-law exponent in this oracle model is zero.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Shows that well-conditioned log-concave sampling has subpolynomial query complexity, separating oracle cost from computation: the dimension dependence of queries can be made (d^{o(1)}) while arbitrary computation is allowed between queries. This fixes the optimal power-law exponent at zero and guides the design of high-dimensional sampling algorithms.</p>
+  </section>
+  <div class="controls">
+    <label for="ld">log10 d</label>
+    <input id="ld" type="range" min="1" max="6" value="3" step="0.1">
+    <span class="val" id="ldval">3.0</span>
+    <label for="eps">ε</label>
+    <input id="eps" type="range" min="0.01" max="1.00" value="0.10" step="0.01">
+    <span class="val" id="epsval">0.10</span>
+    <label for="C">C_ε</label>
+    <input id="C" type="range" min="0.1" max="10" value="1" step="0.1">
+    <span class="val" id="Cval">1.0</span>
+  </div>
+  <div class="controls">
+    <label for="p">Polynomial exponent p</label>
+    <input id="p" type="range" min="1" max="4" value="2" step="0.1">
+    <span class="val" id="pval">2.0</span>
+    <label for="cc">Lower-bound coeff c</label>
+    <input id="cc" type="range" min="0.1" max="5" value="1" step="0.1">
+    <span class="val" id="ccval">1.0</span>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Dimension d</div><div class="value" id="sd">—</div></div>
+    <div class="stat"><div class="label">ε</div><div class="value" id="seps">—</div></div>
+    <div class="stat"><div class="label">Subpolynomial queries</div><div class="value" id="sq">—</div></div>
+    <div class="stat"><div class="label">Polynomial baseline d^p</div><div class="value" id="spoly">—</div></div>
+    <div class="stat"><div class="label">Lower bound c log d</div><div class="value" id="slb">—</div></div>
+    <div class="stat"><div class="label">Ratio Q / d^p</div><div class="value" id="sratio">—</div></div>
+  </div>
+  <div class="legend">
+    <span><span class="swatch" style="background:#5eead4"></span>Subpolynomial (C d^\varepsilon)</span>
+    <span><span class="swatch" style="background:#f59e0b"></span>Polynomial (d^p)</span>
+    <span><span class="swatch" style="background:#94a3b8"></span>Logarithmic lower bound</span>
+    <span><span class="swatch" style="background:#9fb0cc"></span>Selected d</span>
+  </div>
+  <canvas id="c" width="900" height="460"></canvas>
+  <p style="font-size:.85rem;color:var(--muted);margin-top:.5rem">Conceptual model: required exact value-and-gradient queries versus dimension on a logarithmic scale. For every fixed \(\varepsilon>0), (C_\varepsilon d^\varepsilon) grows slower than any positive power (d^p), while the logarithmic lower bound shows the exponent cannot be negative.</p>
+</div>
+<script>
+const ldSlider=document.getElementById('ld');
+const epsSlider=document.getElementById('eps');
+const CSlider=document.getElementById('C');
+const pSlider=document.getElementById('p');
+const ccSlider=document.getElementById('cc');
+
+const ldval=document.getElementById('ldval');
+const epsval=document.getElementById('epsval');
+const Cval=document.getElementById('Cval');
+const pval=document.getElementById('pval');
+const ccval=document.getElementById('ccval');
+
+const sd=document.getElementById('sd');
+const seps=document.getElementById('seps');
+const sq=document.getElementById('sq');
+const spoly=document.getElementById('spoly');
+const slb=document.getElementById('slb');
+const sratio=document.getElementById('sratio');
+
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+
+function resizeCanvas(){ canvas.width=Math.max(300,canvas.clientWidth); canvas.height=460; }
+window.addEventListener('resize',function(){ resizeCanvas(); render(); });
+resizeCanvas();
+
+function fmt(x){
+  if(!isFinite(x)) return '—';
+  if(x>=1e6 || x<=1e-3) return x.toExponential(3);
+  return x.toFixed(3);
+}
+
+function getParams(){
+  const ld=+ldSlider.value;
+  const eps=+epsSlider.value;
+  const C=+CSlider.value;
+  const p=+pSlider.value;
+  const cc=+ccSlider.value;
+  const d=Math.pow(10,ld);
+  return {ld,eps,C,p,cc,d};
+}
+
+function updateStats(){
+  const {ld,eps,C,p,cc,d}=getParams();
+  ldval.textContent=ld.toFixed(1);
+  epsval.textContent=eps.toFixed(2);
+  Cval.textContent=C.toFixed(1);
+  pval.textContent=p.toFixed(1);
+  ccval.textContent=cc.toFixed(1);
+  const Q=C*Math.pow(d,eps);
+  const poly=Math.pow(d,p);
+  const lb=cc*Math.log(d);
+  sd.textContent=fmt(d);
+  seps.textContent=eps.toFixed(2);
+  sq.textContent=fmt(Q);
+  spoly.textContent=fmt(poly);
+  slb.textContent=fmt(lb);
+  sratio.textContent=fmt(Q/poly);
+}
+
+function render(){
+  updateStats();
+  const {eps,C,p,cc}=getParams();
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const padL=62,padR=20,padT=30,padB=46;
+  const plotW=W-padL-padR;
+  const plotH=H-padT-padB;
+  const xmin=1,xmax=6;
+  function xOfLog(lg){ return padL+(lg-xmin)/(xmax-xmin)*plotW; }
+  const ys=[];
+  for(let i=0;i<=200;i++){
+    const lg=xmin+(xmax-xmin)*i/200;
+    const d=Math.pow(10,lg);
+    ys.push(Math.log10(C)+eps*lg);
+    ys.push(p*lg);
+    ys.push(Math.log10(Math.max(1e-12,cc*Math.log(d))));
+  }
+  const ymin=Math.min(...ys);
+  const ymax=Math.max(...ys);
+  const ypad=(ymax-ymin)*0.08;
+  const ylo=ymin-ypad,yhi=ymax+ypad;
+  function yOfLog(lg){ return padT+plotH - (lg-ylo)/(yhi-ylo)*plotH; }
+
+  ctx.strokeStyle='rgba(159,176,204,0.35)';
+  ctx.lineWidth=1;
+  for(let i=0;i<=6;i++){
+    const x=padL+i*plotW/6;
+    ctx.beginPath(); ctx.moveTo(x,padT); ctx.lineTo(x,padT+plotH); ctx.stroke();
+  }
+  for(let i=0;i<=6;i++){
+    const y=padT+i*plotH/6;
+    ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(padL+plotW,y); ctx.stroke();
+  }
+
+  ctx.fillStyle='rgba(159,176,204,0.9)';
+  ctx.font='12px system-ui';
+  ctx.textAlign='center';
+  for(let lg=1;lg<=6;lg++){
+    ctx.fillText('1e'+lg, xOfLog(lg), H-padB+18);
+  }
+  ctx.textAlign='right';
+  for(let i=0;i<=6;i++){
+    const v=ylo+(yhi-ylo)*(1-i/6);
+    ctx.fillText('1e'+v.toFixed(1), padL-8, padT+i*plotH/6+4);
+  }
+  ctx.save();
+  ctx.translate(16, padT+plotH/2);
+  ctx.rotate(-Math.PI/2);
+  ctx.textAlign='center';
+  ctx.fillText('queries (log10)',0,0);
+  ctx.restore();
+  ctx.fillText('dimension d (log10)', padL+plotW/2, H-8);
+
+  function drawCurve(fn,color,width){
+    ctx.strokeStyle=color;
+    ctx.lineWidth=width;
+    ctx.beginPath();
+    for(let i=0;i<=200;i++){
+      const lg=xmin+(xmax-xmin)*i/200;
+      const d=Math.pow(10,lg);
+      const x=xOfLog(lg);
+      const y=yOfLog(fn(d,lg));
+      if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+  }
+  drawCurve((d,lg)=>Math.log10(C)+eps*lg, '#5eead4', 2.5);
+  drawCurve((d,lg)=>p*lg, '#f59e0b', 2);
+  drawCurve((d,lg)=>Math.log10(Math.max(1e-12,cc*Math.log(d))), '#94a3b8', 2);
+
+  const ld=+ldSlider.value;
+  const xk=xOfLog(ld);
+  ctx.strokeStyle='rgba(255,255,255,0.35)';
+  ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(xk,padT); ctx.lineTo(xk,padT+plotH); ctx.stroke();
+}
+
+ldSlider.addEventListener('input',render);
+epsSlider.addEventListener('input',render);
+CSlider.addEventListener('input',render);
+pSlider.addEventListener('input',render);
+ccSlider.addEventListener('input',render);
+render();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

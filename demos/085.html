@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Endpoint regularity of the planar centered maximal function (conceptual, result 085)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range]{flex:1 1 220px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:460px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+select{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text)}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Endpoint regularity of the planar centered maximal function (conceptual, result 085)</h1>
+  <p>For $f\in W^{1,1}(\mathbb R^2)$, the centered disk maximal function $Mf$ satisfies $|\nabla Mf|_{L^1}\le C|\nabla f|_{L^1}$ with an absolute constant. It belongs locally to $W^{1,1}$ and has a globally integrable weak gradient. The radial model below shows how disk averaging smooths while preserving first-order Sobolev regularity.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Resolves the planar centered-disk case of the Hajłasz--Onninen maximal-function regularity problem. For every real $f\in W^{1,1}(\mathbb R^2)$, the centered disk maximal function satisfies $|\nabla Mf|_1\le C|\nabla f|_1$ with an absolute constant. It belongs locally to $W^{1,1}$ and has a globally integrable weak gradient.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Gives an absolute $L^1$ gradient bound for the planar centered disk maximal operator, settling the endpoint regularity problem in two dimensions. It shows maximal averaging does not destroy first-order Sobolev regularity, supporting harmonic-analysis arguments that require precise control of maximal functions and their derivatives.</p>
+  </section>
+  <div class="controls">
+    <label for="func">Function</label>
+    <select id="func">
+      <option value="gauss" selected>Gaussian bump</option>
+      <option value="disk">Disk indicator</option>
+      <option value="annulus">Annulus</option>
+      <option value="tent">Tent</option>
+      <option value="osc">Oscillatory bump</option>
+    </select>
+    <label for="a">Scale a</label>
+    <input id="a" type="range" min="5" max="30" value="12" step="1">
+    <span class="val" id="aval">1.2</span>
+    <label for="amp">Amplitude</label>
+    <input id="amp" type="range" min="5" max="20" value="10" step="1">
+    <span class="val" id="ampval">1.0</span>
+    <label for="view">View</label>
+    <select id="view">
+      <option value="both" selected>Profiles + gradients</option>
+      <option value="prof">Profiles only</option>
+      <option value="grad">Gradients only</option>
+    </select>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Input $|\nabla f|_1$</div><div class="value" id="instat">—</div></div>
+    <div class="stat"><div class="label">Output $|\nabla Mf|_1$</div><div class="value" id="outstat">—</div></div>
+    <div class="stat"><div class="label">Ratio (est. C)</div><div class="value" id="ratiostat">—</div></div>
+    <div class="stat"><div class="label">Max $Mf$</div><div class="value" id="maxstat">—</div></div>
+    <div class="stat"><div class="label">Max input grad</div><div class="value" id="mingrad">—</div></div>
+    <div class="stat"><div class="label">Regularity</div><div class="value" id="regstat">Integrable</div></div>
+    <div class="stat"><div class="label">Dimension</div><div class="value" id="dimstat">2 (planar)</div></div>
+    <div class="stat"><div class="label">Radii sampled</div><div class="value" id="radstat">—</div></div>
+  </div>
+  <div class="legend">
+    <span><span class="swatch" style="background:#3b82f6"></span>$f$ (radial)</span>
+    <span><span class="swatch" style="background:#5eead4"></span>$Mf$</span>
+    <span><span class="swatch" style="background:#9fb0cc"></span>input gradient integrand</span>
+    <span><span class="swatch" style="background:#f59e0b"></span>output gradient integrand</span>
+  </div>
+  <canvas id="c" width="900" height="460"></canvas>
+</div>
+<script>
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+const RMAX=6;
+const N=120;
+const NR=20;
+const NT=20;
+const NTH=32;
+
+const funcSel=document.getElementById('func');
+const aSlider=document.getElementById('a');
+const ampSlider=document.getElementById('amp');
+const viewSel=document.getElementById('view');
+const aval=document.getElementById('aval');
+const ampval=document.getElementById('ampval');
+const instat=document.getElementById('instat');
+const outstat=document.getElementById('outstat');
+const ratiostat=document.getElementById('ratiostat');
+const maxstat=document.getElementById('maxstat');
+const mingrad=document.getElementById('mingrad');
+const radstat=document.getElementById('radstat');
+
+let rs=new Float64Array(N);
+let fs=new Float64Array(N);
+let Ms=new Float64Array(N);
+let fgrad=new Float64Array(N);
+let Mgrad=new Float64Array(N);
+let radii=[];
+
+function clamp(x,lo,hi){ return Math.max(lo,Math.min(hi,x)); }
+
+function fval(r,type,a,amp){
+  let v=0;
+  if(type==='gauss'){
+    v=amp*Math.exp(-r*r/(a*a));
+  } else if(type==='disk'){
+    v = (r<=a)?amp:0;
+  } else if(type==='annulus'){
+    v = (r>=a*0.6 && r<=a*1.6)?amp:0;
+  } else if(type==='tent'){
+    v = amp*clamp(1-r/a,0,1);
+  } else if(type==='osc'){
+    v = amp*Math.exp(-r*r/(2*a*a))*(1+0.35*Math.sin(4*r));
+    if(v<0) v=0;
+  }
+  if(!isFinite(v)) v=0;
+  return v;
+}
+
+function diskAvg(r,R,type,a,amp){
+  if(R<=1e-6) return fval(r,type,a,amp);
+  let sum=0;
+  const dtheta=2*Math.PI/NTH;
+  const dt=R/NT;
+  for(let it=0; it<NT; it++){
+    const t=(it+0.5)*dt;
+    for(let j=0; j<NTH; j++){
+      const th=j*dtheta;
+      const d=Math.sqrt(r*r + t*t + 2*r*t*Math.cos(th));
+      sum += fval(d,type,a,amp)*t*dt*dtheta;
+    }
+  }
+  return sum/(Math.PI*R*R);
+}
+
+function compute(){
+  const type=funcSel.value;
+  const a=aSlider.value/10;
+  const amp=ampSlider.value/10;
+  aval.textContent=a.toFixed(1);
+  ampval.textContent=amp.toFixed(1);
+  const dr=RMAX/(N-1);
+  for(let i=0;i<N;i++) rs[i]=i*dr;
+  radii=[];
+  for(let k=1;k<=NR;k++) radii.push((k/NR)*RMAX*0.9+0.05);
+  radstat.textContent=radii.length;
+
+  for(let i=0;i<N;i++){
+    fs[i]=fval(rs[i],type,a,amp);
+    let best=fs[i];
+    for(const R of radii){
+      const avg=diskAvg(rs[i],R,type,a,amp);
+      if(avg>best) best=avg;
+    }
+    Ms[i]=best;
+  }
+  // gradients
+  for(let i=0;i<N;i++){
+    let fp, bp;
+    if(i===0){ fp=(fs[1]-fs[0])/dr; } 
+    else if(i===N-1){ fp=(fs[N-1]-fs[N-2])/dr; }
+    else { fp=(fs[i+1]-fs[i-1])/(2*dr); }
+    fgrad[i]=fp;
+    if(i===0){ bp=(Ms[1]-Ms[0])/dr; }
+    else if(i===N-1){ bp=(Ms[N-1]-Ms[N-2])/dr; }
+    else { bp=(Ms[i+1]-Ms[i-1])/(2*dr); }
+    Mgrad[i]=bp;
+  }
+  // L1 norms: 2pi integral |grad| r dr
+  let inL1=0, outL1=0, maxM=0, maxg=0;
+  for(let i=0;i<N;i++){
+    const r=rs[i];
+    const w = (i===0||i===N-1)?0.5:1.0;
+    const integrandIn=2*Math.PI*r*Math.abs(fgrad[i]);
+    const integrandOut=2*Math.PI*r*Math.abs(Mgrad[i]);
+    inL1 += integrandIn*w*dr;
+    outL1 += integrandOut*w*dr;
+    if(Ms[i]>maxM) maxM=Ms[i];
+    if(integrandIn>maxg) maxg=integrandIn;
+  }
+  instat.textContent=inL1.toFixed(3);
+  outstat.textContent=outL1.toFixed(3);
+  ratiostat.textContent=(inL1>1e-9?(outL1/inL1).toFixed(3):'—');
+  maxstat.textContent=maxM.toFixed(3);
+  mingrad.textContent=maxg.toFixed(3);
+  draw();
+}
+
+function resizeCanvas(){ canvas.width=Math.max(300,canvas.clientWidth); canvas.height=460; }
+window.addEventListener('resize',function(){ resizeCanvas(); draw(); });
+resizeCanvas();
+
+function drawAxes(padL,padR,padT,padB,W,H,xmax,ymax,label){
+  ctx.strokeStyle='rgba(159,176,204,0.35)'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(padL,H-padB); ctx.lineTo(W-padR,H-padB); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(padL,padT); ctx.lineTo(padL,H-padB); ctx.stroke();
+  ctx.fillStyle='#9fb0cc'; ctx.font='11px system-ui';
+  ctx.textAlign='center'; ctx.fillText('r', padL+(W-padL-padR)/2, H-8);
+  ctx.save(); ctx.translate(14, padT+(H-padT-padB)/2); ctx.rotate(-Math.PI/2); ctx.fillText(label,0,0); ctx.restore();
+  // ticks
+  ctx.fillStyle='#9fb0cc'; ctx.font='10px ui-monospace,monospace'; ctx.textAlign='center';
+  for(let k=0;k<=4;k++){
+    const x=padL + (k/4)*(W-padL-padR);
+    const rv=(k/4)*xmax;
+    ctx.fillText(rv.toFixed(1), x, H-padB+12);
+  }
+}
+
+function plotLine(arr,color,W,H,padL,padR,padT,padB,xmax,ymax){
+  ctx.strokeStyle=color; ctx.lineWidth=2;
+  ctx.beginPath();
+  for(let i=0;i<N;i++){
+    const x=padL + (rs[i]/xmax)*(W-padL-padR);
+    const y=H-padB - (arr[i]/ymax)*(H-padT-padB);
+    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  }
+  ctx.stroke();
+}
+
+function draw(){
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const view=viewSel.value;
+  const showProf = (view==='both'||view==='prof');
+  const showGrad = (view==='both'||view==='grad');
+  if(showProf && showGrad){
+    // top half profiles, bottom half gradients
+    const Htop=Math.floor(H/2);
+    // profiles
+    let ymax=0;
+    for(let i=0;i<N;i++){ ymax=Math.max(ymax,fs[i],Ms[i]); }
+    if(ymax<1e-9) ymax=1;
+    const padL=50,padR=20,padT=20,padB=28;
+    drawAxes(padL,padR,padT,padB,W,Htop,RMAX,ymax,'value');
+    plotLine(fs,'#3b82f6',W,Htop,padL,padR,padT,padB,RMAX,ymax);
+    plotLine(Ms,'#5eead4',W,Htop,padL,padR,padT,padB,RMAX,ymax);
+    // gradients bottom
+    const off=Htop;
+    ctx.save(); ctx.translate(0,off);
+    let gmax=0;
+    for(let i=0;i<N;i++){ gmax=Math.max(gmax, 2*Math.PI*rs[i]*Math.abs(fgrad[i]), 2*Math.PI*rs[i]*Math.abs(Mgrad[i])); }
+    if(gmax<1e-9) gmax=1;
+    drawAxes(padL,padR,padT,padB,W,H-Htop,RMAX,gmax,'integrand');
+    plotLine(new Float64Array(Array.from({length:N},(_,i)=>2*Math.PI*rs[i]*Math.abs(fgrad[i]))),'#9fb0cc',W,H-Htop,padL,padR,padT,padB,RMAX,gmax);
+    plotLine(new Float64Array(Array.from({length:N},(_,i)=>2*Math.PI*rs[i]*Math.abs(Mgrad[i]))),'#f59e0b',W,H-Htop,padL,padR,padT,padB,RMAX,gmax);
+    ctx.restore();
+  } else if(showProf){
+    let ymax=0;
+    for(let i=0;i<N;i++){ ymax=Math.max(ymax,fs[i],Ms[i]); }
+    if(ymax<1e-9) ymax=1;
+    const padL=50,padR=20,padT=20,padB=30;
+    drawAxes(padL,padR,padT,padB,W,H,RMAX,ymax,'value');
+    plotLine(fs,'#3b82f6',W,H,padL,padR,padT,padB,RMAX,ymax);
+    plotLine(Ms,'#5eead4',W,H,padL,padR,padT,padB,RMAX,ymax);
+  } else {
+    let gmax=0;
+    for(let i=0;i<N;i++){ gmax=Math.max(gmax, 2*Math.PI*rs[i]*Math.abs(fgrad[i]), 2*Math.PI*rs[i]*Math.abs(Mgrad[i])); }
+    if(gmax<1e-9) gmax=1;
+    const padL=50,padR=20,padT=20,padB=30;
+    drawAxes(padL,padR,padT,padB,W,H,RMAX,gmax,'integrand');
+    plotLine(new Float64Array(Array.from({length:N},(_,i)=>2*Math.PI*rs[i]*Math.abs(fgrad[i]))),'#9fb0cc',W,H,padL,padR,padT,padB,RMAX,gmax);
+    plotLine(new Float64Array(Array.from({length:N},(_,i)=>2*Math.PI*rs[i]*Math.abs(Mgrad[i]))),'#f59e0b',W,H,padL,padR,padT,padB,RMAX,gmax);
+  }
+}
+
+funcSel.addEventListener('change',compute);
+aSlider.addEventListener('input',compute);
+ampSlider.addEventListener('input',compute);
+viewSel.addEventListener('change',draw);
+compute();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Large prime gaps — interactive demo (result 026)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#34d399; --bad:#f87171; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#059669; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range]{flex:1 1 220px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:460px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+table{width:100%;border-collapse:collapse;font-size:.85rem}
+th,td{padding:.35rem .45rem;border-bottom:1px solid var(--border);text-align:left}
+th{color:var(--muted);font-weight:600}
+td.num{font-family:ui-monospace,monospace}
+.status{color:var(--muted);font-size:.9rem}
+.legend{display:flex;gap:1rem;align-items:center;font-size:.85rem;color:var(--muted);margin:.5rem 0;flex-wrap:wrap}
+.swatch{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:.3rem;vertical-align:middle}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Large prime gaps: positive density</h1>
+  <p>For primes \(p_n\), the gap \(g_n=p_{n+1}-p_n\). Gaps exceeding \(C\log p_n\) are highlighted; the result says a positive proportion of them do, for every fixed \(C>0).</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Positive lower density of large prime gaps. For every fixed C &gt; 0, a positive proportion of consecutive prime gaps exceed C log p_n, throughout every sufficiently large initial segment of the primes. The proportion may depend on C. Consequently, the indices where p_n/n increases have positive lower density, answering Erdős and Prachar.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Gives an unconditional positive lower density of prime gaps larger than any fixed multiple of log p, and answers Erdős–Prachar on the density of indices where p_n/n increases.</p>
+  </section>
+  <div class="controls">
+    <label for="X">N (max prime)</label>
+    <input id="X" type="range" min="1000" max="200000" value="50000" step="1000">
+    <span class="val" id="Xval">50000</span>
+    <label for="C">C</label>
+    <input id="C" type="range" min="0.5" max="5" value="2" step="0.1">
+    <span class="val" id="Cval">2.0</span>
+    <button id="reset">Reset</button>
+    <span class="status" id="status"></span>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Primes ≤ N</div><div class="value" id="stP">—</div></div>
+    <div class="stat"><div class="label">Gaps shown</div><div class="value" id="stG">—</div></div>
+    <div class="stat"><div class="label">Large gaps</div><div class="value" id="stL">—</div></div>
+    <div class="stat"><div class="label">Proportion</div><div class="value" id="stProp">—</div></div>
+    <div class="stat"><div class="label">Max gap</div><div class="value" id="stMax">—</div></div>
+    <div class="stat"><div class="label">Threshold at N</div><div class="value" id="stThr">—</div></div>
+  </div>
+  <div class="legend">
+    <span><span class="swatch" style="background:#f87171"></span>gap &gt; C log p</span>
+    <span><span class="swatch" style="background:#5eead4"></span>gap ≤ C log p</span>
+    <span><span class="swatch" style="background:#f59e0b"></span>threshold C log p</span>
+  </div>
+  <div style="position:relative">
+    <canvas id="c" width="900" height="460"></canvas>
+  </div>
+  <section class="box">
+    <h3>Largest gaps</h3>
+    <table>
+      <thead><tr><th>p</th><th>gap</th><th>C log p</th><th>large?</th></tr></thead>
+      <tbody id="tbl"></tbody>
+    </table>
+  </section>
+</div>
+<script>
+const MAXX = 200000;
+const sieve = new Uint8Array(MAXX + 1);
+const primes = [];
+for (let i = 2; i <= MAXX; i++) {
+  if (!sieve[i]) {
+    primes.push(i);
+    if (i * i <= MAXX) for (let j = i * i; j <= MAXX; j += i) sieve[j] = 1;
+  }
+}
+const allGaps = [];
+for (let i = 0; i + 1 < primes.length; i++) {
+  allGaps.push({ p: primes[i], q: primes[i + 1], g: primes[i + 1] - primes[i] });
+}
+
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+function resizeCanvas(){ canvas.width = Math.max(300, canvas.clientWidth); canvas.height = 460; }
+window.addEventListener('resize', function(){ resizeCanvas(); draw(); });
+resizeCanvas();
+
+function shownGaps() {
+  const X = +document.getElementById('X').value;
+  const out = [];
+  for (const gap of allGaps) {
+    if (gap.p <= X) out.push(gap);
+    else break;
+  }
+  return out;
+}
+
+function update() {
+  const X = +document.getElementById('X').value;
+  const C = +document.getElementById('C').value;
+  document.getElementById('Xval').textContent = X.toLocaleString();
+  document.getElementById('Cval').textContent = C.toFixed(1);
+  const gaps = shownGaps();
+  let largeCount = 0;
+  let maxGap = 0;
+  let maxAt = 0;
+  for (const gap of gaps) {
+    const thr = C * Math.log(gap.p);
+    if (gap.g > thr) largeCount++;
+    if (gap.g > maxGap) { maxGap = gap.g; maxAt = gap.p; }
+  }
+  document.getElementById('stP').textContent = (function(){ let c=0; for(const p of primes){ if(p<=X) c++; else break; } return c.toLocaleString(); })();
+  document.getElementById('stG').textContent = gaps.length.toLocaleString();
+  document.getElementById('stL').textContent = largeCount.toLocaleString();
+  document.getElementById('stProp').textContent = gaps.length ? (100*largeCount/gaps.length).toFixed(2)+'%' : '—';
+  document.getElementById('stMax').textContent = maxGap + ' @ ' + maxAt;
+  const lastP = gaps.length ? gaps[gaps.length-1].p : X;
+  document.getElementById('stThr').textContent = (C*Math.log(lastP)).toFixed(2);
+  document.getElementById('status').textContent = '';
+
+  const tbody = document.getElementById('tbl');
+  tbody.innerHTML = '';
+  const sorted = gaps.slice().sort(function(a,b){ return b.g - a.g; }).slice(0, 10);
+  for (const gap of sorted) {
+    const thr = C * Math.log(gap.p);
+    const tr = document.createElement('tr');
+    tr.innerHTML = '<td class="num">'+gap.p.toLocaleString()+'</td><td class="num">'+gap.g+'</td><td class="num">'+thr.toFixed(2)+'</td><td>'+(gap.g>thr?'yes':'no')+'</td>';
+    tbody.appendChild(tr);
+  }
+  draw();
+}
+
+function draw() {
+  const C = +document.getElementById('C').value;
+  const gaps = shownGaps();
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0, 0, W, H);
+  const padL = 56, padR = 20, padT = 20, padB = 40;
+  const plotW = W - padL - padR, plotH = H - padT - padB;
+  let maxGap = 0;
+  for (const gap of gaps) if (gap.g > maxGap) maxGap = gap.g;
+  const lastP = gaps.length ? gaps[gaps.length-1].p : 1000;
+  const thrEnd = C * Math.log(lastP);
+  const ymax = Math.max(maxGap, thrEnd) * 1.15 + 2;
+  const ymin = 0;
+  const Xmap = function(v){ return padL + plotW * (v - gaps[0].p) / (lastP - gaps[0].p || 1); };
+  const Ymap = function(v){ return padT + plotH * (1 - (v - ymin)/(ymax - ymin)); };
+
+  ctx.strokeStyle = 'rgba(159,176,204,0.15)'; ctx.lineWidth = 1;
+  for (let i = 0; i <= 5; i++) {
+    const y = padT + plotH * i / 5;
+    ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(W - padR, y); ctx.stroke();
+  }
+  ctx.strokeStyle = '#475569'; ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(padL, H - padB); ctx.lineTo(W - padR, H - padB); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(padL, padT); ctx.lineTo(padL, H - padB); ctx.stroke();
+  ctx.fillStyle = '#9fb0cc'; ctx.font = '12px system-ui';
+  ctx.fillText('p', W/2, H-8);
+  ctx.save(); ctx.translate(14, H/2+30); ctx.rotate(-Math.PI/2); ctx.fillText('gap', 0, 0); ctx.restore();
+
+  if (!gaps.length) return;
+
+  ctx.strokeStyle = 'rgba(245,158,11,0.85)'; ctx.lineWidth = 2;
+  ctx.beginPath();
+  let first = true;
+  for (const gap of gaps) {
+    const x = Xmap(gap.p);
+    const y = Ymap(C * Math.log(gap.p));
+    if (first) { ctx.moveTo(x, y); first = false; } else ctx.lineTo(x, y);
+  }
+  ctx.stroke();
+
+  for (const gap of gaps) {
+    const thr = C * Math.log(gap.p);
+    const large = gap.g > thr;
+    const x = Xmap(gap.p);
+    const y = Ymap(gap.g);
+    if (large) {
+      ctx.strokeStyle = 'rgba(248,113,113,0.35)'; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(x, Ymap(0)); ctx.lineTo(x, y); ctx.stroke();
+    }
+    ctx.fillStyle = large ? '#f87171' : '#5eead4';
+    ctx.beginPath(); ctx.arc(x, y, large ? 3.5 : 2, 0, Math.PI*2); ctx.fill();
+  }
+
+  ctx.fillStyle = '#f59e0b'; ctx.font = '11px system-ui';
+  ctx.fillText('C log p', W - padR - 52, Ymap(thrEnd) - 6);
+}
+
+const xSlider = document.getElementById('X');
+const cSlider = document.getElementById('C');
+xSlider.addEventListener('input', update);
+cSlider.addEventListener('input', update);
+document.getElementById('reset').addEventListener('click', function(){
+  xSlider.value = 50000; cSlider.value = 2;
+  document.getElementById('Xval').textContent = '50000';
+  document.getElementById('Cval').textContent = '2.0';
+  update();
+});
+
+update();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

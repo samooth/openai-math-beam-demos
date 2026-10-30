@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bounded-degree coboundary expanders in every dimension (conceptual, result 177)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range]{flex:1 1 180px}
+input[type=checkbox]{width:18px;height:18px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+select{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:540px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+.legend{display:flex;gap:1rem;align-items:center;font-size:.85rem;color:var(--muted);margin:.5rem 0;flex-wrap:wrap}
+.swatch{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:.3rem;vertical-align:middle}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Bounded-degree coboundary expanders in every dimension (conceptual, result 177)</h1>
+  <p>Samples a random $2$-dimensional simplicial complex (clique complex of a random graph) and computes its $\mathbb F_2$ coboundary expansion constants in degrees $0$ and $1$ by direct linear algebra over $\mathbb F_2$.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Result 177 constructs arbitrarily large finite $d$-dimensional simplicial complexes, for every $d\ge3$, with uniformly bounded vertex degrees and uniform $\mathbb F_2$ coboundary expansion in every degree below $d$. Together with the known graph ($d=1$) and two-dimensional cases, this establishes the existence of such expanders in every positive dimension. The demo samples a small random $2$-complex and measures the corresponding constants directly.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Coboundary expanders are high-dimensional analogues of expander graphs; they provide sparse objects with strong isoperimetric properties in every dimension. Their existence with bounded degree underpins constructions in high-dimensional topology, locally testable codes, quantum CSS codes, and property testing that were previously unavailable.</p>
+  </section>
+  <div class="controls">
+    <label for="n">Vertices $n$</label>
+    <input id="n" type="range" min="5" max="7" value="6" step="1">
+    <span class="val" id="nval">6</span>
+    <label for="p">Edge probability $p$</label>
+    <input id="p" type="range" min="0.30" max="0.70" value="0.50" step="0.05">
+    <span class="val" id="pval">0.50</span>
+    <label for="seed">Seed</label>
+    <input id="seed" type="range" min="1" max="99" value="7" step="1">
+    <span class="val" id="seedval">7</span>
+    <button id="regen">Regenerate</button>
+  </div>
+  <div class="controls">
+    <label for="showtri">Show triangles</label>
+    <input id="showtri" type="checkbox" checked>
+    <label for="showlabels">Show labels</label>
+    <input id="showlabels" type="checkbox" checked>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Vertices $V$</div><div class="value" id="sv">—</div></div>
+    <div class="stat"><div class="label">Edges $E$</div><div class="value" id="se">—</div></div>
+    <div class="stat"><div class="label">Triangles $T$</div><div class="value" id="st">—</div></div>
+    <div class="stat"><div class="label">Max edge degree</div><div class="value" id="sdeg">—</div></div>
+    <div class="stat"><div class="label">Components</div><div class="value" id="scomp">—</div></div>
+    <div class="stat"><div class="label">$\beta_1$</div><div class="value" id="sbeta">—</div></div>
+    <div class="stat"><div class="label">$h_0$ (degree 0)</div><div class="value" id="sh0">—</div></div>
+    <div class="stat"><div class="label">$h_1$ (degree 1)</div><div class="value" id="sh1">—</div></div>
+  </div>
+  <div class="legend">
+    <span><span class="swatch" style="background:#5eead4"></span>Vertex</span>
+    <span><span class="swatch" style="background:rgba(94,234,212,0.25)"></span>Triangle (2-face)</span>
+    <span><span class="swatch" style="background:#9fb0cc"></span>Edge</span>
+  </div>
+  <canvas id="c" width="900" height="540"></canvas>
+  <p style="font-size:.85rem;color:var(--muted);margin-top:.5rem">Conceptual measurement on a sampled finite complex: $h_0=\min_{f\notin B^0} |\delta f|/\mathrm{dist}(f,B^0)$ and $h_1=\min_{g\notin B^1} |\delta g|/\mathrm{dist}(g,B^1)$ over $\mathbb F_2$. Asymptotic bounded-degree expansion concerns families as size grows.</p>
+</div>
+<script>
+const nSlider=document.getElementById('n');
+const pSlider=document.getElementById('p');
+const seedSlider=document.getElementById('seed');
+const regenBtn=document.getElementById('regen');
+const showTri=document.getElementById('showtri');
+const showLabels=document.getElementById('showlabels');
+
+const nval=document.getElementById('nval');
+const pval=document.getElementById('pval');
+const seedval=document.getElementById('seedval');
+
+const sv=document.getElementById('sv');
+const se=document.getElementById('se');
+const st=document.getElementById('st');
+const sdeg=document.getElementById('sdeg');
+const scomp=document.getElementById('scomp');
+const sbeta=document.getElementById('sbeta');
+const sh0=document.getElementById('sh0');
+const sh1=document.getElementById('sh1');
+
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+
+function resizeCanvas(){ canvas.width=Math.max(300,canvas.clientWidth); canvas.height=540; }
+window.addEventListener('resize',function(){ resizeCanvas(); render(); });
+resizeCanvas();
+
+function mulberry(a){ return function(){ a=(a*1664525+1013904223)>>>0; return a/4294967296; }; }
+function popcount(x){ let c=0; while(x){ x&=x-1; c++; } return c; }
+
+let state={pts:[],edges:[],tris:[],edgeIndex:new Map(),n:0};
+
+function genComplex(){
+  const n=+nSlider.value;
+  const p=+pSlider.value;
+  const seed=+seedSlider.value;
+  const rnd=mulberry(seed*9973+11);
+  const edgeSet=new Set();
+  const edges=[];
+  for(let i=0;i<n;i++){
+    for(let j=i+1;j<n;j++){
+      if(rnd()<p){
+        const key=i*n+j;
+        if(!edgeSet.has(key)){ edgeSet.add(key); edges.push([i,j]); }
+      }
+    }
+  }
+  const eIndex=new Map();
+  edges.forEach((e,idx)=>eIndex.set(e[0]*n+e[1],idx));
+  // triangles: triples with all three edges present
+  const tris=[];
+  for(let a=0;a<n;a++){
+    for(let b=a+1;b<n;b++){
+      for(let c=b+1;c<n;c++){
+        const ab=eIndex.has(a*n+b);
+        const ac=eIndex.has(a*n+c);
+        const bc=eIndex.has(b*n+c);
+        if(ab && ac && bc) tris.push([a,b,c]);
+      }
+    }
+  }
+  state={pts:[],edges,tris,edgeIndex:eIndex,n};
+  for(let i=0;i<n;i++) state.pts.push(i);
+}
+
+function components(n,edges){
+  const parent=Array.from({length:n},(_,i)=>i);
+  function find(x){ while(parent[x]!==x){parent[x]=parent[parent[x]];x=parent[x];} return x; }
+  function union(a,b){ a=find(a); b=find(b); if(a!==b) parent[a]=b; }
+  edges.forEach(([u,v])=>union(u,v));
+  const comp=new Map();
+  for(let i=0;i<n;i++){ const r=find(i); if(!comp.has(r)) comp.set(r,[]); comp.get(r).push(i); }
+  return [...comp.values()];
+}
+
+function analyze(){
+  const n=state.n;
+  const edges=state.edges;
+  const tris=state.tris;
+  const m1=edges.length;
+  const m2=tris.length;
+  const comps=components(n,edges);
+  // edge degree
+  const deg=new Array(n).fill(0);
+  edges.forEach(([u,v])=>{ deg[u]++; deg[v]++; });
+  const maxDeg=Math.max(...deg,0);
+  // triangle degree
+  const tdeg=new Array(n).fill(0);
+  tris.forEach(([a,b,c])=>{ tdeg[a]++; tdeg[b]++; tdeg[c]++; });
+
+  // h0: enumerate f in F2^n
+  let h0=Infinity;
+  for(let f=0; f<(1<<n); f++){
+    // delta weight
+    let w=0;
+    edges.forEach(([u,v])=>{
+      if(((f>>u)&1)^((f>>v)&1)) w++;
+    });
+    // dist to B0 (constants on components)
+    let dist=0;
+    comps.forEach(c=>{
+      let ones=0;
+      c.forEach(v=>{ if((f>>v)&1) ones++; });
+      const zeros=c.length-ones;
+      dist+=Math.min(ones,zeros);
+    });
+    if(dist>0){
+      const ratio=w/dist;
+      if(ratio<h0) h0=ratio;
+    }
+  }
+  if(!isFinite(h0)) h0=null;
+
+  // h1: enumerate g in F2^m1 if feasible
+  let h1=null;
+  if(m1<=22){
+    // image B1 from phi
+    const imageSet=new Set();
+    for(let phi=0; phi<(1<<n); phi++){
+      let vec=0;
+      edges.forEach(([u,v],ei)=>{
+        const bit=((phi>>u)&1)^((phi>>v)&1);
+        if(bit) vec |= (1<<ei);
+      });
+      imageSet.add(vec);
+    }
+    const imageList=[...imageSet];
+    // triangle edge masks
+    const triMasks=tris.map(([a,b,c])=>{
+      // find edge indices
+      let mask=0;
+      // ab
+      const findEdge=(x,y)=>{
+        // edge list may have either order but stored x<y
+        const u=Math.min(x,y), v=Math.max(x,y);
+        for(let ei=0;ei<edges.length;ei++){
+          if(edges[ei][0]===u && edges[ei][1]===v) return ei;
+        }
+        return -1;
+      };
+      const eab=findEdge(a,b);
+      const eac=findEdge(a,c);
+      const ebc=findEdge(b,c);
+      if(eab>=0) mask |= (1<<eab);
+      if(eac>=0) mask |= (1<<eac);
+      if(ebc>=0) mask |= (1<<ebc);
+      return mask;
+    });
+    let minRatio=Infinity;
+    let found=false;
+    const total=1<<m1;
+    for(let g=0; g<total; g++){
+      // delta weight
+      let w=0;
+      triMasks.forEach(mask=>{
+        if(popcount(g & mask)&1) w++;
+      });
+      // dist to image
+      let dist=Infinity;
+      for(const b of imageList){
+        const d=popcount(g ^ b);
+        if(d<dist) dist=d;
+      }
+      if(dist>0){
+        const ratio=w/dist;
+        if(ratio<minRatio){ minRatio=ratio; found=true; }
+      }
+    }
+    if(found) h1=minRatio;
+  }
+
+  const beta1=m1 - n + comps.length;
+
+  sv.textContent=n;
+  se.textContent=m1;
+  st.textContent=m2;
+  sdeg.textContent=maxDeg;
+  scomp.textContent=comps.length;
+  sbeta.textContent=beta1;
+  sh0.textContent=h0===null?'n/a':h0.toFixed(4);
+  sh1.textContent=h1===null?'n/a':h1.toFixed(4);
+}
+
+function positions(){
+  const n=state.n;
+  const W=canvas.width,H=canvas.height;
+  const R=Math.min(W,H)*0.35;
+  const cx=W/2, cy=H/2;
+  const pos=[];
+  for(let i=0;i<n;i++){
+    const a=2*Math.PI*i/n - Math.PI/2;
+    pos.push([cx+R*Math.cos(a), cy+R*Math.sin(a)]);
+  }
+  return pos;
+}
+
+function render(){
+  genComplex();
+  analyze();
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const pos=positions();
+  const edges=state.edges;
+  const tris=state.tris;
+  const n=state.n;
+
+  // triangles
+  if(showTri.checked){
+    tris.forEach(([a,b,c])=>{
+      ctx.beginPath();
+      ctx.moveTo(pos[a][0],pos[a][1]);
+      ctx.lineTo(pos[b][0],pos[b][1]);
+      ctx.lineTo(pos[c][0],pos[c][1]);
+      ctx.closePath();
+      ctx.fillStyle='rgba(94,234,212,0.18)';
+      ctx.fill();
+      ctx.strokeStyle='rgba(94,234,212,0.35)';
+      ctx.lineWidth=1;
+      ctx.stroke();
+    });
+  }
+  // edges
+  ctx.strokeStyle='rgba(159,176,204,0.6)';
+  ctx.lineWidth=1.5;
+  edges.forEach(([u,v])=>{
+    ctx.beginPath();
+    ctx.moveTo(pos[u][0],pos[u][1]);
+    ctx.lineTo(pos[v][0],pos[v][1]);
+    ctx.stroke();
+  });
+  // vertices
+  for(let i=0;i<n;i++){
+    ctx.beginPath();
+    ctx.arc(pos[i][0],pos[i][1],7,0,Math.PI*2);
+    ctx.fillStyle='#5eead4';
+    ctx.fill();
+    ctx.strokeStyle='rgba(0,0,0,0.4)';
+    ctx.lineWidth=1;
+    ctx.stroke();
+    if(showLabels.checked){
+      ctx.fillStyle='#e6edf7';
+      ctx.font='12px ui-monospace,monospace';
+      ctx.textAlign='center';
+      ctx.textBaseline='middle';
+      ctx.fillText(String(i),pos[i][0],pos[i][1]-16);
+    }
+  }
+}
+
+nSlider.addEventListener('input',function(){ nval.textContent=nSlider.value; render(); });
+pSlider.addEventListener('input',function(){ pval.textContent=(+pSlider.value).toFixed(2); render(); });
+seedSlider.addEventListener('input',function(){ seedval.textContent=seedSlider.value; render(); });
+regenBtn.addEventListener('click',function(){ render(); });
+showTri.addEventListener('change',render);
+showLabels.addEventListener('change',render);
+render();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

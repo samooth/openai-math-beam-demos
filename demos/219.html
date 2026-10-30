@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GOE bulk universality for random regular graphs with weak disorder (conceptual, result 219)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+select{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+input[type=range]{flex:1 1 160px}
+input[type=number]{width:6rem;padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text)}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:5ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+canvas{width:100%;max-width:640px;height:auto;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block;margin:.5rem 0}
+.legend{display:flex;gap:1rem;align-items:center;font-size:.85rem;color:var(--muted);margin:.5rem 0;flex-wrap:wrap}
+.swatch{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:.3rem;vertical-align:middle}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>GOE bulk universality for random regular graphs with weak disorder (conceptual, result 219)</h1>
+  <p>Generates uniform simple random $d$-regular graphs, computes adjacency spectra, and compares bulk nearest-neighbor spacing and density to GOE predictions. Weak diagonal disorder can be added.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">For every fixed degree $d\ge3$, the bulk adjacency-eigenvalue point process of a uniform simple random $d$-regular graph converges to the Gaussian orthogonal ensemble law, including for cubic graphs. The same fixed-energy universality persists under sufficiently weak fixed iid uniform diagonal disorder, throughout compact bands strictly inside the clean spectral edges.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Connects random regular graphs to GOE local statistics in the bulk, predicting Wigner-Dyson level repulsion rather than Poisson clustering. The interactive view resamples finite graphs, computes spectra, and visualizes how level spacings approach the Wigner surmise while disorder remains inside the permitted weak regime.</p>
+  </section>
+  <div class="controls">
+    <label for="deg">degree $d$</label>
+    <select id="deg">
+      <option value="3" selected>3</option>
+      <option value="4">4</option>
+      <option value="5">5</option>
+      <option value="6">6</option>
+    </select>
+    <label for="n">vertices $n$</label>
+    <input id="n" type="range" min="40" max="100" value="70" step="2">
+    <span class="val" id="nval">70</span>
+    <label for="w">disorder $w$</label>
+    <input id="w" type="range" min="0" max="0.6" value="0" step="0.05">
+    <span class="val" id="wval">0.00</span>
+  </div>
+  <div class="controls">
+    <label for="reps">realizations</label>
+    <input id="reps" type="range" min="1" max="6" value="3" step="1">
+    <span class="val" id="rval">3</span>
+    <label for="seed">seed</label>
+    <input id="seed" type="number" value="42">
+    <button id="run">Resample</button>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Graphs used</div><div class="value" id="sgraphs">—</div></div>
+    <div class="stat"><div class="label">Spacings</div><div class="value" id="sspac">—</div></div>
+    <div class="stat"><div class="label">Mean bulk gap</div><div class="value" id="smean">—</div></div>
+    <div class="stat"><div class="label">Top eigenvalue</div><div class="value" id="stop">—</div></div>
+    <div class="stat"><div class="label">Bulk radius</div><div class="value" id="srad">—</div></div>
+    <div class="stat"><div class="label">Degree</div><div class="value" id="sdeg">—</div></div>
+  </div>
+  <div class="legend">
+    <span><span class="swatch" style="background:#5eead4"></span>empirical density</span>
+    <span><span class="swatch" style="background:#f59e0b"></span>Kesten-McKay</span>
+    <span><span class="swatch" style="background:#5eead4"></span>empirical spacing</span>
+    <span><span class="swatch" style="background:#22c55e"></span>GOE Wigner</span>
+    <span><span class="swatch" style="background:#9fb0cc"></span>Poisson</span>
+  </div>
+  <canvas id="cvd" width="640" height="340"></canvas>
+  <canvas id="cvs" width="640" height="340"></canvas>
+</div>
+<script>
+const degSel=document.getElementById('deg');
+const nSlider=document.getElementById('n');
+const wSlider=document.getElementById('w');
+const repsSlider=document.getElementById('reps');
+const seedInput=document.getElementById('seed');
+const nval=document.getElementById('nval');
+const wval=document.getElementById('wval');
+const rval=document.getElementById('rval');
+const sgraphs=document.getElementById('sgraphs');
+const sspac=document.getElementById('sspac');
+const smean=document.getElementById('smean');
+const stop=document.getElementById('stop');
+const srad=document.getElementById('srad');
+const sdeg=document.getElementById('sdeg');
+const cvd=document.getElementById('cvd');
+const cvs=document.getElementById('cvs');
+const ctxd=cvd.getContext('2d');
+const ctxs=cvs.getContext('2d');
+
+function mulberry32(a){ a|=0; return function(){ a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; };
+
+function jacobiEigenvalues(A,n){
+  const a=A.slice();
+  for(let sweep=0;sweep<60;sweep++){
+    let off=0;
+    for(let i=0;i<n;i++) for(let j=i+1;j<n;j++) off+=a[i*n+j]*a[i*n+j];
+    if(Math.sqrt(off)<1e-12) break;
+    for(let p=0;p<n;p++){
+      for(let q=p+1;q<n;q++){
+        const apq=a[p*n+q];
+        if(Math.abs(apq)>1e-14){
+          const theta=(a[q*n+q]-a[p*n+p])/(2*apq);
+          const t=(theta>=0?1:-1)/(Math.abs(theta)+Math.sqrt(theta*theta+1));
+          const c=1/Math.sqrt(1+t*t);
+          const s=t*c;
+          const app=a[p*n+p], aqq=a[q*n+q];
+          for(let k=0;k<n;k++){
+            if(k!==p && k!==q){
+              const apk=a[p*n+k];
+              const aqk=a[q*n+k];
+              a[p*n+k]=c*apk-s*aqk;
+              a[q*n+k]=s*apk+c*aqk;
+              a[k*n+p]=a[p*n+k];
+              a[k*n+q]=a[q*n+k];
+            }
+          }
+          a[p*n+p]=c*c*app-2*s*c*apq+s*s*aqq;
+          a[q*n+q]=s*s*app+2*s*c*apq+c*c*aqq;
+          a[p*n+q]=0; a[q*n+p]=0;
+        }
+      }
+    }
+  }
+  const ev=[];
+  for(let i=0;i<n;i++) ev.push(a[i*n+i]);
+  ev.sort((x,y)=>x-y);
+  return ev;
+}
+
+function genRegular(n,d,rng){
+  for(let attempt=0;attempt<300;attempt++){
+    const adj=Array.from({length:n},()=>new Set());
+    const stubs=[];
+    for(let i=0;i<n;i++) for(let k=0;k<d;k++) stubs.push(i);
+    for(let i=stubs.length-1;i>0;i--){
+      const j=Math.floor(rng()*(i+1));
+      const t=stubs[i]; stubs[i]=stubs[j]; stubs[j]=t;
+    }
+    let ok=true;
+    for(let i=0;i<stubs.length;i+=2){
+      const u=stubs[i], v=stubs[i+1];
+      if(u===v || adj[u].has(v)){ ok=false; break; }
+      adj[u].add(v); adj[v].add(u);
+    }
+    if(!ok) continue;
+    let good=true;
+    for(let i=0;i<n;i++) if(adj[i].size!==d){ good=false; break; }
+    if(good) return adj;
+  }
+  return null;
+}
+
+function kestenMcKay(x,d){
+  const R=2*Math.sqrt(d-1);
+  if(Math.abs(x)>R) return 0;
+  return (d/(2*Math.PI))*(Math.sqrt(R*R-x*x))/(d*d-x*x);
+}
+
+function run(){
+  const d=+degSel.value;
+  const n=+nSlider.value;
+  const w=+wSlider.value;
+  const reps=+repsSlider.value;
+  const seed=+seedInput.value || 42;
+  nval.textContent=n;
+  wval.textContent=w.toFixed(2);
+  rval.textContent=reps;
+  sdeg.textContent=d;
+  srad.textContent=(2*Math.sqrt(d-1)).toFixed(3);
+  let densitySamples=[];
+  let spacingSamples=[];
+  let topEv=0;
+  let graphsUsed=0;
+  let meanGapSum=0;
+  for(let r=0;r<reps;r++){
+    const rng=mulberry32(seed + r*1000003);
+    const adj=genRegular(n,d,rng);
+    if(!adj) continue;
+    const rngD=mulberry32(seed + r*1000003 + 7);
+    const A=new Float64Array(n*n);
+    for(let i=0;i<n;i++){
+      for(const j of adj[i]){
+        if(j>i) continue;
+        A[i*n+j]=1; A[j*n+i]=1;
+      }
+    }
+    for(let i=0;i<n;i++) A[i*n+i]=(rngD()*2-1)*w;
+    const ev=jacobiEigenvalues(A,n);
+    graphsUsed++;
+    topEv=Math.max(topEv, Math.max(Math.abs(ev[0]), Math.abs(ev[ev.length-1])));
+    for(const x of ev) densitySamples.push(x);
+    const lo=Math.floor(ev.length*0.1);
+    const hi=Math.ceil(ev.length*0.9);
+    const bulk=ev.slice(lo,hi);
+    const gaps=[];
+    for(let i=1;i<bulk.length;i++) gaps.push(bulk[i]-bulk[i-1]);
+    const meanGap=gaps.reduce((a,b)=>a+b,0)/gaps.length;
+    meanGapSum+=meanGap;
+    for(const g of gaps) spacingSamples.push(g/meanGap);
+  }
+  sgraphs.textContent=graphsUsed;
+  sspac.textContent=spacingSamples.length;
+  smean.textContent=(meanGapSum/graphsUsed).toFixed(4);
+  stop.textContent=topEv.toFixed(3);
+
+  drawDensity(densitySamples,d,n);
+  drawSpacing(spacingSamples);
+}
+
+function drawDensity(samples,d,n){
+  const W=cvd.width, H=cvd.height;
+  ctxd.clearRect(0,0,W,H);
+  const pad=40;
+  const xmin=- (d+1), xmax=d+1;
+  const bins=48;
+  const bw=(xmax-xmin)/bins;
+  const counts=new Array(bins).fill(0);
+  for(const x of samples){ const b=Math.floor((x-xmin)/bw); if(b>=0 && b<bins) counts[b]++; }
+  const total=samples.length;
+  const maxCount=Math.max(...counts);
+  const ymax=Math.max(maxCount/(total*bw)*1.1, 0.3);
+  const sx=x=>pad+(x-xmin)/(xmax-xmin)*(W-2*pad);
+  const sy=y=>H-pad-y/ymax*(H-2*pad);
+  ctxd.strokeStyle='rgba(120,140,180,0.35)';
+  ctxd.beginPath();
+  ctxd.moveTo(pad,pad); ctxd.lineTo(pad,H-pad); ctxd.lineTo(W-pad,H-pad); ctxd.stroke();
+  for(let i=0;i<bins;i++){
+    const x0=xmin+i*bw;
+    const h=counts[i]/(total*bw);
+    ctxd.fillStyle='rgba(94,234,212,0.55)';
+    ctxd.fillRect(sx(x0), sy(h), sx(x0+bw)-sx(x0)-1, H-pad-sy(h));
+  }
+  ctxd.strokeStyle='#f59e0b';
+  ctxd.lineWidth=2;
+  ctxd.beginPath();
+  let first=true;
+  for(let i=0;i<=200;i++){
+    const x=xmin + (xmax-xmin)*i/200;
+    const y=kestenMcKay(x,d);
+    if(first){ ctxd.moveTo(sx(x),sy(y)); first=false; } else ctxd.lineTo(sx(x),sy(y));
+  }
+  ctxd.stroke();
+  ctxd.fillStyle='#9fb0cc';
+  ctxd.font='12px system-ui';
+  ctxd.fillText('density', 8, 16);
+}
+
+function drawSpacing(samples){
+  const W=cvs.width, H=cvs.height;
+  ctxs.clearRect(0,0,W,H);
+  const pad=40;
+  const xmin=0, xmax=4;
+  const bins=32;
+  const bw=(xmax-xmin)/bins;
+  const counts=new Array(bins).fill(0);
+  for(const s of samples){ const b=Math.floor((s-xmin)/bw); if(b>=0 && b<bins) counts[b]++; }
+  const total=samples.length || 1;
+  const ymax=Math.max(1.2, ...counts.map((c,i)=>c/(total*bw)));
+  const sx=x=>pad+(x-xmin)/(xmax-xmin)*(W-2*pad);
+  const sy=y=>H-pad-y/ymax*(H-2*pad);
+  ctxs.strokeStyle='rgba(120,140,180,0.35)';
+  ctxs.beginPath();
+  ctxs.moveTo(pad,pad); ctxs.lineTo(pad,H-pad); ctxs.lineTo(W-pad,H-pad); ctxs.stroke();
+  for(let i=0;i<bins;i++){
+    const x0=xmin+i*bw;
+    const h=counts[i]/(total*bw);
+    ctxs.fillStyle='rgba(94,234,212,0.55)';
+    ctxs.fillRect(sx(x0), sy(h), sx(x0+bw)-sx(x0)-1, H-pad-sy(h));
+  }
+  ctxs.strokeStyle='#22c55e';
+  ctxs.lineWidth=2;
+  ctxs.beginPath();
+  let first=true;
+  for(let i=0;i<=200;i++){
+    const s=xmin+(xmax-xmin)*i/200;
+    const y=(Math.PI*s/2)*Math.exp(-Math.PI*s*s/4);
+    if(first){ ctxs.moveTo(sx(s),sy(y)); first=false; } else ctxs.lineTo(sx(s),sy(y));
+  }
+  ctxs.stroke();
+  ctxs.strokeStyle='#9fb0cc';
+  ctxs.lineWidth=2;
+  ctxs.beginPath();
+  first=true;
+  for(let i=0;i<=200;i++){
+    const s=xmin+(xmax-xmin)*i/200;
+    const y=Math.exp(-s);
+    if(first){ ctxs.moveTo(sx(s),sy(y)); first=false; } else ctxs.lineTo(sx(s),sy(y));
+  }
+  ctxs.stroke();
+  ctxs.fillStyle='#9fb0cc';
+  ctxs.font='12px system-ui';
+  ctxs.fillText('spacing', 8, 16);
+}
+
+document.getElementById('run').addEventListener('click', run);
+degSel.addEventListener('change', run);
+nSlider.addEventListener('input', ()=>{ nval.textContent=nSlider.value; });
+wSlider.addEventListener('input', ()=>{ wval.textContent=(+wSlider.value).toFixed(2); });
+repsSlider.addEventListener('input', ()=>{ rval.textContent=repsSlider.value; });
+window.addEventListener('load', run);
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

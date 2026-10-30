@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Perfect completeness for 2-to-1 games (conceptual, result 105)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range]{flex:1 1 160px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:460px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+select{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text)}
+.toggle{display:inline-flex;align-items:center;gap:.4rem}
+.assign{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem 1rem;margin:1rem 0;font-family:ui-monospace,monospace;font-size:.95rem;white-space:pre-wrap}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Perfect completeness for 2-to-1 games (conceptual, result 105)</h1>
+  <p>A 2-to-1 game has constraints given by maps whose every output label has exactly two preimages. It is NP-hard, for every fixed rational $\delta\in(0,1)$, to distinguish satisfiable games (value $1$) from games whose optimum is at most $\delta$, on explicit unweighted instances with alphabet depending only on $\delta$.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Khot's 2-to-1 Games Conjecture asserts that it is NP-hard to decide whether a 2-to-1 game has value close to 1 or bounded away from 1. This result proves the conjecture with perfect completeness: for every fixed rational $\delta\in(0,1)$, a deterministic polynomial-time reduction from binary 3SAT produces a nonempty unweighted game of value exactly $1$ on satisfiable inputs and at most $\delta$ on unsatisfiable inputs. Each constraint projection has exactly two preimages for every output label, the alphabet depends only on $\delta$, and the runtime is measured in the original input bit length. The Lean formalization establishes the same perfect-completeness hardness statement.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">This sharpens the hardness of approximation for constraint satisfaction and underlies reductions to problems such as vertex cover, coloring, and unique-games-type questions. Perfect completeness matters because satisfiable instances have value exactly 1, giving a clean gap without completeness error. The construction keeps instances unweighted and explicit, with a fixed alphabet per $\delta$, making the hardness result suitable as a starting point for further inapproximability reductions.</p>
+  </section>
+  <div class="controls">
+    <label for="mode">Mode</label>
+    <select id="mode">
+      <option value="sat">Satisfiable instance</option>
+      <option value="rand">Random instance</option>
+    </select>
+    <label for="m">Right alphabet $m$</label>
+    <input id="m" type="range" min="2" max="4" value="3" step="1">
+    <span class="val" id="mval">3</span>
+    <label for="L">Left vertices</label>
+    <input id="L" type="range" min="3" max="7" value="5" step="1">
+    <span class="val" id="Lval">5</span>
+    <label for="R">Right vertices</label>
+    <input id="R" type="range" min="2" max="4" value="3" step="1">
+    <span class="val" id="Rval">3</span>
+    <label for="K">Constraints</label>
+    <input id="K" type="range" min="4" max="20" value="10" step="1">
+    <span class="val" id="Kval">10</span>
+    <label for="seed">Seed</label>
+    <input id="seed" type="range" min="1" max="99" value="7" step="1">
+    <span class="val" id="seedval">7</span>
+    <button id="regen">Regenerate</button>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Left alphabet</div><div class="value" id="la">—</div></div>
+    <div class="stat"><div class="label">Right alphabet</div><div class="value" id="ra">—</div></div>
+    <div class="stat"><div class="label">Constraints</div><div class="value" id="kc">—</div></div>
+    <div class="stat"><div class="label">Optimal satisfied</div><div class="value" id="satc">—</div></div>
+    <div class="stat"><div class="label">Optimal value</div><div class="value" id="val">—</div></div>
+    <div class="stat"><div class="label">Satisfiable?</div><div class="value" id="issat">—</div></div>
+  </div>
+  <div class="assign" id="assign">—</div>
+  <canvas id="c" width="900" height="460"></canvas>
+  <p style="font-size:.85rem;color:var(--muted);margin-top:.5rem">Conceptual model: left vertices carry labels in an alphabet of size $2m$, right vertices labels in an alphabet of size $m$. Each constraint edge is a 2-to-1 map; it is satisfied when the right label equals the map applied to the left label. Edges are green when satisfied by the optimum assignment, red otherwise. Satisfiable mode builds an instance with a hidden all-satisfying assignment.</p>
+</div>
+<script>
+const modeSel=document.getElementById('mode');
+const mSlider=document.getElementById('m');
+const LSlider=document.getElementById('L');
+const RSlider=document.getElementById('R');
+const KSlider=document.getElementById('K');
+const seedSlider=document.getElementById('seed');
+const regenBtn=document.getElementById('regen');
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+const textCol=getComputedStyle(document.documentElement).getPropertyValue('--text').trim()||'#e6edf7';
+
+const mval=document.getElementById('mval');
+const Lval=document.getElementById('Lval');
+const Rval=document.getElementById('Rval');
+const Kval=document.getElementById('Kval');
+const seedval=document.getElementById('seedval');
+const laEl=document.getElementById('la');
+const raEl=document.getElementById('ra');
+const kcEl=document.getElementById('kc');
+const satcEl=document.getElementById('satc');
+const valEl=document.getElementById('val');
+const issatEl=document.getElementById('issat');
+const assignEl=document.getElementById('assign');
+
+let constraints=[], L=5, R=3, m=3, K=10;
+let bestY=null, bestX=null, bestTotal=0, satisfied=[];
+
+function mulberry32(seed){ let t=seed>>>0; return function(){ t+=0x6D2B79F5; let r=Math.imul(t^(t>>>15),1|t); r^=r+Math.imul(r^(r>>>7),61|r); return ((r^(r>>>14))>>>0)/4294967296; }; }
+
+function makeRng(){ return mulberry32(+seedSlider.value); }
+
+function shuffle(arr,rand){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(rand()*(i+1)); const t=arr[i]; arr[i]=arr[j]; arr[j]=t; } return arr; }
+
+function makeF(m, forcedLeft, forcedRight, rand){
+  const f=new Array(2*m);
+  const labels=[];
+  for(let b=0;b<m;b++){ labels.push(b,b); }
+  shuffle(labels,rand);
+  for(let a=0;a<2*m;a++) f[a]=labels[a];
+  if(forcedLeft!==null){
+    const a=forcedLeft; const b=forcedRight;
+    if(f[a]!==b){
+      let c=-1;
+      for(let k=0;k<2*m;k++) if(f[k]===b){ c=k; break; }
+      const tmp=f[a]; f[a]=f[c]; f[c]=tmp;
+    }
+  }
+  return f;
+}
+
+function generate(){
+  const rand=makeRng();
+  m=+mSlider.value; L=+LSlider.value; R=+RSlider.value; K=+KSlider.value;
+  mval.textContent=m; Lval.textContent=L; Rval.textContent=R; Kval.textContent=K; seedval.textContent=seedSlider.value;
+  constraints=[];
+  let ystar=null, xstar=null;
+  const satMode = modeSel.value==='sat';
+  if(satMode){
+    ystar=new Array(R); xstar=new Array(L);
+    for(let j=0;j<R;j++) ystar[j]=Math.floor(rand()*m);
+    for(let i=0;i<L;i++) xstar[i]=Math.floor(rand()*(2*m));
+  }
+  for(let k=0;k<K;k++){
+    const i=Math.floor(rand()*L);
+    const j=Math.floor(rand()*R);
+    let f;
+    if(satMode){
+      f=makeF(m, xstar[i], ystar[j], rand);
+    } else {
+      f=makeF(m, null, null, rand);
+    }
+    constraints.push({i,j,f});
+  }
+
+  bestTotal=-1; bestY=null; bestX=null;
+  const totalAssign=Math.pow(m,R);
+  for(let t=0;t<totalAssign;t++){
+    const yVec=new Array(R);
+    let tmp=t;
+    for(let j=0;j<R;j++){ yVec[j]=tmp%m; tmp=Math.floor(tmp/m); }
+    let total=0;
+    const xChoice=new Array(L);
+    for(let i=0;i<L;i++){
+      const inc=[];
+      for(let idx=0;idx<constraints.length;idx++) if(constraints[idx].i===i) inc.push(idx);
+      let bestCount=0; let bestXv=0;
+      for(let x=0;x<2*m;x++){
+        let cnt=0;
+        for(const idx of inc){
+          const c=constraints[idx];
+          if(c.f[x]===yVec[c.j]) cnt++;
+        }
+        if(cnt>bestCount){ bestCount=cnt; bestXv=x; }
+      }
+      total+=bestCount;
+      xChoice[i]=bestXv;
+    }
+    if(total>bestTotal){ bestTotal=total; bestY=yVec.slice(); bestX=xChoice.slice(); }
+  }
+  satisfied=new Array(constraints.length);
+  for(let idx=0;idx<constraints.length;idx++){
+    const c=constraints[idx];
+    satisfied[idx]=(c.f[bestX[c.i]]===bestY[c.j]);
+  }
+  updateStats();
+  render();
+}
+
+function updateStats(){
+  laEl.textContent=2*m;
+  raEl.textContent=m;
+  kcEl.textContent=K;
+  satcEl.textContent=bestTotal+'/'+K;
+  valEl.textContent=(bestTotal/K).toFixed(4);
+  const isSat = bestTotal===K;
+  issatEl.textContent=isSat?'Yes':'No';
+  issatEl.style.color=isSat?'var(--good)':'var(--bad)';
+  let txt='Best right labels: ['+bestY.join(', ')+']\n';
+  txt+='Best left labels:  ['+bestX.join(', ')+']\n';
+  txt+='Satisfied edges: '+satisfied.filter(Boolean).length+'/'+constraints.length;
+  assignEl.textContent=txt;
+}
+
+function resizeCanvas(){ canvas.width=Math.max(300,canvas.clientWidth); canvas.height=460; }
+window.addEventListener('resize',function(){ resizeCanvas(); render(); });
+resizeCanvas();
+
+function render(){
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const leftX=70, rightX=W-70;
+  const top=50, bottom=H-50;
+  function yPos(idx,total){ return top + (bottom-top)*(idx+0.5)/total; }
+  const lpos=[]; for(let i=0;i<L;i++) lpos.push([leftX, yPos(i,L)]);
+  const rpos=[]; for(let j=0;j<R;j++) rpos.push([rightX, yPos(j,R)]);
+
+  // edges
+  for(let idx=0;idx<constraints.length;idx++){
+    const c=constraints[idx];
+    const [x1,y1]=lpos[c.i];
+    const [x2,y2]=rpos[c.j];
+    ctx.strokeStyle = satisfied[idx] ? 'rgba(34,197,94,0.85)' : 'rgba(239,68,68,0.55)';
+    ctx.lineWidth = satisfied[idx] ? 2.2 : 1.2;
+    ctx.beginPath();
+    ctx.moveTo(x1,y1);
+    const mx=(x1+x2)/2;
+    ctx.bezierCurveTo(mx,y1,mx,y2,x2,y2);
+    ctx.stroke();
+  }
+  // left nodes
+  for(let i=0;i<L;i++){
+    const [x,y]=lpos[i];
+    ctx.fillStyle='#5eead4';
+    ctx.beginPath(); ctx.arc(x,y,15,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#0b1220';
+    ctx.font='bold 12px system-ui';
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText('L'+i, x, y-1);
+    ctx.fillStyle=textCol;
+    ctx.font='11px ui-monospace,monospace';
+    ctx.textAlign='left';
+    ctx.fillText('x='+bestX[i], x+20, y+4);
+  }
+  // right nodes
+  for(let j=0;j<R;j++){
+    const [x,y]=rpos[j];
+    ctx.fillStyle='#f59e0b';
+    ctx.beginPath(); ctx.arc(x,y,15,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#0b1220';
+    ctx.font='bold 12px system-ui';
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText('R'+j, x, y-1);
+    ctx.fillStyle=textCol;
+    ctx.font='11px ui-monospace,monospace';
+    ctx.textAlign='right';
+    ctx.fillText('y='+bestY[j], x-20, y+4);
+  }
+  ctx.textAlign='left';
+}
+
+modeSel.addEventListener('change',generate);
+mSlider.addEventListener('input',generate);
+LSlider.addEventListener('input',generate);
+RSlider.addEventListener('input',generate);
+KSlider.addEventListener('input',generate);
+seedSlider.addEventListener('input',generate);
+regenBtn.addEventListener('click',function(){ seedSlider.value=Math.floor(1+Math.random()*98); generate(); });
+generate();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

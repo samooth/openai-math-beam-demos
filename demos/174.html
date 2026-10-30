@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Deterministic construction of strong thin spanning trees (conceptual, result 174)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+select{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+input[type=range]{flex:1 1 180px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:520px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+.legend{display:flex;gap:1rem;align-items:center;font-size:.85rem;color:var(--muted);margin:.5rem 0;flex-wrap:wrap}
+.swatch{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:.3rem;vertical-align:middle}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Deterministic construction of strong thin spanning trees (conceptual, result 174)</h1>
+  <p>Explores the strong thin-tree property: for a $k$-edge-connected multigraph, a spanning tree whose edges cross every cut at most a $C/k$ fraction of the original cut.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">The strong thin-tree conjecture asks for a spanning tree that crosses every cut sparsely relative to the original graph. Result 174 gives one absolute constant $C>0$ such that every finite loopless $k$-edge-connected multigraph with at least two vertices has a spanning tree crossing each nontrivial cut at most $(C/k)$ times the original cut size; parallel edges remain distinct. Moreover the tree can be found by a deterministic polynomial-time algorithm, even when parallel-edge multiplicities are encoded in binary. No numerical value of $C$ is asserted by the theorem; the demo uses a heuristic threshold to illustrate the property.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Thin trees are a structural tool for graph decomposition, approximation, and embedding problems: a spanning tree that rarely crosses cuts approximates the connectivity structure of the original graph without paying the full cut size. Turning the conjecture into a deterministic polynomial-time construction makes the tool algorithmic rather than existential, with applications to routing, network design, and cut-based optimization. The demo compares naive trees with a locally optimized tree and measures the worst cut ratio exactly over all subsets.</p>
+  </section>
+  <div class="controls">
+    <label for="n">Vertices n</label>
+    <input id="n" type="range" min="5" max="10" value="7" step="1">
+    <span class="val" id="nval">7</span>
+    <label for="k">Connectivity k</label>
+    <input id="k" type="range" min="2" max="4" value="3" step="1">
+    <span class="val" id="kval">3</span>
+    <label for="alg">Tree method</label>
+    <select id="alg">
+      <option value="dfs">DFS tree</option>
+      <option value="bfs">BFS tree</option>
+      <option value="random">Random (Wilson)</option>
+      <option value="thin">Thin (local search)</option>
+    </select>
+  </div>
+  <div class="controls">
+    <label for="seed">Seed</label>
+    <input id="seed" type="range" min="1" max="99" value="7" step="1">
+    <span class="val" id="seedval">7</span>
+    <label for="iters">Search iters</label>
+    <input id="iters" type="range" min="50" max="500" value="200" step="50">
+    <span class="val" id="itersval">200</span>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Vertices n</div><div class="value" id="sn">—</div></div>
+    <div class="stat"><div class="label">Graph edges</div><div class="value" id="se">—</div></div>
+    <div class="stat"><div class="label">Min cut size</div><div class="value" id="smincut">—</div></div>
+    <div class="stat"><div class="label">Max tree cut</div><div class="value" id="smaxtree">—</div></div>
+    <div class="stat"><div class="label">Worst ratio</div><div class="value" id="sratio">—</div></div>
+    <div class="stat"><div class="label">k·ratio</div><div class="value" id="skr">—</div></div>
+    <div class="stat"><div class="label">Verdict</div><div class="value" id="sverdict">—</div></div>
+  </div>
+  <div class="legend">
+    <span><span class="swatch" style="background:#94a3b8"></span>Graph edge</span>
+    <span><span class="swatch" style="background:#5eead4"></span>Tree edge</span>
+    <span><span class="swatch" style="background:#f59e0b"></span>Worst cut side</span>
+  </div>
+  <canvas id="c" width="900" height="520"></canvas>
+  <p id="reason" style="font-size:.9rem;color:var(--muted);margin-top:.5rem"></p>
+</div>
+<script>
+const nSlider=document.getElementById('n');
+const kSlider=document.getElementById('k');
+const algSel=document.getElementById('alg');
+const seedSlider=document.getElementById('seed');
+const itersSlider=document.getElementById('iters');
+const nval=document.getElementById('nval');
+const kval=document.getElementById('kval');
+const seedval=document.getElementById('seedval');
+const itersval=document.getElementById('itersval');
+const sn=document.getElementById('sn');
+const se=document.getElementById('se');
+const smincut=document.getElementById('smincut');
+const smaxtree=document.getElementById('smaxtree');
+const sratio=document.getElementById('sratio');
+const skr=document.getElementById('skr');
+const sverdict=document.getElementById('sverdict');
+const reason=document.getElementById('reason');
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+
+function mulberry(a){ return function(){ a=(a*1664525+1013904223)>>>0; return a/4294967296; }; }
+
+function buildGraph(n,k,seed){
+  const rnd=mulberry(seed*7919+13);
+  const edges=[];
+  // k edge-disjoint Hamiltonian cycles
+  for(let c=0;c<k;c++){
+    const perm=[];
+    for(let i=0;i<n;i++) perm.push(i);
+    // Fisher-Yates
+    for(let i=n-1;i>0;i--){ const j=Math.floor(rnd()*(i+1)); const t=perm[i]; perm[i]=perm[j]; perm[j]=t; }
+    for(let i=0;i<n;i++){
+      const u=perm[i], v=perm[(i+1)%n];
+      edges.push([u,v]);
+    }
+  }
+  return edges;
+}
+
+function adjList(n,edges){
+  const adj=Array.from({length:n},()=>[]);
+  edges.forEach(([u,v],idx)=>{ adj[u].push([v,idx]); adj[v].push([u,idx]); });
+  return adj;
+}
+
+function dfsTree(n,edges){
+  const adj=adjList(n,edges);
+  const visited=Array(n).fill(false);
+  const tree=new Set();
+  const stack=[0];
+  visited[0]=true;
+  // iterative DFS
+  const parent=Array(n).fill(-1);
+  const order=[0];
+  const st=[0];
+  while(st.length){
+    const u=st.pop();
+    for(const [v,idx] of adj[u]){
+      if(!visited[v]){ visited[v]=true; parent[v]=idx; tree.add(idx); st.push(v); }
+    }
+  }
+  // ensure connected
+  return tree;
+}
+
+function bfsTree(n,edges){
+  const adj=adjList(n,edges);
+  const visited=Array(n).fill(false);
+  const tree=new Set();
+  const q=[0]; visited[0]=true;
+  while(q.length){
+    const u=q.shift();
+    for(const [v,idx] of adj[u]){
+      if(!visited[v]){ visited[v]=true; tree.add(idx); q.push(v); }
+    }
+  }
+  return tree;
+}
+
+function wilsonTree(n,edges){
+  const adj=adjList(n,edges);
+  const inTree=Array(n).fill(false);
+  inTree[0]=true;
+  const treeEdges=new Set();
+  const rnd=mulberry((+seedSlider.value)*31+7);
+  for(let s=1;s<n;s++){
+    if(inTree[s]) continue;
+    const path=[];
+    const pos=new Map();
+    let cur=s;
+    while(!inTree[cur]){
+      if(pos.has(cur)){
+        // cycle: trim
+        const idx=path.indexOf(cur);
+        const removed=path.splice(idx);
+        removed.forEach(x=>pos.delete(x));
+        // restart from cur
+        path.push(cur); // not exactly; simpler: break
+        // fallback: restart walk
+        path.length=0; pos.clear(); cur=s; 
+        // avoid infinite: just do standard
+        break;
+      }
+      pos.set(cur,path.length);
+      path.push(cur);
+      // pick random neighbor
+      const nbrs=adj[cur];
+      const pick=nbrs[Math.floor(rnd()*nbrs.length)];
+      // store edge index
+      path.push('E'+pick[1]); // marker hack (ugly)
+      // Actually we need parallel handling; redo cleaner below
+      cur=pick[0];
+    }
+  }
+  // The above is messy; replace with cleaner implementation below by overwriting
+  return treeEdges;
+}
+
+// Cleaner Wilson:
+function wilsonTree2(n,edges,seed){
+  const adj=adjList(n,edges);
+  const inTree=Array(n).fill(false);
+  inTree[0]=true;
+  const treeEdges=new Set();
+  const rnd=mulberry(seed*131+9);
+  for(let s=1;s<n;s++){
+    if(inTree[s]) continue;
+    const walk=[];
+    const idxOf=new Map();
+    let cur=s;
+    while(true){
+      if(inTree[cur]) break;
+      if(idxOf.has(cur)){
+        const i=idxOf.get(cur);
+        // remove cycle
+        const removed=walk.slice(i);
+        removed.forEach(v=>idxOf.delete(v));
+        walk.length=i;
+      }
+      idxOf.set(cur,walk.length);
+      walk.push(cur);
+      const nbrs=adj[cur];
+      const pick=nbrs[Math.floor(rnd()*nbrs.length)];
+      // record chosen edge alongside by storing in parallel array
+      walk.push('e'+pick[1]); // marker
+      // We'll instead keep edges array separate
+      // Redo: store vertices only and edges separately
+      cur=pick[0];
+    }
+    // Reconstruct edges for the walk (vertices at even positions)
+    // walk currently has vertex, 'eX', vertex, 'eX'... need parse
+    // Simpler: redo walk storing pairs
+  }
+  return treeEdges;
+}
+
+// Let's implement Wilson cleanly:
+function wilsonTreeClean(n,edges,seed){
+  const adj=adjList(n,edges);
+  const inTree=Array(n).fill(false);
+  inTree[0]=true;
+  const treeEdges=new Set();
+  const rnd=mulberry(seed*131+9);
+  for(let s=1;s<n;s++){
+    if(inTree[s]) continue;
+    const verts=[s];
+    const edgs=[];
+    const pos=new Map([[s,0]]);
+    let cur=s;
+    while(!inTree[cur]){
+      const nbrs=adj[cur];
+      const pick=nbrs[Math.floor(rnd()*nbrs.length)];
+      const ne=pick[1];
+      const nv=pick[0];
+      // check cycle
+      if(pos.has(nv) && !inTree[nv]){
+        // trim
+        const i=pos.get(nv);
+        const removedVerts=verts.slice(i+1);
+        removedVerts.forEach(v=>pos.delete(v));
+        verts.length=i+1;
+        edgs.length=i;
+        // nv is already last? Actually nv not added yet; set cur to nv which is in verts
+        cur=nv;
+        // find index of nv
+        // nv is verts[i]
+        // now extend from nv
+        // We'll just set cur=nv and continue loop; but need not push duplicate
+        // Handle by pushing edge then vertex? Let's restructure.
+      }
+      // push edge+vertex
+      edgs.push(ne);
+      verts.push(nv);
+      pos.set(nv,verts.length-1);
+      cur=nv;
+      if(inTree[cur]) break;
+    }
+    // Add path edges until hitting tree
+    for(let i=0;i<edgs.length;i++){
+      const v=verts[i+1];
+      if(inTree[v]) { 
+        // add edges up to i
+        for(let j=0;j<=i;j++) treeEdges.add(edgs[j]);
+        break;
+      }
+    }
+    // Mark tree vertices: those in verts up to hit
+    // Determine hit index
+    let hit=-1;
+    for(let i=0;i<verts.length;i++){ if(inTree[verts[i]]){ hit=i; break; } }
+    if(hit===-1) hit=verts.length-1;
+    for(let i=0;i<hit;i++){ inTree[verts[i]]=true; treeEdges.add(edgs[i]); }
+    inTree[s]=true;
+  }
+  // Ensure n-1 edges
+  return treeEdges;
+}
+
+function cutSize(edges,n,S){
+  let c=0;
+  for(const [u,v] of edges){
+    const a=S.has(u), b=S.has(v);
+    if(a!==b) c++;
+  }
+  return c;
+}
+
+function allSubsetsMaxRatio(treeEdges,edges,n){
+  const E=edges;
+  const treeArr=[...treeEdges].map(i=>E[i]);
+  let maxRatio=0, worstMask=0, minCut=Infinity, maxTreeCut=0;
+  const total=(1<<n);
+  for(let mask=1;mask<total-1;mask++){
+    const S=new Set();
+    for(let i=0;i<n;i++) if(mask&(1<<i)) S.add(i);
+    const g=cutSize(E,n,S);
+    if(g===0) continue;
+    const t=cutSize(treeArr,n,S);
+    const ratio=t/g;
+    if(ratio>maxRatio){ maxRatio=ratio; worstMask=mask; }
+    if(g<minCut) minCut=g;
+    if(t>maxTreeCut) maxTreeCut=t;
+  }
+  return {maxRatio,worstMask,minCut,maxTreeCut};
+}
+
+function localThin(n,edges,seed,iters){
+  const rnd=mulberry(seed*999+5);
+  // start from DFS
+  let tree=new Set(dfsTree(n,edges));
+  const E=edges;
+  const M=E.length;
+  function maxRatioFor(treeSet){
+    const arr=[...treeSet].map(i=>E[i]);
+    let mx=0;
+    for(let mask=1;mask<(1<<n)-1;mask++){
+      const S=new Set(); for(let i=0;i<n;i++) if(mask&(1<<i)) S.add(i);
+      const g=cutSize(E,n,S); if(g===0) continue;
+      const t=cutSize(arr,n,S); const r=t/g; if(r>mx) mx=r;
+    }
+    return mx;
+  }
+  let best=maxRatioFor(tree);
+  let bestTree=new Set(tree);
+  for(let it=0;it<iters;it++){
+    // random swap
+    const treeArr=[...tree];
+    if(treeArr.length===0) break;
+    const ri=Math.floor(rnd()*treeArr.length);
+    const removeIdx=treeArr[ri];
+    // pick non-tree edge
+    const nonTree=[];
+    for(let i=0;i<M;i++) if(!tree.has(i)) nonTree.push(i);
+    if(nonTree.length===0) break;
+    const addIdx=nonTree[Math.floor(rnd()*nonTree.length)];
+    // swap
+    tree.delete(removeIdx);
+    tree.add(addIdx);
+    // check connectivity
+    // quick connectivity check via union-find
+    const uf=Array.from({length:n},(_,i)=>i);
+    function find(x){ while(uf[x]!==x){uf[x]=uf[uf[x]];x=uf[x];} return x; }
+    function union(a,b){ const ra=find(a),rb=find(b); if(ra!==rb) uf[ra]=rb; }
+    let connected=true;
+    for(const idx of tree){ const [u,v]=E[idx]; union(u,v); }
+    const root=find(0);
+    for(let i=1;i<n;i++){ if(find(i)!==root){ connected=false; break; } }
+    if(!connected){ // revert
+      tree.delete(addIdx); tree.add(removeIdx); continue;
+    }
+    const newR=maxRatioFor(tree);
+    if(newR<best){ best=newR; bestTree=new Set(tree); }
+    else if(rnd()<0.05){ // accept sometimes
+      // keep
+    } else {
+      // revert if worse
+      if(newR>best*1.01){ tree.delete(addIdx); tree.add(removeIdx); }
+    }
+  }
+  // use best tree found
+  return bestTree;
+}
+
+function positions(n){
+  const pts=[];
+  for(let i=0;i<n;i++){
+    const a=-Math.PI/2+2*Math.PI*i/n;
+    pts.push([Math.cos(a),Math.sin(a)]);
+  }
+  return pts;
+}
+
+let last={};
+function render(){
+  const n=+nSlider.value;
+  const k=+kSlider.value;
+  const seed=+seedSlider.value;
+  const iters=+itersSlider.value;
+  const alg=algSel.value;
+  nval.textContent=n; kval.textContent=k; seedval.textContent=seed; itersval.textContent=iters;
+
+  const edges=buildGraph(n,k,seed);
+  let tree;
+  if(alg==='dfs') tree=dfsTree(n,edges);
+  else if(alg==='bfs') tree=bfsTree(n,edges);
+  else if(alg==='random') tree=wilsonTreeClean(n,edges,seed);
+  else tree=localThin(n,edges,seed,iters);
+
+  const info=allSubsetsMaxRatio(tree,edges,n);
+  const maxRatio=info.maxRatio;
+  const worstMask=info.worstMask;
+  const minCut=info.minCut;
+  const maxTreeCut=info.maxTreeCut;
+
+  sn.textContent=n;
+  se.textContent=edges.length;
+  smincut.textContent=minCut;
+  smaxtree.textContent=maxTreeCut;
+  sratio.textContent=maxRatio.toFixed(3);
+  skr.textContent=(k*maxRatio).toFixed(2);
+  const ok = k*maxRatio <= 8;
+  sverdict.textContent = ok ? 'Thin (ok)' : 'Not thin';
+  sverdict.className='value '+(ok?'good':'bad');
+  reason.textContent='Worst cut has '+maxTreeCut+' tree edges over '+Math.round(maxTreeCut/maxRatio)+' graph edges (ratio '+maxRatio.toFixed(3)+'). Method: '+alg+'.';
+
+  last={n,k,edges,tree,worstMask};
+
+  // draw
+  resizeCanvas();
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const pts=positions(n);
+  const cx=W/2, cy=H/2;
+  const scale=Math.min(W,H)*0.4;
+  // graph edges
+  ctx.strokeStyle='rgba(148,163,184,0.35)';
+  ctx.lineWidth=1;
+  edges.forEach(([u,v])=>{
+    ctx.beginPath();
+    ctx.moveTo(cx+pts[u][0]*scale, cy+pts[u][1]*scale);
+    ctx.lineTo(cx+pts[v][0]*scale, cy+pts[v][1]*scale);
+    ctx.stroke();
+  });
+  // worst cut highlight vertices
+  const worstSet=new Set();
+  for(let i=0;i<n;i++) if(worstMask&(1<<i)) worstSet.add(i);
+  // tree edges
+  ctx.strokeStyle='#5eead4';
+  ctx.lineWidth=2.5;
+  for(const idx of tree){
+    const [u,v]=edges[idx];
+    ctx.beginPath();
+    ctx.moveTo(cx+pts[u][0]*scale, cy+pts[u][1]*scale);
+    ctx.lineTo(cx+pts[v][0]*scale, cy+pts[v][1]*scale);
+    ctx.stroke();
+  }
+  // vertices
+  pts.forEach((p,i)=>{
+    const x=cx+p[0]*scale, y=cy+p[1]*scale;
+    ctx.fillStyle=worstSet.has(i)?'#f59e0b':'#5eead4';
+    ctx.beginPath(); ctx.arc(x,y,8,0,Math.PI*2); ctx.fill();
+    ctx.strokeStyle='rgba(255,255,255,0.4)'; ctx.lineWidth=1; ctx.stroke();
+    ctx.fillStyle='#e6edf7'; ctx.font='12px system-ui'; ctx.textAlign='center';
+    ctx.fillText(String(i),x,y-12);
+  });
+}
+
+function resizeCanvas(){ canvas.width=Math.max(300,canvas.clientWidth); canvas.height=520; }
+window.addEventListener('resize',function(){ resizeCanvas(); render(); });
+resizeCanvas();
+
+nSlider.addEventListener('input',render);
+kSlider.addEventListener('input',render);
+algSel.addEventListener('change',render);
+seedSlider.addEventListener('input',render);
+itersSlider.addEventListener('input',render);
+render();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Foulkes' conjecture for sixth powers and quadratic stabilization (conceptual, result 210)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+select,button{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+input[type=range]{flex:1 1 180px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:340px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button:hover{filter:brightness(1.1)}
+.legend{display:flex;gap:1rem;align-items:center;font-size:.85rem;color:var(--muted);margin:.5rem 0;flex-wrap:wrap}
+.swatch{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:.3rem;vertical-align:middle}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Foulkes' conjecture for sixth powers and quadratic stabilization (conceptual, result 210)</h1>
+  <p>Compares the dimensions of $\operatorname{Sym}^a(\operatorname{Sym}^b V)$ and $\operatorname{Sym}^b(\operatorname{Sym}^a V)$, the Foulkes embedding condition $a\le b$, and the quadratic stabilization bound $b\ge a(a-1)$.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Foulkes' conjecture asks, for $a\le b$, for a $\mathrm{GL}(V)$-equivariant injection $\operatorname{Sym}^a(\operatorname{Sym}^b V)\hookrightarrow \operatorname{Sym}^b(\operatorname{Sym}^a V)$. Result 210 proves the sixth case: $\operatorname{Sym}^6(\operatorname{Sym}^b V)$ embeds in $\operatorname{Sym}^b(\operatorname{Sym}^6 V)$ for every $b\ge 6$. More generally, the canonical multiplication (Foulkes--Howe) map $\operatorname{Sym}^b(\operatorname{Sym}^a V)\to \operatorname{Sym}^a(\operatorname{Sym}^b V)$ is surjective whenever $a\ge 2$ and $b\ge a(a-1)$, giving a dimension-independent quadratic stabilization bound. The demo computes the module dimensions for a chosen vector-space dimension $n=\dim V$ and powers $a,b$, illustrating the necessary dimension inequality and the two thresholds.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">This is a central problem in representation theory of $\mathrm{GL}(V)$ and invariant theory: it controls how symmetric powers of symmetric powers decompose and gives stabilization bounds for canonical maps. The quadratic bound $b\ge a(a-1)$ is independent of $\dim V$, so it applies uniformly to all finite-dimensional complex $V$. The interactive view lets you vary $\dim V$, $a$, and $b$, check the Foulkes condition $a\le b$, the stabilization condition $b\ge a(a-1)$, and compare the two module dimensions (a necessary condition for any injection or surjection).</p>
+  </section>
+  <div class="controls">
+    <label for="n">dim V = n</label>
+    <input id="n" type="range" min="2" max="4" value="3" step="1">
+    <span class="val" id="nval">3</span>
+    <label for="a">power a</label>
+    <input id="a" type="range" min="2" max="8" value="6" step="1">
+    <span class="val" id="aval">6</span>
+    <label for="b">power b</label>
+    <input id="b" type="range" min="2" max="40" value="10" step="1">
+    <span class="val" id="bval">10</span>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">dim Sym^b(V)</div><div class="value" id="db">—</div></div>
+    <div class="stat"><div class="label">dim Sym^a(V)</div><div class="value" id="da">—</div></div>
+    <div class="stat"><div class="label">D1 = dim Sym^a(Sym^b V)</div><div class="value" id="d1">—</div></div>
+    <div class="stat"><div class="label">D2 = dim Sym^b(Sym^a V)</div><div class="value" id="d2">—</div></div>
+    <div class="stat"><div class="label">log10 D1 / log10 D2</div><div class="value" id="logs">—</div></div>
+    <div class="stat"><div class="label">Foulkes condition a≤b</div><div class="value" id="foulkes">—</div></div>
+    <div class="stat"><div class="label">Stabilization b≥a(a-1)</div><div class="value" id="stab">—</div></div>
+    <div class="stat"><div class="label">Dimension check D1≤D2</div><div class="value" id="dimcheck">—</div></div>
+  </div>
+  <div class="legend">
+    <span><span class="swatch" style="background:#5eead4"></span>D1 = dim Sym^a(Sym^b V)</span>
+    <span><span class="swatch" style="background:#f59e0b"></span>D2 = dim Sym^b(Sym^a V)</span>
+  </div>
+  <canvas id="hc" width="840" height="340"></canvas>
+  <p id="info" style="font-size:.9rem;color:var(--muted);margin-top:.5rem">D1 and D2 are module dimensions for complex V. If D1>D2 then no injection D1→D2 or surjection D2→D1 is possible. The sixth-power result is the case a=6, b≥6; stabilization is the case b≥a(a-1).</p>
+</div>
+<script>
+const nSlider=document.getElementById('n');
+const aSlider=document.getElementById('a');
+const bSlider=document.getElementById('b');
+const nval=document.getElementById('nval');
+const aval=document.getElementById('aval');
+const bval=document.getElementById('bval');
+const db=document.getElementById('db');
+const da=document.getElementById('da');
+const d1=document.getElementById('d1');
+const d2=document.getElementById('d2');
+const logs=document.getElementById('logs');
+const foulkes=document.getElementById('foulkes');
+const stab=document.getElementById('stab');
+const dimcheck=document.getElementById('dimcheck');
+const hc=document.getElementById('hc');
+const hctx=hc.getContext('2d');
+
+function fmtBigInt(x){
+  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+
+function binomBigInt(N, K){
+  if(K<0n || K>N) return 0n;
+  let k=K;
+  if(k>N-k) k=N-k;
+  let res=1n;
+  for(let i=1n;i<=k;i++){
+    res=res*(N-i+1n)/i;
+  }
+  return res;
+}
+
+function dimSym(k, n){
+  return binomBigInt(BigInt(n+k-1), BigInt(k));
+}
+
+function log10BigInt(x){
+  const s=x.toString();
+  if(s.length<=15) return Math.log10(Number(x));
+  const head=Number(s.slice(0,15));
+  return Math.log10(head)+(s.length-15);
+}
+
+function drawBars(l1, l2){
+  const W=hc.width,H=hc.height;
+  hctx.clearRect(0,0,W,H);
+  hctx.fillStyle='#1f2a44';
+  hctx.fillRect(0,0,W,H);
+  const pad={l:52,r:12,t:24,b:40};
+  const pw=W-pad.l-pad.r, ph=H-pad.t-pad.b;
+  const maxv=Math.max(l1,l2,1);
+  const barW=pw*0.28;
+  const x1=pad.l+pw*0.22;
+  const x2=pad.l+pw*0.58;
+  const h1=(l1/maxv)*ph;
+  const h2=(l2/maxv)*ph;
+  hctx.fillStyle='#5eead4';
+  hctx.fillRect(x1, pad.t+ph-h1, barW, h1);
+  hctx.fillStyle='#f59e0b';
+  hctx.fillRect(x2, pad.t+ph-h2, barW, h2);
+  hctx.fillStyle='#9fb0cc';
+  hctx.font='12px system-ui';
+  hctx.textAlign='center';
+  hctx.fillText('D1', x1+barW/2, H-14);
+  hctx.fillText('D2', x2+barW/2, H-14);
+  hctx.fillText('log10 dimension', W/2, 16);
+  hctx.textAlign='left';
+  hctx.fillText(l1.toFixed(2), x1, pad.t+ph-h1-6);
+  hctx.fillText(l2.toFixed(2), x2, pad.t+ph-h2-6);
+}
+
+function update(){
+  let n=+nSlider.value;
+  let a=+aSlider.value;
+  let b=+bSlider.value;
+  if(b<a){ b=a; bSlider.value=b; }
+  nval.textContent=n;
+  aval.textContent=a;
+  bval.textContent=b;
+  const dbv=dimSym(b,n);
+  const dav=dimSym(a,n);
+  const D1v=binomBigInt(dbv+BigInt(a)-1n, BigInt(a));
+  const D2v=binomBigInt(dav+BigInt(b)-1n, BigInt(b));
+  db.textContent=fmtBigInt(dbv);
+  da.textContent=fmtBigInt(dav);
+  d1.textContent=fmtBigInt(D1v);
+  d2.textContent=fmtBigInt(D2v);
+  const l1=log10BigInt(D1v);
+  const l2=log10BigInt(D2v);
+  logs.textContent=l1.toFixed(2)+' / '+l2.toFixed(2);
+  foulkes.textContent=(a<=b)?'yes':'no';
+  foulkes.style.color=(a<=b)?'var(--good)':'var(--bad)';
+  const threshold=a*(a-1);
+  stab.textContent=(b>=threshold)?'yes ('+threshold+')':'no ('+threshold+')';
+  stab.style.color=(b>=threshold)?'var(--good)':'var(--warn)';
+  const ok=D1v<=D2v;
+  dimcheck.textContent=ok?'D1≤D2':'D1>D2';
+  dimcheck.style.color=ok?'var(--good)':'var(--bad)';
+  drawBars(l1,l2);
+}
+
+for(const el of [nSlider,aSlider,bSlider]){
+  el.addEventListener('input', update);
+}
+window.addEventListener('resize', update);
+update();
+</script>
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

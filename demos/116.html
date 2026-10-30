@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Uniform identity testing for noncommutative formulas (conceptual, result 116)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range]{flex:1 1 200px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:420px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+select{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text)}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Uniform identity testing for noncommutative formulas (conceptual, result 116)</h1>
+  <p>For each characteristic, deterministic polynomial-time construction of a polynomial-dimensional matrix tuple that detects every nonzero division-free noncommutative formula of bounded size; rational formulas over $\mathbb Q$ admit polynomial-size hitting lists when a rational-matrix evaluation is defined.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">For each characteristic, constructs in deterministic polynomial bit time a polynomial-dimensional matrix tuple detecting every nonzero division-free noncommutative formula of bounded size over any field of that characteristic. Rational formulas over $\mathbb Q$ also admit polynomial-size hitting lists whenever they have a defined rational-matrix evaluation. The construction is uniform: one matrix tuple works for all formulas up to the given size bound, over every field of the chosen characteristic, removing dependence on the formula instance.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">This gives a uniform, deterministic polynomial-time identity test for noncommutative formulas, a setting where commutativity cannot be assumed and classical scalar Schwartz-Zippel tests fail. It separates nonzero formulas from the zero polynomial without random choices and with polynomially many matrix entries, with extensions to rational formulas via finite hitting lists. It underpins derandomization of algebraic complexity and efficient verification of noncommutative computations.</p>
+  </section>
+  <div class="controls">
+    <label for="s">Size bound s</label>
+    <input id="s" type="range" min="2" max="40" value="12" step="1">
+    <span class="val" id="sval">12</span>
+    <label for="m">Variables m</label>
+    <input id="m" type="range" min="2" max="5" value="3" step="1">
+    <span class="val" id="mval">3</span>
+    <label for="d">Matrix dimension d</label>
+    <input id="d" type="range" min="1" max="12" value="4" step="1">
+    <span class="val" id="dval">4</span>
+  </div>
+  <div class="controls">
+    <label for="p">Characteristic p</label>
+    <select id="p">
+      <option value="0" selected>0 (Q, large prime proxy)</option>
+      <option value="2">2</option>
+      <option value="3">3</option>
+      <option value="5">5</option>
+      <option value="7">7</option>
+      <option value="11">11</option>
+    </select>
+    <label for="T">Trials</label>
+    <input id="T" type="range" min="5" max="40" value="20" step="1">
+    <span class="val" id="Tval">20</span>
+    <label for="mode">Formula</label>
+    <select id="mode">
+      <option value="nonzero" selected>Nonzero random polynomial</option>
+      <option value="zero">Zero polynomial (cancellation)</option>
+      <option value="commutator">Commutator [X,Y]</option>
+    </select>
+    <button id="rerun">Re-run</button>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Size bound s</div><div class="value" id="ss">—</div></div>
+    <div class="stat"><div class="label">Variables m</div><div class="value" id="sm">—</div></div>
+    <div class="stat"><div class="label">Dimension d</div><div class="value" id="sd">—</div></div>
+    <div class="stat"><div class="label">Characteristic</div><div class="value" id="sp">—</div></div>
+    <div class="stat"><div class="label">Trials</div><div class="value" id="sT">—</div></div>
+    <div class="stat"><div class="label">False-zero rate</div><div class="value" id="srate">—</div></div>
+    <div class="stat"><div class="label">Theoretical miss ≤</div><div class="value" id="stheo">—</div></div>
+    <div class="stat"><div class="label">Last eval norm</div><div class="value" id="snorm">—</div></div>
+  </div>
+  <canvas id="c" width="900" height="420"></canvas>
+  <p style="font-size:.85rem;color:var(--muted);margin-top:.5rem">Conceptual model: evaluate a noncommutative formula at random matrix tuples; nonzero formulas rarely vanish when dimension is comparable to size. The universal hitting tuple removes randomness entirely.</p>
+</div>
+<script>
+const sSlider=document.getElementById('s');
+const mSlider=document.getElementById('m');
+const dSlider=document.getElementById('d');
+const pSel=document.getElementById('p');
+const TSlider=document.getElementById('T');
+const modeSel=document.getElementById('mode');
+const rerunBtn=document.getElementById('rerun');
+
+const sval=document.getElementById('sval');
+const mval=document.getElementById('mval');
+const dval=document.getElementById('dval');
+const Tval=document.getElementById('Tval');
+
+const ss=document.getElementById('ss');
+const sm=document.getElementById('sm');
+const sd=document.getElementById('sd');
+const sp=document.getElementById('sp');
+const sT=document.getElementById('sT');
+const srate=document.getElementById('srate');
+const stheo=document.getElementById('stheo');
+const snorm=document.getElementById('snorm');
+
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+
+function mod(a,p){ a%=p; if(a<0) a+=p; return a; }
+function fieldP(){ const v=+pSel.value; return v===0?1000003:v; }
+
+function randMatrix(d,p){
+  const A=[]; for(let i=0;i<d;i++){ const row=[]; for(let j=0;j<d;j++) row.push(Math.floor(Math.random()*p)); A.push(row);} return A;
+}
+function matMul(A,B,p){
+  const n=A.length, m=B[0].length, k=B.length;
+  const C=[]; for(let i=0;i<n;i++){ const row=[]; for(let j=0;j<m;j++){ let t=0; for(let r=0;r<k;r++) t=(t+A[i][r]*B[r][j])%p; row.push(t);} C.push(row);} return C;
+}
+function matSub(A,B,p){ return A.map((row,i)=>row.map((v,j)=>mod(v-B[i][j],p))); }
+function matAdd(A,B,p){ return A.map((row,i)=>row.map((v,j)=>mod(v+B[i][j],p))); }
+function scalarMulMat(c,A,p){ return A.map(row=>row.map(v=>mod(c*v,p))); }
+function matNorm(A,p){ let t=0; for(const row of A) for(const v of row){ const x=v>p/2?v-p:v; t+=x*x;} return Math.sqrt(t); }
+function isZeroMat(A,p){ for(const row of A) for(const v of row) if(v%p!==0) return false; return true; }
+
+// polynomial representation: array of terms {coeff, word:[varIndex,...]}
+function genPolynomial(s,m,mode){
+  const terms=[];
+  if(mode==='zero'){
+    // generate term then its negation with same word
+    const n=Math.max(1,Math.floor(s/2));
+    for(let i=0;i<n;i++){
+      const len=1+Math.floor(Math.random()*3);
+      const word=[]; for(let k=0;k<len;k++) word.push(Math.floor(Math.random()*m));
+      const c=1+Math.floor(Math.random()*5);
+      terms.push({coeff:c,word:word.slice()});
+      terms.push({coeff:p? (fieldP()-c)%fieldP() : -c, word:word.slice()});
+    }
+    return terms;
+  }
+  if(mode==='commutator'){
+    // XY - YX as two terms degree2
+    return [{coeff:1,word:[0,1]},{coeff:-1,word:[1,0]}];
+  }
+  // nonzero random
+  const n=Math.max(1,s);
+  for(let i=0;i<n;i++){
+    const len=1+Math.floor(Math.random()*4);
+    const word=[]; for(let k=0;k<len;k++) word.push(Math.floor(Math.random()*m));
+    const c=1+Math.floor(Math.random()*7);
+    terms.push({coeff:c,word});
+  }
+  return terms;
+}
+
+let poly=null;
+let lastMat=null;
+let trialsData={T:0,zeros:0,rates:[]};
+
+function evalPoly(poly,mats,p){
+  const d=mats[0].length;
+  // result matrix zeros
+  let R=[]; for(let i=0;i<d;i++){ const row=[]; for(let j=0;j<d;j++) row.push(0); R.push(row);}
+  for(const term of poly){
+    // compute product
+    let P=null;
+    for(const vi of term.word){
+      const M=mats[vi];
+      P = P? matMul(P,M,p) : M.map(row=>row.slice());
+    }
+    if(P===null){
+      // constant term: identity
+      P=[]; for(let i=0;i<d;i++){const row=[];for(let j=0;j<d;j++)row.push(i===j?1:0);P.push(row);}
+    }
+    const c=mod(term.coeff,p);
+    const scaled=P.map(row=>row.map(v=>mod(c*v,p)));
+    R=matAdd(R,scaled,p);
+  }
+  return R;
+}
+
+function runTrials(){
+  const s=+sSlider.value;
+  const m=+mSlider.value;
+  const d=+dSlider.value;
+  const p=fieldP();
+  const T=+TSlider.value;
+  const mode=modeSel.value;
+  if(!poly) poly=genPolynomial(s,m,mode);
+  // regenerate poly if mode changed? keep simple: regenerate on rerun
+  let zeros=0;
+  let last=null;
+  for(let t=0;t<T;t++){
+    const mats=[]; for(let v=0;v<m;v++) mats.push(randMatrix(d,p));
+    const R=evalPoly(poly,mats,p);
+    last=R;
+    if(isZeroMat(R,p)) zeros++;
+  }
+  lastMat=last;
+  trialsData={T,zeros,rate:zeros/T};
+}
+
+let polyMode=null;
+function ensurePoly(){
+  const mode=modeSel.value;
+  const s=+sSlider.value;
+  const m=+mSlider.value;
+  if(!poly || polyMode!==mode){ poly=genPolynomial(s,m,mode); polyMode=mode; }
+}
+
+function renderMatrixHeatmap(W,H){
+  // left area
+  const pad=20;
+  const size=Math.min(W*0.55, H-60);
+  const x0=pad, y0=40;
+  if(!lastMat){ return; }
+  const d=lastMat.length;
+  const cell=size/d;
+  const p=fieldP();
+  for(let i=0;i<d;i++){
+    for(let j=0;j<d;j++){
+      const v=lastMat[i][j];
+      const x=v>p/2?v-p:v;
+      const mag=Math.min(1,Math.abs(x)/(p/2));
+      const hue = x>=0?160:0;
+      ctx.fillStyle=`hsla(${hue},80%,${40+mag*30}%,${0.35+mag*0.65})`;
+      ctx.fillRect(x0+j*cell, y0+i*cell, cell-1, cell-1);
+      if(cell>18){
+        ctx.fillStyle='#e6edf7'; ctx.font='10px system-ui'; ctx.textAlign='center';
+        ctx.fillText(String(v), x0+j*cell+cell/2, y0+i*cell+cell/2+3);
+      }
+    }
+  }
+  ctx.strokeStyle='rgba(159,176,204,0.5)'; ctx.lineWidth=1;
+  ctx.strokeRect(x0,y0,d*cell,d*cell);
+  ctx.fillStyle='#9fb0cc'; ctx.font='12px system-ui'; ctx.textAlign='left';
+  ctx.fillText('Last evaluation matrix ('+d+'x'+d+')', x0, y0-12);
+  const norm=matNorm(lastMat,p);
+  ctx.fillStyle=norm>0?'#22c55e':'#ef4444';
+  ctx.fillText(norm>0?'Nonzero result':'Zero result', x0, y0+d*cell+18);
+}
+
+function renderRateBar(W,H){
+  const x0=W*0.62, y0=60, w=W*0.34, h=H-100;
+  // axes
+  ctx.strokeStyle='rgba(159,176,204,0.5)'; ctx.lineWidth=1;
+  ctx.strokeRect(x0,y0,w,h);
+  ctx.fillStyle='#9fb0cc'; ctx.font='12px system-ui'; ctx.textAlign='center';
+  ctx.fillText('False-zero rate', x0+w/2, y0-12);
+  const rate=trialsData.rate||0;
+  const barH=rate*h;
+  ctx.fillStyle=rate>0.2?'#ef4444':'#22c55e';
+  ctx.fillRect(x0+2, y0+h-barH, w-4, barH);
+  // theoretical line
+  const s=+sSlider.value, d=+dSlider.value;
+  const theo=Math.min(1, Math.max(0, s/Math.max(1,d)));
+  const ty=y0+h-theo*h;
+  ctx.strokeStyle='#f59e0b'; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.moveTo(x0,ty); ctx.lineTo(x0+w,ty); ctx.stroke();
+  ctx.fillStyle='#f59e0b'; ctx.font='11px system-ui'; ctx.textAlign='left';
+  ctx.fillText('theory ~ s/d = '+theo.toFixed(3), x0+4, ty-4);
+  ctx.fillStyle='#9fb0cc'; ctx.font='11px system-ui'; ctx.textAlign='center';
+  ctx.fillText((rate*100).toFixed(1)+'% observed', x0+w/2, y0+h+16);
+}
+
+function updateStats(){
+  const s=+sSlider.value;
+  const m=+mSlider.value;
+  const d=+dSlider.value;
+  const p=+pSel.value;
+  const T=+TSlider.value;
+  sval.textContent=s; mval.textContent=m; dval.textContent=d; Tval.textContent=T;
+  ss.textContent=s; sm.textContent=m; sd.textContent=d;
+  sp.textContent=p===0?'0':p;
+  sT.textContent=T;
+  ensurePoly();
+  runTrials();
+  const rate=trialsData.rate;
+  srate.textContent=(rate*100).toFixed(1)+'%';
+  const theo=Math.min(1, s/Math.max(1,d));
+  stheo.textContent=theo.toFixed(3);
+  const norm=matNorm(lastMat,fieldP());
+  snorm.textContent=norm.toFixed(2);
+}
+
+function render(){
+  updateStats();
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  renderMatrixHeatmap(W,H);
+  renderRateBar(W,H);
+}
+
+sSlider.addEventListener('input',()=>{ poly=null; polyMode=null; render(); });
+mSlider.addEventListener('input',()=>{ poly=null; polyMode=null; render(); });
+dSlider.addEventListener('input',render);
+pSel.addEventListener('change',()=>{ poly=null; polyMode=null; render(); });
+TSlider.addEventListener('input',render);
+modeSel.addEventListener('change',()=>{ poly=null; polyMode=null; render(); });
+rerunBtn.addEventListener('click',()=>{ poly=null; polyMode=null; render(); });
+
+window.addEventListener('resize',function(){ resizeCanvas(); render(); });
+function resizeCanvas(){ canvas.width=Math.max(300,canvas.clientWidth); canvas.height=420; }
+resizeCanvas();
+render();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The hypercube Ramsey conjecture (conceptual, result 171)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range]{flex:1 1 180px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+select{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:460px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+.legend{display:flex;gap:1rem;align-items:center;font-size:.85rem;color:var(--muted);margin:.5rem 0;flex-wrap:wrap}
+.swatch{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:.3rem;vertical-align:middle}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>The hypercube Ramsey conjecture (conceptual, result 171)</h1>
+  <p>Compares the random-coloring, improved lower, and linear upper bounds for the two-color Ramsey number of the (n)-dimensional cube (Q_n), whose vertex count is (2^n).</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Resolves the Burr–Erdős hypercube Ramsey conjecture: the two-color Ramsey number of the (n)-dimensional cube (Q_n) is (\Theta(2^n)). Thus every red-blue coloring of the edges of a complete graph on (C2^n) vertices, for an absolute constant (C), contains a monochromatic copy of (Q_n). The cube (Q_n) has (2^n) vertices and (n2^{n-1}) edges.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">This places the hypercube in the linear Ramsey regime: a graph with exponentially many vertices has Ramsey number only linear in its size, unlike worst-case graphs whose Ramsey numbers are exponential in the number of vertices. The result separates sparse-graph Ramsey theory from dense extremal constructions and supports absorption and sprinkling methods for subgraph Ramsey problems.</p>
+  </section>
+  <div class="controls">
+    <label for="n">Dimension n</label>
+    <input id="n" type="range" min="1" max="10" value="4" step="1">
+    <span class="val" id="nval">4</span>
+    <label for="c">Lower constant c</label>
+    <input id="c" type="range" min="0.1" max="2.0" value="0.5" step="0.1">
+    <span class="val" id="cval">0.5</span>
+    <label for="C">Upper constant C</label>
+    <input id="C" type="range" min="1.0" max="10.0" value="4.0" step="0.1">
+    <span class="val" id="Cval">4.0</span>
+  </div>
+  <div class="controls">
+    <label for="model">Coloring model</label>
+    <select id="model">
+      <option value="random">Random coloring</option>
+      <option value="parity">Parity-based coloring</option>
+      <option value="extremal">Extremal coloring</option>
+    </select>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Vertices of Q_n</div><div class="value" id="sv">—</div></div>
+    <div class="stat"><div class="label">Edges of Q_n</div><div class="value" id="se">—</div></div>
+    <div class="stat"><div class="label">Random lower bound</div><div class="value" id="srand">—</div></div>
+    <div class="stat"><div class="label">Improved lower bound</div><div class="value" id="slow">—</div></div>
+    <div class="stat"><div class="label">Upper bound</div><div class="value" id="sup">—</div></div>
+    <div class="stat"><div class="label">Ramsey interval</div><div class="value" id="sint">—</div></div>
+    <div class="stat"><div class="label">Upper/lower ratio</div><div class="value" id="sratio">—</div></div>
+    <div class="stat"><div class="label">Regime</div><div class="value" id="sreg">—</div></div>
+  </div>
+  <div class="legend">
+    <span><span class="swatch" style="background:#9fb0cc"></span>Random coloring bound (2^{n/2})</span>
+    <span><span class="swatch" style="background:#f59e0b"></span>Improved lower bound (c2^n)</span>
+    <span><span class="swatch" style="background:#ef4444"></span>Upper bound (C2^n)</span>
+    <span><span class="swatch" style="background:#5eead4"></span>Linear regime (\Theta(2^n))</span>
+  </div>
+  <canvas id="canvas" width="900" height="460"></canvas>
+  <p style="font-size:.85rem;color:var(--muted);margin-top:.5rem">Conceptual model: the random-coloring bound grows like (2^{n/2}), while the theorem places the Ramsey number between (c2^n) and (C2^n). The gap between the two parallel lines is the constant factor; changing (c) and (C) rescales the admissible interval without changing the linear order.</p>
+</div>
+<script>
+const nSlider=document.getElementById('n');
+const cSlider=document.getElementById('c');
+const CSlider=document.getElementById('C');
+const modelSel=document.getElementById('model');
+
+const nval=document.getElementById('nval');
+const cval=document.getElementById('cval');
+const Cval=document.getElementById('Cval');
+
+const sv=document.getElementById('sv');
+const se=document.getElementById('se');
+const srand=document.getElementById('srand');
+const slow=document.getElementById('slow');
+const sup=document.getElementById('sup');
+const sint=document.getElementById('sint');
+const sratio=document.getElementById('sratio');
+const sreg=document.getElementById('sreg');
+
+const canvas=document.getElementById('canvas');
+const ctx=canvas.getContext('2d');
+
+function resizeCanvas(){ canvas.width=Math.max(300,canvas.clientWidth); canvas.height=460; }
+window.addEventListener('resize',function(){ resizeCanvas(); render(); });
+resizeCanvas();
+
+function fmt(x){
+  if(!isFinite(x)) return '∞';
+  if(Math.abs(x)>=1e6) return x.toExponential(2);
+  if(Math.abs(x)>=100) return x.toFixed(0);
+  if(Math.abs(x)>=1) return x.toFixed(2);
+  return x.toFixed(4);
+}
+
+function pow2(x){ return Math.pow(2,x); }
+
+function updateStats(){
+  const n=+nSlider.value;
+  const c=+cSlider.value;
+  const C=+CSlider.value;
+  nval.textContent=n;
+  cval.textContent=c.toFixed(1);
+  Cval.textContent=C.toFixed(1);
+
+  const verts=Math.pow(2,n);
+  const edges=n*Math.pow(2,n-1);
+  const rand=Math.pow(2,n/2);
+  const low=c*Math.pow(2,n);
+  const up=C*Math.pow(2,n);
+
+  sv.textContent=fmt(verts);
+  se.textContent=fmt(edges);
+  srand.textContent=fmt(rand);
+  slow.textContent=fmt(low);
+  sup.textContent=fmt(up);
+  sint.textContent=fmt(low)+' – '+fmt(up);
+  sratio.textContent=(C/c).toFixed(2);
+
+  let reg;
+  if(modelSel.value==='random') reg='Random coloring';
+  else if(modelSel.value==='parity') reg='Parity coloring';
+  else reg='Extremal coloring';
+  sreg.textContent=reg;
+}
+
+function render(){
+  updateStats();
+  const c=+cSlider.value;
+  const C=+CSlider.value;
+  const N=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,N,H);
+  const padL=64,padR=20,padT=30,padB=44;
+  const plotW=N-padL-padR;
+  const plotH=H-padT-padB;
+  const nMin=1,nMax=12;
+  function xOf(n){ return padL + ((n-nMin)/(nMax-nMin))*plotW; }
+  // y = log2(N), range 0..14
+  const YMIN=0,YMAX=14;
+  function yOf(y){ return padT + (YMAX-y)/(YMAX-YMIN)*plotH; }
+
+  // grid
+  ctx.strokeStyle='rgba(159,176,204,0.25)';
+  ctx.lineWidth=1;
+  for(let n=nMin;n<=nMax;n++){
+    const x=xOf(n);
+    ctx.beginPath(); ctx.moveTo(x,padT); ctx.lineTo(x,H-padB); ctx.stroke();
+  }
+  for(let y=0;y<=YMAX;y+=2){
+    const yy=yOf(y);
+    ctx.beginPath(); ctx.moveTo(padL,yy); ctx.lineTo(N-padR,yy); ctx.stroke();
+  }
+  ctx.fillStyle='rgba(159,176,204,0.9)';
+  ctx.font='12px system-ui'; ctx.textAlign='center';
+  for(let n=nMin;n<=nMax;n++) ctx.fillText(n, xOf(n), H-18);
+  ctx.textAlign='right';
+  for(let y=0;y<=YMAX;y+=2) ctx.fillText(y, padL-6, yOf(y)+4);
+  ctx.fillStyle='#e6edf7'; ctx.font='12px system-ui'; ctx.textAlign='center';
+  ctx.fillText('dimension n', padL+plotW/2, H-4);
+  ctx.save(); ctx.translate(14,padT+plotH/2); ctx.rotate(-Math.PI/2); ctx.fillText('log2 N',0,0); ctx.restore();
+
+  // linear regime shading between lower and upper
+  ctx.fillStyle='rgba(94,234,212,0.10)';
+  ctx.beginPath();
+  for(let n=nMin;n<=nMax;n++){
+    const x=xOf(n);
+    const yu=yOf(Math.log2(C*Math.pow(2,n)));
+    if(n===nMin) ctx.moveTo(x,yu); else ctx.lineTo(x,yu);
+  }
+  for(let n=nMax;n>=nMin;n--){
+    const x=xOf(n);
+    const yl=yOf(Math.log2(c*Math.pow(2,n)));
+    ctx.lineTo(x,yl);
+  }
+  ctx.closePath(); ctx.fill();
+
+  // random bound line
+  ctx.strokeStyle='#9fb0cc'; ctx.lineWidth=2; ctx.setLineDash([4,3]);
+  ctx.beginPath();
+  for(let n=nMin;n<=nMax;n++){
+    const x=xOf(n), y=yOf(n/2);
+    if(n===nMin) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  }
+  ctx.stroke(); ctx.setLineDash([]);
+
+  // improved lower
+  ctx.strokeStyle='#f59e0b'; ctx.lineWidth=2.5;
+  ctx.beginPath();
+  for(let n=nMin;n<=nMax;n++){
+    const x=xOf(n), y=yOf(n+Math.log2(c));
+    if(n===nMin) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  }
+  ctx.stroke();
+
+  // upper
+  ctx.strokeStyle='#ef4444'; ctx.lineWidth=2.5;
+  ctx.beginPath();
+  for(let n=nMin;n<=nMax;n++){
+    const x=xOf(n), y=yOf(n+Math.log2(C));
+    if(n===nMin) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  }
+  ctx.stroke();
+
+  // current n marker
+  const n=+nSlider.value;
+  const x=xOf(n);
+  ctx.strokeStyle='rgba(94,234,212,0.5)'; ctx.lineWidth=1; ctx.setLineDash([4,3]);
+  ctx.beginPath(); ctx.moveTo(x,padT); ctx.lineTo(x,H-padB); ctx.stroke(); ctx.setLineDash([]);
+  // points
+  const pts=[
+    {y:n/2,color:'#9fb0cc'},
+    {y:n+Math.log2(c),color:'#f59e0b'},
+    {y:n+Math.log2(C),color:'#ef4444'}
+  ];
+  pts.forEach(function(pt){
+    const y=yOf(pt.y);
+    ctx.fillStyle=pt.color;
+    ctx.beginPath(); ctx.arc(x,y,6,0,Math.PI*2); ctx.fill();
+    ctx.strokeStyle='#e6edf7'; ctx.lineWidth=1.5; ctx.stroke();
+  });
+}
+
+nSlider.addEventListener('input',render);
+cSlider.addEventListener('input',render);
+CSlider.addEventListener('input',render);
+modelSel.addEventListener('change',render);
+render();
+</script>
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

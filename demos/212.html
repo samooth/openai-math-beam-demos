@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>No bigeodesics and smooth limit shapes in planar first-passage percolation (conceptual, result 212)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+select{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+input[type=range]{flex:1 1 160px}
+input[type=number]{width:6rem;padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text)}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:5ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+canvas{width:100%;max-width:640px;height:auto;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.legend{display:flex;gap:1rem;align-items:center;font-size:.85rem;color:var(--muted);margin:.5rem 0;flex-wrap:wrap}
+.swatch{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:.3rem;vertical-align:middle}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>No bigeodesics and smooth limit shapes in planar first-passage percolation (conceptual, result 212)</h1>
+  <p>Samples iid edge weights on a finite square lattice, computes first-passage times from the origin by Dijkstra, and traces a geodesic to a boundary point. Isochrones approximate the limit shape; varying the Gamma law illustrates its smoothness and anisotropy.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Planar first-passage percolation assigns iid nonnegative weights to the edges of $\mathbb Z^2$; the passage time between two points is the minimum total weight along a lattice path. The theorem proves that, for nonatomic weights whose four-edge minimum has finite second moment, there is no doubly infinite geodesic. For exponential weights the limit shape is strictly convex with $C^1$ boundary; for every Gamma law with positive shape and rate, the time-constant norm is differentiable away from the origin.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Excludes bigeodesics in the planar case, supporting uniqueness of geodesics and the absence of doubly infinite optimal paths. Differentiability and strict convexity of the limit shape yield a well-defined normal and supporting line at every boundary point, which underpins fluctuation theory, geodesic uniqueness, and universality in random growth models. The interactive view resamples a finite grid, computes passage times, and traces one geodesic to visualize anisotropic growth and approximate isochrones for different Gamma parameters.</p>
+  </section>
+  <div class="controls">
+    <label for="alpha">Gamma shape $\alpha$</label>
+    <input id="alpha" type="range" min="0.5" max="4" value="1" step="0.1">
+    <span class="val" id="aval">1.0</span>
+    <label for="beta">rate $\beta$</label>
+    <input id="beta" type="range" min="0.5" max="3" value="1" step="0.1">
+    <span class="val" id="bval">1.0</span>
+    <label for="R">radius $R$</label>
+    <input id="R" type="range" min="8" max="20" value="12" step="1">
+    <span class="val" id="rval">12</span>
+    <label for="ang">target angle</label>
+    <input id="ang" type="range" min="0" max="360" value="45" step="1">
+    <span class="val" id="gval">45</span>
+  </div>
+  <div class="controls">
+    <label for="seed">seed</label>
+    <input id="seed" type="number" value="42">
+    <button id="resample">Resample</button>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Nodes</div><div class="value" id="snodes">—</div></div>
+    <div class="stat"><div class="label">Max passage time</div><div class="value" id="smax">—</div></div>
+    <div class="stat"><div class="label">Target time</div><div class="value" id="stgt">—</div></div>
+    <div class="stat"><div class="label">Geodesic edges</div><div class="value" id="spath">—</div></div>
+    <div class="stat"><div class="label">Mean edge weight</div><div class="value" id="smean">—</div></div>
+    <div class="stat"><div class="label">Weight law</div><div class="value" id="slaw">—</div></div>
+  </div>
+  <div class="legend">
+    <span><span class="swatch" style="background:hsl(180,70%,50%)"></span>low passage time</span>
+    <span><span class="swatch" style="background:hsl(90,70%,50%)"></span>mid</span>
+    <span><span class="swatch" style="background:hsl(0,70%,50%)"></span>high</span>
+    <span><span class="swatch" style="background:#22c55e"></span>origin</span>
+    <span><span class="swatch" style="background:#f59e0b"></span>target</span>
+    <span><span class="swatch" style="background:#5eead4"></span>geodesic</span>
+  </div>
+  <canvas id="cv" width="640" height="640"></canvas>
+</div>
+<script>
+const alphaSlider=document.getElementById('alpha');
+const betaSlider=document.getElementById('beta');
+const RSlider=document.getElementById('R');
+const angSlider=document.getElementById('ang');
+const seedInput=document.getElementById('seed');
+const aval=document.getElementById('aval');
+const bval=document.getElementById('bval');
+const rval=document.getElementById('rval');
+const gval=document.getElementById('gval');
+const snodes=document.getElementById('snodes');
+const smax=document.getElementById('smax');
+const stgt=document.getElementById('stgt');
+const spath=document.getElementById('spath');
+const smean=document.getElementById('smean');
+const slaw=document.getElementById('slaw');
+const cv=document.getElementById('cv');
+const ctx=cv.getContext('2d');
+
+let state={R:12, dist:null, prev:null, N:0, adj:[], src:0, target:0, path:[], maxDist:1, meanW:1, alpha:1, beta:1, seed:42, angle:45};
+
+function mulberry32(a){ a|=0; return function(){ a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; };
+
+function randn(rng){
+  let u=0,v=0;
+  while(u===0) u=rng();
+  while(v===0) v=rng();
+  return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);
+}
+
+function gammaSample(alpha, beta, rng){
+  if(alpha < 1){
+    return gammaSample(alpha+1, beta, rng) * Math.pow(rng(), 1/alpha);
+  }
+  const d = alpha - 1/3;
+  const c = 1/Math.sqrt(9*d);
+  while(true){
+    let x, v;
+    do { x = randn(rng); v = 1 + c*x; } while(v <= 0);
+    v = v*v*v;
+    const u = rng();
+    if(u < 1 - 0.0331*(x*x)*(x*x)) return d*v/beta;
+    if(Math.log(u) < 0.5*x*x + d*(1 - v + Math.log(v))) return d*v/beta;
+  }
+}
+
+function clamp(x,a,b){ return Math.max(a, Math.min(b, x)); }
+
+function regenerate(){
+  const alpha=+alphaSlider.value;
+  const beta=+betaSlider.value;
+  const R=+RSlider.value;
+  const seed=+seedInput.value || 42;
+  const rng=mulberry32(seed);
+  const N=2*R+1;
+  const n=N*N;
+  const idx=(i,j)=> (i+R)*N + (j+R);
+  const adj=Array.from({length:n}, ()=>[]);
+  let sumW=0, cnt=0;
+  for(let i=-R;i<=R;i++){
+    for(let j=-R;j<=R;j++){
+      const u=idx(i,j);
+      if(i<R){
+        const v=idx(i+1,j);
+        const w=gammaSample(alpha,beta,rng);
+        adj[u].push([v,w]); adj[v].push([u,w]);
+        sumW+=w; cnt++;
+      }
+      if(j<R){
+        const v=idx(i,j+1);
+        const w=gammaSample(alpha,beta,rng);
+        adj[u].push([v,w]); adj[v].push([u,w]);
+        sumW+=w; cnt++;
+      }
+    }
+  }
+  const src=idx(0,0);
+  const dist=new Float64Array(n).fill(Infinity);
+  const prev=new Int32Array(n).fill(-1);
+  dist[src]=0;
+  const visited=new Uint8Array(n);
+  for(let it=0; it<n; it++){
+    let u=-1, best=Infinity;
+    for(let k=0;k<n;k++) if(!visited[k] && dist[k]<best){best=dist[k];u=k;}
+    if(u===-1) break;
+    visited[u]=1;
+    for(const [v,w] of adj[u]){
+      if(!visited[v] && dist[u]+w < dist[v]){
+        dist[v]=dist[u]+w; prev[v]=u;
+      }
+    }
+  }
+  let maxDist=0;
+  for(let k=0;k<n;k++) if(isFinite(dist[k]) && dist[k]>maxDist) maxDist=dist[k];
+  state={R, dist, prev, N, adj, src, path:[], maxDist, meanW: sumW/cnt, alpha, beta, seed, angle: +angSlider.value};
+  updateView();
+}
+
+function updateView(){
+  const R=state.R;
+  const N=state.N;
+  const idx=(i,j)=> (i+R)*N + (j+R);
+  const ang=+angSlider.value * Math.PI/180;
+  const ti=clamp(Math.round(R*Math.cos(ang)), -R, R);
+  const tj=clamp(Math.round(R*Math.sin(ang)), -R, R);
+  const target=idx(ti,tj);
+  state.target=target;
+  // backtrack
+  const path=[];
+  let u=target;
+  while(u!==-1){
+    path.push(u);
+    if(u===state.src) break;
+    u=state.prev[u];
+  }
+  if(path.length && path[path.length-1]===state.src){ path.reverse(); } else { path.length=0; }
+  state.path=path;
+  draw();
+  // stats
+  aval.textContent=state.alpha.toFixed(1);
+  bval.textContent=state.beta.toFixed(1);
+  rval.textContent=R;
+  gval.textContent=angSlider.value;
+  snodes.textContent=(N*N).toString();
+  smax.textContent=state.maxDist.toFixed(2);
+  stgt.textContent=isFinite(state.dist[target]) ? state.dist[target].toFixed(2) : '—';
+  spath.textContent=path.length ? (path.length-1).toString() : '—';
+  smean.textContent=state.meanW.toFixed(3);
+  slaw.textContent = Math.abs(state.alpha-1)<1e-9 ? 'Exponential (α=1)' : 'Gamma(α,β)';
+}
+
+function color(t){
+  const h=180*(1-t);
+  return 'hsl('+h.toFixed(1)+',70%,50%)';
+}
+
+function draw(){
+  const W=cv.width,H=cv.height;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='#1f2a44'; ctx.fillRect(0,0,W,H);
+  const R=state.R;
+  const N=state.N;
+  const margin=24;
+  const scale=(W-2*margin)/(2*R);
+  function X(i){ return margin + (i+R)*scale; }
+  function Y(j){ return margin + (R-j)*scale; }
+  const idx=(i,j)=> (i+R)*N + (j+R);
+  // edges
+  ctx.strokeStyle='rgba(159,176,204,0.10)';
+  ctx.lineWidth=1;
+  ctx.beginPath();
+  for(let i=-R;i<=R;i++){
+    for(let j=-R;j<=R;j++){
+      if(i<R){ ctx.moveTo(X(i),Y(j)); ctx.lineTo(X(i+1),Y(j)); }
+      if(j<R){ ctx.moveTo(X(i),Y(j)); ctx.lineTo(X(i),Y(j+1)); }
+    }
+  }
+  ctx.stroke();
+  // nodes
+  const maxD=state.maxDist || 1;
+  for(let i=-R;i<=R;i++){
+    for(let j=-R;j<=R;j++){
+      const d=state.dist[idx(i,j)];
+      const t=isFinite(d) ? d/maxD : 1;
+      ctx.fillStyle=color(t);
+      ctx.fillRect(X(i)-3, Y(j)-3, 6, 6);
+    }
+  }
+  // origin
+  ctx.fillStyle='#22c55e';
+  ctx.beginPath(); ctx.arc(X(0),Y(0),7,0,Math.PI*2); ctx.fill();
+  // target
+  const ti=state.target;
+  // convert target idx back
+  let tI=0,tJ=0;
+  for(let i=-R;i<=R;i++) for(let j=-R;j<=R;j++) if(idx(i,j)===state.target){ tI=i; tJ=j; }
+  ctx.fillStyle='#f59e0b';
+  ctx.beginPath(); ctx.arc(X(tI),Y(tJ),7,0,Math.PI*2); ctx.fill();
+  // geodesic
+  if(state.path.length>1){
+    ctx.strokeStyle='#5eead4';
+    ctx.lineWidth=3;
+    ctx.beginPath();
+    state.path.forEach((node,k)=>{
+      // find i,j for node
+      const ii = Math.floor(node/N)-R;
+      const jj = (node % N)-R;
+      if(k===0) ctx.moveTo(X(ii),Y(jj)); else ctx.lineTo(X(ii),Y(jj));
+    });
+    ctx.stroke();
+  }
+}
+
+alphaSlider.addEventListener('input', regenerate);
+betaSlider.addEventListener('input', regenerate);
+RSlider.addEventListener('input', regenerate);
+seedInput.addEventListener('change', regenerate);
+document.getElementById('resample').addEventListener('click', ()=>{ seedInput.value = Math.floor(Math.random()*1e6); regenerate(); });
+angSlider.addEventListener('input', updateView);
+
+regenerate();
+</script>
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

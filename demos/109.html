@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Integer multiplication below n log n (conceptual, result 109)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range]{flex:1 1 180px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:460px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+select{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text)}
+.toggle{display:inline-flex;align-items:center;gap:.4rem}
+.legend{display:flex;gap:1rem;align-items:center;font-size:.85rem;color:var(--muted);margin:.5rem 0;flex-wrap:wrap}
+.swatch{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:.3rem;vertical-align:middle}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Integer multiplication below n log n (conceptual, result 109)</h1>
+  <p>Multiplies two (n)-bit integers exactly at every input length in deterministic worst-case time (O(n(\log n)^{1-\kappa})), with (\kappa=2^{-182}), on one fixed finite-alphabet Turing machine with finitely many one-dimensional tapes. This disproves the Schönhage--Strassen (n\log n) optimality conjecture in the ordinary multitape bit model. Slide the bit length and the exponent (\kappa) to compare growth rates.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">We give a deterministic algorithm that multiplies two (n)-bit integers in (O(n(\lg n)^{1-\kappa})) worst-case time, with (\kappa=2^{-182}), on one fixed finite-alphabet Turing machine with a fixed finite number of one-dimensional tapes. The algorithm is exact for every input length and disproves the (n\log n) optimality conjecture of Schönhage and Strassen in this model. The construction uses a fixed machine and a fixed number of tapes, so the speedup is not an artifact of varying hardware.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">This removes the long-standing (n\log n) barrier for integer multiplication in the ordinary multitape bit model and shows that faster-than-(n\log n) exact multiplication is possible with a universal constant-factor-independent asymptotic improvement in the logarithmic exponent. It affects fast arithmetic, algebraic complexity, and the design of multiplication in cryptographic and scientific software, where bit-level constants and worst-case guarantees matter.</p>
+  </section>
+  <div class="controls">
+    <label for="nlog">log10 n</label>
+    <input id="nlog" type="range" min="1" max="8" value="6" step="0.01">
+    <span class="val" id="nlogval">6.00</span>
+    <label for="kappa">kappa</label>
+    <input id="kappa" type="range" min="0" max="0.5" value="0.1" step="0.001">
+    <span class="val" id="kappaval">0.100</span>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Bit length n</div><div class="value" id="nstat">—</div></div>
+    <div class="stat"><div class="label">log2 n</div><div class="value" id="log2stat">—</div></div>
+    <div class="stat"><div class="label">Schoolbook n^2</div><div class="value" id="schoolstat">—</div></div>
+    <div class="stat"><div class="label">Karatsuba</div><div class="value" id="karastat">—</div></div>
+    <div class="stat"><div class="label">Schonhage-Strassen</div><div class="value" id="ssstat">—</div></div>
+    <div class="stat"><div class="label">New bound</div><div class="value" id="newstat">—</div></div>
+    <div class="stat"><div class="label">Plain n log n</div><div class="value" id="plainstat">—</div></div>
+    <div class="stat"><div class="label">SS / new</div><div class="value" id="ratiostat">—</div></div>
+  </div>
+  <div class="legend">
+    <span><span class="swatch" style="background:#ef4444"></span>Schoolbook (n^2)</span>
+    <span><span class="swatch" style="background:#f59e0b"></span>Karatsuba (n^1.585)</span>
+    <span><span class="swatch" style="background:#a78bfa"></span>Toom-Cook (n^1.465)</span>
+    <span><span class="swatch" style="background:#94a3b8"></span>Plain (n log n)</span>
+    <span><span class="swatch" style="background:#5eead4"></span>Schönhage-Strassen</span>
+    <span><span class="swatch" style="background:#22c55e"></span>New bound</span>
+    <span><span class="swatch" style="background:#f59e0b;border:2px dashed #f59e0b;background:transparent"></span>Selected n</span>
+  </div>
+  <canvas id="c" width="900" height="460"></canvas>
+  <p style="font-size:.85rem;color:var(--muted);margin-top:.5rem">The axes are base-10 logarithms of bit length and operation count. The new bound sits below (n\log n) for large (n) whenever (\kappa>0); the actual (\kappa=2^{-182}) makes the gap extremely small at practical lengths, so the slider exaggerates (\kappa) for visibility.</p>
+</div>
+<script>
+const nlogSlider=document.getElementById('nlog');
+const kappaSlider=document.getElementById('kappa');
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+
+const nlogval=document.getElementById('nlogval');
+const kappaval=document.getElementById('kappaval');
+const nstat=document.getElementById('nstat');
+const log2stat=document.getElementById('log2stat');
+const schoolstat=document.getElementById('schoolstat');
+const karastat=document.getElementById('karastat');
+const ssstat=document.getElementById('ssstat');
+const newstat=document.getElementById('newstat');
+const plainstat=document.getElementById('plainstat');
+const ratiostat=document.getElementById('ratiostat');
+
+function nValue(){ return Math.pow(10, +nlogSlider.value); }
+function fmt(x){
+  if(!isFinite(x)) return '—';
+  if(x>=1e6 || x<=1e-4) return x.toExponential(3);
+  return x.toFixed(4);
+}
+
+function costSchool(n){ return n*n; }
+function costKara(n){ return Math.pow(n, 1.5849625); }
+function costToom(n){ return Math.pow(n, 1.4649735); }
+function costPlain(n){ const l=Math.log2(n+2); return n*l; }
+function costSS(n){ const l=Math.log2(n+2); const ll=Math.max(1, Math.log2(l+2)); return n*l*ll; }
+function costNew(n,k){ const l=Math.log2(n+2); return n*Math.pow(l, 1-k); }
+
+function updateStats(){
+  nlogval.textContent=(+nlogSlider.value).toFixed(2);
+  kappaval.textContent=(+kappaSlider.value).toFixed(3);
+  const n=nValue();
+  const k=+kappaSlider.value;
+  nstat.textContent=fmt(n);
+  log2stat.textContent=Math.log2(n).toFixed(3);
+  schoolstat.textContent=fmt(costSchool(n));
+  karastat.textContent=fmt(costKara(n));
+  ssstat.textContent=fmt(costSS(n));
+  newstat.textContent=fmt(costNew(n,k));
+  plainstat.textContent=fmt(costPlain(n));
+  ratiostat.textContent=fmt(costSS(n)/costNew(n,k));
+}
+
+function resizeCanvas(){ canvas.width=Math.max(300,canvas.clientWidth); canvas.height=460; }
+window.addEventListener('resize',function(){ resizeCanvas(); render(); });
+resizeCanvas();
+
+function render(){
+  updateStats();
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const k=+kappaSlider.value;
+  const xmin=1,xmax=8;
+  const padL=58,padR=20,padT=24,padB=46;
+  const plotW=W-padL-padR;
+  const plotH=H-padT-padB;
+  const ymin=0,ymax=17;
+  function xOf(lg){ return padL + (lg-xmin)/(xmax-xmin)*plotW; }
+  function yOf(lg){ return padT + plotH - (lg-ymin)/(ymax-ymin)*plotH; }
+
+  ctx.strokeStyle='rgba(159,176,204,0.18)';
+  ctx.lineWidth=1;
+  for(let i=0;i<=7;i++){
+    const lg=xmin+i;
+    const x=xOf(lg);
+    ctx.beginPath(); ctx.moveTo(x,padT); ctx.lineTo(x,H-padB); ctx.stroke();
+    ctx.fillStyle='#9fb0cc';
+    ctx.font='11px system-ui';
+    ctx.textAlign='center';
+    ctx.fillText('1e'+lg, x, H-padB+16);
+  }
+  for(let i=0;i<=17;i+=2){
+    const y=yOf(i);
+    ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(W-padR,y); ctx.stroke();
+    ctx.fillStyle='#9fb0cc';
+    ctx.textAlign='right';
+    ctx.fillText(i, padL-6, y+4);
+  }
+  ctx.fillStyle='#9fb0cc';
+  ctx.font='12px system-ui';
+  ctx.textAlign='center';
+  ctx.fillText('bit length n', (padL+W-padR)/2, H-8);
+  ctx.save();
+  ctx.translate(14,(padT+H-padB)/2);
+  ctx.rotate(-Math.PI/2);
+  ctx.fillText('log10 operations', 0, 0);
+  ctx.restore();
+
+  function drawCurve(fn,color,width){
+    ctx.strokeStyle=color;
+    ctx.lineWidth=width;
+    ctx.beginPath();
+    for(let i=0;i<=300;i++){
+      const lg=xmin+(xmax-xmin)*i/300;
+      const n=Math.pow(10,lg);
+      const val=fn(n);
+      const x=xOf(lg);
+      const y=yOf(Math.log10(val));
+      if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+  }
+
+  drawCurve(costSchool,'#ef4444',2);
+  drawCurve(costKara,'#f59e0b',2);
+  drawCurve(costToom,'#a78bfa',2);
+  drawCurve(costPlain,'#94a3b8',1.8);
+  drawCurve(n=>costSS(n),'#5eead4',2.5);
+  drawCurve(n=>costNew(n,k),'#22c55e',2.5);
+
+  const lg=+nlogSlider.value;
+  const x=xOf(lg);
+  ctx.strokeStyle='#f59e0b';
+  ctx.lineWidth=1.5;
+  ctx.setLineDash([4,4]);
+  ctx.beginPath(); ctx.moveTo(x,padT); ctx.lineTo(x,H-padB); ctx.stroke();
+  ctx.setLineDash([]);
+}
+
+nlogSlider.addEventListener('input',render);
+kappaSlider.addEventListener('input',render);
+render();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

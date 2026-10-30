@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A power improvement in the Heilbronn triangle problem (conceptual, result 191)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+select{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+input[type=range]{flex:1 1 180px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+.legend{display:flex;gap:1rem;align-items:center;font-size:.85rem;color:var(--muted);margin:.5rem 0;flex-wrap:wrap}
+.swatch{display:inline-block;width:14px;height:14px;border-radius:50%;margin-right:.3rem;vertical-align:middle}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>A power improvement in the Heilbronn triangle problem (conceptual, result 191)</h1>
+  <p>For \(n\) points in the unit square, Heilbronn's problem asks how large the smallest determined triangle can be made. Result 191 gives a construction with every triangle of area at least \(n^{-2+c}\) for a fixed \(c>0).</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">For every sufficiently large \(n\), there exist \(n\) points in the unit square such that every triangle determined by three of them has area at least \(n^{-2+c}\) for one absolute \(c>0). This disproves the conjectured almost-(n^{-2}) upper bound in Heilbronn's triangle problem, which asks how large the smallest determined triangle can be.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">The construction creates a power gap above the \(n^{-2}\) scale: the best possible minimum triangle area is not of order \(n^{-2+\varepsilon}\) for every \(\varepsilon>0). The demo computes the minimum triangle area for several point families and compares it with (n^{-2}) and (n^{-2+c}).</p>
+  </section>
+  <div class="controls">
+    <label for="family">Family</label>
+    <select id="family">
+      <option value="random">Random uniform</option>
+      <option value="grid">Grid (perturbed)</option>
+      <option value="sunflower">Sunflower</option>
+      <option value="parabola">Parabola (on curve)</option>
+      <option value="greedy">Greedy (max-min area)</option>
+    </select>
+    <label for="n">(n)</label>
+    <input id="n" type="range" min="6" max="60" value="24" step="1">
+    <span class="val" id="nval">24</span>
+    <label for="c">(c)</label>
+    <input id="c" type="range" min="1" max="50" value="10" step="1">
+    <span class="val" id="cval">0.10</span>
+    <label for="seed">Seed</label>
+    <input id="seed" type="range" min="1" max="99" value="7" step="1">
+    <span class="val" id="seedval">7</span>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">(n)</div><div class="value" id="sn">—</div></div>
+    <div class="stat"><div class="label">Min area (\Delta)</div><div class="value" id="sdelta">—</div></div>
+    <div class="stat"><div class="label">(n^{-2})</div><div class="value" id="sn2">—</div></div>
+    <div class="stat"><div class="label">(n^{-2+c})</div><div class="value" id="sn2c">—</div></div>
+    <div class="stat"><div class="label">(\Delta\cdot n^2)</div><div class="value" id="sratio">—</div></div>
+    <div class="stat"><div class="label">Status</div><div class="value" id="sstatus">—</div></div>
+  </div>
+  <canvas id="canvas" width="900" height="420"></canvas>
+  <div class="legend">
+    <span><span class="swatch" style="background:#5eead4"></span>points</span>
+    <span><span class="swatch" style="background:#f59e0b"></span>smallest triangle</span>
+  </div>
+  <canvas id="cscale" width="900" height="260"></canvas>
+  <p style="font-size:.9rem;color:var(--muted);margin:.5rem 0 0">Scaling plot: minimum area versus (n) on log-log axes, with the (n^{-2}) reference line.</p>
+</div>
+<script>
+function mulberry32(a){ a|=0; return function(){ a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+function randomPoints(n,seed){ const rng=mulberry32(seed*997+1); const pts=[]; for(let i=0;i<n;i++) pts.push({x:rng(),y:rng()}); return pts; }
+function gridPoints(n){ const k=Math.ceil(Math.sqrt(n)); const pts=[]; let s=12345; for(let i=0;i<k && pts.length<n;i++) for(let j=0;j<k && pts.length<n;j++){ s=(s*1103515245+12345)>>>0; const jx=(s/4294967296)*1e-3; s=(s*1103515245+12345)>>>0; const jy=(s/4294967296)*1e-3; pts.push({x:(k===1?0.5:i/(k-1))+jx, y:(k===1?0.5:j/(k-1))+jy}); } return pts; }
+function sunflowerPoints(n){ const pts=[]; const ga=Math.PI*(3-Math.sqrt(5)); for(let i=0;i<n;i++){ const r=Math.sqrt((i+0.5)/n); const th=i*ga; pts.push({x:0.5+0.48*r*Math.cos(th), y:0.5+0.48*r*Math.sin(th)}); } return pts; }
+function parabolaPoints(n){ const pts=[]; for(let i=0;i<n;i++){ const x=n===1?0.5:i/(n-1); pts.push({x:x, y:x*x}); } return pts; }
+let greedyCache=[];
+function greedyPoints(n){
+  if(greedyCache.length>=n) return greedyCache.slice(0,n);
+  if(greedyCache.length===0) greedyCache=[{x:0,y:0},{x:1,y:0},{x:0,y:1},{x:1,y:1}];
+  const M=28;
+  while(greedyCache.length<n){
+    let best=-1; let bestPt=null;
+    for(let xi=0;xi<M;xi++) for(let yi=0;yi<M;yi++){
+      const x=xi/(M-1); const y=yi/(M-1);
+      let skip=false;
+      for(const p of greedyCache){ if(Math.abs(p.x-x)<1e-9 && Math.abs(p.y-y)<1e-9){ skip=true; break; } }
+      if(skip) continue;
+      const cand=greedyCache.concat({x,y});
+      const a=minTriangleArea(cand).min;
+      if(a>best){ best=a; bestPt={x,y}; }
+    }
+    greedyCache.push(bestPt);
+  }
+  return greedyCache.slice(0,n);
+}
+function minTriangleArea(pts){
+  let min=Infinity; let tri=null;
+  for(let i=0;i<pts.length;i++) for(let j=i+1;j<pts.length;j++) for(let k=j+1;k<pts.length;k++){
+    const a=0.5*Math.abs((pts[j].x-pts[i].x)*(pts[k].y-pts[i].y)-(pts[k].x-pts[i].x)*(pts[j].y-pts[i].y));
+    if(a<min){ min=a; tri=[i,j,k]; }
+  }
+  return {min,tri};
+}
+function makePoints(family,n,seed){
+  if(family==='random') return randomPoints(n,seed);
+  if(family==='grid') return gridPoints(n);
+  if(family==='sunflower') return sunflowerPoints(n);
+  if(family==='parabola') return parabolaPoints(n);
+  if(family==='greedy') return greedyPoints(Math.min(n,24));
+  return randomPoints(n,seed);
+}
+const familySel=document.getElementById('family');
+const nSlider=document.getElementById('n');
+const nVal=document.getElementById('nval');
+const cSlider=document.getElementById('c');
+const cVal=document.getElementById('cval');
+const seedSlider=document.getElementById('seed');
+const seedVal=document.getElementById('seedval');
+const sn=document.getElementById('sn');
+const sdelta=document.getElementById('sdelta');
+const sn2=document.getElementById('sn2');
+const sn2c=document.getElementById('sn2c');
+const sratio=document.getElementById('sratio');
+const sstatus=document.getElementById('sstatus');
+const canvas=document.getElementById('canvas');
+const ctx=canvas.getContext('2d');
+const cscale=document.getElementById('cscale');
+const cctx=cscale.getContext('2d');
+let lastPts=[]; let lastTri=null; let lastDelta=0;
+function resizeCanvas(){ canvas.width=Math.max(300,canvas.clientWidth); canvas.height=420; }
+function toX(x,W){ const m=36; const size=Math.min(W,420)-72; return m+x*size; }
+function toY(y,H){ const m=36; const size=Math.min(canvas.width,H)-72; return m+(1-y)*size; }
+function drawPoints(){
+  resizeCanvas();
+  const W=canvas.width; const H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const m=36; const size=Math.min(W,H)-72;
+  ctx.strokeStyle='#243252'; ctx.lineWidth=2; ctx.strokeRect(m,m,size,size);
+  if(lastTri){
+    ctx.beginPath();
+    ctx.moveTo(m+lastPts[lastTri[0]].x*size, m+(1-lastPts[lastTri[0]].y)*size);
+    ctx.lineTo(m+lastPts[lastTri[1]].x*size, m+(1-lastPts[lastTri[1]].y)*size);
+    ctx.lineTo(m+lastPts[lastTri[2]].x*size, m+(1-lastPts[lastTri[2]].y)*size);
+    ctx.closePath();
+    ctx.fillStyle='rgba(245,158,11,0.18)'; ctx.fill();
+    ctx.strokeStyle='#f59e0b'; ctx.lineWidth=2; ctx.stroke();
+  }
+  for(let i=0;i<lastPts.length;i++){
+    const x=m+lastPts[i].x*size; const y=m+(1-lastPts[i].y)*size;
+    const inTri=lastTri && lastTri.indexOf(i)>=0;
+    ctx.beginPath(); ctx.arc(x,y,inTri?6:4,0,Math.PI*2);
+    ctx.fillStyle=inTri?'#f59e0b':'#5eead4'; ctx.fill();
+    ctx.strokeStyle=inTri?'#d97706':'#0f766e'; ctx.lineWidth=1.5; ctx.stroke();
+  }
+}
+function drawScale(){
+  const W=cscale.width=Math.max(300,cscale.clientWidth); const H=cscale.height=260;
+  cctx.clearRect(0,0,W,H);
+  const pad=44; const pw=W-pad*2; const ph=H-pad*2;
+  const family=familySel.value;
+  const maxN = family==='greedy'?24:48;
+  const ns=[8,12,16,20,24,32,40].filter(v=>v<=maxN);
+  const pts=[];
+  for(const nn of ns){
+    const pp=makePoints(family,nn,+seedSlider.value);
+    const r=minTriangleArea(pp);
+    pts.push({n:nn,delta:r.min});
+  }
+  const xs=pts.map(p=>Math.log(p.n));
+  const ys=pts.map(p=>Math.log(Math.max(p.delta,1e-18)));
+  const ref=pts.map(p=>Math.log(1/(p.n*p.n)));
+  let xmin=Math.min(...xs), xmax=Math.max(...xs);
+  let ymin=Math.min(...ys,...ref), ymax=Math.max(...ys,...ref);
+  const sx=x=>pad+(x-xmin)/(xmax-xmin)*pw;
+  const sy=y=>pad+ph-(y-ymin)/(ymax-ymin)*ph;
+  cctx.strokeStyle='#243252'; cctx.lineWidth=1; cctx.strokeRect(pad,pad,pw,ph);
+  cctx.fillStyle='#9fb0cc'; cctx.font='11px system-ui'; cctx.textAlign='center';
+  cctx.fillText('log n', W/2, H-8);
+  cctx.save(); cctx.translate(12,H/2); cctx.rotate(-Math.PI/2); cctx.fillText('log Δ',0,0); cctx.restore();
+  cctx.strokeStyle='#ef4444'; cctx.setLineDash([4,4]); cctx.beginPath();
+  for(let i=0;i<pts.length;i++){ const x=sx(xs[i]); const y=sy(ref[i]); if(i===0) cctx.moveTo(x,y); else cctx.lineTo(x,y); }
+  cctx.stroke(); cctx.setLineDash([]);
+  cctx.strokeStyle='#5eead4'; cctx.beginPath();
+  for(let i=0;i<pts.length;i++){ const x=sx(xs[i]); const y=sy(ys[i]); if(i===0) cctx.moveTo(x,y); else cctx.lineTo(x,y); }
+  cctx.stroke();
+  for(let i=0;i<pts.length;i++){
+    cctx.beginPath(); cctx.arc(sx(xs[i]),sy(ys[i]),4,0,Math.PI*2); cctx.fillStyle='#5eead4'; cctx.fill();
+  }
+  cctx.fillStyle='#9fb0cc'; cctx.font='10px system-ui'; cctx.textAlign='left';
+  cctx.fillText('blue: family, red dashed: n^-2', pad, 12);
+}
+function update(){
+  const family=familySel.value;
+  let n=+nSlider.value;
+  if(family==='greedy' && n>24){ n=24; nSlider.value=24; }
+  nVal.textContent=n;
+  const seed=+seedSlider.value; seedVal.textContent=seed;
+  const c=+cSlider.value/100; cVal.textContent=c.toFixed(2);
+  const pts=makePoints(family,n,seed);
+  const res=minTriangleArea(pts);
+  lastPts=pts; lastTri=res.tri; lastDelta=res.min;
+  sn.textContent=n;
+  sdelta.textContent=Number.isFinite(res.min)?res.min.toExponential(3):'—';
+  const n2=1/(n*n);
+  const n2c=Math.pow(n,-2+c);
+  sn2.textContent=n2.toExponential(3);
+  sn2c.textContent=n2c.toExponential(3);
+  sratio.textContent=Number.isFinite(res.min)?(res.min*n*n).toFixed(3):'—';
+  if(!Number.isFinite(res.min) || res.min===0) sstatus.textContent='degenerate';
+  else sstatus.textContent=res.min>=n2c?'above n^-2+c':'below n^-2+c';
+  sstatus.style.color = (Number.isFinite(res.min)&&res.min>=n2c)?'var(--good)':'var(--bad)';
+  drawPoints();
+  drawScale();
+}
+familySel.addEventListener('change',update);
+nSlider.addEventListener('input',update);
+cSlider.addEventListener('input',update);
+seedSlider.addEventListener('input',update);
+window.addEventListener('resize',function(){ drawPoints(); drawScale(); });
+update();
+</script>
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

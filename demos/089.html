@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bounded-distortion L1 embeddings of planar and bounded-treewidth graphs (conceptual, result 089)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range]{flex:1 1 220px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:440px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+select{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text)}
+.toggle{display:inline-flex;align-items:center;gap:.4rem}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Bounded-distortion L1 embeddings of planar and bounded-treewidth graphs (conceptual, result 089)</h1>
+  <p>Resolves the planar and bounded-treewidth cases of the Gupta--Newman--Rabinovich--Sinclair conjecture: shortest-path metrics of finite connected graphs embed into real (L_1) with universal distortion for planar graphs and distortion depending only on treewidth for bounded-treewidth graphs. The corresponding multicommodity flow--cut gaps are uniformly bounded.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Resolves the planar and bounded-treewidth cases of the Gupta--Newman--Rabinovich--Sinclair conjecture. Shortest-path metrics of finite connected graphs with arbitrary positive edge lengths embed into real (L_1) with universal distortion for planar graphs, and distortion depending only on treewidth for bounded-treewidth graphs. The corresponding multicommodity flow--cut gaps are uniformly bounded.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Metric embeddings into (L_1) govern multicommodity flow--cut gaps, sparsest-cut approximations, and algorithm design on graph classes. Constant (planar) and treewidth-dependent (bounded treewidth) distortion bounds replace exponential worst-case gaps with uniform guarantees, enabling efficient approximation and exact algorithms on these graph classes.</p>
+  </section>
+  <div class="controls">
+    <label for="gtype">Graph family</label>
+    <select id="gtype">
+      <option value="path">Path (tree, tw 1)</option>
+      <option value="star">Star (tree, tw 1)</option>
+      <option value="cycle">Cycle (tw 2)</option>
+      <option value="grid">3x3 grid (planar, tw 3)</option>
+      <option value="k23">K_{2,3} (planar, tw 2)</option>
+      <option value="complete">Complete K_n (tw n-1)</option>
+    </select>
+    <label for="n">Vertices n</label>
+    <input id="n" type="range" min="3" max="8" value="6" step="1">
+    <span class="val" id="nval">6</span>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Graph</div><div class="value" id="gstat">—</div></div>
+    <div class="stat"><div class="label">Vertices (n)</div><div class="value" id="nstat">—</div></div>
+    <div class="stat"><div class="label">Treewidth</div><div class="value" id="twstat">—</div></div>
+    <div class="stat"><div class="label">Planar?</div><div class="value" id="planarstat">—</div></div>
+    <div class="stat"><div class="label">Tree embedding distortion</div><div class="value" id="diststat">—</div></div>
+    <div class="stat"><div class="label">Max d_tree/d_graph</div><div class="value" id="ratiostat">—</div></div>
+    <div class="stat"><div class="label">Universal bound</div><div class="value" id="boundstat">—</div></div>
+    <div class="stat"><div class="label">Flow-cut gap</div><div class="value" id="gapstat">—</div></div>
+  </div>
+  <canvas id="c" width="900" height="440"></canvas>
+  <p style="font-size:.85rem;color:var(--muted);margin-top:.5rem">Blue edges are the chosen spanning tree; its path metric gives an (L_1) (cut) embedding. Distortion compares tree distances to shortest-path distances.</p>
+</div>
+<script>
+const typeSel=document.getElementById('gtype');
+const nSlider=document.getElementById('n');
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+
+const nval=document.getElementById('nval');
+const gstat=document.getElementById('gstat');
+const nstat=document.getElementById('nstat');
+const twstat=document.getElementById('twstat');
+const planarstat=document.getElementById('planarstat');
+const diststat=document.getElementById('diststat');
+const ratiostat=document.getElementById('ratiostat');
+const boundstat=document.getElementById('boundstat');
+const gapstat=document.getElementById('gapstat');
+
+let graph={n:0,edges:[],tree:[],pos:[],tw:0,planar:true,name:''};
+
+function buildGraph(){
+  const type=typeSel.value;
+  const n=+nSlider.value;
+  let N, edges=[], tree=[], pos=[], tw=0, planar=true, name='';
+  if(type==='path'){
+    N=n; name='Path P_'+n;
+    for(let i=0;i<N-1;i++) edges.push([i,i+1,1]);
+    tree=edges.map(e=>e.slice());
+    tw=1; planar=true;
+    for(let i=0;i<N;i++) pos.push([i/(N-1||1),0.5]);
+  } else if(type==='star'){
+    N=n; name='Star K_{1,'+(n-1)+'}';
+    for(let i=1;i<N;i++) edges.push([0,i,1]);
+    tree=edges.map(e=>e.slice());
+    tw=1; planar=true;
+    pos.push([0.5,0.5]);
+    for(let i=1;i<N;i++){ const a=2*Math.PI*(i-1)/(N-1); pos.push([0.5+0.38*Math.cos(a),0.5+0.38*Math.sin(a)]); }
+  } else if(type==='cycle'){
+    N=n; name='Cycle C_'+n;
+    for(let i=0;i<N;i++) edges.push([i,(i+1)%N,1]);
+    for(let i=0;i<N-1;i++) tree.push([i,i+1,1]);
+    tw=2; planar=true;
+    for(let i=0;i<N;i++){ const a=2*Math.PI*i/N; pos.push([0.5+0.38*Math.cos(a),0.5+0.38*Math.sin(a)]); }
+  } else if(type==='complete'){
+    N=n; name='Complete K_'+n;
+    for(let i=0;i<N;i++) for(let j=i+1;j<N;j++) edges.push([i,j,1]);
+    for(let i=1;i<N;i++) tree.push([0,i,1]);
+    tw=N-1; planar=(N<=4);
+    for(let i=0;i<N;i++){ const a=2*Math.PI*i/N; pos.push([0.5+0.38*Math.cos(a),0.5+0.38*Math.sin(a)]); }
+  } else if(type==='grid'){
+    N=9; name='3x3 grid';
+    for(let r=0;r<3;r++) for(let c=0;c<3;c++){
+      const id=r*3+c;
+      if(c<2) edges.push([id,id+1,1]);
+      if(r<2) edges.push([id,id+3,1]);
+    }
+    for(let r=0;r<3;r++) for(let c=0;c<2;c++) tree.push([r*3+c,r*3+c+1,1]);
+    for(let r=0;r<2;r++) tree.push([r*3,(r+1)*3,1]);
+    tw=3; planar=true;
+    for(let r=0;r<3;r++) for(let c=0;c<3;c++) pos.push([(c/2)*0.76+0.12, (r/2)*0.76+0.12]);
+  } else if(type==='k23'){
+    N=5; name='K_{2,3}';
+    for(let i=0;i<2;i++) for(let j=2;j<5;j++) edges.push([i,j,1]);
+    tree.push([0,2,1],[0,3,1],[0,4,1],[1,2,1]);
+    tw=2; planar=true;
+    pos.push([0.2,0.3],[0.2,0.7],[0.8,0.15],[0.8,0.5],[0.8,0.85]);
+  }
+  graph={n:N,edges,tree,pos,tw,planar,name};
+
+  // shortest paths on graph
+  const INF=1e9;
+  const DG=Array.from({length:N},()=>Array(N).fill(INF));
+  const DT=Array.from({length:N},()=>Array(N).fill(INF));
+  for(let i=0;i<N;i++){ DG[i][i]=0; DT[i][i]=0; }
+  for(const [u,v,w] of edges){ DG[u][v]=Math.min(DG[u][v],w); DG[v][u]=Math.min(DG[v][u],w); }
+  for(const [u,v,w] of tree){ DT[u][v]=Math.min(DT[u][v],w); DT[v][u]=Math.min(DT[v][u],w); }
+  for(let k=0;k<N;k++) for(let i=0;i<N;i++) for(let j=0;j<N;j++){
+    if(DG[i][k]+DG[k][j]<DG[i][j]) DG[i][j]=DG[i][k]+DG[k][j];
+    if(DT[i][k]+DT[k][j]<DT[i][j]) DT[i][j]=DT[i][k]+DT[k][j];
+  }
+  graph.DG=DG; graph.DT=DT;
+}
+
+function computeDistortion(){
+  const N=graph.n;
+  let maxTR=1, maxRT=1;
+  for(let i=0;i<N;i++) for(let j=i+1;j<N;j++){
+    const dg=graph.DG[i][j], dt=graph.DT[i][j];
+    if(!isFinite(dg)||dg<=0) continue;
+    if(dt/dg>maxTR) maxTR=dt/dg;
+    if(dg/dt>maxRT) maxRT=dg/dt;
+  }
+  return {dist:maxTR*maxRT, maxTR, maxRT};
+}
+
+function updateState(){
+  buildGraph();
+  const d=computeDistortion();
+  graph.dist=d;
+}
+
+function updateStats(){
+  const g=graph;
+  nval.textContent=g.name.includes('grid')||g.name.includes('K_{2,3}')?g.n:+nSlider.value;
+  gstat.textContent=g.name;
+  nstat.textContent=g.n;
+  twstat.textContent=g.tw;
+  planarstat.textContent=g.planar?'Yes':'No';
+  diststat.textContent=g.dist.dist.toFixed(3);
+  ratiostat.textContent=g.dist.maxTR.toFixed(3);
+  const bound = g.planar ? 'O(1) universal' : 'O(tw)=O('+g.tw+')';
+  boundstat.textContent=bound;
+  gapstat.textContent=g.planar?'Bounded (const)':'Bounded in tw';
+}
+
+function resizeCanvas(){ canvas.width=Math.max(300,canvas.clientWidth); canvas.height=440; }
+window.addEventListener('resize',function(){ resizeCanvas(); render(); });
+resizeCanvas();
+
+function draw(){
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const pad=40;
+  const toX=x=>pad+x*(W-2*pad);
+  const toY=y=>pad+y*(H-2*pad);
+  // edges
+  for(const [u,v] of graph.edges.map(e=>[e[0],e[1]])){
+    ctx.strokeStyle='rgba(159,176,204,0.35)'; ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.moveTo(toX(graph.pos[u][0]),toY(graph.pos[u][1])); ctx.lineTo(toX(graph.pos[v][0]),toY(graph.pos[v][1])); ctx.stroke();
+  }
+  // tree edges
+  for(const [u,v] of graph.tree.map(e=>[e[0],e[1]])){
+    ctx.strokeStyle='#5eead4'; ctx.lineWidth=3;
+    ctx.beginPath(); ctx.moveTo(toX(graph.pos[u][0]),toY(graph.pos[u][1])); ctx.lineTo(toX(graph.pos[v][0]),toY(graph.pos[v][1])); ctx.stroke();
+  }
+  // nodes
+  for(let i=0;i<graph.n;i++){
+    ctx.fillStyle='#1f2a44'; ctx.strokeStyle='#5eead4'; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.arc(toX(graph.pos[i][0]),toY(graph.pos[i][1]),12,0,Math.PI*2); ctx.fill(); ctx.stroke();
+    ctx.fillStyle='#e6edf7'; ctx.font='11px system-ui'; ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText(i,toX(graph.pos[i][0]),toY(graph.pos[i][1]));
+  }
+  // legend
+  ctx.fillStyle='#9fb0cc'; ctx.font='11px system-ui'; ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+  ctx.fillText('gray: graph edges, teal: spanning-tree (cut) edges', pad, H-8);
+}
+
+function render(){
+  updateState();
+  updateStats();
+  draw();
+}
+
+typeSel.addEventListener('change',render);
+nSlider.addEventListener('input',render);
+render();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

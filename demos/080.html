@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Sobolev endpoint in Carleson's Schrödinger convergence problem (conceptual, result 080)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range]{flex:1 1 220px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:440px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+select{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text)}
+.toggle{display:inline-flex;align-items:center;gap:.4rem}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>The Sobolev endpoint in Carleson's Schrödinger convergence problem (conceptual, result 080)</h1>
+  <p>For (f\in H^s(\mathbb R^n)), the free Schrödinger evolution (e^{it\Delta}f) converges to (f) pointwise almost everywhere as (t\downarrow0) once (s\ge n/(2(n+1))). This resolves the sharp Sobolev endpoint of Carleson's problem, including the planar case (H^{1/3}). Tune dimension, regularity, and time.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Proves almost-everywhere convergence (e^{it\Delta}f\to f) as (t\downarrow0) for every (f\in H^{n/(2(n+1))}(\mathbb R^n)) and every dimension (n\ge2). This attains the sharp Sobolev equality case of Carleson's Schrödinger convergence problem, including the planar endpoint (H^{1/3}). The evolution is defined by taking the Gaussian regularization limit first; on one full-measure spatial set this limit exists for every (0<t<1\), and the resulting evolution is continuous at \(t=0\).</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Gives the sharp threshold (s(n)=n/(2(n+1))) for almost-everywhere pointwise recovery of Schrödinger data. In dimension two this is (H^{1/3}); the threshold rises toward (1/2) in high dimensions. It separates regularity regimes where pointwise convergence holds from those where maximal-function and counterexample obstructions remain, and it underpins dispersive PDE and harmonic-analysis arguments requiring precise control of Schrödinger solutions.</p>
+  </section>
+  <div class="controls">
+    <label for="n">Dimension n</label>
+    <input id="n" type="range" min="2" max="8" value="2" step="1">
+    <span class="val" id="nval">2</span>
+    <label for="s">Regularity s</label>
+    <input id="s" type="range" min="0" max="60" value="33" step="1">
+    <span class="val" id="sval">0.33</span>
+    <label for="t">Time t</label>
+    <input id="t" type="range" min="0" max="100" value="10" step="1">
+    <span class="val" id="tval">0.10</span>
+    <label for="view">View</label>
+    <select id="view">
+      <option value="thresh" selected>Threshold</option>
+      <option value="phase">Phase</option>
+      <option value="inv">Invariants</option>
+    </select>
+    <label class="toggle"><input id="reg" type="checkbox" checked> Gaussian regularization</label>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Dimension (n)</div><div class="value" id="nstat">—</div></div>
+    <div class="stat"><div class="label">Threshold s₀(n)</div><div class="value" id="tstat">—</div></div>
+    <div class="stat"><div class="label">Regularity (s)</div><div class="value" id="sstat">—</div></div>
+    <div class="stat"><div class="label">Margin s-s₀</div><div class="value" id="mstat">—</div></div>
+    <div class="stat"><div class="label">Time (t)</div><div class="value" id="timestat">—</div></div>
+    <div class="stat"><div class="label">A.e. convergence?</div><div class="value" id="convstat">—</div></div>
+    <div class="stat"><div class="label">Planar endpoint?</div><div class="value" id="planarstat">—</div></div>
+    <div class="stat"><div class="label">Regularization</div><div class="value" id="regstat">—</div></div>
+  </div>
+  <canvas id="c" width="900" height="440"></canvas>
+</div>
+<script>
+const nSlider=document.getElementById('n');
+const sSlider=document.getElementById('s');
+const tSlider=document.getElementById('t');
+const viewSel=document.getElementById('view');
+const regBox=document.getElementById('reg');
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+
+const nval=document.getElementById('nval');
+const sval=document.getElementById('sval');
+const tval=document.getElementById('tval');
+const nstat=document.getElementById('nstat');
+const tstat=document.getElementById('tstat');
+const sstat=document.getElementById('sstat');
+const mstat=document.getElementById('mstat');
+const timestat=document.getElementById('timestat');
+const convstat=document.getElementById('convstat');
+const planarstat=document.getElementById('planarstat');
+const regstat=document.getElementById('regstat');
+
+let phase=0;
+let state={};
+
+function threshold(n){ return n/(2*(n+1)); }
+
+function updateState(){
+  const n=+nSlider.value;
+  const s=+sSlider.value/100;
+  const t=+tSlider.value/100;
+  const view=viewSel.value;
+  const reg=regBox.checked;
+  const th=threshold(n);
+  const margin=s-th;
+  const holds=s>=th-1e-12;
+  const conv=holds?'Yes (endpoint included)':'No (below threshold)';
+  const planar=(n===2);
+  state={n,s,t,view,reg,th,margin,holds,conv,planar};
+}
+
+function updateStats(){
+  const s=state;
+  nval.textContent=s.n;
+  sval.textContent=s.s.toFixed(2);
+  tval.textContent=s.t.toFixed(2);
+  nstat.textContent=s.n;
+  tstat.textContent=s.th.toFixed(4);
+  sstat.textContent=s.s.toFixed(4);
+  mstat.textContent=s.margin.toFixed(4);
+  timestat.textContent=s.t.toFixed(3);
+  convstat.textContent=s.conv;
+  convstat.className='value '+(s.holds?'ok':'bad');
+  planarstat.textContent=s.planar?'Yes (H^1/3)':'No';
+  regstat.textContent=s.reg?'On':'Off';
+  regstat.className='value '+(s.reg?'ok':'warn');
+}
+
+function resizeCanvas(){ canvas.width=Math.max(300,canvas.clientWidth); canvas.height=440; }
+window.addEventListener('resize',function(){ resizeCanvas(); render(); });
+resizeCanvas();
+
+function roundRect(x,y,w,h,r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y);
+  ctx.lineTo(x+w-r,y);
+  ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+  ctx.lineTo(x+w,y+h-r);
+  ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+  ctx.lineTo(x+r,y+h);
+  ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+  ctx.lineTo(x,y+r);
+  ctx.quadraticCurveTo(x,y,x+r,y);
+  ctx.closePath();
+}
+
+function mapX(n,W){ const pad=50; return pad+(n-2)/(8-2)*(W-2*pad); }
+function mapY(val,H){ const pad=50; return H-pad - val/0.6*(H-2*pad); }
+
+function drawThreshold(W,H,s){
+  const pad=50;
+  ctx.strokeStyle='rgba(159,176,204,0.35)'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(pad,pad); ctx.lineTo(pad,H-pad); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(pad,H-pad); ctx.lineTo(W-pad,H-pad); ctx.stroke();
+  ctx.fillStyle='#9fb0cc'; ctx.font='11px system-ui'; ctx.textAlign='center';
+  ctx.fillText('dimension n', W/2, H-12);
+  ctx.save(); ctx.translate(16,H/2); ctx.rotate(-Math.PI/2); ctx.fillText('Sobolev regularity s',0,0); ctx.restore();
+
+  const N=300;
+  const pts=[];
+  for(let i=0;i<=N;i++){
+    const n=2+6*i/N;
+    const th=threshold(n);
+    pts.push({n,th});
+  }
+  // shade above curve (admissible)
+  ctx.beginPath();
+  ctx.moveTo(mapX(2,W),pad);
+  ctx.lineTo(mapX(8,W),pad);
+  for(let i=N;i>=0;i--) ctx.lineTo(mapX(pts[i].n,W),mapY(pts[i].th,H));
+  ctx.closePath();
+  ctx.fillStyle='rgba(34,197,94,0.10)'; ctx.fill();
+  // shade below curve (not admissible)
+  ctx.beginPath();
+  ctx.moveTo(mapX(2,W),H-pad);
+  ctx.lineTo(mapX(8,W),H-pad);
+  for(let i=0;i<=N;i++) ctx.lineTo(mapX(pts[i].n,W),mapY(pts[i].th,H));
+  ctx.closePath();
+  ctx.fillStyle='rgba(239,68,68,0.08)'; ctx.fill();
+
+  // curve
+  ctx.strokeStyle='#5eead4'; ctx.lineWidth=2.5;
+  ctx.beginPath();
+  pts.forEach((pt,i)=>{
+    const x=mapX(pt.n,W), y=mapY(pt.th,H);
+    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  });
+  ctx.stroke();
+
+  // planar endpoint marker
+  const px2=mapX(2,W), py2=mapY(threshold(2),H);
+  ctx.fillStyle='#f59e0b';
+  ctx.beginPath(); ctx.arc(px2,py2,7,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle='#f59e0b'; ctx.font='11px system-ui'; ctx.textAlign='left';
+  ctx.fillText('planar H^1/3', px2+10, py2-8);
+
+  // chosen point
+  const px=mapX(s.n,W), py=mapY(s.s,H);
+  ctx.fillStyle=s.holds?'#22c55e':'#ef4444';
+  ctx.beginPath(); ctx.arc(px,py,8,0,Math.PI*2); ctx.fill();
+  ctx.strokeStyle='#e6edf7'; ctx.lineWidth=1.5; ctx.beginPath(); ctx.arc(px,py,8,0,Math.PI*2); ctx.stroke();
+  ctx.fillStyle='#e6edf7'; ctx.font='12px system-ui'; ctx.textAlign='left';
+  ctx.fillText('chosen (n,s)', px+12, py-8);
+
+  // integer dimension ticks
+  ctx.fillStyle='#9fb0cc'; ctx.font='10px system-ui'; ctx.textAlign='center';
+  for(let nn=2;nn<=8;nn++){
+    const x=mapX(nn,W);
+    ctx.fillText(nn, x, H-pad+14);
+  }
+  ctx.fillStyle='#9fb0cc'; ctx.font='11px system-ui'; ctx.textAlign='left';
+  ctx.fillText('green: admissible regularity', pad, pad-10);
+  ctx.fillText('red: below threshold', pad+170, pad-10);
+}
+
+function drawPhase(W,H,s){
+  const cx=W/2, cy=H/2+40;
+  const L=W*0.42;
+  // axes
+  ctx.strokeStyle='rgba(159,176,204,0.35)'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(cx-L, cy); ctx.lineTo(cx+L, cy); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx, cy-150); ctx.lineTo(cx, cy+150); ctx.stroke();
+  ctx.fillStyle='#9fb0cc'; ctx.font='11px system-ui'; ctx.textAlign='center';
+  ctx.fillText('x', cx+L+8, cy+4);
+  ctx.fillStyle='#9fb0cc'; ctx.font='11px system-ui'; ctx.textAlign='right';
+  ctx.fillText('value', cx-6, cy-155);
+
+  // initial data f(x)=exp(-x^2/2) (scaled)
+  const scale=120;
+  ctx.strokeStyle='rgba(159,176,204,0.6)'; ctx.lineWidth=1.5; ctx.setLineDash([5,4]);
+  ctx.beginPath();
+  for(let i=-L;i<=L;i+=2){
+    const x=i/L*3;
+    const y=Math.exp(-x*x/2);
+    const px=cx+i, py=cy-y*scale;
+    if(i===-L) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+  }
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle='#9fb0cc'; ctx.font='11px system-ui'; ctx.textAlign='left';
+  ctx.fillText('initial data f(x)', cx-L, cy-135);
+
+  // evolved real part
+  const t=Math.max(s.t,1e-4);
+  const denom=1+t*t;
+  ctx.strokeStyle=s.holds?'#5eead4':'#f59e0b';
+  ctx.lineWidth=2.5;
+  ctx.beginPath();
+  for(let i=-L;i<=L;i+=2){
+    const x=i/L*3;
+    const mag=Math.pow(denom,-0.25)*Math.exp(-x*x/(2*denom));
+    const phase=t*x*x/(2*denom)-0.5*Math.atan(t);
+    const val=mag*Math.cos(phase);
+    if(!s.reg){
+      val += 0.06*Math.sin(18*x)*Math.exp(-x*x/4);
+    }
+    const px=cx+i, py=cy-val*scale;
+    if(i===-L) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+  }
+  ctx.stroke();
+  ctx.fillStyle=s.holds?'#5eead4':'#f59e0b';
+  ctx.font='11px system-ui'; ctx.textAlign='left';
+  ctx.fillText('evolved Re(e^{itΔ}f)(x)', cx-L, cy-118);
+
+  // Fresnel phase rings
+  const ringCx=W-110, ringCy=90, maxR=70;
+  for(let r=4;r<maxR;r+=3){
+    const ph=r*r/(4*Math.max(t,1e-3));
+    const alpha=0.35+0.35*Math.cos(ph);
+    ctx.strokeStyle='rgba(94,234,212,'+alpha.toFixed(3)+')';
+    ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.arc(ringCx,ringCy,r,0,Math.PI*2); ctx.stroke();
+  }
+  ctx.fillStyle='#9fb0cc'; ctx.font='11px system-ui'; ctx.textAlign='center';
+  ctx.fillText('Fresnel phases', ringCx, ringCy+maxR+14);
+  ctx.fillText('t='+s.t.toFixed(3), ringCx, ringCy+maxR+28);
+
+  // convergence note
+  ctx.fillStyle=s.holds?'#22c55e':'#ef4444';
+  ctx.font='13px system-ui'; ctx.textAlign='center';
+  ctx.fillText(s.holds?'Regularity at/above endpoint: pointwise recovery as t→0':'Below endpoint: convergence not guaranteed', cx, H-40);
+  ctx.fillStyle='#9fb0cc'; ctx.font='12px system-ui'; ctx.textAlign='center';
+  ctx.fillText('Gaussian regularization: '+(s.reg?'on (paper definition)':'off'), cx, H-18);
+}
+
+function drawInv(W,H,s){
+  const x=40,y=50,dy=24;
+  const lines=[
+    'Result 080 — Sobolev endpoint in Carleson’s Schrödinger convergence problem',
+    'Equation: free Schrödinger equation i∂_t u = Δu on R^n',
+    'Convergence: e^{itΔ}f(x) → f(x) for a.e. x as t↓0',
+    'Sharp regularity: s(n)=n/(2(n+1))',
+    'Planar endpoint (n=2): H^{1/3}(R^2)',
+    'High-dimensional limit: s(n) → 1/2 as n→∞',
+    'Chosen dimension n = '+s.n+'   threshold = '+s.th.toFixed(4),
+    'Chosen regularity s = '+s.s.toFixed(4)+'   margin = '+s.margin.toFixed(4),
+    'Time t = '+s.t.toFixed(3),
+    'Almost-everywhere convergence: '+(s.holds?'YES (endpoint included)':'NO (below threshold)'),
+    'Gaussian regularization: '+(s.reg?'on':'off'),
+    'Interpretation: pointwise recovery of Schrödinger data at sharp Sobolev regularity.',
+  ];
+  ctx.fillStyle='#e6edf7'; ctx.font='14px system-ui'; ctx.textAlign='left';
+  lines.forEach((l,i)=>{
+    if(i===0){ ctx.fillStyle='#5eead4'; ctx.font='16px system-ui'; }
+    else { ctx.fillStyle='#e6edf7'; ctx.font='14px system-ui'; }
+    ctx.fillText(l, x, y+i*dy);
+  });
+  const cx0=W-170, cy0=H/2;
+  ctx.strokeStyle='#5eead4'; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.arc(cx0,cy0,62,0,Math.PI*2); ctx.stroke();
+  ctx.beginPath(); ctx.arc(cx0,cy0,30,0,Math.PI*2); ctx.stroke();
+  ctx.fillStyle='rgba(94,234,212,0.15)';
+  ctx.beginPath(); ctx.arc(cx0,cy0,62,0,Math.PI*2); ctx.arc(cx0,cy0,30,0,Math.PI*2,true); ctx.closePath(); ctx.fill();
+  ctx.fillStyle='#9fb0cc'; ctx.font='11px system-ui'; ctx.textAlign='center';
+  ctx.fillText('convergence region', cx0, cy0+84);
+}
+
+function render(){
+  updateState();
+  updateStats();
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  if(state.view==='thresh') drawThreshold(W,H,state);
+  else if(state.view==='phase') drawPhase(W,H,state);
+  else drawInv(W,H,state);
+}
+
+nSlider.addEventListener('input',render);
+sSlider.addEventListener('input',render);
+tSlider.addEventListener('input',render);
+viewSel.addEventListener('change',render);
+regBox.addEventListener('change',render);
+render();
+
+function tick(){ phase+=16; if(state.view==='phase') render(); requestAnimationFrame(tick); }
+requestAnimationFrame(tick);
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

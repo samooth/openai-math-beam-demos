@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>P=W for fixed-determinant Higgs moduli (conceptual, result 043)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range]{flex:1 1 220px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:520px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+select{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text)}
+.legend{display:flex;gap:1rem;align-items:center;font-size:.85rem;color:var(--muted);margin:.5rem 0;flex-wrap:wrap}
+.swatch{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:.3rem;vertical-align:middle}
+table{width:100%;border-collapse:collapse;font-size:.85rem}
+th,td{padding:.35rem .45rem;border-bottom:1px solid var(--border);text-align:left}
+th{color:var(--muted);font-weight:600}
+td.num{font-family:ui-monospace,monospace}
+.ok{color:var(--good)} .bad{color:var(--bad)}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>P=W for fixed-determinant Higgs moduli (conceptual, result 043)</h1>
+  <p>For a smooth projective complex curve (C) of genus (g\ge2), the non-abelian Hodge correspondence identifies Higgs moduli and character varieties. The perverse filtration (P_k) on Higgs cohomology matches the weight filtration (W) on the character variety: (P_k = W_{2k}=W_{2k+1}). Tune rank, genus, degree and indexing to compare the two filtrations.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Proves (P_k=W_{2k}=W_{2k+1}) on the full rational cohomology of smooth coprime fixed-determinant, trace-free Higgs moduli spaces and their character varieties for composite ranks over smooth projective complex curves of genus at least two. This includes variant cohomology and, together with the known prime-rank theorems, establishes the fixed-determinant (P=W) conjecture in every coprime rank.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Identifies the perverse filtration on Higgs-moduli cohomology with the weight filtration on the character variety via non-abelian Hodge, so topological invariants of the two moduli spaces agree under index doubling; extends the fixed-determinant (P=W) conjecture to all coprime ranks, including composite ranks and variant cohomology.</p>
+  </section>
+  <div class="controls">
+    <label for="rank">rank n</label>
+    <select id="rank">
+      <option value="2" selected>2</option>
+      <option value="3">3</option>
+    </select>
+    <label for="genus">genus g</label>
+    <input id="genus" type="range" min="2" max="4" value="2" step="1">
+    <span class="val" id="gval">2</span>
+    <label for="deg">degree d</label>
+    <input id="deg" type="range" min="1" max="12" value="1" step="1">
+    <span class="val" id="dval">1</span>
+    <label for="mode">Indexing</label>
+    <select id="mode">
+      <option value="pw" selected>P=W: P_k = W_{2k}=W_{2k+1}</option>
+      <option value="naive">Naive: P_k = W_k</option>
+    </select>
+    <label for="k">level k</label>
+    <input id="k" type="range" min="0" max="20" value="0" step="1">
+    <span class="val" id="kval">0</span>
+    <button id="play">Play</button>
+    <button id="reset">Reset</button>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Complex dimension D</div><div class="value" id="sD">—</div></div>
+    <div class="stat"><div class="label">Max weight level 2D</div><div class="value" id="smax">—</div></div>
+    <div class="stat"><div class="label">gcd(n,d)</div><div class="value" id="sgcd">—</div></div>
+    <div class="stat"><div class="label">Coprime?</div><div class="value" id="scop">—</div></div>
+    <div class="stat"><div class="label">Selected k</div><div class="value" id="sk">—</div></div>
+    <div class="stat"><div class="label">dim P_k (cumul.)</div><div class="value" id="spk">—</div></div>
+    <div class="stat"><div class="label">dim W_{2k}</div><div class="value" id="sw2k">—</div></div>
+    <div class="stat"><div class="label">dim W_{2k+1}</div><div class="value" id="sw2k1">—</div></div>
+    <div class="stat"><div class="label">Equality at k?</div><div class="value" id="seq">—</div></div>
+    <div class="stat"><div class="label">Phase</div><div class="value" id="sph">0.00</div></div>
+  </div>
+  <div class="legend">
+    <span><span class="swatch" style="background:#5eead4"></span>Perverse P (Higgs side)</span>
+    <span><span class="swatch" style="background:#f59e0b"></span>Weight W (character variety)</span>
+    <span><span class="swatch" style="background:#22c55e"></span>graded piece match</span>
+    <span><span class="swatch" style="background:#ef4444"></span>mismatch / zero</span>
+  </div>
+  <canvas id="c" width="900" height="520"></canvas>
+  <section class="box">
+    <h3>Graded pieces by level</h3>
+    <div id="tablewrap" style="overflow:auto;max-height:420px"></div>
+  </section>
+</div>
+<script>
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+const rankSel = document.getElementById('rank');
+const genusSlider = document.getElementById('genus');
+const degSlider = document.getElementById('deg');
+const modeSel = document.getElementById('mode');
+const kSlider = document.getElementById('k');
+const gval = document.getElementById('gval');
+const dval = document.getElementById('dval');
+const kval = document.getElementById('kval');
+const sD = document.getElementById('sD');
+const smax = document.getElementById('smax');
+const sgcd = document.getElementById('sgcd');
+const scop = document.getElementById('scop');
+const sk = document.getElementById('sk');
+const spk = document.getElementById('spk');
+const sw2k = document.getElementById('sw2k');
+const sw2k1 = document.getElementById('sw2k1');
+const seq = document.getElementById('seq');
+const sph = document.getElementById('sph');
+const tablewrap = document.getElementById('tablewrap');
+
+let phase = 0;
+let playing = false;
+let playTimer = null;
+
+function gcd(a,b){ a=Math.abs(a); b=Math.abs(b); while(b){ const t=a%b; a=b; b=t; } return a; }
+
+function binomRow(N){
+  const cur = [1];
+  for(let i=1;i<=N;i++){
+    const next = [1];
+    for(let j=1;j<cur.length;j++) next.push(cur[j-1]+cur[j]);
+    next.push(1);
+    cur.length=0; cur.push(...next);
+  }
+  return cur.slice();
+}
+
+function resize(){ canvas.width = Math.max(300, canvas.clientWidth); canvas.height = 520; }
+window.addEventListener('resize', function(){ resize(); update(); });
+resize();
+
+function params(){
+  const n = +rankSel.value;
+  const g = +genusSlider.value;
+  const d = +degSlider.value;
+  const D = (n*n - 1)*(g-1);
+  const L = D;
+  const Wmax = 2*D;
+  const coprime = gcd(n,d)===1;
+  const row = binomRow(L);
+  const grP = row.slice();
+  let grW;
+  if (modeSel.value === 'pw') {
+    grW = new Array(Wmax+1).fill(0);
+    for(let k=0;k<=L;k++){ grW[2*k] = grP[k]; }
+  } else {
+    grW = new Array(Wmax+1).fill(0);
+    for(let i=0;i<=Math.min(Wmax,L);i++) grW[i] = grP[i];
+  }
+  return {n,g,d,D,L,Wmax,coprime,grP,grW};
+}
+
+function cumul(arr, idx){ let s=0; for(let i=0;i<=idx && i<arr.length;i++) s+=arr[i]; return s; }
+
+function update(){
+  const {n,g,d,D,L,Wmax,coprime,grP,grW} = params();
+  gval.textContent = g;
+  dval.textContent = d;
+  let k = +kSlider.value;
+  if (k > L) { k = L; kSlider.value = k; }
+  kval.textContent = k;
+  const gcdnd = gcd(n,d);
+  sgcd.textContent = gcdnd;
+  scop.textContent = coprime ? 'YES' : 'NO';
+  scop.style.color = coprime ? 'var(--good)' : 'var(--bad)';
+  sD.textContent = D;
+  smax.textContent = Wmax;
+  sk.textContent = k;
+  const PK = cumul(grP, k);
+  const W2k = cumul(grW, 2*k);
+  const W2k1 = cumul(grW, 2*k+1);
+  spk.textContent = PK;
+  sw2k.textContent = W2k;
+  sw2k1.textContent = W2k1;
+  const match = (PK === W2k) && (W2k === W2k1);
+  seq.textContent = match ? 'MATCH' : 'MISMATCH';
+  seq.style.color = match ? 'var(--good)' : 'var(--bad)';
+  sph.textContent = phase.toFixed(2);
+
+  draw(D,Wmax,grP,grW,k,modeSel.value);
+  buildTable(L,Wmax,grP,grW,k);
+}
+
+function draw(D,Wmax,grP,grW,k,mode){
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const padL=50,padR=30,padT=30,padB=60;
+  const plotW=W-padL-padR, plotH=H-padT-padB;
+  const mid = padL + plotW/2;
+  const leftW = plotW/2 - 20;
+  const rightW = plotW/2 - 20;
+  const leftX = padL;
+  const rightX = mid + 20;
+
+  ctx.fillStyle='#9fb0cc'; ctx.font='bold 12px system-ui'; ctx.textAlign='center';
+  ctx.fillText('Perverse P_k (Higgs)', leftX+leftW/2, padT-8);
+  ctx.fillText('Weight W_m (character variety)', rightX+rightW/2, padT-8);
+
+  const maxVal = Math.max(...grP, ...grW, 1);
+  const nLeft = grP.length;
+  const nRight = grW.length;
+  const barWleft = Math.max(2, leftW/nLeft - 1);
+  const barWright = Math.max(2, rightW/nRight - 1);
+
+  for(let i=0;i<nLeft;i++){
+    const h = (grP[i]/maxVal)*plotH*0.9;
+    const x = leftX + i*(leftW/nLeft);
+    const y = padT + plotH - h;
+    const highlight = (i <= k);
+    ctx.fillStyle = highlight ? '#5eead4' : 'rgba(94,234,212,0.35)';
+    ctx.fillRect(x, y, barWleft, h);
+  }
+  for(let m=0;m<nRight;m++){
+    const h = (grW[m]/maxVal)*plotH*0.9;
+    const x = rightX + m*(rightW/nRight);
+    const y = padT + plotH - h;
+    let color = 'rgba(245,158,11,0.35)';
+    if (mode==='pw') {
+      if (m % 2 === 0 && m/2 <= k) color = '#22c55e';
+      else if (m % 2 !== 0) color = 'rgba(239,68,68,0.5)';
+      else if (m/2 <= k) color = '#f59e0b';
+    } else {
+      if (m <= k) color = '#f59e0b';
+    }
+    ctx.fillStyle = color;
+    ctx.fillRect(x, y, barWright, h);
+  }
+
+  ctx.strokeStyle='rgba(159,176,204,0.3)';
+  ctx.lineWidth=1;
+  ctx.beginPath();
+  ctx.moveTo(padL, padT+plotH); ctx.lineTo(padL+plotW, padT+plotH); ctx.stroke();
+  ctx.fillStyle='#9fb0cc'; ctx.font='10px system-ui'; ctx.textAlign='center';
+  ctx.fillText('level', padL+plotW/2, H-12);
+
+  ctx.strokeStyle='#fff'; ctx.lineWidth=1.5;
+  const mx = leftX + k*(leftW/nLeft) + barWleft/2;
+  ctx.beginPath(); ctx.moveTo(mx, padT); ctx.lineTo(mx, padT+plotH); ctx.stroke();
+  const m1 = rightX + (2*k)*(rightW/nRight) + barWright/2;
+  const m2 = rightX + (2*k+1)*(rightW/nRight) + barWright/2;
+  ctx.strokeStyle='rgba(255,255,255,0.7)';
+  ctx.beginPath(); ctx.moveTo(m1, padT); ctx.lineTo(m1, padT+plotH); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(m2, padT); ctx.lineTo(m2, padT+plotH); ctx.stroke();
+
+  ctx.fillStyle='#9fb0cc'; ctx.font='11px system-ui'; ctx.textAlign='left';
+  ctx.fillText('D=' + D, padL, padT-20);
+}
+
+function buildTable(L,Wmax,grP,grW,k){
+  let html = '<table><thead><tr><th>k</th><th>gr^P_k</th><th>W level 2k</th><th>gr^W_{2k}</th><th>gr^W_{2k+1}</th></tr></thead><tbody>';
+  for(let i=0;i<=L;i++){
+    const a = grP[i];
+    const b = (2*i <= Wmax) ? grW[2*i] : 0;
+    const c = (2*i+1 <= Wmax) ? grW[2*i+1] : 0;
+    const hl = (i===k) ? ' style="background:rgba(94,234,212,0.15)"' : '';
+    html += '<tr'+hl+'><td class="num">'+i+'</td><td class="num">'+a+'</td><td class="num">'+(2*i)+'</td><td class="num">'+b+'</td><td class="num">'+c+'</td></tr>';
+  }
+  html += '</tbody></table>';
+  tablewrap.innerHTML = html;
+}
+
+rankSel.addEventListener('change', update);
+genusSlider.addEventListener('input', update);
+degSlider.addEventListener('input', update);
+modeSel.addEventListener('change', update);
+kSlider.addEventListener('input', update);
+
+const playBtn = document.getElementById('play');
+playBtn.addEventListener('click', function(){
+  playing = !playing;
+  this.textContent = playing ? 'Pause' : 'Play';
+  if (playing) animate(); else clearTimeout(playTimer);
+});
+function animate(){
+  if (!playing) return;
+  phase += 0.08;
+  if (phase > Math.PI*2) phase -= Math.PI*2;
+  const {L} = params();
+  let k = +kSlider.value;
+  k = (k+1) % (L+1);
+  kSlider.value = k;
+  update();
+  playTimer = setTimeout(animate, 700);
+}
+document.getElementById('reset').addEventListener('click', function(){
+  playing=false; clearTimeout(playTimer); playBtn.textContent='Play';
+  phase=0;
+  rankSel.value='2';
+  genusSlider.value=2; degSlider.value=1; modeSel.value='pw'; kSlider.value=0;
+  update();
+});
+
+update();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

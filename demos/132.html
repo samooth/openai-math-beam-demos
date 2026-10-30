@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A counterexample to the quadratic sensitivity conjecture (conceptual, result 132)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range],select{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+input[type=range]{flex:1 1 180px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:460px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+.legend{display:flex;gap:1rem;align-items:center;font-size:.85rem;color:var(--muted);margin:.5rem 0;flex-wrap:wrap}
+.swatch{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:.3rem;vertical-align:middle}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>A counterexample to the quadratic sensitivity conjecture (conceptual, result 132)</h1>
+  <p>Constructs total Boolean functions with block sensitivity $\operatorname{bs}(f)\ge s(f)^\alpha$ for a fixed $\alpha>2$, disproving the quadratic strengthening of the Sensitivity Conjecture. Here $s(f)$ counts influential individual-bit flips, while block sensitivity allows disjoint groups of bits to change together.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Result 132 disproves the quadratic strengthening of the Sensitivity Conjecture: for every constant $C$, there is a total Boolean function $f$ with $\operatorname{bs}(f)>Cs(f)^2$. Sensitivity $s(f)$ is the maximum over inputs $x$ of the number of coordinates $i$ for which flipping bit $i$ alone changes $f(x)$. Block sensitivity $\operatorname{bs}(f)$ is the maximum number of pairwise disjoint nonempty sets of coordinates whose simultaneous flip changes $f(x)$. Nisan and Szegedy suggested $\operatorname{bs}(f)\le s(f)^2$; Rubinstein, Virza, and Ambainis--Sun gave quadratic separations, while Huang's theorem (with Tal's refinement) gives the polynomial bound $\operatorname{bs}(f)\le O(s(f)^4)$. The construction uses nested predicates on a labelled tournament: at depth $d$, sensitivity grows by at most about $M$ per level, while disjoint sensitive blocks grow by about $2M^2+1$ per level, so their ratio grows like $2^d/[4(d+2)^2]$. An OR of $M$ copies balances values at $0$ and $1$.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">This removes the last plausible universal quadratic relation between two central complexity measures of Boolean functions. It implies that block sensitivity can be arbitrarily larger than the square of sensitivity, affecting translations between certificate complexity, decision-tree complexity, and polynomial degree. The construction also yields a fixed seed with $\operatorname{bs}(f,0)>s(f)^2$; iterating disjoint composition gives functions with $\operatorname{bs}(F_m,0)\ge s(F_m)^\alpha$ for a fixed $\alpha>2$. The interactive panel evaluates the recurrence bounds $S_{\ell,0}$, $S_{\ell,1}$, $J_{\ell,0}$, $J_{\ell,1}$, the final sensitivity and block-sensitivity bounds, their ratio, and the composed exponent $\alpha$.</p>
+  </section>
+  <div class="controls">
+    <label for="d">Depth d</label>
+    <input id="d" type="range" min="1" max="9" value="9" step="1">
+    <span class="val" id="dval">9</span>
+    <label for="factor">M oversize factor</label>
+    <input id="factor" type="range" min="1" max="5" value="1" step="1">
+    <span class="val" id="factorval">1</span>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">d</div><div class="value" id="sd">—</div></div>
+    <div class="stat"><div class="label">L=d+2</div><div class="value" id="sL">—</div></div>
+    <div class="stat"><div class="label">M</div><div class="value" id="sM">—</div></div>
+    <div class="stat"><div class="label">r=ceil(sqrt M)</div><div class="value" id="sr">—</div></div>
+    <div class="stat"><div class="label">k=2M^2+1</div><div class="value" id="sk">—</div></div>
+    <div class="stat"><div class="label">S_{d,0}</div><div class="value" id="sS0">—</div></div>
+    <div class="stat"><div class="label">S_{d,1}</div><div class="value" id="sS1">—</div></div>
+    <div class="stat"><div class="label">J_{d,0}</div><div class="value" id="sJ0">—</div></div>
+    <div class="stat"><div class="label">J_{d,1}</div><div class="value" id="sJ1">—</div></div>
+    <div class="stat"><div class="label">s(f) bound max(M S_{d,0},S_{d,1})</div><div class="value" id="ss">—</div></div>
+    <div class="stat"><div class="label">bs(f,0) lower M^2 k^d</div><div class="value" id="sbs">—</div></div>
+    <div class="stat"><div class="label">ratio bs/s^2</div><div class="value" id="sratio">—</div></div>
+    <div class="stat"><div class="label">lower bound 2^d/[4(d+2)^2]</div><div class="value" id="slower">—</div></div>
+    <div class="stat"><div class="label">composed exponent alpha</div><div class="value" id="salpha">—</div></div>
+    <div class="stat"><div class="label">log10 n</div><div class="value" id="sn">—</div></div>
+    <div class="stat"><div class="label">seed alpha>2?</div><div class="value" id="sseedyes">—</div></div>
+  </div>
+  <div class="legend">
+    <span><span class="swatch" style="background:#ef4444"></span>$\log_{10} s(f)$ bound</span>
+    <span><span class="swatch" style="background:#5eead4"></span>$\log_{10} \operatorname{bs}(f,0)$ lower bound</span>
+    <span><span class="swatch" style="background:#f59e0b"></span>$\log_{10}(\operatorname{bs}/s^2)$</span>
+    <span><span class="swatch" style="background:#94a3b8"></span>selected depth</span>
+  </div>
+  <canvas id="c" width="900" height="460"></canvas>
+  <p style="font-size:.85rem;color:var(--muted);margin-top:.5rem">Conceptual model: recurrence bounds from the construction. Increasing depth makes the block-sensitivity lower bound outrun the square of the sensitivity bound.</p>
+</div>
+<script>
+const dSlider=document.getElementById('d');
+const factorSlider=document.getElementById('factor');
+
+const dval=document.getElementById('dval');
+const factorval=document.getElementById('factorval');
+
+const sd=document.getElementById('sd');
+const sL=document.getElementById('sL');
+const sM=document.getElementById('sM');
+const sr=document.getElementById('sr');
+const sk=document.getElementById('sk');
+const sS0=document.getElementById('sS0');
+const sS1=document.getElementById('sS1');
+const sJ0=document.getElementById('sJ0');
+const sJ1=document.getElementById('sJ1');
+const ss=document.getElementById('ss');
+const sbs=document.getElementById('sbs');
+const sratio=document.getElementById('sratio');
+const slower=document.getElementById('slower');
+const salpha=document.getElementById('salpha');
+const sn=document.getElementById('sn');
+const sseedyes=document.getElementById('sseedyes');
+
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+
+function resizeCanvas(){ canvas.width=Math.max(300,canvas.clientWidth); canvas.height=460; }
+window.addEventListener('resize',function(){ resizeCanvas(); render(); });
+resizeCanvas();
+
+function fmt(x){
+  if(!isFinite(x)) return '—';
+  if(x>=1e6 || (x>0 && x<=1e-3)) return x.toExponential(3);
+  return x.toFixed(3);
+}
+function log10(x){ return Math.log(x)/Math.LN10; }
+
+function profile(D,F){
+  const L=D+2;
+  const M=F*Math.pow(9,D+1);
+  const r=Math.ceil(Math.sqrt(M));
+  const t=16;
+  const k=2*M*M+1;
+  let S_prev0=L;
+  let S_prev1=L*M;
+  let J_prev0=0;
+  let J_prev1=0;
+  for(let ell=1;ell<=D;ell++){
+    const S1=M*M*S_prev0 + r*S_prev1;
+    const J1=M*M*J_prev0 + r*S_prev1;
+    const S0=t*S_prev0 + S_prev1 + 3*J_prev1;
+    const J0=t*S_prev0 + 3*J_prev1;
+    S_prev0=S0; S_prev1=S1; J_prev0=J0; J_prev1=J1;
+  }
+  const Sd0=S_prev0;
+  const Sd1=S_prev1;
+  const Jd0=J_prev0;
+  const Jd1=J_prev1;
+  const sBound=Math.max(M*Sd0, Sd1);
+  const bsLower=M*M*Math.pow(k,D);
+  const ratio=bsLower/(sBound*sBound);
+  const alpha=Math.log(bsLower)/Math.log(sBound);
+  const nLog10=log10(L)+2*log10(M)+D*log10(k*r);
+  const lowerBoundRatio=Math.pow(2,D)/(4*Math.pow(D+2,2));
+  return {L,M,r,t,k,Sd0,Sd1,Jd0,Jd1,sBound,bsLower,ratio,alpha,nLog10,lowerBoundRatio};
+}
+
+function updateStats(){
+  const D=+dSlider.value;
+  const F=+factorSlider.value;
+  dval.textContent=D;
+  factorval.textContent=F;
+  const P=profile(D,F);
+  sd.textContent=D;
+  sL.textContent=P.L;
+  sM.textContent=fmt(P.M);
+  sr.textContent=P.r;
+  sk.textContent=fmt(P.k);
+  sS0.textContent=fmt(P.Sd0);
+  sS1.textContent=fmt(P.Sd1);
+  sJ0.textContent=fmt(P.Jd0);
+  sJ1.textContent=fmt(P.Jd1);
+  ss.textContent=fmt(P.sBound);
+  sbs.textContent=fmt(P.bsLower);
+  sratio.textContent=fmt(P.ratio);
+  slower.textContent=fmt(P.lowerBoundRatio);
+  salpha.textContent=fmt(P.alpha);
+  sn.textContent=fmt(P.nLog10);
+  sseedyes.textContent=(P.alpha>2)?'yes':'no';
+}
+
+function render(){
+  updateStats();
+  const F=+factorSlider.value;
+  const Dsel=+dSlider.value;
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const padL=62,padR=20,padT=30,padB=46;
+  const plotW=W-padL-padR;
+  const plotH=H-padT-padB;
+  const depths=[];
+  const sVals=[],bVals=[],rVals=[];
+  for(let dd=1;dd<=9;dd++){
+    const P=profile(dd,F);
+    depths.push(dd);
+    sVals.push(log10(P.sBound));
+    bVals.push(log10(P.bsLower));
+    rVals.push(log10(P.ratio));
+  }
+  const all=[].concat(sVals,bVals,rVals);
+  const ymin=Math.min(...all);
+  const ymax=Math.max(...all);
+  const ypad=(ymax-ymin)*0.08;
+  const ylo=ymin-ypad, yhi=ymax+ypad;
+  function xOfD(dd){ return padL+(dd-1)/(8)*plotW; }
+  function yOfV(v){ return padT+plotH - (v-ylo)/(yhi-ylo)*plotH; }
+
+  ctx.strokeStyle='rgba(159,176,204,0.35)';
+  ctx.lineWidth=1;
+  for(let i=0;i<=5;i++){
+    const y=padT+i*plotH/5;
+    ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(padL+plotW,y); ctx.stroke();
+  }
+  for(let i=0;i<=8;i++){
+    const x=padL+i*plotW/8;
+    ctx.beginPath(); ctx.moveTo(x,padT); ctx.lineTo(x,padT+plotH); ctx.stroke();
+  }
+
+  ctx.fillStyle='rgba(159,176,204,0.9)';
+  ctx.font='12px system-ui';
+  ctx.textAlign='center';
+  for(let dd=1;dd<=9;dd++){
+    ctx.fillText(String(dd), xOfD(dd), H-padB+18);
+  }
+  ctx.textAlign='right';
+  for(let i=0;i<=5;i++){
+    const v=ylo+(yhi-ylo)*(1-i/5);
+    ctx.fillText(v.toFixed(1), padL-8, padT+i*plotH/5+4);
+  }
+  ctx.save();
+  ctx.translate(16, padT+plotH/2);
+  ctx.rotate(-Math.PI/2);
+  ctx.textAlign='center';
+  ctx.fillText('log10 value',0,0);
+  ctx.restore();
+  ctx.fillText('depth d', padL+plotW/2, H-8);
+
+  function drawSeries(vals,color,width){
+    ctx.strokeStyle=color;
+    ctx.lineWidth=width;
+    ctx.beginPath();
+    for(let i=0;i<vals.length;i++){
+      const x=xOfD(depths[i]);
+      const y=yOfV(vals[i]);
+      if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+    for(let i=0;i<vals.length;i++){
+      ctx.fillStyle=color;
+      ctx.beginPath();
+      ctx.arc(xOfD(depths[i]),yOfV(vals[i]),3,0,Math.PI*2);
+      ctx.fill();
+    }
+  }
+  drawSeries(sVals,'#ef4444',2.5);
+  drawSeries(bVals,'#5eead4',2.5);
+  drawSeries(rVals,'#f59e0b',2.5);
+
+  const xk=xOfD(Dsel);
+  ctx.strokeStyle='rgba(255,255,255,0.35)';
+  ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(xk,padT); ctx.lineTo(xk,padT+plotH); ctx.stroke();
+}
+
+dSlider.addEventListener('input',render);
+factorSlider.addEventListener('input',render);
+render();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

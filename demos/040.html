@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bloch’s conjecture for complex surfaces (conceptual, result 040)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range]{flex:1 1 220px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:420px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+select{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text)}
+table{width:100%;border-collapse:collapse;font-size:.85rem}
+th,td{padding:.35rem .45rem;border-bottom:1px solid var(--border);text-align:left}
+th{color:var(--muted);font-weight:600}
+td.num{font-family:ui-monospace,monospace}
+.badge{display:inline-block;padding:.15rem .5rem;border-radius:6px;font-size:.75rem;font-weight:700}
+.ok{color:var(--good)} .bad{color:var(--bad)}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Bloch’s conjecture for complex surfaces (conceptual, result 040)</h1>
+  <p>For a smooth connected projective complex surface (S) with (p_g(S)=0), the Albanese map (\mathrm{CH}_0(S)^0\to\mathrm{Alb}(S)(\mathbb C)) on integral degree-zero zero-cycles is an isomorphism. Tune (p_g) and (q) to see when Bloch's conjecture applies.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Proves Bloch's conjecture: for every smooth connected projective complex surface (S) with (p_g(S)=0), the Albanese map (\mathrm{CH}_0(S)^0\to\mathrm{Alb}(S)(\mathbb C)) on integral degree-zero zero-cycles is an isomorphism. This combines the new (p_g=q=0) theorem with the classical theorem of Bloch, Kas, and Lieberman.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Identifies the surfaces with (p_g=0) as those whose degree-zero zero-cycles are completely captured by the Albanese variety; the map is an isomorphism, so the Chow group of zero-cycles modulo rational equivalence has no extra transcendental part. This links the geometry of complex surfaces to their Albanese and supports motive and zero-cycle computations.</p>
+  </section>
+  <div class="controls">
+    <label for="preset">Surface preset</label>
+    <select id="preset">
+      <option value="rational" selected>Rational surface (p_g=0,q=0)</option>
+      <option value="enriques">Enriques surface (p_g=0,q=0)</option>
+      <option value="burniat">Burniat surface (p_g=0,q=0)</option>
+      <option value="pg0q1">Surface with p_g=0, q=1</option>
+      <option value="k3">K3 surface (p_g=1,q=0)</option>
+      <option value="abelian">Abelian surface (p_g=1,q=2)</option>
+      <option value="general">General type, p_g>0</option>
+    </select>
+    <label for="pg">(p_g)</label>
+    <input id="pg" type="range" min="0" max="4" value="0" step="1">
+    <span class="val" id="pgval">0</span>
+    <label for="q">(q)</label>
+    <input id="q" type="range" min="0" max="4" value="0" step="1">
+    <span class="val" id="qval">0</span>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Geometric genus (p_g)</div><div class="value" id="pgstat">0</div></div>
+    <div class="stat"><div class="label">Irregularity (q)</div><div class="value" id="qstat">0</div></div>
+    <div class="stat"><div class="label">Albanese dimension</div><div class="value" id="albstat">0</div></div>
+    <div class="stat"><div class="label">Bloch status</div><div class="value" id="blochstat">—</div></div>
+    <div class="stat"><div class="label">Kernel of Albanese map</div><div class="value" id="kernelstat">—</div></div>
+    <div class="stat"><div class="label">(p_g=0) ?</div><div class="value" id="pg0stat">—</div></div>
+  </div>
+  <canvas id="c" width="900" height="420"></canvas>
+  <section class="box">
+    <h3>Examples</h3>
+    <table>
+      <thead><tr><th>Surface</th><th>(p_g)</th><th>(q)</th><th>Bloch?</th></tr></thead>
+      <tbody>
+        <tr><td>Rational / Enriques / Burniat</td><td class="num">0</td><td class="num">0</td><td class="ok">Yes</td></tr>
+        <tr><td>Surface with (p_g=0,q=1)</td><td class="num">0</td><td class="num">1</td><td class="ok">Yes</td></tr>
+        <tr><td>K3</td><td class="num">1</td><td class="num">0</td><td class="bad">No</td></tr>
+        <tr><td>Abelian</td><td class="num">1</td><td class="num">2</td><td class="bad">No</td></tr>
+      </tbody>
+    </table>
+  </section>
+</div>
+<script>
+const presetSel=document.getElementById('preset');
+const pgSlider=document.getElementById('pg');
+const qSlider=document.getElementById('q');
+const pgval=document.getElementById('pgval');
+const qval=document.getElementById('qval');
+const pgstat=document.getElementById('pgstat');
+const qstat=document.getElementById('qstat');
+const albstat=document.getElementById('albstat');
+const blochstat=document.getElementById('blochstat');
+const kernelstat=document.getElementById('kernelstat');
+const pg0stat=document.getElementById('pg0stat');
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+
+const presets={
+  rational:{pg:0,q:0},
+  enriques:{pg:0,q:0},
+  burniat:{pg:0,q:0},
+  pg0q1:{pg:0,q:1},
+  k3:{pg:1,q:0},
+  abelian:{pg:1,q:2},
+  general:{pg:2,q:1}
+};
+
+function resizeCanvas(){ canvas.width=Math.max(300,canvas.clientWidth); canvas.height=420; }
+window.addEventListener('resize',function(){ resizeCanvas(); update(); });
+resizeCanvas();
+
+function update(){
+  const preset=presetSel.value;
+  if(presets[preset]){
+    pgSlider.value=presets[preset].pg;
+    qSlider.value=presets[preset].q;
+  }
+  const pg=+pgSlider.value;
+  const qv=+qSlider.value;
+  pgval.textContent=pg;
+  qval.textContent=qv;
+  pgstat.textContent=pg;
+  qstat.textContent=qv;
+  albstat.textContent=qv;
+  const ok = pg===0;
+  blochstat.textContent = ok ? 'Holds (isomorphism)' : 'Not applicable';
+  blochstat.className='value '+(ok?'ok':'bad');
+  kernelstat.textContent = ok ? 'trivial' : 'large (p_g>0)';
+  kernelstat.className='value '+(ok?'ok':'bad');
+  pg0stat.textContent = ok ? 'yes' : 'no';
+  pg0stat.className='value '+(ok?'ok':'bad');
+  draw(pg,qv,ok);
+}
+
+function draw(pg,qv,ok){
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const padT=30,padB=40;
+  const plotH=H-padT-padB;
+  const leftX=60, boxW=150;
+  const rightX=W-210, rightW=150;
+  const albH=Math.max(40, 40 + qv*30);
+  const chH = ok ? albH : Math.max(albH+60, 120 + pg*40);
+
+  const leftTop=padT + (plotH-chH)/2;
+  const rightTop=padT + (plotH-albH)/2;
+
+  ctx.fillStyle='rgba(94,234,212,0.18)';
+  ctx.fillRect(leftX,leftTop,boxW,chH);
+  ctx.strokeStyle='#5eead4'; ctx.lineWidth=2;
+  ctx.strokeRect(leftX,leftTop,boxW,chH);
+
+  ctx.fillStyle='rgba(34,197,94,0.18)';
+  ctx.fillRect(rightX,rightTop,rightW,albH);
+  ctx.strokeStyle='#22c55e'; ctx.lineWidth=2;
+  ctx.strokeRect(rightX,rightTop,rightW,albH);
+
+  if(!ok){
+    const kernelH=chH-albH;
+    ctx.fillStyle='rgba(239,68,68,0.25)';
+    ctx.fillRect(leftX,leftTop+albH,boxW,kernelH);
+    ctx.fillStyle='#ef4444'; ctx.font='12px system-ui'; ctx.textAlign='center';
+    ctx.fillText('kernel (transcendental)', leftX+boxW/2, leftTop+albH+kernelH/2+4);
+  }
+
+  ctx.fillStyle='#e6edf7'; ctx.font='13px system-ui'; ctx.textAlign='center';
+  ctx.fillText('CH_0(S)^0', leftX+boxW/2, leftTop-8);
+  ctx.fillText('Alb(S)(C)', rightX+rightW/2, rightTop-8);
+
+  const midY=H/2;
+  ctx.strokeStyle='#9fb0cc'; ctx.lineWidth=2;
+  ctx.beginPath();
+  ctx.moveTo(leftX+boxW,midY);
+  ctx.lineTo(rightX,midY);
+  ctx.stroke();
+  ctx.fillStyle='#9fb0cc';
+  ctx.font='16px system-ui'; ctx.textAlign='center';
+  ctx.fillText(ok ? '≅' : '↠ (not iso)', (leftX+boxW+rightX)/2, midY-8);
+
+  ctx.fillStyle='#9fb0cc'; ctx.font='11px system-ui'; ctx.textAlign='center';
+  ctx.fillText('p_g = '+pg, leftX+boxW/2, H-padB+4);
+  ctx.fillText('dim Alb = '+qv, rightX+rightW/2, H-padB+4);
+
+  ctx.fillStyle='#9fb0cc'; ctx.font='12px system-ui'; ctx.textAlign='left';
+  ctx.fillText('Bloch applies iff p_g=0', 60, padT-8);
+}
+
+presetSel.addEventListener('change',function(){ update(); });
+pgSlider.addEventListener('input',function(){ presetSel.value=''; update(); });
+qSlider.addEventListener('input',function(){ presetSel.value=''; update(); });
+update();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

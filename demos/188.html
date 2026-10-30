@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The sharp constant in random triangle removal (conceptual, result 188)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+select{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+input[type=range]{flex:1 1 180px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:460px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+.legend{display:flex;gap:1rem;align-items:center;font-size:.85rem;color:var(--muted);margin:.5rem 0;flex-wrap:wrap}
+.swatch{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:.3rem;vertical-align:middle}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>The sharp constant in random triangle removal (conceptual, result 188)</h1>
+  <p>Starting from $K_n$, repeatedly delete the three edges of a uniformly chosen remaining triangle. The demo simulates this process and estimates the terminal edge count, which is asymptotic to $n^{3/2}/(2\sqrt2)$.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Start with the complete graph on $n$ vertices. Repeatedly choose uniformly at random a remaining triangle and delete its three edges, until the graph is triangle-free. The number of edges at termination, divided by $n^{3/2}$, converges in $L^2$ to $1/(2\sqrt2)$; hence it also converges in probability and its normalized expectation converges to the same constant. This proves the triangle case of the sharp terminal-leave conjecture of Joos and Kühn.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Determines the sharp leading constant for the terminal leave of the random triangle-removal process, giving a precise average-case endpoint for greedy triangle deletion and a concrete instance of the Joos–Kühn conjecture.</p>
+  </section>
+  <div class="controls">
+    <label for="n">n</label>
+    <input id="n" type="range" min="6" max="20" value="12" step="1">
+    <span class="val" id="nval">12</span>
+    <label for="trials">trials</label>
+    <input id="trials" type="range" min="10" max="500" value="100" step="10">
+    <span class="val" id="trialval">100</span>
+    <button id="run">Run</button>
+    <span id="status" style="color:var(--muted);font-size:.9rem">idle</span>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">n</div><div class="value" id="sn">—</div></div>
+    <div class="stat"><div class="label">trials</div><div class="value" id="str">—</div></div>
+    <div class="stat"><div class="label">mean terminal edges</div><div class="value" id="smean">—</div></div>
+    <div class="stat"><div class="label">normalized mean</div><div class="value" id="snorm">—</div></div>
+    <div class="stat"><div class="label">constant $1/(2\sqrt2)$</div><div class="value" id="sconst">0.353553</div></div>
+    <div class="stat"><div class="label">normalized std dev</div><div class="value" id="sstd">—</div></div>
+    <div class="stat"><div class="label">avg steps</div><div class="value" id="ssteps">—</div></div>
+    <div class="stat"><div class="label">representative final</div><div class="value" id="srep">—</div></div>
+  </div>
+  <div class="legend">
+    <span><span class="swatch" style="background:#5eead4"></span>representative run</span>
+    <span><span class="swatch" style="background:#f59e0b"></span>constant $1/(2\sqrt2)$</span>
+    <span><span class="swatch" style="background:#9fb0cc"></span>histogram of terminal edges$/n^{3/2}$</span>
+  </div>
+  <canvas id="c" width="900" height="460"></canvas>
+  <p style="font-size:.85rem;color:var(--muted);margin-top:.5rem">Conceptual Monte Carlo simulation of the random triangle-removal process. Each run uniformly selects among all triangles still present in the graph. Estimates are finite-$n$ Monte Carlo values, not the formal limit.</p>
+</div>
+<script>
+const nSlider=document.getElementById('n');
+const trialSlider=document.getElementById('trials');
+const runBtn=document.getElementById('run');
+const status=document.getElementById('status');
+const nval=document.getElementById('nval');
+const trialval=document.getElementById('trialval');
+const sn=document.getElementById('sn');
+const str=document.getElementById('str');
+const smean=document.getElementById('smean');
+const snorm=document.getElementById('snorm');
+const sstd=document.getElementById('sstd');
+const ssteps=document.getElementById('ssteps');
+const srep=document.getElementById('srep');
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+
+function resizeCanvas(){ canvas.width=Math.max(300,canvas.clientWidth); canvas.height=460; }
+window.addEventListener('resize',function(){ resizeCanvas(); draw(); });
+resizeCanvas();
+
+const CONST=1/(2*Math.sqrt(2));
+
+let runs=[];
+let repTraj=[];
+let repFinal=0;
+let agg={n:0,T:0,mean:0,std:0,steps:0};
+
+function runOne(n){
+  const adj=new Array(n);
+  for(let i=0;i<n;i++) adj[i]=( (1<<n)-1 ) ^ (1<<i);
+  let edges=n*(n-1)/2;
+  const traj=[edges];
+  while(true){
+    const tris=[];
+    for(let i=0;i<n-2;i++){
+      for(let j=i+1;j<n-1;j++){
+        if(!((adj[i]>>j)&1)) continue;
+        const common=adj[i]&adj[j];
+        for(let k=j+1;k<n;k++){
+          if((common>>k)&1) tris.push([i,j,k]);
+        }
+      }
+    }
+    if(tris.length===0) break;
+    const t=tris[Math.floor(Math.random()*tris.length)];
+    const a=t[0],b=t[1],c=t[2];
+    adj[a]&=~(1<<b); adj[b]&=~(1<<a);
+    adj[a]&=~(1<<c); adj[c]&=~(1<<a);
+    adj[b]&=~(1<<c); adj[c]&=~(1<<b);
+    edges-=3;
+    traj.push(edges);
+  }
+  return {edges, steps:traj.length-1, traj};
+}
+
+function runSim(){
+  const n=+nSlider.value;
+  const T=+trialSlider.value;
+  status.textContent='running...';
+  setTimeout(function(){
+    runs=[];
+    let sum=0,sumsq=0,stepsSum=0;
+    let lastTraj=null,lastFinal=0;
+    for(let t=0;t<T;t++){
+      const r=runOne(n);
+      runs.push(r.edges);
+      sum+=r.edges;
+      sumsq+=r.edges*r.edges;
+      stepsSum+=r.steps;
+      lastTraj=r.traj;
+      lastFinal=r.edges;
+    }
+    repTraj=lastTraj;
+    repFinal=lastFinal;
+    const mean=sum/T;
+    const variance=Math.max(0,sumsq/T-mean*mean);
+    const std=Math.sqrt(variance);
+    const nd=Math.pow(n,1.5);
+    agg={n,T,mean,std,steps:stepsSum/T,normMean:mean/nd,normStd:std/nd};
+    nval.textContent=n;
+    trialval.textContent=T;
+    sn.textContent=n;
+    str.textContent=T;
+    smean.textContent=mean.toFixed(2);
+    snorm.textContent=(mean/nd).toFixed(4);
+    sstd.textContent=(std/nd).toFixed(4);
+    ssteps.textContent=(stepsSum/T).toFixed(1);
+    srep.textContent=lastFinal;
+    status.textContent='done';
+    draw();
+  },10);
+}
+
+function draw(){
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  if(!runs.length){
+    ctx.fillStyle='rgba(159,176,204,0.9)';
+    ctx.font='16px system-ui';
+    ctx.textAlign='center';
+    ctx.fillText('Press Run to simulate', W/2, H/2);
+    return;
+  }
+  const pad=40;
+  const mid=W/2;
+  const leftX=pad, leftW=mid-2*pad;
+  const rightX=mid+pad, rightW=W-mid-2*pad;
+  const top=30, bot=H-40;
+  const plotH=bot-top;
+
+  // Left: trajectory
+  ctx.fillStyle='rgba(159,176,204,0.95)';
+  ctx.font='13px system-ui';
+  ctx.textAlign='left';
+  ctx.fillText('Representative run: remaining edges', leftX, 18);
+  const n=agg.n;
+  const initEdges=n*(n-1)/2;
+  const traj=repTraj;
+  const maxE=initEdges;
+  const xScale=leftW/Math.max(1,traj.length-1);
+  // grid
+  ctx.strokeStyle='rgba(159,176,204,0.2)';
+  ctx.lineWidth=1;
+  for(let i=0;i<=4;i++){
+    const y=top+i*plotH/4;
+    ctx.beginPath(); ctx.moveTo(leftX,y); ctx.lineTo(leftX+leftW,y); ctx.stroke();
+  }
+  // constant line
+  const constE=CONST*Math.pow(n,1.5);
+  const yConst=top+plotH-(constE/maxE)*plotH;
+  ctx.strokeStyle='#f59e0b';
+  ctx.setLineDash([6,4]);
+  ctx.beginPath(); ctx.moveTo(leftX,yConst); ctx.lineTo(leftX+leftW,yConst); ctx.stroke();
+  ctx.setLineDash([]);
+  // traj line
+  ctx.strokeStyle='#5eead4';
+  ctx.lineWidth=2;
+  ctx.beginPath();
+  for(let i=0;i<traj.length;i++){
+    const x=leftX+i*xScale;
+    const y=top+plotH-(traj[i]/maxE)*plotH;
+    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  }
+  ctx.stroke();
+  ctx.fillStyle='rgba(159,176,204,0.9)';
+  ctx.font='11px system-ui';
+  ctx.textAlign='center';
+  ctx.fillText('deletion step', leftX+leftW/2, H-8);
+  ctx.save();
+  ctx.translate(12, top+plotH/2);
+  ctx.rotate(-Math.PI/2);
+  ctx.textAlign='center';
+  ctx.fillText('edges',0,0);
+  ctx.restore();
+
+  // Right: histogram
+  ctx.fillStyle='rgba(159,176,204,0.95)';
+  ctx.font='13px system-ui';
+  ctx.textAlign='left';
+  ctx.fillText('Terminal edges / n^{3/2}', rightX, 18);
+  const bins=20;
+  const binMax=0.8;
+  const counts=new Array(bins).fill(0);
+  for(const e of runs){
+    const v=e/Math.pow(n,1.5);
+    let idx=Math.floor((v/binMax)*bins);
+    if(idx<0) idx=0; if(idx>=bins) idx=bins-1;
+    counts[idx]++;
+  }
+  const maxCount=Math.max(...counts,1);
+  const bw=rightW/bins;
+  for(let i=0;i<bins;i++){
+    const h=(counts[i]/maxCount)*plotH;
+    ctx.fillStyle='rgba(159,176,204,0.55)';
+    ctx.fillRect(rightX+i*bw, bot-h, bw-2, h);
+  }
+  // constant line
+  const xConst=rightX+(CONST/binMax)*rightW;
+  ctx.strokeStyle='#f59e0b';
+  ctx.setLineDash([6,4]);
+  ctx.beginPath(); ctx.moveTo(xConst,top); ctx.lineTo(xConst,bot); ctx.stroke();
+  ctx.setLineDash([]);
+  // mean line
+  const xMean=rightX+(agg.normMean/binMax)*rightW;
+  ctx.strokeStyle='#5eead4';
+  ctx.lineWidth=2;
+  ctx.beginPath(); ctx.moveTo(xMean,top); ctx.lineTo(xMean,bot); ctx.stroke();
+  ctx.fillStyle='rgba(159,176,204,0.9)';
+  ctx.font='11px system-ui';
+  ctx.textAlign='center';
+  ctx.fillText('normalized terminal value', rightX+rightW/2, H-8);
+  // x ticks
+  ctx.fillStyle='rgba(159,176,204,0.8)';
+  ctx.textAlign='center';
+  for(let i=0;i<=4;i++){
+    const v=i*binMax/4;
+    const x=rightX+(v/binMax)*rightW;
+    ctx.fillText(v.toFixed(2), x, bot+14);
+  }
+}
+
+nSlider.addEventListener('input',function(){ nval.textContent=nSlider.value; });
+trialSlider.addEventListener('input',function(){ trialval.textContent=trialSlider.value; });
+runBtn.addEventListener('click',runSim);
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

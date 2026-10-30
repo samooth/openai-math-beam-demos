@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sharp homogeneous depth-five complexity of matrix products (conceptual, result 135)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range]{flex:1 1 180px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:460px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+.legend{display:flex;gap:1rem;align-items:center;font-size:.85rem;color:var(--muted);margin:.5rem 0;flex-wrap:wrap}
+.swatch{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:.3rem;vertical-align:middle}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Sharp homogeneous depth-five complexity of matrix products (conceptual, result 135)</h1>
+  <p>Over every characteristic-zero field, the $(1,1)$ entry of a product of $n$ independent $n\times n$ variable matrices requires $n^{\Theta(\sqrt n)}$ gates in homogeneous depth-five sum--product circuits.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Over every characteristic-zero field, the $(1,1)$ entry of a product of $n$ independent $n\times n$ variable matrices requires $n^{\Theta(\sqrt n)}$ gates in homogeneous depth-five sum--product circuits. The bound is sharp: it allows shared gates and bottom linear forms involving all variables, so no additional saving comes from those features in this depth. It places iterated matrix multiplication firmly in the superpolynomial regime for bounded-depth homogeneous arithmetic circuits.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Gives a sharp superpolynomial lower bound for a natural polynomial family in homogeneous depth-five circuits, clarifying the power and limits of bounded-depth arithmetic computation, and providing a benchmark for algebraic complexity and circuit lower-bound techniques.</p>
+  </section>
+  <div class="controls">
+    <label for="n">Matrix size / factors n</label>
+    <input id="n" type="range" min="2" max="60" value="12" step="1">
+    <span class="val" id="nval">12</span>
+    <label for="c">Exponent constant c</label>
+    <input id="c" type="range" min="0.1" max="2" value="1" step="0.1">
+    <span class="val" id="cval">1.0</span>
+    <label for="k">Polynomial degree k</label>
+    <input id="k" type="range" min="2" max="12" value="6" step="1">
+    <span class="val" id="kval">6</span>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">n</div><div class="value" id="sn">—</div></div>
+    <div class="stat"><div class="label">sqrt(n)</div><div class="value" id="ssqrt">—</div></div>
+    <div class="stat"><div class="label">Exponent c*sqrt(n)</div><div class="value" id="sexp">—</div></div>
+    <div class="stat"><div class="label">Lower bound log10 gates</div><div class="value" id="slower">—</div></div>
+    <div class="stat"><div class="label">Trivial expansion log10</div><div class="value" id="striv">—</div></div>
+    <div class="stat"><div class="label">Polynomial n^k log10</div><div class="value" id="spoly">—</div></div>
+    <div class="stat"><div class="label">Lower - polynomial (log10)</div><div class="value" id="sgap">—</div></div>
+    <div class="stat"><div class="label">Trivial - lower (log10)</div><div class="value" id="strivgap">—</div></div>
+  </div>
+  <div class="legend">
+    <span><span class="swatch" style="background:#ef4444"></span>Trivial path expansion $n^{n-1}$</span>
+    <span><span class="swatch" style="background:#5eead4"></span>Depth-5 lower bound $n^{c\sqrt n}$</span>
+    <span><span class="swatch" style="background:#f59e0b"></span>Polynomial-size circuit $n^k$</span>
+    <span><span class="swatch" style="background:#94a3b8"></span>Selected n</span>
+  </div>
+  <canvas id="canvas" width="900" height="460"></canvas>
+  <p style="font-size:.85rem;color:var(--muted);margin-top:.5rem">Conceptual model: estimated gate counts (as base-10 logarithms) for computing the $(1,1)$ entry of a product of $n$ independent $n\times n$ matrices, comparing the homogeneous depth-five lower bound with the trivial expansion and polynomial-size circuits.</p>
+</div>
+<script>
+const nSlider=document.getElementById('n');
+const cSlider=document.getElementById('c');
+const kSlider=document.getElementById('k');
+
+const nval=document.getElementById('nval');
+const cval=document.getElementById('cval');
+const kval=document.getElementById('kval');
+
+const sn=document.getElementById('sn');
+const ssqrt=document.getElementById('ssqrt');
+const sexp=document.getElementById('sexp');
+const slower=document.getElementById('slower');
+const striv=document.getElementById('striv');
+const spoly=document.getElementById('spoly');
+const sgap=document.getElementById('sgap');
+const strivgap=document.getElementById('strivgap');
+
+const canvas=document.getElementById('canvas');
+const ctx=canvas.getContext('2d');
+
+function resizeCanvas(){ canvas.width=Math.max(300,canvas.clientWidth); canvas.height=460; }
+window.addEventListener('resize',function(){ resizeCanvas(); render(); });
+resizeCanvas();
+
+function fmt(x){
+  if(!isFinite(x)) return '—';
+  if(x>=1e6 || x<=1e-3) return x.toExponential(3);
+  return x.toFixed(3);
+}
+
+function updateStats(){
+  const n=+nSlider.value;
+  const c=+cSlider.value;
+  const k=+kSlider.value;
+  nval.textContent=n;
+  cval.textContent=c.toFixed(1);
+  kval.textContent=k;
+
+  const sqrtN=Math.sqrt(n);
+  const exponent=c*sqrtN;
+  const lowerLog=exponent*Math.log10(n);
+  const trivialLog=(n-1)*Math.log10(n);
+  const polyLog=k*Math.log10(n);
+
+  sn.textContent=n;
+  ssqrt.textContent=sqrtN.toFixed(3);
+  sexp.textContent=exponent.toFixed(3);
+  slower.textContent=lowerLog.toFixed(3);
+  striv.textContent=trivialLog.toFixed(3);
+  spoly.textContent=polyLog.toFixed(3);
+  sgap.textContent=(lowerLog-polyLog).toFixed(3);
+  strivgap.textContent=(trivialLog-lowerLog).toFixed(3);
+}
+
+function render(){
+  updateStats();
+  const c=+cSlider.value;
+  const k=+kSlider.value;
+  const nSel=+nSlider.value;
+
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const padL=62,padR=20,padT=30,padB=46;
+  const plotW=W-padL-padR;
+  const plotH=H-padT-padB;
+  const xmin=2, xmax=60;
+
+  const vals=[];
+  for(let i=0;i<=240;i++){
+    const nn=xmin+(xmax-xmin)*i/240;
+    vals.push(c*Math.sqrt(nn)*Math.log10(nn));
+    vals.push((nn-1)*Math.log10(nn));
+    vals.push(k*Math.log10(nn));
+  }
+  let ymin=Math.min(...vals);
+  let ymax=Math.max(...vals);
+  const ypad=(ymax-ymin)*0.08;
+  ymin-=ypad; ymax+=ypad;
+  if(ymin<0) ymin=0;
+
+  function xOf(nn){ return padL+(nn-xmin)/(xmax-xmin)*plotW; }
+  function yOf(v){ return padT+plotH-(v-ymin)/(ymax-ymin)*plotH; }
+
+  ctx.strokeStyle='rgba(159,176,204,0.35)';
+  ctx.lineWidth=1;
+  for(let i=0;i<=5;i++){
+    const y=padT+i*plotH/5;
+    ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(padL+plotW,y); ctx.stroke();
+    const x=padL+i*plotW/5;
+    ctx.beginPath(); ctx.moveTo(x,padT); ctx.lineTo(x,padT+plotH); ctx.stroke();
+  }
+
+  ctx.fillStyle='rgba(159,176,204,0.9)';
+  ctx.font='12px system-ui';
+  ctx.textAlign='center';
+  for(let v of [2,10,20,30,40,50,60]){
+    ctx.fillText(String(v), xOf(v), H-padB+18);
+  }
+  ctx.textAlign='right';
+  for(let i=0;i<=5;i++){
+    const v=ymin+(ymax-ymin)*(1-i/5);
+    ctx.fillText(v.toFixed(1), padL-8, padT+i*plotH/5+4);
+  }
+  ctx.save();
+  ctx.translate(16, padT+plotH/2);
+  ctx.rotate(-Math.PI/2);
+  ctx.textAlign='center';
+  ctx.fillText('gates (log10)',0,0);
+  ctx.restore();
+  ctx.textAlign='center';
+  ctx.fillText('n', padL+plotW/2, H-8);
+
+  function drawCurve(fn,color,width){
+    ctx.strokeStyle=color;
+    ctx.lineWidth=width;
+    ctx.beginPath();
+    for(let i=0;i<=240;i++){
+      const nn=xmin+(xmax-xmin)*i/240;
+      const x=xOf(nn);
+      const y=yOf(fn(nn));
+      if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+  }
+  drawCurve(nn=>(nn-1)*Math.log10(nn), '#ef4444', 2.5);
+  drawCurve(nn=>c*Math.sqrt(nn)*Math.log10(nn), '#5eead4', 2.5);
+  drawCurve(nn=>k*Math.log10(nn), '#f59e0b', 2);
+
+  const xk=xOf(nSel);
+  ctx.strokeStyle='rgba(255,255,255,0.35)';
+  ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(xk,padT); ctx.lineTo(xk,padT+plotH); ctx.stroke();
+}
+
+nSlider.addEventListener('input',render);
+cSlider.addEventListener('input',render);
+kSlider.addEventListener('input',render);
+render();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

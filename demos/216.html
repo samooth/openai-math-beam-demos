@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Critical logarithmic corrections and BKT scaling for the planar XY model (conceptual, result 216)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+select,button{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+input[type=range]{flex:1 1 180px}
+input[type=number]{width:6rem;padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text)}
+input[type=checkbox]{width:1.1rem;height:1.1rem;accent-color:var(--accent)}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:auto;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block;margin:.5rem 0}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button:hover{filter:brightness(1.1)}
+.legend{display:flex;gap:1rem;align-items:center;font-size:.85rem;color:var(--muted);margin:.5rem 0;flex-wrap:wrap}
+.swatch{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:.3rem;vertical-align:middle}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Critical logarithmic corrections and BKT scaling for the planar XY model (conceptual, result 216)</h1>
+  <p>The planar cosine XY model undergoes a Berezinskii–Kosterlitz–Thouless transition: at criticality correlations decay as (C_{\beta_c}(r)\sim A r^{-1/4}(\log r)^{1/8}), while the correlation length diverges with the essential singularity (\sqrt{\beta_c-\beta}\log\xi(\beta)\to B). Vortex unbinding separates a rough low-temperature phase from exponential decay above (T_c).</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">For the square-lattice nearest-neighbor cosine XY model, result 216 proves the critical axis correlation \(C_{\beta_c}(r)\sim A r^{-1/4}(\log r)^{1/8}\) and the BKT essential singularity \(\sqrt{\beta_c-\beta}\log \xi(\beta)\to B\), with \(A,B>0) after the free-box thermodynamic limit. For finite square-symmetric interactions containing nearest neighbors, discrete Gaussian heights converge to Gaussian fields throughout the rough phase, including its threshold, along geometric torus sizes. Critical center-magnetization and spin-field conclusions retain their stated height, renormalization, and field-input assumptions.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Quantifies the universal critical decay and the correlation-length divergence at the BKT transition, supporting rough-phase Gaussian free-field limits and universality of planar spin and height fields. The demo interpolates the predicted decay laws across the transition so the logarithmic correction and essential singularity can be seen directly.</p>
+  </section>
+  <div class="controls">
+    <label for="T">Temperature (T/T_c)</label>
+    <input id="T" type="range" min="0.70" max="1.30" value="1.00" step="0.01">
+    <span class="val" id="Tval">1.00</span>
+    <label for="A">Amplitude (A)</label>
+    <input id="A" type="range" min="0.5" max="2.0" value="1.0" step="0.1">
+    <span class="val" id="Aval">1.0</span>
+    <label for="B">BKT constant (B)</label>
+    <input id="B" type="range" min="0.5" max="3.0" value="1.5" step="0.1">
+    <span class="val" id="Bval">1.5</span>
+  </div>
+  <div class="controls">
+    <label for="R">Max radius (R)</label>
+    <input id="R" type="range" min="20" max="2000" value="200" step="10">
+    <span class="val" id="Rval">200</span>
+    <label for="ref">Show critical reference</label>
+    <input id="ref" type="checkbox" checked>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Regime</div><div class="value" id="sregime">—</div></div>
+    <div class="stat"><div class="label">Exponent (\eta)</div><div class="value" id="seta">—</div></div>
+    <div class="stat"><div class="label">Correlation length (\xi)</div><div class="value" id="sxi">—</div></div>
+    <div class="stat"><div class="label">(C(R))</div><div class="value" id="sCR">—</div></div>
+    <div class="stat"><div class="label">BKT product (\sqrt{T-1}\log\xi)</div><div class="value" id="sprod">—</div></div>
+    <div class="stat"><div class="label">Critical (C_{\beta_c}(R))</div><div class="value" id="scrit">—</div></div>
+  </div>
+  <div class="legend">
+    <span><span class="swatch" style="background:#5eead4"></span>current temperature</span>
+    <span><span class="swatch" style="background:#9fb0cc"></span>critical reference</span>
+  </div>
+  <canvas id="c1" width="900" height="460"></canvas>
+  <p style="color:var(--muted);font-size:.85rem;margin:.25rem 0 1rem">Correlation (C(r)) versus distance (r) on logarithmic axes. At (T=T_c) the curve carries the ((\log r)^{1/8}) correction; above (T_c) exponential decay with the BKT length (\xi).</p>
+  <canvas id="c2" width="900" height="320"></canvas>
+  <p style="color:var(--muted);font-size:.85rem;margin:.25rem 0 1rem">BKT essential singularity: (\log\xi(\beta)) diverges as (B/\sqrt{T-T_c}) above the transition.</p>
+</div>
+<script>
+const TSlider=document.getElementById('T');
+const ASlider=document.getElementById('A');
+const BSlider=document.getElementById('B');
+const RSlider=document.getElementById('R');
+const RefBox=document.getElementById('ref');
+const Tval=document.getElementById('Tval');
+const Aval=document.getElementById('Aval');
+const Bval=document.getElementById('Bval');
+const Rval=document.getElementById('Rval');
+const sregime=document.getElementById('sregime');
+const seta=document.getElementById('seta');
+const sxi=document.getElementById('sxi');
+const sCR=document.getElementById('sCR');
+const sprod=document.getElementById('sprod');
+const scrit=document.getElementById('scrit');
+const c1=document.getElementById('c1');
+const ctx1=c1.getContext('2d');
+const c2=document.getElementById('c2');
+const ctx2=c2.getContext('2d');
+
+let T=1.0, A=1.0, B=1.5, R=200, showRef=true;
+
+function etaOf(t){ return t>=1 ? 0.25 : 0.25*t; }
+function xiOf(t){
+  if(t<=1) return Infinity;
+  return Math.exp(B/Math.sqrt(t-1));
+}
+function C(r,t){
+  const rr=Math.max(r,1.0001);
+  if(Math.abs(t-1)<1e-9){
+    return A*Math.pow(rr,-0.25)*Math.pow(Math.log(rr),0.125);
+  }
+  if(t<1){
+    return A*Math.pow(rr,-etaOf(t));
+  }
+  const x=xiOf(t);
+  return A*Math.pow(rr,-0.25)*Math.exp(-rr/x);
+}
+
+function fmt(x){
+  if(!isFinite(x)) return '\u221e';
+  if(Math.abs(x)>=1e4 || (Math.abs(x)>0 && Math.abs(x)<1e-3)) return x.toExponential(2);
+  return x.toFixed(3);
+}
+
+function resizeCanvas(cv,h){
+  const w=Math.max(300, cv.clientWidth||900);
+  cv.width=w; cv.height=h;
+}
+
+function drawCorr(){
+  resizeCanvas(c1,460);
+  const W=c1.width,H=c1.height;
+  ctx1.clearRect(0,0,W,H);
+  const padL=62,padR=18,padT=18,padB=48;
+  const plotW=W-padL-padR, plotH=H-padT-padB;
+  const xmin=0;
+  const xmax=Math.log10(R);
+  // y range
+  let ymin=Infinity,ymax=-Infinity;
+  function consider(t){
+    for(let i=0;i<=240;i++){
+      const lr=xmin+(xmax-xmin)*i/240;
+      const r=Math.pow(10,lr);
+      const v=C(r,t);
+      if(v>0){ const y=Math.log10(v); ymin=Math.min(ymin,y); ymax=Math.max(ymax,y);}
+    }
+  }
+  consider(T);
+  if(showRef) consider(1);
+  if(!isFinite(ymin)){ ymin=-2; ymax=1; }
+  const span=ymax-ymin||1;
+  ymin-=0.18*span; ymax+=0.18*span;
+  function X(lr){ return padL+(lr-xmin)/(xmax-xmin)*plotW; }
+  function Y(y){ return padT+(ymax-y)/(ymax-ymin)*plotH; }
+  // grid
+  ctx1.strokeStyle='rgba(159,176,204,0.12)'; ctx1.lineWidth=1;
+  for(let d=0; d<=Math.ceil(xmax); d++){
+    const x=X(d);
+    ctx1.beginPath(); ctx1.moveTo(x,padT); ctx1.lineTo(x,padT+plotH); ctx1.stroke();
+    ctx1.fillStyle='#9fb0cc'; ctx1.font='11px system-ui'; ctx1.textAlign='center';
+    ctx1.fillText('10^'+d, x, H-22);
+  }
+  // y ticks
+  const y0=Math.floor(ymin), y1=Math.ceil(ymax);
+  for(let y=y0; y<=y1; y++){
+    const yy=Y(y);
+    ctx1.beginPath(); ctx1.moveTo(padL,yy); ctx1.lineTo(padL+plotW,yy); ctx1.stroke();
+    ctx1.fillStyle='#9fb0cc'; ctx1.font='11px system-ui'; ctx1.textAlign='right';
+    ctx1.fillText('10^'+y, padL-6, yy+4);
+  }
+  // axes labels
+  ctx1.fillStyle='#9fb0cc'; ctx1.font='12px system-ui'; ctx1.textAlign='center';
+  ctx1.fillText('distance r', padL+plotW/2, H-4);
+  ctx1.save(); ctx1.translate(16,padT+plotH/2); ctx1.rotate(-Math.PI/2); ctx1.fillText('correlation C(r)',0,0); ctx1.restore();
+  function drawCurve(t, color, dash){
+    ctx1.beginPath();
+    let first=true;
+    for(let i=0;i<=500;i++){
+      const lr=xmin+(xmax-xmin)*i/500;
+      const r=Math.pow(10,lr);
+      const v=C(r,t);
+      if(v<=0) continue;
+      const x=X(lr), y=Y(Math.log10(v));
+      if(first){ ctx1.moveTo(x,y); first=false; } else ctx1.lineTo(x,y);
+    }
+    ctx1.strokeStyle=color; ctx1.lineWidth=2;
+    ctx1.setLineDash(dash?[6,4]:[]);
+    ctx1.stroke();
+    ctx1.setLineDash([]);
+  }
+  if(showRef && Math.abs(T-1)>1e-9) drawCurve(1, '#9fb0cc', true);
+  drawCurve(T, '#5eead4', false);
+}
+
+function drawScaling(){
+  resizeCanvas(c2,320);
+  const W=c2.width,H=c2.height;
+  ctx2.clearRect(0,0,W,H);
+  const padL=62,padR=18,padT=18,padB=44;
+  const plotW=W-padL-padR, plotH=H-padT-padB;
+  const tMin=1.01, tMax=1.30;
+  // x T, y log xi
+  let ymax=0;
+  for(let t=tMin; t<=tMax; t+=0.001){
+    const y=Math.log(xiOf(t));
+    if(isFinite(y)) ymax=Math.max(ymax,y);
+  }
+  ymax=Math.max(ymax,1); ymax*=1.05;
+  const ymin=0;
+  function X(t){ return padL+(t-tMin)/(tMax-tMin)*plotW; }
+  function Y(y){ return padT+(ymax-y)/(ymax-ymin)*plotH; }
+  // grid
+  ctx2.strokeStyle='rgba(159,176,204,0.12)';
+  for(let t=1.05; t<=tMax; t+=0.05){
+    const x=X(t); ctx2.beginPath(); ctx2.moveTo(x,padT); ctx2.lineTo(x,padT+plotH); ctx2.stroke();
+    ctx2.fillStyle='#9fb0cc'; ctx2.font='10px system-ui'; ctx2.textAlign='center'; ctx2.fillText(t.toFixed(2), x, H-20);
+  }
+  for(let y=0; y<=ymax; y+=Math.max(1,Math.floor(ymax/6))){
+    const yy=Y(y); ctx2.beginPath(); ctx2.moveTo(padL,yy); ctx2.lineTo(padL+plotW,yy); ctx2.stroke();
+    ctx2.fillStyle='#9fb0cc'; ctx2.font='10px system-ui'; ctx2.textAlign='right'; ctx2.fillText(String(y), padL-6, yy+4);
+  }
+  ctx2.fillStyle='#9fb0cc'; ctx2.font='12px system-ui'; ctx2.textAlign='center';
+  ctx2.fillText('temperature T/T_c', padL+plotW/2, H-4);
+  ctx2.save(); ctx2.translate(16,padT+plotH/2); ctx2.rotate(-Math.PI/2); ctx2.fillText('log \u03be',0,0); ctx2.restore();
+  // curve
+  ctx2.beginPath(); let first=true;
+  for(let i=0;i<=400;i++){
+    const t=tMin+(tMax-tMin)*i/400;
+    const y=Math.log(xiOf(t));
+    if(!isFinite(y)) continue;
+    const x=X(t), yy=Y(y);
+    if(first){ ctx2.moveTo(x,yy); first=false;} else ctx2.lineTo(x,yy);
+  }
+  ctx2.strokeStyle='#5eead4'; ctx2.lineWidth=2; ctx2.stroke();
+  // current point
+  if(T>1){
+    const y=Math.log(xiOf(T));
+    if(isFinite(y) && T>=tMin && T<=tMax){
+      ctx2.beginPath(); ctx2.arc(X(T),Y(y),5,0,Math.PI*2); ctx2.fillStyle='#f59e0b'; ctx2.fill();
+    }
+  }
+  // note
+  ctx2.fillStyle='#9fb0cc'; ctx2.font='11px system-ui'; ctx2.textAlign='left';
+  ctx2.fillText('Essential singularity: log \u03be \u2248 B/\u221a(T-T_c)', padL+6, padT+14);
+}
+
+function update(){
+  T=+TSlider.value; A=+ASlider.value; B=+BSlider.value; R=+RSlider.value; showRef=RefBox.checked;
+  Tval.textContent=T.toFixed(2);
+  Aval.textContent=A.toFixed(1);
+  Bval.textContent=B.toFixed(1);
+  Rval.textContent=R;
+  // regime
+  if(Math.abs(T-1)<1e-9){ sregime.textContent='critical'; }
+  else if(T<1){ sregime.textContent='ordered (rough)'; }
+  else { sregime.textContent='disordered'; }
+  seta.textContent=etaOf(T).toFixed(3);
+  const x=xiOf(T);
+  sxi.textContent=fmt(x);
+  sCR.textContent=fmt(C(R,T));
+  if(T>1){
+    sprod.textContent=fmt(Math.sqrt(T-1)*Math.log(x));
+  } else {
+    sprod.textContent='\u2014';
+  }
+  scrit.textContent=fmt(C(R,1));
+  drawCorr();
+  drawScaling();
+}
+TSlider.addEventListener('input', update);
+ASlider.addEventListener('input', update);
+BSlider.addEventListener('input', update);
+RSlider.addEventListener('input', update);
+RefBox.addEventListener('change', update);
+window.addEventListener('resize', update);
+update();
+</script>
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

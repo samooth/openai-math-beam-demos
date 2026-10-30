@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Memory–sample lower bounds for noiseless Gaussian regression (conceptual, result 140)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range]{flex:1 1 180px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+select{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:460px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+.legend{display:flex;gap:1rem;align-items:center;font-size:.85rem;color:var(--muted);margin:.5rem 0;flex-wrap:wrap}
+.swatch{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:.3rem;vertical-align:middle}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Memory–sample lower bounds for noiseless Gaussian regression (conceptual, result 140)</h1>
+  <p>A one-pass learner observes $y_i=\langle a_i,\theta\rangle$ with $a_i\sim \mathcal N(0,I_d)$ for an unknown unit vector $\theta\in\mathbb R^d$. Slide dimension, accuracy, memory size, and regime to see the resulting sample lower bound $\Omega(d\log(1/\varepsilon))$.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">In noiseless Gaussian regression, a learner observes inner products of an unknown unit vector in $\mathbb R^d$ with independent standard Gaussian vectors. For fixed $A>0$, a one-pass learner retaining at most $Ad^2$ bits between observations needs $\Omega_A(d\log(1/\varepsilon))$ observations to recover the signal to angular error at most $\varepsilon$ with probability at least $2/3$, uniformly for large $d$, when $0<\varepsilon\le 1/10$. Computation and randomized updates are unrestricted, but output uses only the terminal state, stopping index, and fresh randomness. For subquadratic memory $o(d^2)$, the constant can be universal and the bound can be required for every signal.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">This quantifies the cost of memory in continuous statistical estimation: even with quadratic-bit memory and unlimited computation, one-pass recovery of a direction requires on the order of $d\log(1/\varepsilon)$ samples. It bears on streaming and memory-constrained inference, posterior-replica information bounds, exact Gaussian observation localization, and the design of memory-efficient estimators.</p>
+  </section>
+  <div class="controls">
+    <label for="d">Dimension d</label>
+    <input id="d" type="range" min="10" max="500" value="100" step="1">
+    <span class="val" id="dval">100</span>
+    <label for="eps">Error ε</label>
+    <input id="eps" type="range" min="0.01" max="0.10" value="0.05" step="0.005">
+    <span class="val" id="epsval">0.050</span>
+  </div>
+  <div class="controls">
+    <label for="A">Memory coeff. A</label>
+    <input id="A" type="range" min="0.1" max="8" value="1" step="0.1">
+    <span class="val" id="Aval">1.0</span>
+    <label for="regime">Regime</label>
+    <select id="regime">
+      <option value="fixed">Fixed $Ad^2$ bits</option>
+      <option value="sub">Subquadratic $o(d^2)$ bits</option>
+    </select>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Dimension d</div><div class="value" id="sd">—</div></div>
+    <div class="stat"><div class="label">Error ε</div><div class="value" id="se">—</div></div>
+    <div class="stat"><div class="label">log₂(1/ε)</div><div class="value" id="slg">—</div></div>
+    <div class="stat"><div class="label">Memory bits M</div><div class="value" id="smem">—</div></div>
+    <div class="stat"><div class="label">Constant c</div><div class="value" id="sc">—</div></div>
+    <div class="stat"><div class="label">Lower bound T</div><div class="value" id="st">—</div></div>
+    <div class="stat"><div class="label">Baseline exact recovery d</div><div class="value" id="sbase">—</div></div>
+    <div class="stat"><div class="label">Ratio T/d</div><div class="value" id="sratio">—</div></div>
+  </div>
+  <div class="legend">
+    <span><span class="swatch" style="background:#5eead4"></span>Lower bound $cd\log_2(1/\varepsilon)$</span>
+    <span><span class="swatch" style="background:#f59e0b"></span>Unlimited-memory exact recovery $\sim d$</span>
+    <span><span class="swatch" style="background:#94a3b8"></span>Selected $d$</span>
+  </div>
+  <canvas id="c" width="900" height="460"></canvas>
+  <p style="font-size:.85rem;color:var(--muted);margin-top:.5rem">Conceptual model: the plotted lower bound is $\Omega(d\log(1/\varepsilon))$; constants are illustrative. The baseline $d$ is the number of noiseless Gaussian observations that suffice with unbounded memory.</p>
+</div>
+<script>
+const dSlider=document.getElementById('d');
+const epsSlider=document.getElementById('eps');
+const ASlider=document.getElementById('A');
+const regimeSel=document.getElementById('regime');
+const dval=document.getElementById('dval');
+const epsval=document.getElementById('epsval');
+const Aval=document.getElementById('Aval');
+const sd=document.getElementById('sd');
+const se=document.getElementById('se');
+const slg=document.getElementById('slg');
+const smem=document.getElementById('smem');
+const sc=document.getElementById('sc');
+const st=document.getElementById('st');
+const sbase=document.getElementById('sbase');
+const sratio=document.getElementById('sratio');
+
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+
+function resizeCanvas(){ canvas.width=Math.max(300,canvas.clientWidth); canvas.height=460; }
+window.addEventListener('resize',function(){ resizeCanvas(); render(); });
+resizeCanvas();
+
+function fmt(x){
+  if(!isFinite(x)) return '—';
+  if(x>=1e6 || x<=1e-4) return x.toExponential(3);
+  return x.toFixed(3);
+}
+
+function params(){
+  const d=+dSlider.value;
+  const eps=+epsSlider.value;
+  const A=+ASlider.value;
+  const regime=regimeSel.value;
+  let M, c;
+  if(regime==='fixed'){
+    M=A*d*d;
+    c=0.5/(A+1);
+  } else {
+    M=Math.pow(d,1.8);
+    c=0.12;
+  }
+  const T=c*d*(Math.log(1/eps)/Math.LN2);
+  return {d,eps,A,regime,M,c,T};
+}
+
+function updateStats(){
+  const p=params();
+  dval.textContent=p.d;
+  epsval.textContent=p.eps.toFixed(3);
+  Aval.textContent=p.A.toFixed(1);
+  sd.textContent=p.d;
+  se.textContent=p.eps.toFixed(3);
+  slg.textContent=(Math.log(1/p.eps)/Math.LN2).toFixed(3);
+  smem.textContent=fmt(p.M);
+  sc.textContent=p.c.toFixed(4);
+  st.textContent=fmt(p.T);
+  sbase.textContent=p.d;
+  sratio.textContent=fmt(p.T/p.d);
+}
+
+function render(){
+  updateStats();
+  const p=params();
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const padL=62,padR=20,padT=30,padB=46;
+  const plotW=W-padL-padR;
+  const plotH=H-padT-padB;
+  const dmin=10, dmax=500;
+  function xOf(v){ return padL+(v-dmin)/(dmax-dmin)*plotW; }
+  const vals=[];
+  for(let i=0;i<=200;i++){
+    const dd=dmin+(dmax-dmin)*i/200;
+    const T=p.c*dd*(Math.log(1/p.eps)/Math.LN2);
+    vals.push(T);
+    vals.push(dd);
+  }
+  let ymin=Math.min(...vals), ymax=Math.max(...vals);
+  if(ymin<=0) ymin=1;
+  const logMin=Math.log10(ymin*0.8), logMax=Math.log10(ymax*1.2);
+  function yOf(v){ return padT+plotH - (Math.log10(v)-logMin)/(logMax-logMin)*plotH; }
+
+  ctx.strokeStyle='rgba(159,176,204,0.35)';
+  ctx.lineWidth=1;
+  for(let i=0;i<=5;i++){
+    const y=padT+i*plotH/5;
+    ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(padL+plotW,y); ctx.stroke();
+    const x=padL+i*plotW/5;
+    ctx.beginPath(); ctx.moveTo(x,padT); ctx.lineTo(x,padT+plotH); ctx.stroke();
+  }
+  ctx.fillStyle='rgba(159,176,204,0.9)';
+  ctx.font='12px system-ui';
+  ctx.textAlign='center';
+  for(let v of [10,100,200,300,400,500]){
+    ctx.fillText(v.toString(), xOf(v), H-padB+18);
+  }
+  ctx.textAlign='right';
+  for(let i=0;i<=5;i++){
+    const v=Math.pow(10, logMin+(logMax-logMin)*(1-i/5));
+    ctx.fillText(fmt(v), padL-8, padT+i*plotH/5+4);
+  }
+  ctx.save();
+  ctx.translate(16, padT+plotH/2);
+  ctx.rotate(-Math.PI/2);
+  ctx.textAlign='center';
+  ctx.fillText('samples (log10)',0,0);
+  ctx.restore();
+  ctx.textAlign='center';
+  ctx.fillText('dimension d', padL+plotW/2, H-8);
+
+  // baseline d
+  ctx.strokeStyle='#f59e0b';
+  ctx.lineWidth=2;
+  ctx.beginPath();
+  for(let i=0;i<=200;i++){
+    const dd=dmin+(dmax-dmin)*i/200;
+    const x=xOf(dd), y=yOf(dd);
+    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  }
+  ctx.stroke();
+
+  // lower bound
+  ctx.strokeStyle='#5eead4';
+  ctx.lineWidth=2.5;
+  ctx.beginPath();
+  for(let i=0;i<=200;i++){
+    const dd=dmin+(dmax-dmin)*i/200;
+    const T=p.c*dd*(Math.log(1/p.eps)/Math.LN2);
+    const x=xOf(dd), y=yOf(T);
+    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  }
+  ctx.stroke();
+
+  // selected d
+  const xs=xOf(p.d);
+  ctx.strokeStyle='rgba(255,255,255,0.35)';
+  ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(xs,padT); ctx.lineTo(xs,padT+plotH); ctx.stroke();
+}
+
+dSlider.addEventListener('input',render);
+epsSlider.addEventListener('input',render);
+ASlider.addEventListener('input',render);
+regimeSel.addEventListener('change',render);
+render();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

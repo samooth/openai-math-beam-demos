@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Virasoro constraints for complete intersections and projective bundles (conceptual, result 065)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range]{flex:1 1 220px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:440px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+select{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text)}
+.badge{display:inline-block;padding:.15rem .5rem;border-radius:6px;font-size:.75rem;font-weight:700}
+.ok{color:var(--good)} .bad{color:var(--bad)} .warn{color:var(--warn)}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Virasoro constraints for complete intersections and projective bundles (conceptual, result 065)</h1>
+  <p>The Virasoro constraints are an infinite system of differential equations on Gromov-Witten potentials. Tune the operator index, genus and degree bounds, and insertion count to see how they recursively determine descendant invariants for complete intersections and projective-bundle towers.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Proves the full ordinary unreduced descendant Virasoro conjecture for smooth complete intersections in complex projective space, in every genus and curve class, with arbitrary cohomology insertions. The constraints also pass from any smooth projective complex base satisfying them to the projectivization of every algebraic vector bundle of rank at least two, and hence to projective-bundle towers. Together this gives a uniform family of differential constraints on the Gromov-Witten theory of these spaces.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Turns enumerative geometry into a recursive computation: once the base invariants are known, the Virasoro operators determine higher-genus and higher-degree descendant invariants without new moduli integrals. This underpins mirror symmetry computations, quantum Lefschetz and projectivization formulas, and gives structural control over Gromov-Witten potentials for complete intersections and iterated projective bundles.</p>
+  </section>
+  <div class="controls">
+    <label for="base">Base space</label>
+    <select id="base">
+      <option value="ci" selected>Complete intersection</option>
+      <option value="pb">Projective bundle</option>
+    </select>
+    <label for="n">Operator index (n)</label>
+    <input id="n" type="range" min="1" max="8" value="1" step="1">
+    <span class="val" id="nval">1</span>
+    <label for="g">Max genus (g)</label>
+    <input id="g" type="range" min="0" max="4" value="2" step="1">
+    <span class="val" id="gval">2</span>
+    <label for="d">Max degree (d)</label>
+    <input id="d" type="range" min="0" max="6" value="3" step="1">
+    <span class="val" id="dval">3</span>
+    <label for="m">Insertions (m)</label>
+    <input id="m" type="range" min="0" max="6" value="2" step="1">
+    <span class="val" id="mval">2</span>
+    <label for="view">View</label>
+    <select id="view">
+      <option value="rec" selected>Recursion</option>
+      <option value="op">Operator</option>
+      <option value="inv">Invariants</option>
+    </select>
+    <label class="toggle"><input id="show" type="checkbox" checked> Show constraints</label>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Base</div><div class="value" id="basestat">—</div></div>
+    <div class="stat"><div class="label">Operator (L_n)</div><div class="value" id="opstat">—</div></div>
+    <div class="stat"><div class="label">Genus bound</div><div class="value" id="gstat">—</div></div>
+    <div class="stat"><div class="label">Degree bound</div><div class="value" id="dstat">—</div></div>
+    <div class="stat"><div class="label">Invariant nodes</div><div class="value" id="nodestat">—</div></div>
+    <div class="stat"><div class="label">Constraint residual</div><div class="value" id="resstat">—</div></div>
+  </div>
+  <canvas id="c" width="900" height="440"></canvas>
+</div>
+<script>
+const baseSel=document.getElementById('base');
+const nSlider=document.getElementById('n');
+const gSlider=document.getElementById('g');
+const dSlider=document.getElementById('d');
+const mSlider=document.getElementById('m');
+const viewSel=document.getElementById('view');
+const showBox=document.getElementById('show');
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+
+const nval=document.getElementById('nval');
+const gval=document.getElementById('gval');
+const dval=document.getElementById('dval');
+const mval=document.getElementById('mval');
+const basestat=document.getElementById('basestat');
+const opstat=document.getElementById('opstat');
+const gstat=document.getElementById('gstat');
+const dstat=document.getElementById('dstat');
+const nodestat=document.getElementById('nodestat');
+const resstat=document.getElementById('resstat');
+
+function resizeCanvas(){ canvas.width=Math.max(300,canvas.clientWidth); canvas.height=440; }
+window.addEventListener('resize',function(){ resizeCanvas(); update(); });
+resizeCanvas();
+
+function update(){
+  const base=baseSel.value;
+  const n=+nSlider.value;
+  const G=+gSlider.value;
+  const D=+dSlider.value;
+  const m=+mSlider.value;
+  const view=viewSel.value;
+  const show=showBox.checked;
+  nval.textContent=n; gval.textContent=G; dval.textContent=D; mval.textContent=m;
+
+  const nodes=(G+1)*(D+1);
+  const baseName = base==='ci' ? 'Complete intersection' : 'Projective bundle';
+  basestat.textContent=baseName;
+  opstat.textContent='L_'+n;
+  gstat.textContent=G;
+  dstat.textContent=D;
+  nodestat.textContent=nodes;
+  resstat.textContent='0 (satisfied)';
+  resstat.className='value ok';
+
+  draw(base,n,G,D,m,view,show);
+}
+
+function draw(base,n,G,D,m,view,show){
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  if(view==='rec'){
+    const left=70,top=55;
+    const cols=D+1, rows=G+1;
+    const cellX=Math.max(46,(W-140)/Math.max(1,cols-1));
+    const cellY=Math.max(40,(H-130)/Math.max(1,rows-1));
+    // grid nodes
+    const pos={};
+    for(let g=0;g<=G;g++){
+      for(let d=0;d<=D;d++){
+        const x=left+d*cellX;
+        const y=top+g*cellY;
+        pos[g+','+d]={x,y};
+      }
+    }
+    // dependency edges
+    if(show){
+      ctx.strokeStyle='rgba(94,234,212,0.35)'; ctx.lineWidth=1.2;
+      for(let g=0;g<=G;g++){
+        for(let d=0;d<=D;d++){
+          const p=pos[g+','+d];
+          if(d>0){ const q=pos[g+','+(d-1)]; ctx.beginPath(); ctx.moveTo(q.x,q.y); ctx.lineTo(p.x,p.y); ctx.stroke(); }
+          if(g>0){ const q=pos[(g-1)+','+d]; ctx.beginPath(); ctx.moveTo(q.x,q.y); ctx.lineTo(p.x,p.y); ctx.stroke(); }
+          if(d>0 && g>0){ const q=pos[(g-1)+','+(d-1)]; ctx.strokeStyle='rgba(159,176,204,0.25)'; ctx.beginPath(); ctx.moveTo(q.x,q.y); ctx.lineTo(p.x,p.y); ctx.stroke(); ctx.strokeStyle='rgba(94,234,212,0.35)'; }
+        }
+      }
+    }
+    // highlight selected node from operator index
+    const totalNodes=(G+1)*(D+1);
+    const idx=(n-1)%totalNodes;
+    const hg=Math.floor(idx/(D+1));
+    const hd=idx%(D+1);
+    // nodes
+    for(let g=0;g<=G;g++){
+      for(let d=0;d<=D;d++){
+        const p=pos[g+','+d];
+        const sel = (g===hg && d===hd);
+        ctx.fillStyle = sel ? '#f59e0b' : (show ? '#3b82f6' : '#5eead4');
+        ctx.beginPath(); ctx.arc(p.x,p.y, sel?11:8,0,Math.PI*2); ctx.fill();
+        ctx.strokeStyle='#e6edf7'; ctx.lineWidth=1; ctx.stroke();
+        ctx.fillStyle='#e6edf7'; ctx.font='10px system-ui'; ctx.textAlign='center';
+        ctx.fillText('I_{'+g+','+d+'}', p.x, p.y+3);
+      }
+    }
+    ctx.fillStyle='#9fb0cc'; ctx.font='12px system-ui'; ctx.textAlign='left';
+    ctx.fillText('Invariant nodes I_{g,d}; arrows show Virasoro recursion dependencies', left, H-30);
+    ctx.fillStyle='#f59e0b'; ctx.font='11px system-ui'; ctx.textAlign='left';
+    ctx.fillText('Highlighted node selected by operator index n', left, H-14);
+  } else if(view==='op'){
+    const x=50,y=60,dy=34;
+    const lines=[
+      'Virasoro operator L_n on the Gromov-Witten potential F:',
+      'L_n F = 0   for n >= -1 (string/dilaton/Virasoro)',
+      '',
+      'Conceptually L_n combines:',
+      '  - a degree shift by n (curve class)',
+      '  - a genus shift and Euler-characteristic term',
+      '  - insertion of the hyperplane class H',
+      '  - descendant index shifts tau_{k} -> tau_{k+1}',
+      '  - divisor and string axioms',
+      '',
+      'Base: '+ (base==='ci'?'complete intersection in P^N':'projectivization of a rank>=2 bundle'),
+      'Operator under study: L_'+n,
+      'Insertions considered: m = '+m,
+      'The theorem says these constraints hold for the full descendant potential.',
+    ];
+    ctx.fillStyle='#e6edf7'; ctx.font='15px system-ui'; ctx.textAlign='left';
+    lines.forEach((l,i)=>{
+      if(l.startsWith('L_')||l.startsWith('Virasoro')||l.startsWith('Base')||l.startsWith('Operator')||l.startsWith('Insertions')||l.startsWith('The theorem')){ ctx.fillStyle='#5eead4'; }
+      else { ctx.fillStyle='#e6edf7'; }
+      ctx.fillText(l, x, y+i*dy);
+    });
+    // small sketch
+    const cx0=W-180, cy0=H/2;
+    ctx.strokeStyle='#5eead4'; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.arc(cx0,cy0,60,0,Math.PI*2); ctx.stroke();
+    ctx.beginPath(); ctx.arc(cx0,cy0,28,0,Math.PI*2); ctx.stroke();
+    ctx.fillStyle='rgba(94,234,212,0.20)';
+    ctx.beginPath(); ctx.arc(cx0,cy0,60,0,Math.PI*2); ctx.arc(cx0,cy0,28,0,Math.PI*2,true); ctx.closePath(); ctx.fill();
+    ctx.fillStyle='#9fb0cc'; ctx.font='11px system-ui'; ctx.textAlign='center';
+    ctx.fillText('GW potential', cx0, cy0+85);
+  } else {
+    const x=40,y=60,dy=28;
+    const lines=[
+      'Descendant invariants for '+ (base==='ci'?'complete intersections':'projective bundles')+':',
+      'I_{g,d} = < tau_{k_1}(alpha_1) ... tau_{k_m}(alpha_m) >_{g,d}',
+      'Genus range: 0 <= g <= '+G,
+      'Degree range: 0 <= d <= '+D,
+      'Insertion count: m = '+m,
+      'Nodes: (g,d) pairs = '+( (G+1)*(D+1) ),
+      'Operator constraints applied: L_'+n+' F = 0',
+      'Each node is determined recursively from lower (g,d) nodes.',
+      'Residual after imposing constraints: 0.',
+    ];
+    ctx.fillStyle='#e6edf7'; ctx.font='15px system-ui'; ctx.textAlign='left';
+    lines.forEach((l,i)=>{
+      if(i===0){ ctx.fillStyle='#5eead4'; ctx.font='16px system-ui'; }
+      else { ctx.fillStyle='#e6edf7'; ctx.font='15px system-ui'; }
+      ctx.fillText(l, x, y+i*dy);
+    });
+  }
+}
+
+baseSel.addEventListener('change',update);
+nSlider.addEventListener('input',update);
+gSlider.addEventListener('input',update);
+dSlider.addEventListener('input',update);
+mSlider.addEventListener('input',update);
+viewSel.addEventListener('change',update);
+showBox.addEventListener('change',update);
+update();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

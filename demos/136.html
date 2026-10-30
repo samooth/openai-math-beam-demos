@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A quasilinear PCP theorem for PPAD (conceptual, result 136)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range]{flex:1 1 180px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:420px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+.legend{display:flex;gap:1rem;align-items:center;font-size:.85rem;color:var(--muted);margin:.5rem 0;flex-wrap:wrap}
+.swatch{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:.3rem;vertical-align:middle}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+.barwrap{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem}
+.bar{display:flex;height:28px;border-radius:8px;overflow:hidden;border:1px solid var(--border)}
+.bar .pass{background:var(--good)} .bar .fail{background:var(--bad)}
+.barlabel{display:flex;justify-content:space-between;font-size:.85rem;color:var(--muted);margin-top:.5rem}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>A quasilinear PCP theorem for PPAD (conceptual, result 136)</h1>
+  <p>An End-of-Line instance of length $N$ reduces to numerical circuit constraints of total length $N(\log N)^{O(1)}$ such that any polynomially encoded rational assignment satisfying all but a fixed fraction to fixed accuracy yields an endpoint solution.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Resolves the quasilinear PCP-for-PPAD conjecture of Babichenko, Papadimitriou, and Rubinstein. There are fixed positive rational constants $\varepsilon$ and $\delta$ and a deterministic polynomial-time reduction that transforms an End-of-Line instance of binary length $N$ into a generalized circuit of total binary length $N(\log N)^{O(1)}$. From any rational assignment of polynomial encoding length that $\varepsilon$-satisfies all but a $\delta$ fraction of the gates, a solution to the original End-of-Line instance can be recovered in polynomial time, regardless of which gates fail. Such assignments always exist, with one fixed polynomial bound on their encoding length.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Provides robust local verification for PPAD with only quasilinear size overhead, turning End-of-Line instances into succinctly checkable constraint systems and supporting applications to equilibrium computation, market equilibria, and the complexity of total search problems.</p>
+  </section>
+  <div class="controls">
+    <label for="N">Input length N</label>
+    <input id="N" type="range" min="10" max="100000" value="1000" step="10">
+    <span class="val" id="Nval">1000</span>
+    <label for="a">Overhead exponent a</label>
+    <input id="a" type="range" min="1" max="4" value="2" step="0.1">
+    <span class="val" id="aval">2.0</span>
+  </div>
+  <div class="controls">
+    <label for="delta">Failed-gate fraction δ</label>
+    <input id="delta" type="range" min="0.01" max="0.49" value="0.10" step="0.01">
+    <span class="val" id="dval">0.10</span>
+    <label for="eps">Accuracy ε</label>
+    <input id="eps" type="range" min="0.01" max="0.50" value="0.05" step="0.01">
+    <span class="val" id="eval">0.05</span>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">N</div><div class="value" id="sN">—</div></div>
+    <div class="stat"><div class="label">log2 N</div><div class="value" id="slog">—</div></div>
+    <div class="stat"><div class="label">Circuit length L</div><div class="value" id="sL">—</div></div>
+    <div class="stat"><div class="label">Overhead factor</div><div class="value" id="sover">—</div></div>
+    <div class="stat"><div class="label">Failed gates (δ L)</div><div class="value" id="sfail">—</div></div>
+    <div class="stat"><div class="label">Passing gates</div><div class="value" id="spass">—</div></div>
+    <div class="stat"><div class="label">Certification samples (99%)</div><div class="value" id="ssamp">—</div></div>
+    <div class="stat"><div class="label">Encoding bound N^3 (bits)</div><div class="value" id="senc">—</div></div>
+  </div>
+  <div class="barwrap">
+    <div class="bar">
+      <div class="pass" id="barpass" style="width:90%"></div>
+      <div class="fail" id="barfail" style="width:10%"></div>
+    </div>
+    <div class="barlabel">
+      <span id="barpasslabel">passing</span>
+      <span id="barfaillabel">failing</span>
+    </div>
+  </div>
+  <div class="legend">
+    <span><span class="swatch" style="background:#5eead4"></span>Quasilinear $N(\log N)^a$</span>
+    <span><span class="swatch" style="background:#94a3b8"></span>Linear $N$</span>
+    <span><span class="swatch" style="background:#f59e0b"></span>Quadratic $N^2$</span>
+    <span><span class="swatch" style="background:#ef4444"></span>Cubic $N^3$</span>
+    <span><span class="swatch" style="background:#22c55e"></span>Passing gates</span>
+    <span><span class="swatch" style="background:#ef4444"></span>Failing gates</span>
+  </div>
+  <canvas id="c" width="900" height="420"></canvas>
+  <p style="font-size:.85rem;color:var(--muted);margin-top:.5rem">Conceptual model: reduction size versus input length on a logarithmic scale, plus the robustness margin allowing a fixed fraction of gates to fail while an endpoint solution remains recoverable.</p>
+</div>
+<script>
+const NSlider=document.getElementById('N');
+const aSlider=document.getElementById('a');
+const dSlider=document.getElementById('delta');
+const eSlider=document.getElementById('eps');
+
+const Nval=document.getElementById('Nval');
+const aval=document.getElementById('aval');
+const dval=document.getElementById('dval');
+const eval=document.getElementById('eval');
+
+const sN=document.getElementById('sN');
+const slog=document.getElementById('slog');
+const sL=document.getElementById('sL');
+const sover=document.getElementById('sover');
+const sfail=document.getElementById('sfail');
+const spass=document.getElementById('spass');
+const ssamp=document.getElementById('ssamp');
+const senc=document.getElementById('senc');
+
+const barpass=document.getElementById('barpass');
+const barfail=document.getElementById('barfail');
+const barpasslabel=document.getElementById('barpasslabel');
+const barfaillabel=document.getElementById('barfaillabel');
+
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+
+function resizeCanvas(){ canvas.width=Math.max(300,canvas.clientWidth); canvas.height=420; }
+window.addEventListener('resize',function(){ resizeCanvas(); render(); });
+resizeCanvas();
+
+function fmt(x){
+  if(!isFinite(x)) return '—';
+  if(x>=1e6 || x<=1e-3) return x.toExponential(3);
+  return x.toFixed(3);
+}
+
+function updateStats(){
+  const N=+NSlider.value;
+  const a=+aSlider.value;
+  const delta=+dSlider.value;
+  const eps=+eSlider.value;
+  Nval.textContent=N;
+  aval.textContent=a.toFixed(1);
+  dval.textContent=delta.toFixed(2);
+  eval.textContent=eps.toFixed(2);
+
+  const log2N=Math.log(N)/Math.LN2;
+  const L=N*Math.pow(log2N,a);
+  const overhead=Math.pow(log2N,a);
+  const fail=Math.floor(delta*L);
+  const pass=Math.ceil((1-delta)*L);
+  const samples=Math.ceil(8*Math.log(100)/(delta*delta));
+  const enc=Math.pow(N,3);
+
+  sN.textContent=N;
+  slog.textContent=log2N.toFixed(3);
+  sL.textContent=fmt(L);
+  sover.textContent=fmt(overhead);
+  sfail.textContent=fmt(fail);
+  spass.textContent=fmt(pass);
+  ssamp.textContent=samples;
+  senc.textContent=fmt(enc);
+
+  barpass.style.width=((1-delta)*100)+'%';
+  barfail.style.width=(delta*100)+'%';
+  barpasslabel.textContent='passing '+( (1-delta)*100).toFixed(0)+'%';
+  barfaillabel.textContent='failing '+ (delta*100).toFixed(0)+'%';
+}
+
+function render(){
+  updateStats();
+  const a=+aSlider.value;
+  const Nsel=+NSlider.value;
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const padL=62,padR=20,padT=30,padB=46;
+  const plotW=W-padL-padR;
+  const plotH=H-padT-padB;
+  const logMin=1, logMax=6;
+  function xOfLog(lg){ return padL+(lg-logMin)/(logMax-logMin)*plotW; }
+  function xOfN(nn){ return xOfLog(Math.log10(nn)); }
+  const vals=[];
+  for(let i=0;i<=200;i++){
+    const lg=logMin+(logMax-logMin)*i/200;
+    const nn=Math.pow(10,lg);
+    const lgn=Math.log(nn)/Math.LN2;
+    vals.push(Math.log10(nn*Math.pow(lgn,a)));
+    vals.push(Math.log10(nn));
+    vals.push(Math.log10(nn*nn));
+    vals.push(Math.log10(nn*nn*nn));
+  }
+  const ymin=Math.min(...vals);
+  const ymax=Math.max(...vals);
+  const ypad=(ymax-ymin)*0.08;
+  const ylo=ymin-ypad, yhi=ymax+ypad;
+  function yOfLog(lg){ return padT+plotH - (lg-ylo)/(yhi-ylo)*plotH; }
+
+  ctx.strokeStyle='rgba(159,176,204,0.35)';
+  ctx.lineWidth=1;
+  for(let i=0;i<=5;i++){
+    const y=padT+i*plotH/5;
+    ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(padL+plotW,y); ctx.stroke();
+    const x=padL+i*plotW/5;
+    ctx.beginPath(); ctx.moveTo(x,padT); ctx.lineTo(x,padT+plotH); ctx.stroke();
+  }
+
+  ctx.fillStyle='rgba(159,176,204,0.9)';
+  ctx.font='12px system-ui';
+  ctx.textAlign='center';
+  for(let lg of [1,2,3,4,5,6]){
+    ctx.fillText('1e'+lg, xOfLog(lg), H-padB+18);
+  }
+  ctx.textAlign='right';
+  for(let i=0;i<=5;i++){
+    const v=ylo+(yhi-ylo)*(1-i/5);
+    ctx.fillText('1e'+v.toFixed(1), padL-8, padT+i*plotH/5+4);
+  }
+  ctx.save();
+  ctx.translate(16, padT+plotH/2);
+  ctx.rotate(-Math.PI/2);
+  ctx.textAlign='center';
+  ctx.fillText('size (log10)',0,0);
+  ctx.restore();
+  ctx.textAlign='center';
+  ctx.fillText('input length N (log10)', padL+plotW/2, H-8);
+
+  function drawCurve(fn,color,width){
+    ctx.strokeStyle=color;
+    ctx.lineWidth=width;
+    ctx.beginPath();
+    for(let i=0;i<=200;i++){
+      const lg=logMin+(logMax-logMin)*i/200;
+      const nn=Math.pow(10,lg);
+      const x=xOfLog(lg);
+      const y=yOfLog(fn(nn));
+      if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+  }
+  drawCurve(nn=>Math.log10(nn), '#94a3b8', 2);
+  drawCurve(nn=>Math.log10(nn*nn), '#f59e0b', 2);
+  drawCurve(nn=>Math.log10(nn*nn*nn), '#ef4444', 2);
+  drawCurve(nn=>Math.log10(nn*Math.pow(Math.log(nn)/Math.LN2,a)), '#5eead4', 2.5);
+
+  const xk=xOfN(Nsel);
+  ctx.strokeStyle='rgba(255,255,255,0.35)';
+  ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(xk,padT); ctx.lineTo(xk,padT+plotH); ctx.stroke();
+}
+
+NSlider.addEventListener('input',render);
+aSlider.addEventListener('input',render);
+dSlider.addEventListener('input',render);
+eSlider.addEventListener('input',render);
+render();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The David-Semmes Riesz-transform problem in higher codimension (conceptual, result 081)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range]{flex:1 1 220px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:440px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+select{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text)}
+.toggle{display:inline-flex;align-items:center;gap:.4rem}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>The David-Semmes Riesz-transform problem in higher codimension (conceptual, result 081)</h1>
+  <p>Resolves the remaining higher-codimension Riesz-transform rectifiability problem: for (d\ge4) and (2\le n\le d-2), an (n)-Ahlfors-David regular Radon measure on (\mathbb R^d) is uniformly (n)-rectifiable whenever its (n)-dimensional Riesz transform is uniformly (L^2)-bounded over all positive hard truncations. The rectifiability bounds depend only on dimension, regularity and operator bounds.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Resolves the remaining higher-codimension Riesz-transform rectifiability problem: for (d\ge4) and (2\le n\le d-2), an (n)-Ahlfors-David regular Radon measure on (\mathbb R^d) is uniformly (n)-rectifiable whenever its (n)-dimensional Riesz transform is uniformly (L^2)-bounded over all positive hard truncations. The rectifiability bounds depend only on dimension, regularity and operator bounds. Hard truncations avoid the nonintegrable singularity at the origin; uniformity over all truncation scales is the operative hypothesis.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Closes the higher-codimension case of the David-Semmes program: boundedness of a singular integral operator (the (n)-dimensional Riesz transform) characterizes uniform rectifiability of the underlying measure. It extends rectifiability criteria beyond codimension-one settings and supplies quantitative bounds depending only on ambient dimension, measure dimension, Ahlfors regularity and operator bounds. This underpins geometric measure theory, singular integrals and analytic capacity arguments in higher codimension.</p>
+  </section>
+  <div class="controls">
+    <label for="d">Ambient dimension d</label>
+    <input id="d" type="range" min="4" max="8" value="5" step="1">
+    <span class="val" id="dval">5</span>
+    <label for="n">Measure dimension n</label>
+    <input id="n" type="range" min="2" max="3" value="2" step="1">
+    <span class="val" id="nval">2</span>
+    <label for="eps">Truncation scale eps</label>
+    <input id="eps" type="range" min="1" max="100" value="20" step="1">
+    <span class="val" id="epsval">0.20</span>
+    <label for="measure">Measure type</label>
+    <select id="measure">
+      <option value="rect" selected>Rectifiable plane</option>
+      <option value="cantor">Non-rectifiable Cantor</option>
+    </select>
+    <label for="view">View</label>
+    <select id="view">
+      <option value="feas" selected>Feasibility</option>
+      <option value="riesz">Riesz bounds</option>
+      <option value="inv">Invariants</option>
+    </select>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Ambient d</div><div class="value" id="dst">—</div></div>
+    <div class="stat"><div class="label">Measure n</div><div class="value" id="nst">—</div></div>
+    <div class="stat"><div class="label">Codimension</div><div class="value" id="codest">—</div></div>
+    <div class="stat"><div class="label">Feasible range?</div><div class="value" id="feasst">—</div></div>
+    <div class="stat"><div class="label">Truncation eps</div><div class="value" id="epsst">—</div></div>
+    <div class="stat"><div class="label">Riesz norm est.</div><div class="value" id="rieszst">—</div></div>
+    <div class="stat"><div class="label">Uniformly bounded?</div><div class="value" id="boundst">—</div></div>
+    <div class="stat"><div class="label">Rectifiable?</div><div class="value" id="rectst">—</div></div>
+  </div>
+  <canvas id="c" width="900" height="440"></canvas>
+</div>
+<script>
+const dSlider=document.getElementById('d');
+const nSlider=document.getElementById('n');
+const epsSlider=document.getElementById('eps');
+const measureSel=document.getElementById('measure');
+const viewSel=document.getElementById('view');
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+
+const dval=document.getElementById('dval');
+const nval=document.getElementById('nval');
+const epsval=document.getElementById('epsval');
+const dst=document.getElementById('dst');
+const nst=document.getElementById('nst');
+const codest=document.getElementById('codest');
+const feasst=document.getElementById('feasst');
+const epsst=document.getElementById('epsst');
+const rieszst=document.getElementById('rieszst');
+const boundst=document.getElementById('boundst');
+const rectst=document.getElementById('rectst');
+
+let state={};
+
+function feasible(d,n){ return d>=4 && n>=2 && n<=d-2; }
+
+function rieszNorm(d,n,eps,type){
+  const cod=d-n;
+  const base = type==='rect' ? 1.05 + 0.05*Math.sin(eps*3) : 1.6 + 0.9*Math.log(1/eps+1)*0.25 + 0.15*cod;
+  // truncation scale effect: smaller eps -> larger norm for non-rectifiable
+  const t = Math.max(eps,1e-3);
+  const nonrect = type!=='rect' ? 1.2 + 0.8*(1/Math.sqrt(t)) * 0.05 * cod : 0;
+  return base + (type!=='rect' ? nonrect : 0.0);
+}
+
+function updateState(){
+  const d=+dSlider.value;
+  // clamp n range
+  const nmax=Math.max(2,d-2);
+  nSlider.max=nmax;
+  if(+nSlider.value>nmax) nSlider.value=nmax;
+  if(+nSlider.value<2) nSlider.value=2;
+  const n=+nSlider.value;
+  const eps=+epsSlider.value/100;
+  const type=measureSel.value;
+  const view=viewSel.value;
+  const cod=d-n;
+  const feas=feasible(d,n);
+  const rn=rieszNorm(d,n,eps,type);
+  const bounded = type==='rect' ? rn < 2.5 : rn > 2.5 || eps < 0.3;
+  const rect = type==='rect' ? (feas? 'Yes (theorem)' : 'n/a') : (feas? 'No (not bounded)' : 'n/a');
+  state={d,n,eps,type,view,cod,feas,rn,bounded,rect};
+}
+
+function updateStats(){
+  const s=state;
+  dval.textContent=s.d;
+  nval.textContent=s.n;
+  epsval.textContent=s.eps.toFixed(2);
+  dst.textContent=s.d;
+  nst.textContent=s.n;
+  codest.textContent=s.cod;
+  feasst.textContent=s.feas?'Yes':'No';
+  feasst.className='value '+(s.feas?'ok':'bad');
+  epsst.textContent=s.eps.toFixed(3);
+  rieszst.textContent=s.rn.toFixed(3);
+  boundst.textContent=s.bounded?'No':'Yes';
+  boundst.className='value '+(s.bounded?'bad':'ok');
+  // uniform boundedness means not growing; for rectifiable yes
+  const ub = (s.type==='rect') ? 'Yes' : 'No';
+  boundst.textContent=ub;
+  boundst.className='value '+(ub==='Yes'?'ok':'bad');
+  rectst.textContent=s.rect;
+  rectst.className='value '+(String(s.rect).indexOf('Yes')===0?'ok':'bad');
+}
+
+function resizeCanvas(){ canvas.width=Math.max(300,canvas.clientWidth); canvas.height=440; }
+window.addEventListener('resize',function(){ resizeCanvas(); render(); });
+resizeCanvas();
+
+function mapX(x,W){ const pad=50; return pad+x*(W-2*pad); }
+function mapY(y,H){ const pad=50; return H-pad - y*(H-2*pad); }
+
+function drawFeas(W,H,s){
+  const pad=50;
+  ctx.strokeStyle='rgba(159,176,204,0.35)'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(pad,pad); ctx.lineTo(pad,H-pad); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(pad,H-pad); ctx.lineTo(W-pad,H-pad); ctx.stroke();
+  ctx.fillStyle='#9fb0cc'; ctx.font='11px system-ui'; ctx.textAlign='center';
+  ctx.fillText('ambient dimension d', W/2, H-12);
+  ctx.save(); ctx.translate(16,H/2); ctx.rotate(-Math.PI/2); ctx.fillText('measure dimension n',0,0); ctx.restore();
+
+  // feasible region: d>=4, 2<=n<=d-2
+  ctx.fillStyle='rgba(34,197,94,0.12)';
+  for(let dd=4;dd<=8;dd++){
+    for(let nn=2;nn<=dd-2;nn++){
+      const x0=mapX((dd-4)/4,W)- (W-2*pad)/8/2;
+      // draw cells
+    }
+  }
+  // shade polygon n from 2 to d-2 for d in [4,8]
+  ctx.beginPath();
+  // top boundary n=d-2, bottom n=2
+  for(let i=0;i<=100;i++){
+    const d=4+4*i/100;
+    const n=Math.min(Math.max(2,d-2),8);
+    const x=mapX((d-4)/4,W);
+    const y=mapY(n/8,H);
+    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  }
+  for(let i=100;i>=0;i--){
+    const d=4+4*i/100;
+    const x=mapX((d-4)/4,W);
+    const y=mapY(2/8,H);
+    ctx.lineTo(x,y);
+  }
+  ctx.closePath();
+  ctx.fillStyle='rgba(34,197,94,0.12)'; ctx.fill();
+
+  // boundary lines
+  ctx.strokeStyle='#5eead4'; ctx.lineWidth=2;
+  ctx.beginPath();
+  for(let i=0;i<=100;i++){
+    const d=4+4*i/100;
+    const n=d-2;
+    const x=mapX((d-4)/4,W);
+    const y=mapY(n/8,H);
+    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  }
+  ctx.stroke();
+  ctx.strokeStyle='#f59e0b'; ctx.lineWidth=2;
+  ctx.beginPath();
+  for(let i=0;i<=100;i++){
+    const d=4+4*i/100;
+    const x=mapX((d-4)/4,W);
+    const y=mapY(2/8,H);
+    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  }
+  ctx.stroke();
+
+  // chosen point
+  const px=mapX((s.d-4)/4,W);
+  const py=mapY(s.n/8,H);
+  ctx.fillStyle=s.feas?'#22c55e':'#ef4444';
+  ctx.beginPath(); ctx.arc(px,py,8,0,Math.PI*2); ctx.fill();
+  ctx.strokeStyle='#e6edf7'; ctx.lineWidth=1.5; ctx.beginPath(); ctx.arc(px,py,8,0,Math.PI*2); ctx.stroke();
+  ctx.fillStyle='#e6edf7'; ctx.font='12px system-ui'; ctx.textAlign='left';
+  ctx.fillText('chosen (d,n)', px+12, py-8);
+
+  ctx.fillStyle='#9fb0cc'; ctx.font='11px system-ui'; ctx.textAlign='left';
+  ctx.fillText('green region: 2 <= n <= d-2, d>=4', pad, pad-10);
+  ctx.fillText('upper boundary: n=d-2', pad, pad-24);
+}
+
+function drawRiesz(W,H,s){
+  const pad=50;
+  const L=W-2*pad;
+  // axes
+  ctx.strokeStyle='rgba(159,176,204,0.35)'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(pad,pad); ctx.lineTo(pad,H-pad); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(pad,H-pad); ctx.lineTo(W-pad,H-pad); ctx.stroke();
+  ctx.fillStyle='#9fb0cc'; ctx.font='11px system-ui'; ctx.textAlign='center';
+  ctx.fillText('truncation scale eps', W/2, H-12);
+  ctx.save(); ctx.translate(16,H/2); ctx.rotate(-Math.PI/2); ctx.fillText('Riesz transform norm',0,0); ctx.restore();
+
+  // draw rectifiable curve (bounded)
+  ctx.strokeStyle='#5eead4'; ctx.lineWidth=2.5;
+  ctx.beginPath();
+  for(let i=0;i<=200;i++){
+    const eps=0.01 + (1-0.01)*i/200;
+    const x=mapX(Math.log(eps/0.01)/Math.log(1/0.01),W);
+    const y=rieszNorm(s.d,s.n,eps,'rect');
+    const py=mapY(Math.min(y/4,1),H);
+    if(i===0) ctx.moveTo(x,py); else ctx.lineTo(x,py);
+  }
+  ctx.stroke();
+  ctx.fillStyle='#5eead4'; ctx.font='11px system-ui'; ctx.textAlign='left';
+  ctx.fillText('rectifiable measure', pad+4, pad+14);
+
+  // non-rectifiable curve
+  ctx.strokeStyle='#ef4444'; ctx.lineWidth=2.5;
+  ctx.beginPath();
+  for(let i=0;i<=200;i++){
+    const eps=0.01 + (1-0.01)*i/200;
+    const x=mapX(Math.log(eps/0.01)/Math.log(1/0.01),W);
+    const y=rieszNorm(s.d,s.n,eps,'cantor');
+    const py=mapY(Math.min(y/4,1),H);
+    if(i===0) ctx.moveTo(x,py); else ctx.lineTo(x,py);
+  }
+  ctx.stroke();
+  ctx.fillStyle='#ef4444'; ctx.font='11px system-ui'; ctx.textAlign='left';
+  ctx.fillText('non-rectifiable measure', pad+4, pad+30);
+
+  // threshold line
+  const ty=mapY(2.5/4,H);
+  ctx.strokeStyle='rgba(245,158,11,0.7)'; ctx.lineWidth=1.5; ctx.setLineDash([6,4]);
+  ctx.beginPath(); ctx.moveTo(pad,ty); ctx.lineTo(W-pad,ty); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle='#f59e0b'; ctx.font='11px system-ui'; ctx.textAlign='right';
+  ctx.fillText('uniform bound threshold', W-pad-4, ty-6);
+
+  // chosen point on selected curve
+  const eps=s.eps;
+  const x=mapX(Math.log(eps/0.01)/Math.log(1/0.01),W);
+  const y=rieszNorm(s.d,s.n,eps,s.type);
+  const py=mapY(Math.min(y/4,1),H);
+  ctx.fillStyle=s.type==='rect'?'#5eead4':'#ef4444';
+  ctx.beginPath(); ctx.arc(x,py,7,0,Math.PI*2); ctx.fill();
+  ctx.strokeStyle='#e6edf7'; ctx.lineWidth=1.5; ctx.beginPath(); ctx.arc(x,py,7,0,Math.PI*2); ctx.stroke();
+}
+
+function drawInv(W,H,s){
+  const x=40,y=50,dy=24;
+  const lines=[
+    'Result 081 - David-Semmes Riesz-transform problem in higher codimension',
+    'Ambient space: R^d with d>=4',
+    'Measure dimension: 2<=n<=d-2',
+    'Hypothesis: n-dimensional Riesz transform uniformly L^2-bounded',
+    'over all positive hard truncations',
+    'Conclusion: measure is uniformly n-rectifiable',
+    'Bounds depend only on d, n, regularity, operator bounds',
+    'Chosen d = '+s.d+'   n = '+s.n+'   codimension = '+s.cod,
+    'Feasible range: '+(s.feas?'yes':'no'),
+    'Truncation eps = '+s.eps.toFixed(3),
+    'Riesz norm estimate = '+s.rn.toFixed(3),
+    'Uniformly bounded: '+(s.type==='rect'?'yes':'no'),
+    'Rectifiable: '+s.rect,
+  ];
+  ctx.fillStyle='#e6edf7'; ctx.font='14px system-ui'; ctx.textAlign='left';
+  lines.forEach((l,i)=>{
+    if(i===0){ ctx.fillStyle='#5eead4'; ctx.font='16px system-ui'; }
+    else { ctx.fillStyle='#e6edf7'; ctx.font='14px system-ui'; }
+    ctx.fillText(l, x, y+i*dy);
+  });
+  const cx0=W-170, cy0=H/2;
+  ctx.strokeStyle='#5eead4'; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.arc(cx0,cy0,62,0,Math.PI*2); ctx.stroke();
+  ctx.beginPath(); ctx.arc(cx0,cy0,30,0,Math.PI*2); ctx.stroke();
+  ctx.fillStyle='rgba(94,234,212,0.15)';
+  ctx.beginPath(); ctx.arc(cx0,cy0,62,0,Math.PI*2); ctx.arc(cx0,cy0,30,0,Math.PI*2,true); ctx.closePath(); ctx.fill();
+  ctx.fillStyle='#9fb0cc'; ctx.font='11px system-ui'; ctx.textAlign='center';
+  ctx.fillText('rectifiability', cx0, cy0+84);
+}
+
+function render(){
+  updateState();
+  updateStats();
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  if(state.view==='feas') drawFeas(W,H,state);
+  else if(state.view==='riesz') drawRiesz(W,H,state);
+  else drawInv(W,H,state);
+}
+
+dSlider.addEventListener('input',render);
+nSlider.addEventListener('input',render);
+epsSlider.addEventListener('input',render);
+measureSel.addEventListener('change',render);
+viewSel.addEventListener('change',render);
+render();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Integral density on curve character varieties — interactive demo (result 027)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --warn:#f59e0b; --good:#22c55e; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --warn:#d97706; --good:#16a34a; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range],select{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+input[type=range]{flex:1 1 180px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:4ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:520px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+table{width:100%;border-collapse:collapse;font-size:.85rem}
+th,td{padding:.35rem .45rem;border-bottom:1px solid var(--border);text-align:left}
+th{color:var(--muted);font-weight:600}
+td.num{font-family:ui-monospace,monospace}
+.legend{display:flex;gap:1rem;align-items:center;font-size:.85rem;color:var(--muted);margin:.5rem 0;flex-wrap:wrap}
+.swatch{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:.3rem;vertical-align:middle}
+.note{font-size:.9rem;color:var(--muted)}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Integral density on curve character varieties (result 027)</h1>
+  <p>Conceptual view of Litt's integral-density question for SL_r character varieties of curves: integral points accumulate in every component as the height bound grows, including prescribed quasi-unipotent boundary classes.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Resolves the determinant-one curve case of Litt's integral-density question. For every smooth connected complex algebraic curve and every rank, integral points become Zariski dense in every component of its SL_r character variety over the full ring of integers of one number field. Prescribed quasi-unipotent boundary conjugacy classes are allowed, including nonsemisimple classes.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Settles the determinant-one curve case of Litt's question over one number field, including prescribed quasi-unipotent (possibly nonsemisimple) boundary classes, with integral points Zariski dense in every component.</p>
+  </section>
+  <div class="controls">
+    <label for="g">Genus g</label>
+    <input id="g" type="range" min="0" max="4" value="1" step="1">
+    <span class="val" id="gval">1</span>
+    <label for="r">Rank r</label>
+    <input id="r" type="range" min="2" max="5" value="2" step="1">
+    <span class="val" id="rval">2</span>
+    <label for="n">Punctures</label>
+    <input id="n" type="range" min="0" max="6" value="1" step="1">
+    <span class="val" id="nval">1</span>
+  </div>
+  <div class="controls">
+    <label for="B">Height bound B</label>
+    <input id="B" type="range" min="5" max="60" value="15" step="1">
+    <span class="val" id="Bval">15</span>
+    <label for="boundary">Boundary class</label>
+    <select id="boundary">
+      <option value="semi">semisimple</option>
+      <option value="quasi" selected>quasi-unipotent</option>
+      <option value="nonsemi">nonsemisimple</option>
+    </select>
+    <button id="play">Play</button>
+    <button id="reset">Reset</button>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Components</div><div class="value" id="stComp">—</div></div>
+    <div class="stat"><div class="label">Height bound B</div><div class="value" id="stB">—</div></div>
+    <div class="stat"><div class="label">Integral points</div><div class="value" id="stPts">—</div></div>
+    <div class="stat"><div class="label">Density</div><div class="value" id="stDens">—</div></div>
+    <div class="stat"><div class="label">Components hit</div><div class="value" id="stHit">—</div></div>
+    <div class="stat"><div class="label">All components hit</div><div class="value" id="stAll">—</div></div>
+  </div>
+  <div class="legend">
+    <span><span class="swatch" style="background:rgba(94,234,212,0.25);border:1px solid #5eead4"></span>character component</span>
+    <span><span class="swatch" style="background:#5eead4"></span>integral point</span>
+    <span><span class="swatch" style="background:#f59e0b"></span>puncture / boundary</span>
+    <span><span class="swatch" style="background:#f87171"></span>selected component</span>
+  </div>
+  <canvas id="c" width="900" height="520"></canvas>
+  <section class="box">
+    <h3>Components</h3>
+    <table>
+      <thead><tr><th>#</th><th>Center</th><th>Size</th><th>Integral points</th></tr></thead>
+      <tbody id="tbl"></tbody>
+    </table>
+  </section>
+  <p class="note">Conceptual model: components are regions in a trace-coordinate projection; integral lattice points accumulate as the height bound grows, illustrating Zariski density in each component.</p>
+</div>
+<script>
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+function resize(){ canvas.width = Math.max(300, canvas.clientWidth); canvas.height = 520; }
+window.addEventListener('resize', function(){ resize(); draw(); });
+resize();
+
+const gSlider = document.getElementById('g');
+const rSlider = document.getElementById('r');
+const nSlider = document.getElementById('n');
+const BSlider = document.getElementById('B');
+const gval = document.getElementById('gval');
+const rval = document.getElementById('rval');
+const nval = document.getElementById('nval');
+const Bval = document.getElementById('Bval');
+const boundarySel = document.getElementById('boundary');
+
+let selectedComp = 0;
+let playing = false;
+let playTimer = null;
+
+function params(){
+  return { g:+gSlider.value, r:+rSlider.value, n:+nSlider.value, B:+BSlider.value, boundary:boundarySel.value };
+}
+
+function components(p){
+  const K = Math.min(9, Math.max(1, p.g + p.n + 1));
+  const arr = [];
+  const cx = 0.5, cy = 0.5;
+  const R = 0.30 + 0.02*p.n;
+  const sizeBase = 0.16 / (0.6 + 0.12*(p.r-2));
+  const boundaryFactor = p.boundary === 'quasi' ? 1.15 : (p.boundary === 'nonsemi' ? 0.9 : 1.0);
+  for (let k=0; k<K; k++){
+    const ang = (2*Math.PI*k)/K - Math.PI/2 + 0.15*p.g;
+    const rr = R*(1 + 0.12*Math.sin(k*1.7 + p.g));
+    const x = cx + rr*Math.cos(ang);
+    const y = cy + rr*Math.sin(ang);
+    const rx = sizeBase*boundaryFactor*(1 + 0.08*Math.cos(k*2.1));
+    const ry = sizeBase*boundaryFactor*(0.85 + 0.1*Math.sin(k*1.3));
+    arr.push({ idx:k, x, y, rx, ry });
+  }
+  return arr;
+}
+
+function punctures(p){
+  const pts = [];
+  const R = 0.44;
+  for (let i=0; i<p.n; i++){
+    const ang = (2*Math.PI*i)/Math.max(1,p.n) - Math.PI/2;
+    pts.push({ x:0.5+R*Math.cos(ang), y:0.5+R*Math.sin(ang) });
+  }
+  return pts;
+}
+
+function toCanvasX(x){ const padL=40, padR=40; return padL + (canvas.width-padL-padR)*x; }
+function toCanvasY(y){ const padT=40, padB=40; return padT + (canvas.height-padT-padB)*y; }
+
+function inComp(x,y,c){
+  const dx=(x-c.x)/c.rx;
+  const dy=(y-c.y)/c.ry;
+  return dx*dx + dy*dy <= 1;
+}
+
+function compute(p, comps){
+  const B = p.B;
+  const total = (2*B+1)*(2*B+1);
+  let count = 0;
+  const compCounts = new Array(comps.length).fill(0);
+  const pts = [];
+  for (let i=-B; i<=B; i++){
+    for (let j=-B; j<=B; j++){
+      const x = 0.5 + (i/(B+1))*0.42;
+      const y = 0.5 + (j/(B+1))*0.42;
+      let hit = -1;
+      for (let c=0; c<comps.length; c++){
+        if (inComp(x,y,comps[c])){ hit=c; break; }
+      }
+      if (hit>=0){
+        count++;
+        compCounts[hit]++;
+        pts.push({x,y,c:hit});
+      }
+    }
+  }
+  const hitComps = compCounts.filter(v=>v>0).length;
+  return { total, count, compCounts, pts, hitComps };
+}
+
+function draw(){
+  const p = params();
+  gval.textContent = p.g;
+  rval.textContent = p.r;
+  nval.textContent = p.n;
+  Bval.textContent = p.B;
+  const comps = components(p);
+  const ps = punctures(p);
+  const R = compute(p, comps);
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const padL=40, padR=40, padT=40, padB=40;
+  const plotW=W-padL-padR, plotH=H-padT-padB;
+
+  // grid
+  ctx.strokeStyle='rgba(159,176,204,0.12)'; ctx.lineWidth=1;
+  for (let i=0;i<=8;i++){
+    const x=padL+plotW*i/8;
+    const y=padT+plotH*i/8;
+    ctx.beginPath(); ctx.moveTo(x,padT); ctx.lineTo(x,H-padB); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(W-padR,y); ctx.stroke();
+  }
+  ctx.strokeStyle='#475569'; ctx.lineWidth=1.5;
+  ctx.beginPath(); ctx.moveTo(padL,H-padB); ctx.lineTo(W-padR,H-padB); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(padL,padT); ctx.lineTo(padL,H-padB); ctx.stroke();
+
+  // components
+  for (let c=0; c<comps.length; c++){
+    const comp = comps[c];
+    const cx = toCanvasX(comp.x);
+    const cy = toCanvasY(comp.y);
+    const rx = comp.rx*plotW;
+    const ry = comp.ry*plotH;
+    ctx.fillStyle = (c===selectedComp) ? 'rgba(248,113,113,0.22)' : 'rgba(94,234,212,0.18)';
+    ctx.strokeStyle = (c===selectedComp) ? 'rgba(248,113,113,0.95)' : 'rgba(94,234,212,0.85)';
+    ctx.lineWidth = (c===selectedComp)?2.5:2;
+    ctx.beginPath();
+    ctx.ellipse(cx,cy,rx,ry,0,0,Math.PI*2);
+    ctx.fill();
+    ctx.stroke();
+    ctx.fillStyle = (c===selectedComp)?'#f87171':'#5eead4';
+    ctx.font='12px system-ui';
+    ctx.textAlign='center';
+    ctx.fillText('C'+(c+1), cx, cy+4);
+    ctx.textAlign='left';
+  }
+
+  // integral points
+  ctx.fillStyle='rgba(94,234,212,0.9)';
+  for (let i=0;i<R.pts.length;i++){
+    const pt=R.pts[i];
+    const px=toCanvasX(pt.x);
+    const py=toCanvasY(pt.y);
+    ctx.beginPath(); ctx.arc(px,py,2,0,Math.PI*2); ctx.fill();
+  }
+
+  // punctures
+  for (let i=0;i<ps.length;i++){
+    const pt=ps[i];
+    const px=toCanvasX(pt.x);
+    const py=toCanvasY(pt.y);
+    ctx.fillStyle='#f59e0b';
+    ctx.beginPath(); ctx.arc(px,py,6,0,Math.PI*2); ctx.fill();
+    ctx.strokeStyle='rgba(245,158,11,0.4)'; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.arc(px,py,11,0,Math.PI*2); ctx.stroke();
+  }
+
+  // stats
+  document.getElementById('stComp').textContent = comps.length;
+  document.getElementById('stB').textContent = p.B;
+  document.getElementById('stPts').textContent = R.count.toLocaleString();
+  document.getElementById('stDens').textContent = (R.count/R.total).toFixed(5);
+  document.getElementById('stHit').textContent = R.hitComps+'/'+comps.length;
+  document.getElementById('stAll').textContent = (R.hitComps===comps.length) ? 'yes' : 'no';
+  document.getElementById('stAll').style.color = (R.hitComps===comps.length) ? 'var(--good)' : 'var(--warn)';
+
+  // table
+  const tbody = document.getElementById('tbl');
+  tbody.innerHTML='';
+  comps.forEach((c,i)=>{
+    const tr=document.createElement('tr');
+    if (i===selectedComp) tr.classList.add('sel');
+    tr.innerHTML = '<td>'+(i+1)+'</td><td class="num">('+c.x.toFixed(2)+', '+c.y.toFixed(2)+')</td><td class="num">'+c.rx.toFixed(3)+'×'+c.ry.toFixed(3)+'</td><td class="num">'+R.compCounts[i]+'</td>';
+    tr.addEventListener('click', function(){ selectedComp=i; draw(); });
+    tbody.appendChild(tr);
+  });
+}
+
+function update(){ draw(); }
+gSlider.addEventListener('input', update);
+rSlider.addEventListener('input', update);
+nSlider.addEventListener('input', update);
+BSlider.addEventListener('input', update);
+boundarySel.addEventListener('change', update);
+
+const playBtn=document.getElementById('play');
+playBtn.addEventListener('click', function(){
+  playing=!playing;
+  this.textContent = playing ? 'Pause' : 'Play';
+  if (playing) animate(); else clearTimeout(playTimer);
+});
+function animate(){
+  if (!playing) return;
+  if (+BSlider.value < 60){ BSlider.value = +BSlider.value + 1; }
+  else { BSlider.value = 5; }
+  draw();
+  playTimer=setTimeout(animate, 120);
+}
+document.getElementById('reset').addEventListener('click', function(){
+  playing=false; clearTimeout(playTimer); playBtn.textContent='Play';
+  gSlider.value=1; rSlider.value=2; nSlider.value=1; BSlider.value=15; boundarySel.value='quasi'; selectedComp=0;
+  update();
+});
+
+update();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hyperkähler SYZ and projective-space bases (conceptual, result 041)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range]{flex:1 1 220px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:5ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:440px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+select{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text)}
+input[type=checkbox]{width:1.1rem;height:1.1rem}
+.badge{display:inline-block;padding:.15rem .5rem;border-radius:6px;font-size:.75rem;font-weight:700}
+.ok{color:var(--good)} .warn{color:var(--warn)} .bad{color:var(--bad)}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Hyperkähler SYZ and projective-space bases (conceptual, result 041)</h1>
+  <p>A compact irreducible holomorphic symplectic (IHS) manifold (X) and a holomorphic line bundle (L) with nonzero nef isotropic first Chern class (c_1(L)) determine a Lagrangian fibration via semiample (L). For a projective Lagrangian fibration with normal projective base, the base is projective space. Toggle the data below.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Proves the strong hyperkähler SYZ conjecture: every holomorphic line bundle with nonzero nef isotropic first Chern class on a compact irreducible holomorphic symplectic Kähler manifold is semiample. It also proves that every projective Lagrangian fibration with normal projective base has projective space as its base, in every dimension and deformation type.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Converts a nef isotropic line bundle into an actual Lagrangian fibration on any IHS manifold, and forces the base of a projective Lagrangian fibration with normal projective base to be projective space. This constrains possible fibration geometries uniformly across dimensions and deformation types.</p>
+  </section>
+  <div class="controls">
+    <label for="type">Deformation type</label>
+    <select id="type">
+      <option value="k3" selected>K3 surface</option>
+      <option value="hilb">Hilbert scheme of n points on K3</option>
+      <option value="kummer">Generalized Kummer (2n-dim)</option>
+      <option value="og6">O'Grady OG6</option>
+      <option value="og10">O'Grady OG10</option>
+    </select>
+    <label for="n">Half-dimension (n)</label>
+    <input id="n" type="range" min="1" max="6" value="1" step="1">
+    <span class="val" id="nval">1</span>
+  </div>
+  <div class="controls">
+    <label><input id="nef" type="checkbox" checked> (L) nef</label>
+    <label><input id="iso" type="checkbox" checked> (c_1(L)) isotropic</label>
+    <label><input id="nonzero" type="checkbox" checked> (c_1(L)\neq 0)</label>
+    <label><input id="projective" type="checkbox" checked> Lagrangian fibration projective</label>
+    <label><input id="normal" type="checkbox" checked> Base normal projective</label>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Deformation type</div><div class="value" id="typestat">—</div></div>
+    <div class="stat"><div class="label">Half-dimension (n)</div><div class="value" id="nstat">—</div></div>
+    <div class="stat"><div class="label">(\dim X=2n)</div><div class="value" id="dimx">—</div></div>
+    <div class="stat"><div class="label">Base dimension (n)</div><div class="value" id="dimb">—</div></div>
+    <div class="stat"><div class="label">SYZ conditions</div><div class="value" id="syzcond">—</div></div>
+    <div class="stat"><div class="label">(L) semiample?</div><div class="value" id="semistat">—</div></div>
+    <div class="stat"><div class="label">Lagrangian fibration?</div><div class="value" id="fibstat">—</div></div>
+    <div class="stat"><div class="label">Base is (\mathbb P^n) ?</div><div class="value" id="basestat">—</div></div>
+  </div>
+  <canvas id="c" width="900" height="440"></canvas>
+  <section class="box">
+    <h3>Examples</h3>
+    <table>
+      <thead><tr><th>Deformation type</th><th>(n)</th><th>SYZ?</th><th>Base</th></tr></thead>
+      <tbody>
+        <tr><td>K3</td><td class="num">1</td><td class="ok">Yes</td><td class="ok">(\mathbb P^1)</td></tr>
+        <tr><td>Hilbert scheme</td><td class="num">n</td><td class="ok">Yes</td><td class="ok">(\mathbb P^n)</td></tr>
+        <tr><td>Generalized Kummer</td><td class="num">n</td><td class="ok">Yes</td><td class="ok">(\mathbb P^n)</td></tr>
+        <tr><td>O'Grady OG6/OG10</td><td class="num">3/5</td><td class="ok">Yes</td><td class="ok">(\mathbb P^n)</td></tr>
+      </tbody>
+    </table>
+  </section>
+</div>
+<script>
+const typeSel=document.getElementById('type');
+const nSlider=document.getElementById('n');
+const nefBox=document.getElementById('nef');
+const isoBox=document.getElementById('iso');
+const nonzeroBox=document.getElementById('nonzero');
+const projBox=document.getElementById('projective');
+const normalBox=document.getElementById('normal');
+
+const nval=document.getElementById('nval');
+const typestat=document.getElementById('typestat');
+const nstat=document.getElementById('nstat');
+const dimx=document.getElementById('dimx');
+const dimb=document.getElementById('dimb');
+const syzcond=document.getElementById('syzcond');
+const semistat=document.getElementById('semistat');
+const fibstat=document.getElementById('fibstat');
+const basestat=document.getElementById('basestat');
+
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+
+const fixedN={k3:1, og6:3, og10:5};
+
+function typeName(t){
+  return t==='k3'?'K3 surface': t==='hilb'?'Hilbert scheme': t==='kummer'?'Generalized Kummer': t==='og6'?'OGrady OG6':'OGrady OG10';
+}
+function isFixed(t){ return t!=='hilb' && t!=='kummer'; }
+
+function resizeCanvas(){ canvas.width=Math.max(300,canvas.clientWidth); canvas.height=440; }
+window.addEventListener('resize',function(){ resizeCanvas(); update(); });
+resizeCanvas();
+
+function update(){
+  const t=typeSel.value;
+  if(isFixed(t)){
+    nSlider.value=fixedN[t];
+    nSlider.disabled=true;
+  } else {
+    nSlider.disabled=false;
+  }
+  const n=+nSlider.value;
+  const nef=nefBox.checked;
+  const iso=isoBox.checked;
+  const nonzero=nonzeroBox.checked;
+  const projective=projBox.checked;
+  const normal=normalBox.checked;
+
+  nval.textContent=n;
+  typestat.textContent=typeName(t);
+  nstat.textContent=n;
+  dimx.textContent=2*n;
+  dimb.textContent=n;
+
+  const syz = nef && iso && nonzero;
+  syzcond.textContent = syz ? 'satisfied' : 'not satisfied';
+  syzcond.className='value '+(syz?'ok':'bad');
+  semistat.textContent = syz ? 'yes (semiample)' : 'no';
+  semistat.className='value '+(syz?'ok':'bad');
+  fibstat.textContent = syz ? 'yes (Lagrangian)' : 'not determined';
+  fibstat.className='value '+(syz?'ok':'warn');
+  const baseThm = projective && normal;
+  basestat.textContent = baseThm ? 'yes (P^'+n+')' : 'not forced';
+  basestat.className='value '+(baseThm?'ok':'warn');
+
+  draw(t,n,syz,baseThm,projective,normal);
+}
+
+function draw(t,n,syz,baseThm,projective,normal){
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const padT=30,padB=40;
+  const X={x:60,y:padT+20,w:Math.min(260,W*0.32),h:H-padT-padB-40};
+  const B={x:W-230,y:padT+90,w:170,h:120};
+
+  ctx.fillStyle='rgba(94,234,212,0.16)';
+  ctx.fillRect(X.x,X.y,X.w,X.h);
+  ctx.strokeStyle='#5eead4'; ctx.lineWidth=2;
+  ctx.strokeRect(X.x,X.y,X.w,X.h);
+  ctx.fillStyle='#e6edf7'; ctx.font='13px system-ui'; ctx.textAlign='center';
+  ctx.fillText('X (IHS)', X.x+X.w/2, X.y+18);
+  ctx.fillText(typeName(t), X.x+X.w/2, X.y+36);
+  ctx.fillText('dim = '+2*n, X.x+X.w/2, X.y+54);
+
+  if(syz){
+    ctx.strokeStyle='rgba(34,197,94,0.55)';
+    ctx.lineWidth=1.5;
+    for(let i=1;i<=n+1;i++){
+      const yy=X.y + i*(X.h/(n+2));
+      ctx.beginPath();
+      ctx.moveTo(X.x+8, yy);
+      ctx.lineTo(X.x+X.w-8, yy);
+      ctx.stroke();
+    }
+    ctx.fillStyle='#22c55e'; ctx.font='11px system-ui'; ctx.textAlign='center';
+    ctx.fillText('Lagrangian fibers', X.x+X.w/2, X.y+X.h-10);
+  } else {
+    ctx.fillStyle='#ef4444'; ctx.font='12px system-ui'; ctx.textAlign='center';
+    ctx.fillText('no semiample L', X.x+X.w/2, X.y+X.h/2);
+  }
+
+  ctx.strokeStyle='#9fb0cc'; ctx.lineWidth=2;
+  const midY=X.y+X.h/2;
+  ctx.beginPath();
+  ctx.moveTo(X.x+X.w, midY);
+  ctx.lineTo(B.x, midY);
+  ctx.stroke();
+  ctx.fillStyle='#9fb0cc'; ctx.font='16px system-ui'; ctx.textAlign='center';
+  ctx.fillText(syz ? 'f' : '—', (X.x+X.w+B.x)/2, midY-8);
+
+  if(baseThm){
+    ctx.fillStyle='rgba(245,158,11,0.18)';
+    ctx.fillRect(B.x,B.y,B.w,B.h);
+    ctx.strokeStyle='#f59e0b'; ctx.lineWidth=2;
+    ctx.strokeRect(B.x,B.y,B.w,B.h);
+    ctx.fillStyle='#e6edf7'; ctx.font='13px system-ui'; ctx.textAlign='center';
+    ctx.fillText('B ≅ P^'+n, B.x+B.w/2, B.y+20);
+    ctx.fillText('projective space', B.x+B.w/2, B.y+40);
+    ctx.fillText('dim '+n, B.x+B.w/2, B.y+62);
+    // draw P^n schematic as oval
+    ctx.strokeStyle='#f59e0b'; ctx.lineWidth=1.5;
+    ctx.beginPath();
+    ctx.ellipse(B.x+B.w/2, B.y+B.h-22, B.w*0.35, 12, 0, 0, Math.PI*2);
+    ctx.stroke();
+  } else {
+    ctx.fillStyle='rgba(159,176,204,0.12)';
+    ctx.fillRect(B.x,B.y,B.w,B.h);
+    ctx.strokeStyle='#9fb0cc'; ctx.lineWidth=2;
+    ctx.strokeRect(B.x,B.y,B.w,B.h);
+    ctx.fillStyle='#9fb0cc'; ctx.font='12px system-ui'; ctx.textAlign='center';
+    ctx.fillText('B not forced', B.x+B.w/2, B.y+20);
+    ctx.fillText(projective?'projective':'not projective', B.x+B.w/2, B.y+40);
+    ctx.fillText(normal?'normal':'not normal', B.x+B.w/2, B.y+58);
+  }
+
+  ctx.fillStyle='#9fb0cc'; ctx.font='11px system-ui'; ctx.textAlign='left';
+  ctx.fillText('SYZ: nef + isotropic + nonzero  =>  semiample L  =>  Lagrangian fibration', 60, H-18);
+  ctx.textAlign='right';
+  ctx.fillText('Base theorem: projective + normal base  =>  B ≅ P^n', W-20, H-18);
+}
+
+typeSel.addEventListener('change',update);
+nSlider.addEventListener('input',update);
+nefBox.addEventListener('change',update);
+isoBox.addEventListener('change',update);
+nonzeroBox.addEventListener('change',update);
+projBox.addEventListener('change',update);
+normalBox.addEventListener('change',update);
+update();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

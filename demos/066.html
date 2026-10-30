@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bounded klt complements for Fano contractions (conceptual, result 066)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; --info:#60a5fa; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; --info:#2563eb; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range]{flex:1 1 180px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:460px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+select{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text)}
+table{width:100%;border-collapse:collapse;font-size:.82rem}
+th,td{padding:.3rem .4rem;border-bottom:1px solid var(--border);text-align:left}
+th{color:var(--muted);font-weight:600}
+td.num{font-family:ui-monospace,monospace}
+.badge{display:inline-block;padding:.15rem .5rem;border-radius:6px;font-size:.75rem;font-weight:700}
+.ok{color:var(--good)} .warn{color:var(--warn)} .bad{color:var(--bad)}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Bounded klt complements for Fano contractions (conceptual, result 066)</h1>
+  <p>For an (\epsilon)-lc Fano contraction (f:X\to Z), tune dimension, discrepancy gap, base dimension, coefficients, and a trial local equation to see the threshold inequalities (t\le a(E;X,B)/\operatorname{ord}_E(f^*g)), the resulting uniform Cartier section, and the bounded klt complement index (N(d,\epsilon)).</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Proves the finite-rational-coefficient form of Shokurov's bounded-klt-complement conjecture for (\epsilon)-lc complex Fano-type pairs with nef anti-log-canonical divisor. For every positive integer (d) and positive rational (\epsilon), and every projective surjective morphism (f:X\to Z) of normal integral varieties with connected fibres, (\dim X=d), (K_X) (\mathbb Q)-Cartier, (X) (\epsilon)-lc, and (-K_X) ample over (Z), there is an index (N=N(d,\epsilon)) such that near every closed point (z\in Z) there is an effective (\mathbb Q)-divisor (B) with ((X,B)) klt over a neighbourhood of (z) and (N(K_X+B)) integral Cartier and linearly trivial there. The divisor and neighbourhood may depend on (f) and (z), while (N) depends only on (d) and (\epsilon). Over (\mathbb C), finite rational coefficients are handled, and the stronger real-boundary Cartier-section statement follows via Chen's equivalence.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Turns relative positivity of (-K_X) into a klt adjoint divisor with uniformly bounded torsion: instead of merely an lc complement (which may have zero discrepancies), the singularities remain strictly klt. This is the local threshold/uniform-Cartier-section content behind bounded complements, supports moduli and boundedness of Fano-type pairs, and separates the lc case (zero discrepancies allowed) from the klt case (all discrepancies positive). The argument combines normalized-volume minimization, bounded lc complements, Chen's reduction, and pinning obstructions.</p>
+  </section>
+  <div class="controls">
+    <label for="d">Dimension (d)</label>
+    <input id="d" type="range" min="1" max="6" value="3" step="1">
+    <span class="val" id="dval">3</span>
+    <label for="eps">Discrepancy gap (\epsilon)</label>
+    <input id="eps" type="range" min="0.05" max="1" value="0.2" step="0.05">
+    <span class="val" id="epsval">0.20</span>
+    <label for="base">Base dimension (\ell)</label>
+    <input id="base" type="range" min="0" max="6" value="1" step="1">
+    <span class="val" id="baseval">1</span>
+    <label for="coeff">Boundary coeff. set</label>
+    <select id="coeff">
+      <option value="1/2" selected>1/2</option>
+      <option value="1/2,2/3">1/2, 2/3</option>
+      <option value="1/3,1/2,2/3">1/3, 1/2, 2/3</option>
+      <option value="1">1 (lc boundary)</option>
+    </select>
+    <label for="fano">Fano type?</label>
+    <select id="fano">
+      <option value="yes" selected>Yes</option>
+      <option value="no">No</option>
+    </select>
+    <label for="nef">(-K_X) ample over (Z)?</label>
+
+    <select id="nef">
+      <option value="yes" selected>Yes</option>
+      <option value="no">No</option>
+    </select>
+    <label for="m">Sampled valuations</label>
+    <input id="m" type="range" min="6" max="18" value="10" step="1">
+    <span class="val" id="mval">10</span>
+    <label for="view">View</label>
+    <select id="view">
+      <option value="thresh" selected>Thresholds</option>
+      <option value="comp">Complements</option>
+      <option value="inv">Invariants</option>
+    </select>
+    <button id="regen">Regenerate valuations</button>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Dimension (d)</div><div class="value" id="dst">—</div></div>
+    <div class="stat"><div class="label">Gap (\epsilon)</div><div class="value" id="est">—</div></div>
+    <div class="stat"><div class="label">Base (\ell)</div><div class="value" id="lst">—</div></div>
+    <div class="stat"><div class="label">Hypotheses</div><div class="value" id="hypst">—</div></div>
+    <div class="stat"><div class="label">Sampled (E)</div><div class="value" id="mst">—</div></div>
+    <div class="stat"><div class="label">Uniform (\hat\tau)</div><div class="value" id="taust">—</div></div>
+    <div class="stat"><div class="label">Proxy (N) (illustrative)</div><div class="value" id="nst">—</div></div>
+    <div class="stat"><div class="label">Complement klt?</div><div class="value" id="kltst">—</div></div>
+  </div>
+  <canvas id="c" width="900" height="460"></canvas>
+  <section class="box">
+    <h3>Valuation table</h3>
+    <table>
+      <thead><tr><th>(E)</th><th>(a(E;X,B))</th><th>(\operatorname{ord}_E(f^*g))</th><th>(a/\operatorname{ord})</th><th>Status</th></tr></thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </section>
+</div>
+<script>
+const dSlider=document.getElementById('d');
+const epsSlider=document.getElementById('eps');
+const baseSlider=document.getElementById('base');
+const coeffSel=document.getElementById('coeff');
+const fanoSel=document.getElementById('fano');
+const nefSel=document.getElementById('nef');
+const mSlider=document.getElementById('m');
+const viewSel=document.getElementById('view');
+const regenBtn=document.getElementById('regen');
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+
+const dval=document.getElementById('dval');
+const epsval=document.getElementById('epsval');
+const baseval=document.getElementById('baseval');
+const mval=document.getElementById('mval');
+const dst=document.getElementById('dst');
+const est=document.getElementById('est');
+const lst=document.getElementById('lst');
+const hypst=document.getElementById('hypst');
+const mst=document.getElementById('mst');
+const taust=document.getElementById('taust');
+const nst=document.getElementById('nst');
+const kltst=document.getElementById('kltst');
+const tbody=document.getElementById('tbody');
+
+let vals=[];
+let currentM=0;
+let seed=1;
+
+function rng(){ seed=(seed*1664525+1013904223)>>>0; return seed/4294967296; }
+
+function coeffDenom(c){
+  if(c==='1/2') return 2;
+  if(c==='1/2,2/3') return 6;
+  if(c==='1/3,1/2,2/3') return 6;
+  if(c==='1') return 1;
+  return 2;
+}
+
+function genValuations(m){
+  vals=[];
+  for(let i=0;i<m;i++){
+    const a=+ (0.05 + rng()* (1.2)).toFixed(3);
+    const o=1+Math.floor(rng()*6);
+    vals.push({id:i+1,a:a,o:o});
+  }
+  currentM=m;
+}
+
+function resizeCanvas(){ canvas.width=Math.max(300,canvas.clientWidth); canvas.height=460; }
+window.addEventListener('resize',function(){ resizeCanvas(); update(); });
+resizeCanvas();
+
+function hypothesesOk(d,eps,fano,nef){
+  return fano==='yes' && nef==='yes' && d>0 && eps>0;
+}
+
+function update(){
+  const d=+dSlider.value;
+  const eps=+epsSlider.value;
+  const m=+mSlider.value;
+  const base=Math.min(+baseSlider.value,d);
+  baseSlider.value=base;
+  const coeff=coeffSel.value;
+  const fano=fanoSel.value;
+  const nef=nefSel.value;
+  const view=viewSel.value;
+
+  dval.textContent=d;
+  epsval.textContent=eps.toFixed(2);
+  baseval.textContent=base;
+  mval.textContent=m;
+
+  if(vals.length!==m) genValuations(m);
+
+  const hyp=hypothesesOk(d,eps,fano,nef);
+  const tau = vals.length? Math.min(...vals.map(v=>v.a/v.o)) : NaN;
+  const denom=coeffDenom(coeff);
+  const Nproxy = hyp ? Math.ceil((d+1)/eps)* (base+1)*denom : NaN;
+
+  dst.textContent=d;
+  est.textContent=eps.toFixed(2);
+  lst.textContent=base;
+  hypst.textContent = hyp ? 'Satisfied' : 'Not satisfied';
+  hypst.className='value '+(hyp?'ok':'bad');
+  mst.textContent=vals.length;
+  taust.textContent = hyp && vals.length ? tau.toFixed(3) : 'n/a';
+  taust.className='value '+(hyp && tau>0?'ok':'warn');
+  nst.textContent = hyp ? Nproxy : 'n/a';
+  nst.className='value '+(hyp?'ok':'warn');
+  kltst.textContent = hyp ? 'Yes (by theorem)' : 'Not guaranteed';
+  kltst.className='value '+(hyp?'ok':'bad');
+
+  // valuation table
+  tbody.innerHTML='';
+  vals.forEach(v=>{
+    const t=v.a/v.o;
+    const status = t>=tau-1e-12 ? 'minimizer' : 'above threshold';
+    const cls = t===tau ? 'warn' : 'ok';
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td>E${v.id}</td><td class="num">${v.a.toFixed(3)}</td><td class="num">${v.o}</td><td class="num">${t.toFixed(3)}</td><td class="${cls}">${status}</td>`;
+    tbody.appendChild(tr);
+  });
+
+  draw(d,eps,base,coeff,fano,nef,vals,view,hyp,tau,Nproxy);
+}
+
+function draw(d,eps,base,coeff,fano,nef,vals,view,hyp,tau,Nproxy){
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  if(view==='thresh'){
+    const padL=60,padR=30,padT=40,padB=60;
+    const plotW=W-padL-padR, plotH=H-padT-padB;
+    const maxO=Math.max(8, ...vals.map(v=>v.o))+1;
+    const maxA=Math.max(2, ...vals.map(v=>v.a))+0.5;
+    // axes
+    ctx.strokeStyle='#9fb0cc'; ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.moveTo(padL,padT); ctx.lineTo(padL,H-padB); ctx.lineTo(W-padR,H-padB); ctx.stroke();
+    ctx.fillStyle='#9fb0cc'; ctx.font='12px system-ui'; ctx.textAlign='center';
+    ctx.fillText('order ord_E(f^*g)', padL+plotW/2, H-18);
+    ctx.save(); ctx.translate(16,padT+plotH/2); ctx.rotate(-Math.PI/2); ctx.fillText('discrepancy a(E;X,B)',0,0); ctx.restore();
+
+    // ticks
+    ctx.font='10px system-ui'; ctx.textAlign='center';
+    for(let o=0;o<=maxO;o++){
+      const x=padL + (o/maxO)*plotW;
+      ctx.fillStyle='#9fb0cc'; ctx.fillText(o, x, H-padB+16);
+      ctx.strokeStyle='rgba(159,176,204,0.15)'; ctx.beginPath(); ctx.moveTo(x,padT); ctx.lineTo(x,H-padB); ctx.stroke();
+    }
+
+    // ray for tau
+    if(hyp && vals.length){
+      ctx.strokeStyle='#f59e0b'; ctx.lineWidth=2; ctx.setLineDash([6,4]);
+      ctx.beginPath();
+      ctx.moveTo(padL, H-padB);
+      const xEnd=padL+plotW;
+      const yEnd=H-padB - (tau*maxO/maxA? 0 : 0);
+      // y = H-padB - (tau*o/maxA)*plotH
+      const yAtMaxO = H-padB - (tau*maxO/maxA)*plotH;
+      ctx.lineTo(xEnd, Math.max(padT, yAtMaxO));
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle='#f59e0b'; ctx.font='11px system-ui'; ctx.textAlign='left';
+      ctx.fillText('uniform slope τ̂ = min a/ord', padL+8, padT+14);
+    }
+
+    // points
+    vals.forEach(v=>{
+      const x=padL + (v.o/maxO)*plotW;
+      const y=H-padB - (v.a/maxA)*plotH;
+      const isMin = Math.abs(v.a/v.o - tau)<1e-9;
+      ctx.fillStyle = isMin ? '#ef4444' : '#3b82f6';
+      ctx.beginPath(); ctx.arc(x,y, isMin?7:5,0,Math.PI*2); ctx.fill();
+      ctx.strokeStyle='#e6edf7'; ctx.lineWidth=1; ctx.stroke();
+      ctx.fillStyle='#e6edf7'; ctx.font='10px system-ui'; ctx.textAlign='left';
+      ctx.fillText('E'+v.id, x+8, y-6);
+    });
+
+    // status text
+    ctx.fillStyle=hyp?'#22c55e':'#ef4444';
+    ctx.font='13px system-ui'; ctx.textAlign='right';
+    ctx.fillText(hyp ? 'Uniform positive τ exists (conceptual)' : 'Hypotheses fail: no guarantee', W-padR, padT-12);
+  } else if(view==='comp'){
+    // schematic left
+    const leftX=40, baseY=H-90, topY=60, midX=W*0.38;
+    ctx.strokeStyle='#9fb0cc'; ctx.lineWidth=1.5;
+    ctx.strokeRect(leftX, topY, midX-leftX, baseY-topY);
+    ctx.fillStyle='rgba(94,234,212,0.05)'; ctx.fillRect(leftX,topY,midX-leftX,baseY-topY);
+    ctx.fillStyle='#9fb0cc'; ctx.font='12px system-ui'; ctx.textAlign='left';
+    ctx.fillText('X (Fano type over Z)', leftX+8, topY-10);
+
+    // base Z
+    ctx.strokeStyle='#5eead4'; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.moveTo(leftX, baseY+20); ctx.lineTo(midX, baseY+20); ctx.stroke();
+    ctx.fillStyle='#5eead4'; ctx.font='11px system-ui'; ctx.textAlign='center';
+    ctx.fillText('Z', (leftX+midX)/2, baseY+38);
+
+    // point z and neighbourhood
+    const zX=(leftX+midX)/2;
+    ctx.fillStyle='#f59e0b'; ctx.beginPath(); ctx.arc(zX, baseY+20,5,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#f59e0b'; ctx.font='11px system-ui'; ctx.textAlign='center';
+    ctx.fillText('z', zX, baseY+56);
+    ctx.strokeStyle='rgba(245,158,11,0.5)'; ctx.lineWidth=1.5; ctx.setLineDash([4,3]);
+    ctx.beginPath(); ctx.moveTo(zX-35, baseY+20); ctx.lineTo(zX+35, baseY+20); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle='#9fb0cc'; ctx.font='10px system-ui'; ctx.textAlign='center';
+    ctx.fillText('U', zX, baseY+12);
+
+    // fiber and divisor B
+    ctx.strokeStyle='#3b82f6'; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.moveTo(zX, topY+10); ctx.lineTo(zX, baseY-10); ctx.stroke();
+    ctx.fillStyle='#3b82f6'; ctx.font='11px system-ui'; ctx.textAlign='left';
+    ctx.fillText('fiber f^{-1}(z)', zX+8, topY+24);
+    ctx.strokeStyle='#ef4444'; ctx.lineWidth=3;
+    ctx.beginPath(); ctx.moveTo(leftX+12, baseY-45); ctx.lineTo(midX-12, baseY-45); ctx.stroke();
+    ctx.fillStyle='#ef4444'; ctx.font='11px system-ui'; ctx.textAlign='left';
+    ctx.fillText('B (klt complement)', leftX+12, baseY-52);
+
+    ctx.fillStyle='#9fb0cc'; ctx.font='11px system-ui'; ctx.textAlign='center';
+    const msg = hyp ? 'N(K_X+B) Cartier and linearly trivial over U' : 'Hypotheses fail';
+    ctx.fillStyle = hyp ? '#22c55e' : '#ef4444';
+    ctx.fillText(msg, (leftX+midX)/2, topY-26);
+
+    // bars right
+    const barX=midX+40, barW=60, baseBar=H-90;
+    const nAux = hyp ? Math.ceil(d/eps) : 0;
+    const nFinal = hyp ? Nproxy : 0;
+    const scale = Math.max(1, nFinal);
+    // auxiliary lc complement
+    const h1 = hyp ? (nAux/scale)*220 : 0;
+    ctx.fillStyle='rgba(96,165,250,0.6)'; ctx.fillRect(barX, baseBar-h1, barW, h1);
+    ctx.strokeStyle='#60a5fa'; ctx.lineWidth=1.5; ctx.strokeRect(barX, baseBar-h1, barW, h1);
+    ctx.fillStyle='#9fb0cc'; ctx.font='11px system-ui'; ctx.textAlign='center';
+    ctx.fillText('auxiliary lc index n', barX+barW/2, baseBar+18);
+    ctx.fillStyle='#e6edf7'; ctx.font='11px system-ui'; ctx.textAlign='center';
+    ctx.fillText(nAux? nAux : '—', barX+barW/2, baseBar-h1-6);
+    // final klt complement
+    const x2=barX+barW+30;
+    const h2 = hyp ? 220 : 0;
+    ctx.fillStyle='rgba(94,234,212,0.6)'; ctx.fillRect(x2, baseBar-h2, barW, h2);
+    ctx.strokeStyle='#5eead4'; ctx.lineWidth=1.5; ctx.strokeRect(x2, baseBar-h2, barW, h2);
+    ctx.fillStyle='#9fb0cc'; ctx.font='11px system-ui'; ctx.textAlign='center';
+    ctx.fillText('final klt index N', x2+barW/2, baseBar+18);
+    ctx.fillStyle='#e6edf7'; ctx.font='11px system-ui'; ctx.textAlign='center';
+    ctx.fillText(hyp ? Nproxy : '—', x2+barW/2, baseBar-h2-6);
+
+    ctx.fillStyle='#9fb0cc'; ctx.font='11px system-ui'; ctx.textAlign='left';
+    ctx.fillText('lc complements may have zero discrepancies; klt requires positive', midX+20, topY+20);
+    ctx.fillText('N depends only on d and ε (conceptually)', midX+20, topY+38);
+  } else {
+    const x=40,y=60,dy=28;
+    const lines=[
+      'Bounded klt complements: invariants (conceptual)',
+      'd = '+d+',  ε = '+eps.toFixed(2)+',  base ℓ = '+base,
+      'Coefficients: '+coeff,
+      'Fano type: '+fano+',  -K_X ample over Z: '+nef,
+      'Hypotheses satisfied: '+(hyp?'yes':'no'),
+      'Sampled valuations: '+vals.length,
+      'Uniform threshold τ̂ = '+(hyp? tau.toFixed(3):'n/a'),
+      'Proxy complement index N = '+(hyp? Nproxy:'n/a'),
+      'Theorem: N=N(d,ε) exists (non-effective)',
+      'Chen equivalence: bounded klt complements ⇔ uniform Cartier sections',
+      'Klt complement: (X,B) klt, N(K_X+B)∼0 near z',
+      'Auxiliary lc complement index n is distinct from final N',
+    ];
+    ctx.fillStyle='#e6edf7'; ctx.font='15px system-ui'; ctx.textAlign='left';
+    lines.forEach((l,i)=>{
+      if(i===0){ ctx.fillStyle='#5eead4'; ctx.font='16px system-ui'; }
+      else { ctx.fillStyle='#e6edf7'; ctx.font='15px system-ui'; }
+      ctx.fillText(l, x, y+i*dy);
+    });
+    // small sketch
+    const cx0=W-190, cy0=H/2;
+    ctx.strokeStyle='#5eead4'; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.arc(cx0,cy0,62,0,Math.PI*2); ctx.stroke();
+    ctx.beginPath(); ctx.arc(cx0,cy0,28,0,Math.PI*2); ctx.stroke();
+    ctx.fillStyle='rgba(94,234,212,0.22)';
+    ctx.beginPath(); ctx.arc(cx0,cy0,62,0,Math.PI*2); ctx.arc(cx0,cy0,28,0,Math.PI*2,true); ctx.closePath(); ctx.fill();
+    ctx.fillStyle='#9fb0cc'; ctx.font='11px system-ui'; ctx.textAlign='center';
+    ctx.fillText('threshold annulus', cx0, cy0+86);
+  }
+}
+
+dSlider.addEventListener('input',update);
+epsSlider.addEventListener('input',update);
+baseSlider.addEventListener('input',update);
+coeffSel.addEventListener('change',update);
+fanoSel.addEventListener('change',update);
+nefSel.addEventListener('change',update);
+mSlider.addEventListener('input',update);
+viewSel.addEventListener('change',update);
+regenBtn.addEventListener('click',function(){ seed=Math.floor(Math.random()*1e9); genValuations(+mSlider.value); update(); });
+update();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

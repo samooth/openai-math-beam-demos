@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Continuum phase transitions for radial pair potentials (conceptual, result 228)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+select,button{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+input[type=range]{flex:1 1 160px}
+input[type=number]{width:6rem;padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text)}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:auto;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+.legend{display:flex;gap:1rem;align-items:center;font-size:.85rem;color:var(--muted);margin:.5rem 0;flex-wrap:wrap}
+.swatch{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:.3rem;vertical-align:middle}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Continuum phase transitions for radial pair potentials (conceptual, result 228)</h1>
+  <p>Stable distance-dependent pair interactions for three-dimensional classical particles with a first-order temperature singularity: a canonical free-energy derivative jump at one inverse temperature throughout an open density interval.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Constructs admissible radial pair potentials in $\mathbb R^3$ whose canonical free energy exists for every positive inverse temperature and density. One potential has a divergent repulsive core with an integrable tail that is $o(r^{-3})$; another is bounded and continuous with tail $|\phi(r)|\le C r^{-3-1/32}$. At a common inverse temperature $\beta_c\in(1/2,3/2)$, and for every density in a nonempty open interval, the free energy has a strict finite jump between its one-sided derivatives with respect to inverse temperature. This realizes the type of transition sought in Simon's continuum problem, including over a density interval rather than at a single density.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Gives rigorous examples of first-order phase transitions in continuum particle systems with realistic radial interactions, separating the roles of short-range repulsion and long-range tail decay. The density-interval statement shows the singularity is not an isolated artifact: it persists across an open set of densities, supporting the use of radial potentials as models for temperature-driven condensation and for comparing canonical and grand-canonical descriptions.</p>
+  </section>
+  <div class="controls">
+    <label for="family">potential family</label>
+    <select id="family">
+      <option value="divergent" selected>divergent repulsive core</option>
+      <option value="bounded">bounded continuous tail</option>
+    </select>
+    <label for="rho">density $\rho$</label>
+    <input id="rho" type="range" min="0.2" max="2.6" value="1.2" step="0.01">
+    <span class="val" id="rhoval">1.20</span>
+  </div>
+  <div class="controls">
+    <label for="beta">inverse temperature $\beta$</label>
+    <input id="beta" type="range" min="0.1" max="2.0" value="1.0" step="0.01">
+    <span class="val" id="bval">1.00</span>
+    <label for="amp">interaction amplitude</label>
+    <input id="amp" type="range" min="0.5" max="2.0" value="1.0" step="0.01">
+    <span class="val" id="aval">1.00</span>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Density interval</div><div class="value" id="interval">[0.80,1.60]</div></div>
+    <div class="stat"><div class="label">In interval?</div><div class="value" id="inint">—</div></div>
+    <div class="stat"><div class="label">Critical $\beta_c$</div><div class="value" id="bc">1.00</div></div>
+    <div class="stat"><div class="label">Left derivative $d_-$</div><div class="value" id="dm">—</div></div>
+    <div class="stat"><div class="label">Right derivative $d_+$</div><div class="value" id="dp">—</div></div>
+    <div class="stat"><div class="label">Jump $d_- - d_+$</div><div class="value" id="jump">—</div></div>
+  </div>
+  <canvas id="pot" width="520" height="320"></canvas>
+  <canvas id="free" width="520" height="320"></canvas>
+  <div class="legend">
+    <span><span class="swatch" style="background:#5eead4"></span>radial potential $\phi(r)$</span>
+    <span><span class="swatch" style="background:#f59e0b"></span>canonical free energy $f(\beta,\rho)$</span>
+    <span><span class="swatch" style="background:#ef4444"></span>critical $\beta_c$</span>
+  </div>
+</div>
+<script>
+const rhoSlider = document.getElementById('rho');
+const betaSlider = document.getElementById('beta');
+const ampSlider = document.getElementById('amp');
+const familySel = document.getElementById('family');
+const rhoval = document.getElementById('rhoval');
+const bval = document.getElementById('bval');
+const aval = document.getElementById('aval');
+const bcEl = document.getElementById('bc');
+const dmEl = document.getElementById('dm');
+const dpEl = document.getElementById('dp');
+const jumpEl = document.getElementById('jump');
+const inintEl = document.getElementById('inint');
+const pot = document.getElementById('pot');
+const free = document.getElementById('free');
+const pctx = pot.getContext('2d');
+const fctx = free.getContext('2d');
+
+const INTERVAL = [0.8, 1.6];
+const BETA_C = 1.0;
+const D_MINUS = -0.5;
+const D_PLUS = -2.0;
+
+function inInterval(rho){ return rho >= INTERVAL[0] && rho <= INTERVAL[1]; }
+
+function potential(r, family, amp){
+  if (r <= 0) return NaN;
+  if (family === 'divergent'){
+    const core = amp*Math.pow(1/Math.max(r,1e-3), 10);
+    const well = -1.4*amp*Math.exp(-Math.pow((r-1.35)/0.45,2));
+    const tail = -0.35*amp*Math.pow(1+r, -3.2);
+    return core + well + tail;
+  }
+  const core = amp*(1.2/(1+Math.pow(r/0.7, 6)));
+  const well = -0.9*amp*Math.exp(-Math.pow((r-1.5)/0.6,2));
+  const tail = -0.45*amp*Math.pow(1+r, -3.03125);
+  return core + well + tail;
+}
+
+function freeEnergy(beta, rho, amp){
+  const base = -0.9*rho*amp - 0.25*Math.log(Math.max(rho,1e-6));
+  if (!inInterval(rho)){
+    const slope = -1.1;
+    return base + slope*(beta - BETA_C);
+  }
+  const left = beta <= BETA_C;
+  const slope = left ? D_MINUS : D_PLUS;
+  return base + slope*(beta - BETA_C);
+}
+
+function drawPotential(){
+  const W=pot.width, H=pot.height;
+  pctx.clearRect(0,0,W,H);
+  const family=familySel.value;
+  const amp=+ampSlider.value;
+  const pad=46;
+  const rmin=0.35, rmax=6.0;
+  const vals=[];
+  for(let i=0;i<=400;i++){
+    const r=rmin+(rmax-rmin)*i/400;
+    vals.push(potential(r,family,amp));
+  }
+  let ymin=Math.min(...vals), ymax=Math.max(...vals);
+  const margin=(ymax-ymin)*0.12 || 1;
+  ymin-=margin; ymax+=margin;
+  function X(r){ return pad + (r-rmin)/(rmax-rmin)*(W-2*pad); }
+  function Y(v){ return H-pad - (v-ymin)/(ymax-ymin)*(H-2*pad); }
+  pctx.strokeStyle='#9fb0cc'; pctx.lineWidth=1;
+  pctx.beginPath();
+  pctx.moveTo(pad, H-pad); pctx.lineTo(W-pad, H-pad);
+  pctx.moveTo(pad, pad); pctx.lineTo(pad, H-pad);
+  pctx.stroke();
+  pctx.fillStyle='#9fb0cc'; pctx.font='12px system-ui';
+  pctx.fillText('r', W-pad+4, H-pad+4);
+  pctx.fillText('φ(r)', pad-34, pad-8);
+  pctx.strokeStyle='#5eead4'; pctx.lineWidth=2;
+  pctx.beginPath();
+  let started=false;
+  for(let i=0;i<=400;i++){
+    const r=rmin+(rmax-rmin)*i/400;
+    const v=potential(r,family,amp);
+    if(!isFinite(v)){ started=false; continue; }
+    if(!started){ pctx.moveTo(X(r),Y(v)); started=true; }
+    else pctx.lineTo(X(r),Y(v));
+  }
+  pctx.stroke();
+  pctx.fillStyle='#9fb0cc'; pctx.font='11px ui-monospace,monospace';
+  pctx.fillText('family: '+family, pad+6, pad+12);
+}
+
+function drawFree(){
+  const W=free.width, H=free.height;
+  fctx.clearRect(0,0,W,H);
+  const rho=+rhoSlider.value;
+  const amp=+ampSlider.value;
+  const beta=+betaSlider.value;
+  const pad=46;
+  const bmin=0.1, bmax=2.0;
+  const vals=[];
+  for(let i=0;i<=400;i++){
+    const b=bmin+(bmax-bmin)*i/400;
+    vals.push(freeEnergy(b,rho,amp));
+  }
+  let ymin=Math.min(...vals), ymax=Math.max(...vals);
+  const margin=(ymax-ymin)*0.12 || 1;
+  ymin-=margin; ymax+=margin;
+  function X(b){ return pad + (b-bmin)/(bmax-bmin)*(W-2*pad); }
+  function Y(v){ return H-pad - (v-ymin)/(ymax-ymin)*(H-2*pad); }
+  fctx.strokeStyle='#9fb0cc'; fctx.lineWidth=1;
+  fctx.beginPath();
+  fctx.moveTo(pad, H-pad); fctx.lineTo(W-pad, H-pad);
+  fctx.moveTo(pad, pad); fctx.lineTo(pad, H-pad);
+  fctx.stroke();
+  fctx.fillStyle='#9fb0cc'; fctx.font='12px system-ui';
+  fctx.fillText('β', W-pad+4, H-pad+4);
+  fctx.fillText('f(β,ρ)', pad-38, pad-8);
+  if (inInterval(rho)){
+    fctx.strokeStyle='#f59e0b'; fctx.lineWidth=2;
+    fctx.beginPath();
+    let started=false;
+    for(let i=0;i<=400;i++){
+      const b=bmin+(bmax-bmin)*i/400;
+      if (b > BETA_C) break;
+      const v=freeEnergy(b,rho,amp);
+      if(!started){ fctx.moveTo(X(b),Y(v)); started=true; }
+      else fctx.lineTo(X(b),Y(v));
+    }
+    fctx.stroke();
+    fctx.beginPath();
+    started=false;
+    for(let i=0;i<=400;i++){
+      const b=bmin+(bmax-bmin)*i/400;
+      if (b < BETA_C) continue;
+      const v=freeEnergy(b,rho,amp);
+      if(!started){ fctx.moveTo(X(b),Y(v)); started=true; }
+      else fctx.lineTo(X(b),Y(v));
+    }
+    fctx.stroke();
+  } else {
+    fctx.strokeStyle='#f59e0b'; fctx.lineWidth=2;
+    fctx.beginPath();
+    let started=false;
+    for(let i=0;i<=400;i++){
+      const b=bmin+(bmax-bmin)*i/400;
+      const v=freeEnergy(b,rho,amp);
+      if(!started){ fctx.moveTo(X(b),Y(v)); started=true; }
+      else fctx.lineTo(X(b),Y(v));
+    }
+    fctx.stroke();
+  }
+  fctx.strokeStyle='#ef4444'; fctx.lineWidth=1.5;
+  fctx.setLineDash([4,4]);
+  fctx.beginPath();
+  fctx.moveTo(X(BETA_C), pad);
+  fctx.lineTo(X(BETA_C), H-pad);
+  fctx.stroke();
+  fctx.setLineDash([]);
+  const by=freeEnergy(beta,rho,amp);
+  fctx.fillStyle='#e6edf7';
+  fctx.beginPath();
+  fctx.arc(X(beta), Y(by), 5, 0, 2*Math.PI);
+  fctx.fill();
+}
+
+function update(){
+  const rho=+rhoSlider.value;
+  const beta=+betaSlider.value;
+  const amp=+ampSlider.value;
+  rhoval.textContent=rho.toFixed(2);
+  bval.textContent=beta.toFixed(2);
+  aval.textContent=amp.toFixed(2);
+  inintEl.textContent = inInterval(rho) ? 'yes' : 'no';
+  inintEl.style.color = inInterval(rho) ? 'var(--good)' : 'var(--bad)';
+  bcEl.textContent = BETA_C.toFixed(2);
+  if (inInterval(rho)){
+    dmEl.textContent = D_MINUS.toFixed(2);
+    dpEl.textContent = D_PLUS.toFixed(2);
+    jumpEl.textContent = (D_MINUS-D_PLUS).toFixed(2);
+  } else {
+    dmEl.textContent = '-1.10';
+    dpEl.textContent = '-1.10';
+    jumpEl.textContent = '0.00';
+  }
+  drawPotential();
+  drawFree();
+}
+
+familySel.addEventListener('change', update);
+rhoSlider.addEventListener('input', update);
+betaSlider.addEventListener('input', update);
+ampSlider.addEventListener('input', update);
+
+update();
+</script>
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

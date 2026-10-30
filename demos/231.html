@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The free uniform spanning forest is a factor of IID (conceptual, result 231)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+select,button{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+input[type=range]{flex:1 1 180px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:520px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button:hover{filter:brightness(1.1)}
+.legend{display:flex;gap:1rem;align-items:center;font-size:.85rem;color:var(--muted);margin:.5rem 0;flex-wrap:wrap}
+.swatch{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:.3rem;vertical-align:middle}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>The free uniform spanning forest is a factor of IID (conceptual, result 231)</h1>
+  <p>On every infinite connected locally finite simple unweighted graph, the free uniform spanning forest is a factor of independent vertex labels, by one isomorphism-equivariant rule using no root.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">A factor of IID is a random structure obtained as an equivariant deterministic function of independent identically distributed labels on the vertices, with no distinguished root and no extra randomness. Result 231 proves that the free uniform spanning forest (FUSF) is such a factor on every infinite connected locally finite simple unweighted graph: one Borel rule works for all such graphs. The same framework gives equivariant IID sampling for translation-invariant strongly Rayleigh binary processes on every countable group, including invariant determinantal processes whose kernels are Hermitian positive contractions; these group results need neither amenability nor finite generation, and the kernels need not be trace class.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">This settles a central problem in probability on graphs and ergodic theory: the FUSF, a natural random spanning forest arising as a weak limit of uniform spanning trees, can be generated purely from IID vertex noise in a way compatible with all graph automorphisms. It connects spanning-tree limits, negative dependence, determinantal point processes, and equivariant factorization, and it removes root-dependence and amenability assumptions from earlier constructions. The interactive view illustrates the factor idea on finite graphs: IID labels are placed on vertices, and a deterministic label-decreasing rule selects a spanning forest.</p>
+  </section>
+  <div class="controls">
+    <label for="gtype">Graph</label>
+    <select id="gtype">
+      <option value="path">Path</option>
+      <option value="cycle">Cycle</option>
+      <option value="grid" selected>Grid</option>
+      <option value="star">Star</option>
+    </select>
+    <label for="size">Size</label>
+    <input id="size" type="range" min="3" max="10" value="5" step="1">
+    <span class="val" id="sizeval">5</span>
+    <button id="regen">Regenerate labels</button>
+    <button id="reseed">New seed</button>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Vertices $V$</div><div class="value" id="sV">—</div></div>
+    <div class="stat"><div class="label">Graph edges</div><div class="value" id="sEg">—</div></div>
+    <div class="stat"><div class="label">Forest edges</div><div class="value" id="sEf">—</div></div>
+    <div class="stat"><div class="label">Components (roots)</div><div class="value" id="sComp">—</div></div>
+    <div class="stat"><div class="label">Largest component</div><div class="value" id="sLargest">—</div></div>
+    <div class="stat"><div class="label">Seed</div><div class="value" id="sSeed">—</div></div>
+  </div>
+  <div class="legend">
+    <span><span class="swatch" style="background:#94a3b8"></span>Graph edge</span>
+    <span><span class="swatch" style="background:#5eead4"></span>Selected forest edge</span>
+    <span><span class="swatch" style="background:#f59e0b"></span>Root (local minimum)</span>
+  </div>
+  <canvas id="c" width="960" height="520"></canvas>
+  <p style="font-size:.85rem;color:var(--muted);margin-top:.5rem">Each vertex receives an IID label. The deterministic rule connects every non-minimum vertex to the neighbor with the smallest label among those smaller than its own; edges always decrease labels, so the selected set is acyclic and spans all vertices. This is a factor of IID: the forest is a function of the labels alone.</p>
+  <section class="box">
+    <h3>Reading the picture</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Vertex labels are shown as two-decimal numbers. Gold vertices are local minima and are roots of forest components. Teal edges are selected by the label-decreasing rule; gray edges are present in the graph but not selected. Because every selected edge points to a strictly smaller label, no cycle can occur, and every vertex reaches a root by following selected edges.</p>
+  </section>
+</div>
+<script>
+const gtypeSel=document.getElementById('gtype');
+const sizeSlider=document.getElementById('size');
+const sizeval=document.getElementById('sizeval');
+const regenBtn=document.getElementById('regen');
+const reseedBtn=document.getElementById('reseed');
+
+const sV=document.getElementById('sV');
+const sEg=document.getElementById('sEg');
+const sEf=document.getElementById('sEf');
+const sComp=document.getElementById('sComp');
+const sLargest=document.getElementById('sLargest');
+const sSeed=document.getElementById('sSeed');
+
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+
+let seed=20260317;
+let labels=[];
+let graph={V:0,adj:[],pos:[]};
+let forestEdges=[];
+
+function rand(){
+  seed=(seed*1664525+1013904223)>>>0;
+  return seed/4294967296;
+}
+
+function buildGraph(){
+  const type=gtypeSel.value;
+  const n=+sizeSlider.value;
+  sizeval.textContent=n;
+  let V=0, adj=[], pos=[];
+  if(type==='path'){
+    V=n;
+    for(let i=0;i<V;i++){ adj.push([]); if(i>0){adj[i].push(i-1);adj[i-1].push(i);} }
+    for(let i=0;i<V;i++){ pos.push({x: (i+0.5)/V, y:0.5}); }
+  } else if(type==='cycle'){
+    V=n;
+    for(let i=0;i<V;i++){ adj.push([]); }
+    for(let i=0;i<V;i++){ const j=(i+1)%V; adj[i].push(j); adj[j].push(i); }
+    for(let i=0;i<V;i++){ const a=2*Math.PI*i/V; pos.push({x:0.5+0.42*Math.cos(a), y:0.5+0.42*Math.sin(a)}); }
+  } else if(type==='grid'){
+    const d=n;
+    V=d*d;
+    for(let i=0;i<V;i++) adj.push([]);
+    for(let r=0;r<d;r++){
+      for(let c=0;c<d;c++){
+        const id=r*d+c;
+        if(c+1<d){ adj[id].push(id+1); adj[id+1].push(id); }
+        if(r+1<d){ adj[id].push(id+d); adj[id+d].push(id); }
+      }
+    }
+    for(let r=0;r<d;r++){
+      for(let c=0;c<d;c++){
+        pos.push({x:(c+0.5)/(d+0.5)*0.85+0.075, y:(r+0.5)/(d+0.5)*0.85+0.075});
+      }
+    }
+  } else {
+    V=n;
+    for(let i=0;i<V;i++) adj.push([]);
+    for(let i=1;i<V;i++){ adj[0].push(i); adj[i].push(0); }
+    pos.push({x:0.5,y:0.5});
+    for(let i=1;i<V;i++){ const a=2*Math.PI*(i-1)/(V-1); pos.push({x:0.5+0.38*Math.cos(a), y:0.5+0.38*Math.sin(a)}); }
+  }
+  graph={V,adj,pos};
+  labels=Array.from({length:V},()=>rand());
+  graph.labels=labels;
+  computeForest();
+  updateStats();
+  draw();
+}
+
+function computeForest(){
+  const {V,adj}=graph;
+  const parent=Array(V).fill(-1);
+  const selected=new Set();
+  for(let v=0;v<V;v++){
+    let best=-1;
+    for(const u of adj[v]){
+      if(labels[u]<labels[v] && (best===-1 || labels[u]<labels[best])) best=u;
+    }
+    if(best!==-1){
+      parent[v]=best;
+      const key=v<best ? v+'-'+best : best+'-'+v;
+      selected.add(key);
+    }
+  }
+  forestEdges=[...selected].map(k=>{
+    const [a,b]=k.split('-').map(Number);
+    return {a,b};
+  });
+  graph.parent=parent;
+}
+
+function components(){
+  const {V,parent}=graph;
+  const rootOf=new Array(V);
+  function find(x){
+    let cur=x;
+    const path=[];
+    while(parent[cur]!==-1){ path.push(cur); cur=parent[cur]; }
+    for(const p of path) parent[p]=cur;
+    return cur;
+  }
+  const compSize=new Map();
+  for(let v=0;v<V;v++){
+    const r=find(v);
+    rootOf[v]=r;
+    compSize.set(r,(compSize.get(r)||0)+1);
+  }
+  return {roots:[...compSize.keys()], sizes:[...compSize.values()]};
+}
+
+function updateStats(){
+  const {V,adj}=graph;
+  let eg=0;
+  for(let i=0;i<V;i++) eg+=adj[i].length;
+  eg/=2;
+  const {roots,sizes}=components();
+  sV.textContent=V;
+  sEg.textContent=eg;
+  sEf.textContent=forestEdges.length;
+  sComp.textContent=roots.length;
+  sLargest.textContent=sizes.length?Math.max(...sizes):0;
+  sSeed.textContent=seed;
+}
+
+function draw(){
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='#1f2a44';
+  ctx.fillRect(0,0,W,H);
+  const {V,adj,pos,labels}=graph;
+  const px=p=>({x:p.x*W, y:p.y*H});
+  const roots=new Set(components().roots);
+  for(let i=0;i<V;i++){
+    for(const j of adj[i]){
+      if(j<i) continue;
+      const a=px(pos[i]), b=px(pos[j]);
+      const sel=forestEdges.some(e=>(e.a===i&&e.b===j)||(e.a===j&&e.b===i));
+      ctx.strokeStyle=sel?'#5eead4':'rgba(159,176,204,0.25)';
+      ctx.lineWidth=sel?2.5:1;
+      ctx.beginPath();
+      ctx.moveTo(a.x,a.y);
+      ctx.lineTo(b.x,b.y);
+      ctx.stroke();
+    }
+  }
+  for(let i=0;i<V;i++){
+    const p=px(pos[i]);
+    const r=roots.has(i);
+    ctx.fillStyle=r?'#f59e0b':'#1f2a44';
+    ctx.strokeStyle=r?'#f59e0b':'#5eead4';
+    ctx.lineWidth=2;
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,16,0,Math.PI*2);
+    ctx.fill();
+    ctx.stroke();
+    ctx.fillStyle='#0b1220';
+    ctx.font='bold 9px system-ui';
+    ctx.textAlign='center';
+    ctx.textBaseline='middle';
+    ctx.fillText(labels[i].toFixed(2), p.x, p.y);
+  }
+  ctx.textBaseline='alphabetic';
+}
+
+function regenerate(){
+  labels=Array.from({length:graph.V},()=>rand());
+  graph.labels=labels;
+  computeForest();
+  updateStats();
+  draw();
+}
+
+gtypeSel.addEventListener('change',buildGraph);
+sizeSlider.addEventListener('input',function(){ sizeval.textContent=sizeSlider.value; });
+sizeSlider.addEventListener('change',buildGraph);
+regenBtn.addEventListener('click',regenerate);
+reseedBtn.addEventListener('click',function(){ seed=Math.floor(Math.random()*1e9); buildGraph(); });
+
+window.addEventListener('resize',draw);
+buildGraph();
+</script>
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

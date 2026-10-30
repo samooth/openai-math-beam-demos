@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Permanence for weakly reversible reaction networks (conceptual, result 149)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range]{flex:1 1 180px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:460px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+.legend{display:flex;gap:1rem;align-items:center;font-size:.85rem;color:var(--muted);margin:.5rem 0;flex-wrap:wrap}
+.swatch{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:.3rem;vertical-align:middle}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Permanence for weakly reversible reaction networks (conceptual, result 149)</h1>
+  <p>A weakly reversible mass-action system with reactions (X\rightrightarrows 2Y) and (X\rightrightarrows Y). Slide rate constants and initial concentrations to see trajectories enter and remain in a compact absorbing set with positive lower and finite upper bounds.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Proves the permanence conjecture for every finite weakly reversible mass-action system with fixed positive rate constants. Every positive stoichiometric compatibility class, even an unbounded one, has a common compact convex forward-invariant absorbing set. All positive trajectories in that class therefore eventually share positive lower and finite upper concentration bounds.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Establishes persistence and boundedness for weakly reversible chemical reaction networks without requiring detailed balance or a Lyapunov function of a special form. It guarantees that species do not go extinct or blow up, supporting the use of mass-action kinetics as a robust model for biochemical and ecological networks.</p>
+  </section>
+  <div class="controls">
+    <label for="k1">k₁ (X→2Y)</label>
+    <input id="k1" type="range" min="0.1" max="3" value="1.0" step="0.1">
+    <span class="val" id="k1v">1.0</span>
+    <label for="k2">k₂ (2Y→X)</label>
+    <input id="k2" type="range" min="0.1" max="3" value="1.0" step="0.1">
+    <span class="val" id="k2v">1.0</span>
+  </div>
+  <div class="controls">
+    <label for="k3">k₃ (X→Y)</label>
+    <input id="k3" type="range" min="0.1" max="3" value="0.8" step="0.1">
+    <span class="val" id="k3v">0.8</span>
+    <label for="k4">k₄ (Y→X)</label>
+    <input id="k4" type="range" min="0.1" max="3" value="1.2" step="0.1">
+    <span class="val" id="k4v">1.2</span>
+  </div>
+  <div class="controls">
+    <label for="x0">X₀</label>
+    <input id="x0" type="range" min="0.1" max="5" value="2.0" step="0.1">
+    <span class="val" id="x0v">2.0</span>
+    <label for="y0">Y₀</label>
+    <input id="y0" type="range" min="0.1" max="5" value="1.0" step="0.1">
+    <span class="val" id="y0v">1.0</span>
+    <label for="T">Horizon</label>
+    <input id="T" type="range" min="5" max="40" value="20" step="1">
+    <span class="val" id="Tv">20</span>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">X (current)</div><div class="value" id="xc">—</div></div>
+    <div class="stat"><div class="label">Y (current)</div><div class="value" id="yc">—</div></div>
+    <div class="stat"><div class="label">Equilibrium X*</div><div class="value" id="xe">—</div></div>
+    <div class="stat"><div class="label">Equilibrium Y*</div><div class="value" id="ye">—</div></div>
+    <div class="stat"><div class="label">Tail min X</div><div class="value" id="mnx">—</div></div>
+    <div class="stat"><div class="label">Tail max X</div><div class="value" id="mxx">—</div></div>
+    <div class="stat"><div class="label">Tail min Y</div><div class="value" id="mny">—</div></div>
+    <div class="stat"><div class="label">Tail max Y</div><div class="value" id="mxy">—</div></div>
+  </div>
+  <div class="legend">
+    <span><span class="swatch" style="background:#5eead4"></span>Trajectory</span>
+    <span><span class="swatch" style="background:#f59e0b"></span>Equilibrium</span>
+    <span><span class="swatch" style="background:#ef4444"></span>Tail bounds</span>
+    <span><span class="swatch" style="background:#94a3b8"></span>Vector field</span>
+  </div>
+  <canvas id="c" width="900" height="460"></canvas>
+  <p style="font-size:.85rem;color:var(--muted);margin-top:.5rem">Conceptual model: mass-action ODE for a weakly reversible network. Trajectories are integrated with RK4; the tail window is the last 25% of the horizon. Bounds are empirical and illustrative of the compact absorbing set.</p>
+</div>
+<script>
+const k1s=document.getElementById('k1'), k2s=document.getElementById('k2'), k3s=document.getElementById('k3'), k4s=document.getElementById('k4');
+const x0s=document.getElementById('x0'), y0s=document.getElementById('y0'), Ts=document.getElementById('T');
+const k1v=document.getElementById('k1v'), k2v=document.getElementById('k2v'), k3v=document.getElementById('k3v'), k4v=document.getElementById('k4v');
+const x0v=document.getElementById('x0v'), y0v=document.getElementById('y0v'), Tv=document.getElementById('Tv');
+const xc=document.getElementById('xc'), yc=document.getElementById('yc'), xe=document.getElementById('xe'), ye=document.getElementById('ye');
+const mnx=document.getElementById('mnx'), mxx=document.getElementById('mxx'), mny=document.getElementById('mny'), mxy=document.getElementById('mxy');
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+
+function resizeCanvas(){ canvas.width=Math.max(300,canvas.clientWidth); canvas.height=460; }
+window.addEventListener('resize',function(){ resizeCanvas(); render(); });
+resizeCanvas();
+
+function params(){
+  return {
+    k1:+k1s.value, k2:+k2s.value, k3:+k3s.value, k4:+k4s.value,
+    x0:+x0s.value, y0:+y0s.value, T:+Ts.value
+  };
+}
+
+function deriv(x,y,p){
+  const dx=-(p.k1+p.k3)*x + p.k2*y*y + p.k4*y;
+  const dy=(2*p.k1+p.k3)*x - 2*p.k2*y*y - p.k4*y;
+  return [dx,dy];
+}
+
+function simulate(p){
+  const dt=0.02;
+  const n=Math.round(p.T/dt);
+  const xs=[p.x0], ys=[p.y0];
+  let x=p.x0, y=p.y0;
+  for(let i=0;i<n;i++){
+    const [a1,b1]=deriv(x,y,p);
+    const [a2,b2]=deriv(x+dt/2*a1,y+dt/2*b1,p);
+    const [a3,b3]=deriv(x+dt/2*a2,y+dt/2*b2,p);
+    const [a4,b4]=deriv(x+dt*a3,y+dt*b3,p);
+    x += dt/6*(a1+2*a2+2*a3+a4);
+    y += dt/6*(b1+2*b2+2*b3+b4);
+    if(!isFinite(x)||!isFinite(y)) break;
+    if(x<0) x=0; if(y<0) y=0;
+    xs.push(x); ys.push(y);
+  }
+  return {xs,ys};
+}
+
+function fmt(v){ return (typeof v==='number' && isFinite(v)) ? v.toFixed(3) : '—'; }
+
+function render(){
+  const p=params();
+  k1v.textContent=p.k1.toFixed(1);
+  k2v.textContent=p.k2.toFixed(1);
+  k3v.textContent=p.k3.toFixed(1);
+  k4v.textContent=p.k4.toFixed(1);
+  x0v.textContent=p.x0.toFixed(1);
+  y0v.textContent=p.y0.toFixed(1);
+  Tv.textContent=p.T;
+
+  const sim=simulate(p);
+  const xs=sim.xs, ys=sim.ys;
+  const lastX=xs[xs.length-1], lastY=ys[ys.length-1];
+  xc.textContent=fmt(lastX);
+  yc.textContent=fmt(lastY);
+  const yeq=p.k1*p.k4/(p.k2*p.k3);
+  const xeq=(p.k2*yeq*yeq + p.k4*yeq)/(p.k1+p.k3);
+  xe.textContent=fmt(xeq);
+  ye.textContent=fmt(yeq);
+
+  const tailStart=Math.floor(xs.length*0.75);
+  let minx=Infinity,maxx=-Infinity,miny=Infinity,maxy=-Infinity;
+  for(let i=tailStart;i<xs.length;i++){
+    minx=Math.min(minx,xs[i]); maxx=Math.max(maxx,xs[i]);
+    miny=Math.min(miny,ys[i]); maxy=Math.max(maxy,ys[i]);
+  }
+  mnx.textContent=fmt(minx); mxx.textContent=fmt(maxx);
+  mny.textContent=fmt(miny); mxy.textContent=fmt(maxy);
+
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const padL=52,padR=20,padT=24,padB=40;
+  const plotW=W-padL-padR, plotH=H-padT-padB;
+  const maxX=Math.max(5, ...xs, xeq)+1;
+  const maxY=Math.max(5, ...ys, yeq)+1;
+  function xOf(v){ return padL + (v/maxX)*plotW; }
+  function yOf(v){ return padT + plotH - (v/maxY)*plotH; }
+
+  // axes
+  ctx.strokeStyle='rgba(159,176,204,0.35)';
+  ctx.lineWidth=1;
+  for(let i=0;i<=5;i++){
+    const x=padL+i*plotW/5, y=padT+i*plotH/5;
+    ctx.beginPath(); ctx.moveTo(x,padT); ctx.lineTo(x,padT+plotH); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(padL+plotW,y); ctx.stroke();
+  }
+  ctx.fillStyle='rgba(159,176,204,0.9)';
+  ctx.font='12px system-ui';
+  ctx.textAlign='center';
+  for(let i=0;i<=5;i++){
+    ctx.fillText((maxX*i/5).toFixed(1), padL+i*plotW/5, H-padB+16);
+  }
+  ctx.textAlign='right';
+  for(let i=0;i<=5;i++){
+    ctx.fillText((maxY*(5-i)/5).toFixed(1), padL-6, padT+i*plotH/5+4);
+  }
+  ctx.textAlign='center';
+  ctx.fillText('X', padL+plotW/2, H-8);
+  ctx.save(); ctx.translate(14, padT+plotH/2); ctx.rotate(-Math.PI/2); ctx.fillText('Y',0,0); ctx.restore();
+
+  // vector field
+  const grid=18;
+  ctx.strokeStyle='rgba(159,176,204,0.45)';
+  ctx.lineWidth=1;
+  for(let i=0;i<=grid;i++){
+    for(let j=0;j<=grid;j++){
+      const xv=i/grid*maxX, yv=j/grid*maxY;
+      const [dx,dy]=deriv(xv,yv,p);
+      const mag=Math.hypot(dx,dy);
+      const scale=Math.min(0.12*maxX, 0.12*maxY)/(mag+1e-6)*0.6;
+      const u=dx*scale, v=dy*scale;
+      const x1=xOf(xv), y1=yOf(yv);
+      ctx.beginPath();
+      ctx.moveTo(x1,y1);
+      ctx.lineTo(x1+(u/maxX)*plotW, y1-(v/maxY)*plotH);
+      ctx.stroke();
+    }
+  }
+
+  // trajectory
+  ctx.strokeStyle='#5eead4';
+  ctx.lineWidth=2.2;
+  ctx.beginPath();
+  xs.forEach((v,i)=>{
+    const x=xOf(v), y=yOf(ys[i]);
+    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  });
+  ctx.stroke();
+
+  // tail bounds rectangle
+  ctx.strokeStyle='#ef4444';
+  ctx.lineWidth=1.6;
+  ctx.setLineDash([6,4]);
+  ctx.strokeRect(xOf(minx), yOf(maxy), xOf(maxx)-xOf(minx), yOf(miny)-yOf(maxy));
+  ctx.setLineDash([]);
+
+  // initial point
+  ctx.fillStyle='#e6edf7';
+  ctx.beginPath();
+  ctx.arc(xOf(p.x0), yOf(p.y0), 4, 0, Math.PI*2);
+  ctx.fill();
+
+  // equilibrium
+  ctx.fillStyle='#f59e0b';
+  ctx.beginPath();
+  ctx.arc(xOf(xeq), yOf(yeq), 5, 0, Math.PI*2);
+  ctx.fill();
+
+  // current
+  ctx.fillStyle='#5eead4';
+  ctx.beginPath();
+  ctx.arc(xOf(lastX), yOf(lastY), 4, 0, Math.PI*2);
+  ctx.fill();
+}
+
+function updateVals(){
+  k1v.textContent=(+k1s.value).toFixed(1);
+  k2v.textContent=(+k2s.value).toFixed(1);
+  k3v.textContent=(+k3s.value).toFixed(1);
+  k4v.textContent=(+k4s.value).toFixed(1);
+  x0v.textContent=(+x0s.value).toFixed(1);
+  y0v.textContent=(+y0s.value).toFixed(1);
+  Tv.textContent=Ts.value;
+}
+
+[k1s,k2s,k3s,k4s,x0s,y0s,Ts].forEach(el=>el.addEventListener('input',()=>{updateVals();render();}));
+updateVals();
+render();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

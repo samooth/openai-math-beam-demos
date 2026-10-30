@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The ℓ¹-Bass and complex Bass trace conjectures (conceptual, result 207)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+select,button{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+input[type=range]{flex:1 1 180px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:4ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+table{width:100%;border-collapse:collapse;font-size:.9rem}
+th,td{padding:.4rem .5rem;border-bottom:1px solid var(--border);text-align:left}
+th{color:var(--muted);font-weight:600}
+td.num{font-family:ui-monospace,monospace}
+canvas{width:100%;height:320px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>The ℓ¹-Bass and complex Bass trace conjectures (conceptual, result 207)</h1>
+  <p>For a discrete group $G$, Hattori--Stallings traces of idempotents over $\ell^1(G)$ are supported on finitely many finite-order conjugacy classes; over $\mathbb C[G]$, traces vanish on infinite-order classes. For torsion-free $G$, idempotents are $0$ or $1$.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Proves the $\ell^1$-Bass conjecture for every discrete group: Hattori--Stallings traces of idempotent matrices over $\ell^1(G)$ are supported on finitely many conjugacy classes, all of finite order. The algebraic companion proves the complex Bass trace conjecture for every group: the trace of each virtual class in $K_0(\mathbb C[G])$ vanishes on conjugacy classes of infinite-order elements, with no finiteness or geometric hypothesis on $G$. For torsion-free $G$, it identifies the trace on $K_0(\mathbb C[G])$ with the integral augmentation rank and proves Kaplansky's idempotent conjecture in characteristic zero: for every commutative unital domain $R$ of characteristic zero, an idempotent in $R[G]$ is $0$ or $1$.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Separates finite-order (torsion) data from infinite-order behavior in group-ring traces: finite support in the Banach $\ell^1$ setting and vanishing in the complex algebraic setting. For torsion-free groups it makes the augmentation rank a complete trace invariant and reduces idempotents to trivial ones, with consequences for $K$-theory, operator algebras, and the Kaplansky idempotent program.</p>
+  </section>
+  <div class="controls">
+    <label for="scenario">Scenario</label>
+    <select id="scenario">
+      <option value="finite">Finite group</option>
+      <option value="torsion">Infinite group with torsion</option>
+      <option value="torsionfree">Torsion-free group</option>
+    </select>
+    <label for="F">Finite-order classes</label>
+    <input id="F" type="range" min="1" max="8" value="4">
+    <span class="val" id="Fv">4</span>
+    <label for="I">Infinite-order classes</label>
+    <input id="I" type="range" min="0" max="8" value="5">
+    <span class="val" id="Iv">5</span>
+    <button id="randBtn">Random trace</button>
+    <button id="applyBtn">Apply Bass theorem</button>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Finite-order classes</div><div class="value" id="sF">—</div></div>
+    <div class="stat"><div class="label">Infinite-order classes</div><div class="value" id="sI">—</div></div>
+    <div class="stat"><div class="label">Nonzero finite traces</div><div class="value" id="snf">—</div></div>
+    <div class="stat"><div class="label">Nonzero infinite traces</div><div class="value" id="sni">—</div></div>
+    <div class="stat"><div class="label">Trace support size</div><div class="value" id="ssup">—</div></div>
+    <div class="stat"><div class="label">Bass condition</div><div class="value" id="scond">—</div></div>
+  </div>
+  <canvas id="cv" width="900" height="320"></canvas>
+  <table>
+    <thead><tr><th>Class</th><th>Type</th><th>Trace contribution</th><th>Status</th></tr></thead>
+    <tbody id="tbody"></tbody>
+  </table>
+</div>
+<script>
+const scenarioSel = document.getElementById('scenario');
+const FSlider = document.getElementById('F');
+const ISlider = document.getElementById('I');
+const Fv = document.getElementById('Fv');
+const Iv = document.getElementById('Iv');
+const randBtn = document.getElementById('randBtn');
+const applyBtn = document.getElementById('applyBtn');
+const sF = document.getElementById('sF');
+const sI = document.getElementById('sI');
+const snf = document.getElementById('snf');
+const sni = document.getElementById('sni');
+const ssup = document.getElementById('ssup');
+const scond = document.getElementById('scond');
+const cv = document.getElementById('cv');
+const ctx = cv.getContext('2d');
+const tbody = document.getElementById('tbody');
+
+const presets = {
+  finite: { F:6, I:0 },
+  torsion: { F:4, I:5 },
+  torsionfree: { F:1, I:6 }
+};
+
+let F = 4, I = 5;
+let trace = [];
+
+function fmt(x){ return (Math.round(x*1000)/1000).toFixed(3); }
+
+function randomTrace() {
+  trace = [];
+  for (let i=0;i<F;i++) {
+    let v = Math.random()*2 - 1;
+    if (Math.abs(v) < 0.08) v = 0.35 * (Math.random() < 0.5 ? -1 : 1);
+    trace.push(v);
+  }
+  for (let j=0;j<I;j++) {
+    let v = Math.random()*2 - 1;
+    if (Math.abs(v) < 0.08) v = 0.4 * (Math.random() < 0.5 ? -1 : 1);
+    trace.push(v);
+  }
+  update();
+}
+
+function applyBass() {
+  for (let k=F;k<trace.length;k++) trace[k] = 0;
+  update();
+}
+
+function update() {
+  Fv.textContent = F;
+  Iv.textContent = I;
+  sF.textContent = F;
+  sI.textContent = I;
+  let nf = 0, ni = 0;
+  for (let i=0;i<F;i++) if (Math.abs(trace[i]) > 1e-9) nf++;
+  for (let j=0;j<I;j++) if (Math.abs(trace[F+j]) > 1e-9) ni++;
+  snf.textContent = nf;
+  sni.textContent = ni;
+  ssup.textContent = nf;
+  scond.textContent = (ni === 0) ? 'satisfied' : 'violated';
+  scond.className = 'value ' + (ni === 0 ? 'ok' : 'bad');
+  renderTable();
+  draw();
+}
+
+function renderTable() {
+  tbody.innerHTML = '';
+  for (let i=0;i<F;i++) {
+    const v = trace[i] || 0;
+    const tr = document.createElement('tr');
+    tr.innerHTML = '<td>F'+(i+1)+'</td><td>finite order</td><td class="num">'+fmt(v)+'</td><td class="'+(Math.abs(v)>1e-9?'ok':'muted')+'">'+(Math.abs(v)>1e-9?'nonzero':'zero')+'</td>';
+    tbody.appendChild(tr);
+  }
+  for (let j=0;j<I;j++) {
+    const v = trace[F+j] || 0;
+    const tr = document.createElement('tr');
+    tr.innerHTML = '<td>I'+(j+1)+'</td><td>infinite order</td><td class="num">'+fmt(v)+'</td><td class="'+(Math.abs(v)>1e-9?'bad':'ok')+'">'+(Math.abs(v)>1e-9?'must vanish':'zero')+'</td>';
+    tbody.appendChild(tr);
+  }
+}
+
+function draw() {
+  const W = cv.width, H = cv.height;
+  ctx.clearRect(0,0,W,H);
+  const textColor = (getComputedStyle(document.documentElement).getPropertyValue('--text') || '#e6edf7').trim();
+  const muted = (getComputedStyle(document.documentElement).getPropertyValue('--muted') || '#9fb0cc').trim();
+  const n = F + I;
+  if (n === 0) return;
+  const maxAbs = Math.max(0.5, ...trace.map(v => Math.abs(v)));
+  const pad = 40;
+  const bottom = H - 40;
+  const top = 30;
+  const usable = bottom - top;
+  const slot = (W - 2*pad) / n;
+  const barW = Math.min(46, slot*0.7);
+  // axis
+  ctx.strokeStyle = muted;
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(pad, bottom);
+  ctx.lineTo(W-pad, bottom);
+  ctx.stroke();
+  ctx.fillStyle = muted;
+  ctx.font = '12px system-ui';
+  ctx.textAlign = 'center';
+  ctx.fillText('trace contribution', 14, top-8);
+  for (let k=0;k<n;k++) {
+    const v = trace[k] || 0;
+    const x = pad + slot*k + (slot-barW)/2;
+    const h = (Math.abs(v)/maxAbs) * (usable*0.85);
+    const y = v >= 0 ? bottom - h : bottom;
+    const color = k < F ? '#5eead4' : '#ef4444';
+    ctx.fillStyle = color;
+    ctx.fillRect(x, y, barW, h);
+    // label
+    ctx.fillStyle = muted;
+    ctx.font = '11px monospace';
+    ctx.textAlign = 'center';
+    const name = k < F ? 'F'+(k+1) : 'I'+(k-F+1);
+    ctx.fillText(name, x+barW/2, bottom+16);
+    ctx.fillStyle = textColor;
+    ctx.font = '10px monospace';
+    ctx.fillText(fmt(v), x+barW/2, v>=0 ? y-4 : y+h+12);
+  }
+  ctx.fillStyle = muted;
+  ctx.font = '13px system-ui';
+  ctx.textAlign = 'center';
+  ctx.fillText('Finite-order classes may carry trace; infinite-order classes must have trace 0', W/2, 18);
+}
+
+function setScenario(s) {
+  const p = presets[s];
+  F = p.F;
+  I = p.I;
+  FSlider.value = F;
+  ISlider.value = I;
+  randomTrace();
+}
+
+scenarioSel.addEventListener('change', () => setScenario(scenarioSel.value));
+FSlider.addEventListener('input', () => { F = +FSlider.value; if (trace.length !== F+I) randomTrace(); else update(); });
+ISlider.addEventListener('input', () => { I = +ISlider.value; if (trace.length !== F+I) randomTrace(); else update(); });
+randBtn.addEventListener('click', randomTrace);
+applyBtn.addEventListener('click', applyBass);
+
+setScenario('torsion');
+</script>
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

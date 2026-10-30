@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The existential theory of the reals and existential–universal sentences in the counting hierarchy (conceptual, result 141)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+select{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+input[type=range]{flex:1 1 180px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:460px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+.legend{display:flex;gap:1rem;align-items:center;font-size:.85rem;color:var(--muted);margin:.5rem 0;flex-wrap:wrap}
+.swatch{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:.3rem;vertical-align:middle}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>The existential theory of the reals and existential–universal sentences in the counting hierarchy (conceptual, result 141)</h1>
+  <p>Proves that the existential theory of the reals lies in the counting hierarchy. More generally, truth of existential–universal real sentences can be decided at one fixed level of that hierarchy, even when their integer polynomials are specified by arithmetic circuits.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">The existential theory of the reals asks whether a sentence (\exists x_1,\dots,x_n\in\mathbb R) with polynomial inequalities has a solution. Result 141 proves that this decision problem lies in the counting hierarchy (\mathrm{CH}), improving the classical PSPACE upper bound. More generally, truth of existential–universal real sentences (\exists x\forall yP(x,y)) with real variables can be decided at one fixed level of (\mathrm{CH}), even when the defining integer polynomials are specified compactly by arithmetic circuits rather than expanded coefficient lists. Thus real quantifier elimination and alternation can be placed inside a counting-based hierarchy, with the circuit representation not increasing the hierarchy level.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">This separates the complexity of real-number decision problems from full PSPACE and ties them to counting classes such as (\mathrm{PP}) and its relativized levels. It shows that existential–universal real geometry has a fixed counting-hierarchy cost, including for compressed polynomial representations, guiding reductions from geometry, optimization, and verification problems and clarifying the boundary between algebraic and counting complexity.</p>
+  </section>
+  <div class="controls">
+    <label for="prob">Problem variant</label>
+    <select id="prob">
+      <option value="0">ETR (∃ real variables)</option>
+      <option value="1">∃∀ real sentences</option>
+      <option value="2">Arithmetic-circuit ∃∀ real sentences</option>
+    </select>
+    <label for="k">Counting level k</label>
+    <input id="k" type="range" min="1" max="6" value="2" step="1">
+    <span class="val" id="kval">2</span>
+  </div>
+  <div class="controls">
+    <label for="n">Input size n</label>
+    <input id="n" type="range" min="10" max="100000" value="1000" step="10">
+    <span class="val" id="nval">1000</span>
+    <label for="deg">Polynomial degree</label>
+    <input id="deg" type="range" min="1" max="8" value="3" step="1">
+    <span class="val" id="degval">3</span>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Problem</div><div class="value" id="sprob">—</div></div>
+    <div class="stat"><div class="label">Containing class</div><div class="value" id="sclass">—</div></div>
+    <div class="stat"><div class="label">Counting level</div><div class="value" id="slevel">—</div></div>
+    <div class="stat"><div class="label">Compressed circuits</div><div class="value" id="scirc">—</div></div>
+    <div class="stat"><div class="label">Input size n</div><div class="value" id="sn">—</div></div>
+    <div class="stat"><div class="label">Degree</div><div class="value" id="sdeg">—</div></div>
+    <div class="stat"><div class="label">Placement</div><div class="value" id="splace">—</div></div>
+    <div class="stat"><div class="label">Relation to PSPACE</div><div class="value" id="srel">—</div></div>
+  </div>
+  <div class="legend">
+    <span><span class="swatch" style="background:#22c55e"></span>P / NP</span>
+    <span><span class="swatch" style="background:#5eead4"></span>Counting level (C_kP)</span>
+    <span><span class="swatch" style="background:#f59e0b"></span>Polynomial hierarchy</span>
+    <span><span class="swatch" style="background:#94a3b8"></span>PSPACE</span>
+    <span><span class="swatch" style="background:#ef4444"></span>Selected problem</span>
+  </div>
+  <canvas id="c" width="900" height="460"></canvas>
+  <p style="font-size:.85rem;color:var(--muted);margin-top:.5rem">Conceptual model: complexity classes relevant to real decision problems. ETR lies in (\mathrm{CH}); existential–universal real sentences lie at one fixed counting level, including when polynomials are given by arithmetic circuits. The selected marker shows the containing class relative to P, NP, the polynomial hierarchy, and PSPACE.</p>
+</div>
+<script>
+const probSel=document.getElementById('prob');
+const kSlider=document.getElementById('k');
+const nSlider=document.getElementById('n');
+const degSlider=document.getElementById('deg');
+
+const kval=document.getElementById('kval');
+const nval=document.getElementById('nval');
+const degval=document.getElementById('degval');
+
+const sprob=document.getElementById('sprob');
+const sclass=document.getElementById('sclass');
+const slevel=document.getElementById('slevel');
+const scirc=document.getElementById('scirc');
+const sn=document.getElementById('sn');
+const sdeg=document.getElementById('sdeg');
+const splace=document.getElementById('splace');
+const srel=document.getElementById('srel');
+
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+
+function resizeCanvas(){ canvas.width=Math.max(300,canvas.clientWidth); canvas.height=460; }
+window.addEventListener('resize',function(){ resizeCanvas(); render(); });
+resizeCanvas();
+
+function problemName(v){
+  return v==='0'?'ETR (∃ real)':v==='1'?'∃∀ real sentences':'Arithmetic-circuit ∃∀ real sentences';
+}
+function containingClass(v,k){
+  if(v==='0') return 'CH (fixed level)';
+  return 'C_'+k+'P';
+}
+function compressed(v){ return v==='2'?'Yes (arithmetic circuits)':'No (expanded)'; }
+
+function updateStats(){
+  const v=probSel.value;
+  const k=+kSlider.value;
+  const n=+nSlider.value;
+  const deg=+degSlider.value;
+  kval.textContent=k;
+  nval.textContent=n;
+  degval.textContent=deg;
+  sprob.textContent=problemName(v);
+  sclass.textContent=containingClass(v,k);
+  slevel.textContent=v==='0'?'fixed (≤ '+k+')':k;
+  scirc.textContent=compressed(v);
+  sn.textContent=n;
+  sdeg.textContent=deg;
+  splace.textContent='In CH, hence in PSPACE';
+  srel.textContent='CH ⊆ PSPACE';
+}
+
+function render(){
+  updateStats();
+  const v=probSel.value;
+  const k=+kSlider.value;
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const padL=70,padR=30,padT=30,padB=40;
+  const plotW=W-padL-padR;
+  const plotH=H-padT-padB;
+  const classes=[
+    {name:'P', color:'#22c55e'},
+    {name:'NP', color:'#22c55e'},
+    {name:'PH', color:'#f59e0b'},
+    {name:'CH', color:'#5eead4'},
+    {name:'PSPACE', color:'#94a3b8'}
+  ];
+  const n=classes.length;
+  const bandH=plotH/n;
+  for(let i=0;i<n;i++){
+    const y=padT+(n-1-i)*bandH;
+    ctx.fillStyle=classes[i].color+'22';
+    ctx.fillRect(padL,y,plotW,bandH);
+    ctx.strokeStyle=classes[i].color;
+    ctx.lineWidth=1.5;
+    ctx.strokeRect(padL,y,plotW,bandH);
+    ctx.fillStyle=classes[i].color;
+    ctx.font='bold 15px system-ui';
+    ctx.textAlign='left';
+    ctx.fillText(classes[i].name, padL+8, y+bandH/2+5);
+  }
+  // selected marker position
+  let idx;
+  if(v==='0') idx=3; // CH
+  else idx=3; // C_kP inside CH
+  const y=padT+(n-1-idx)*bandH + bandH/2;
+  const x=padL+plotW*0.72;
+  ctx.fillStyle='#ef4444';
+  ctx.beginPath();
+  ctx.arc(x,y,9,0,Math.PI*2);
+  ctx.fill();
+  ctx.fillStyle='#fff';
+  ctx.font='bold 12px system-ui';
+  ctx.textAlign='center';
+  ctx.fillText(v==='0'?'ETR':v==='1'?'∃∀':'circ', x, y+4);
+  // k label
+  ctx.fillStyle='#5eead4';
+  ctx.font='12px system-ui';
+  ctx.textAlign='left';
+  ctx.fillText('k = '+k, padL+8, padT-10);
+  ctx.fillStyle='rgba(159,176,204,0.9)';
+  ctx.font='12px system-ui';
+  ctx.textAlign='center';
+  ctx.fillText('Complexity landscape (conceptual)', padL+plotW/2, H-12);
+}
+
+probSel.addEventListener('change',render);
+kSlider.addEventListener('input',render);
+nSlider.addEventListener('input',render);
+degSlider.addEventListener('input',render);
+render();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

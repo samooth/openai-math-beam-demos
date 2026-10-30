@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Erdős’s reciprocal-sum conjecture and quasipolynomial Szemerédi bounds (conceptual, result 159)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range]{flex:1 1 180px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+select{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:520px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+.legend{display:flex;gap:1rem;align-items:center;font-size:.85rem;color:var(--muted);margin:.5rem 0;flex-wrap:wrap}
+.swatch{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:.3rem;vertical-align:middle}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Erdős’s reciprocal-sum conjecture and quasipolynomial Szemerédi bounds (conceptual, result 159)</h1>
+  <p>Builds subsets of (\{1,\dots,N\}), detects arithmetic progressions, and compares their size and reciprocal sum with the quasipolynomial Szemerédi bound (C_k N\exp[-c_k(\log N)^{\varepsilon_k}]).</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Erdős’s reciprocal-sum conjecture asks whether every set of positive integers with divergent reciprocal sum contains arithmetic progressions of every finite length. Result 159 proves this: for every (k\ge 3), such a set contains a nonconstant (k)-term progression. Quantitatively, every subset of (\{1,\ldots,N\}) with no nonconstant (k)-term progression has size at most (C_k N\exp[-c_k(\log N)^{\varepsilon_k}]), with positive constants depending only on (k).</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">This turns a density condition into a structural conclusion: enough additive mass in the reciprocals forces additive structure. The quasipolynomial bound improves the quantitative side of Szemerédi’s theorem, showing progression-free sets must be quasipolynomially sparse, while the reciprocal-sum theorem gives a natural divergence criterion for the existence of progressions in infinite sets.</p>
+  </section>
+  <div class="controls">
+    <label for="N">N</label>
+    <input id="N" type="range" min="40" max="240" value="120" step="1">
+    <span class="val" id="Nval">120</span>
+    <label for="k">k</label>
+    <select id="k">
+      <option value="3">3</option>
+      <option value="4">4</option>
+      <option value="5">5</option>
+    </select>
+    <label for="settype">Set</label>
+    <select id="settype">
+      <option value="random">Random subset</option>
+      <option value="salem">Salem–Spencer (base 3)</option>
+      <option value="powers">Powers of 2</option>
+      <option value="interval">Initial segment</option>
+    </select>
+  </div>
+  <div class="controls">
+    <label for="p">Random density p</label>
+    <input id="p" type="range" min="0.05" max="0.6" value="0.25" step="0.01">
+    <span class="val" id="pval">0.25</span>
+    <label for="seg">Segment fraction</label>
+    <input id="seg" type="range" min="0.05" max="0.8" value="0.35" step="0.01">
+    <span class="val" id="segval">0.35</span>
+    <label for="seed">Seed</label>
+    <input id="seed" type="range" min="1" max="99" value="7" step="1">
+    <span class="val" id="seedval">7</span>
+  </div>
+  <div class="controls">
+    <label for="c">c</label>
+    <input id="c" type="range" min="0.2" max="2.0" value="0.8" step="0.1">
+    <span class="val" id="cval">0.8</span>
+    <label for="eps">ε</label>
+    <input id="eps" type="range" min="0.2" max="0.9" value="0.5" step="0.05">
+    <span class="val" id="epsval">0.50</span>
+    <label for="C">C</label>
+    <input id="C" type="range" min="0.5" max="3.0" value="1.0" step="0.1">
+    <span class="val" id="Cval">1.0</span>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">N</div><div class="value" id="sN">—</div></div>
+    <div class="stat"><div class="label">Set size |A|</div><div class="value" id="ssize">—</div></div>
+    <div class="stat"><div class="label">Density</div><div class="value" id="sdens">—</div></div>
+    <div class="stat"><div class="label">Reciprocal sum S</div><div class="value" id="ssum">—</div></div>
+    <div class="stat"><div class="label">k-APs found</div><div class="value" id="sap">—</div></div>
+    <div class="stat"><div class="label">Bound B(N)</div><div class="value" id="sbound">—</div></div>
+    <div class="stat"><div class="label">Size vs bound</div><div class="value" id="scomp">—</div></div>
+    <div class="stat"><div class="label">Divergent proxy</div><div class="value" id="sdiv">—</div></div>
+    <div class="stat"><div class="label">Progression-free?</div><div class="value" id="spf">—</div></div>
+    <div class="stat"><div class="label">Regime</div><div class="value" id="sreg">—</div></div>
+  </div>
+  <div class="legend">
+    <span><span class="swatch" style="background:#5eead4"></span>Selected integer</span>
+    <span><span class="swatch" style="background:#ef4444"></span>Term in a k-AP</span>
+    <span><span class="swatch" style="background:#f59e0b"></span>Bound curve</span>
+  </div>
+  <canvas id="canvas" width="900" height="520"></canvas>
+  <p style="font-size:.85rem;color:var(--muted);margin-top:.5rem">Conceptual model: finite sets cannot have divergent reciprocal sums, so (S) is a finite proxy. Salem–Spencer sets are 3-AP-free with polynomially decaying density; random dense sets almost surely contain many progressions. The curve shows the quasipolynomial upper bound for progression-free sets.</p>
+</div>
+<script>
+const NSlider=document.getElementById('N');
+const kSel=document.getElementById('k');
+const typeSel=document.getElementById('settype');
+const pSlider=document.getElementById('p');
+const segSlider=document.getElementById('seg');
+const seedSlider=document.getElementById('seed');
+const cSlider=document.getElementById('c');
+const epsSlider=document.getElementById('eps');
+const CSlider=document.getElementById('C');
+
+const Nval=document.getElementById('Nval');
+const pval=document.getElementById('pval');
+const segval=document.getElementById('segval');
+const seedval=document.getElementById('seedval');
+const cval=document.getElementById('cval');
+const epsval=document.getElementById('epsval');
+const Cval=document.getElementById('Cval');
+
+const sN=document.getElementById('sN');
+const ssize=document.getElementById('ssize');
+const sdens=document.getElementById('sdens');
+const ssum=document.getElementById('ssum');
+const sap=document.getElementById('sap');
+const sbound=document.getElementById('sbound');
+const scomp=document.getElementById('scomp');
+const sdiv=document.getElementById('sdiv');
+const spf=document.getElementById('spf');
+const sreg=document.getElementById('sreg');
+
+const canvas=document.getElementById('canvas');
+const ctx=canvas.getContext('2d');
+
+function resizeCanvas(){ canvas.width=Math.max(300,canvas.clientWidth); canvas.height=520; }
+window.addEventListener('resize',function(){ resizeCanvas(); render(); });
+resizeCanvas();
+
+function fmt(x){ return (Math.abs(x)>=1e4|| (Math.abs(x)>0 && Math.abs(x)<1e-3)) ? x.toExponential(2) : x.toFixed(3); }
+
+function mulberry(a){ return function(){ a=(a*1664525+1013904223)>>>0; return a/4294967296; }; }
+
+function buildSet(N,k,type,p,seg,seed){
+  const A=new Set();
+  if(type==='random'){
+    const rnd=mulberry(seed*9973+1);
+    for(let n=1;n<=N;n++){ if(rnd()<p) A.add(n); }
+  } else if(type==='salem'){
+    for(let n=1;n<=N;n++){
+      let x=n; let ok=true;
+      while(x>0){ const d=x%3; if(d===2){ ok=false; break; } x=Math.floor(x/3); }
+      if(ok) A.add(n);
+    }
+  } else if(type==='powers'){
+    let v=1;
+    while(v<=N){ A.add(v); v*=2; }
+  } else if(type==='interval'){
+    const m=Math.max(1,Math.floor(seg*N));
+    for(let n=1;n<=m;n++) A.add(n);
+  }
+  return A;
+}
+
+function boundAt(n,c,eps,C){
+  if(n<2) return C*n;
+  return C*n*Math.exp(-c*Math.pow(Math.log(n),eps));
+}
+
+function apTerms(A,N,k){
+  const set=A;
+  const arr=Array.from(set).sort((a,b)=>a-b);
+  const terms=new Set();
+  let count=0;
+  for(let i=0;i<arr.length;i++){
+    for(let j=i+1;j<arr.length;j++){
+      const a=arr[i], b=arr[j];
+      const d=b-a;
+      if(d<=0) continue;
+      let ok=true;
+      for(let r=2;r<k;r++){ if(!set.has(a+r*d)){ ok=false; break; } }
+      if(ok){
+        count++;
+        for(let r=0;r<k;r++) terms.add(a+r*d);
+      }
+    }
+  }
+  return {count,terms};
+}
+
+function updateStats(){
+  const N=+NSlider.value;
+  const k=+kSel.value;
+  const type=typeSel.value;
+  const p=+pSlider.value;
+  const seg=+segSlider.value;
+  const seed=+seedSlider.value;
+  const c=+cSlider.value;
+  const eps=+epsSlider.value;
+  const C=+CSlider.value;
+  Nval.textContent=N;
+  pval.textContent=p.toFixed(2);
+  segval.textContent=seg.toFixed(2);
+  seedval.textContent=seed;
+  cval.textContent=c.toFixed(1);
+  epsval.textContent=eps.toFixed(2);
+  Cval.textContent=C.toFixed(1);
+
+  const A=buildSet(N,k,type,p,seg,seed);
+  const Ssum=Array.from(A).reduce((acc,n)=>acc+1/n,0);
+  const res=apTerms(A,N,k);
+  const B=boundAt(N,c,eps,C);
+  sN.textContent=N;
+  ssize.textContent=A.size;
+  sdens.textContent=(A.size/N).toFixed(3);
+  ssum.textContent=Ssum.toFixed(3);
+  sap.textContent=res.count;
+  sbound.textContent=fmt(B);
+  let comp;
+  if(A.size<=B+1e-9){ comp='Within bound'; scomp.className='value good'; }
+  else { comp='Exceeds bound'; scomp.className='value bad'; }
+  scomp.textContent=comp;
+  sdiv.textContent = Ssum>2.0 ? 'Large (proxy)' : (Ssum>1.0?'Moderate':'Small');
+  spf.textContent = res.count===0 ? 'Yes (no AP found)' : 'No';
+  spf.className='value '+(res.count===0?'good':'bad');
+  if(type==='salem' && k!==3){ sreg.textContent='Salem–Spencer is 3-AP-free'; }
+  else if(res.count===0){ sreg.textContent='Progression-free (found)'; }
+  else { sreg.textContent='Contains progressions'; }
+  if(sdiv.textContent==='Large (proxy)') sdiv.className='value warn'; else sdiv.className='value';
+  window._state={N,k,type,p,seg,seed,c,eps,C,A,res,B};
+}
+
+function render(){
+  updateStats();
+  const st=window._state;
+  const {N,k,type,p,seg,seed,c,eps,C,A,res,B}=st;
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const padL=52,padR=18,padT=24,padB=34;
+  const topH=Math.floor((H-padT-padB)*0.42);
+  const gap=18;
+  const botTop=padT+topH+gap;
+  const botH=H-padB-botTop;
+
+  ctx.fillStyle='rgba(159,176,204,0.9)'; ctx.font='12px system-ui'; ctx.textAlign='left';
+  ctx.fillText('Subset membership (red terms lie in a '+k+'-AP)', padL, padT-6);
+
+  const cellW=(W-padL-padR)/N;
+  for(let n=1;n<=N;n++){
+    const x=padL+(n-1)*cellW;
+    const inA=A.has(n);
+    const inAP=res.terms.has(n);
+    if(inA){
+      ctx.fillStyle=inAP?'#ef4444':'#5eead4';
+      ctx.fillRect(x+0.5, padT, Math.max(1,cellW-1), topH);
+    } else {
+      ctx.fillStyle='rgba(36,50,82,0.35)';
+      ctx.fillRect(x+0.5, padT, Math.max(1,cellW-1), topH);
+    }
+  }
+  ctx.strokeStyle='rgba(159,176,204,0.25)'; ctx.lineWidth=1;
+  ctx.strokeRect(padL,padT,W-padL-padR,topH);
+
+  ctx.fillStyle='rgba(159,176,204,0.9)'; ctx.font='12px system-ui'; ctx.textAlign='left';
+  ctx.fillText('Bound B(n)=C n exp[-c (log n)^ε] and set size', padL, botTop-6);
+
+  const nMin=10;
+  const nMax=Math.max(N,20);
+  let maxLog=0;
+  for(let n=nMin;n<=nMax;n++){
+    const b=boundAt(n,c,eps,C);
+    const v=Math.log(Math.max(b,1));
+    if(v>maxLog) maxLog=v;
+  }
+  const minLog=0;
+  function xOf(n){ return padL + ((n-nMin)/(nMax-nMin))*(W-padL-padR); }
+  function yOf(logv){ return botTop + botH - ((logv-minLog)/(maxLog-minLog))*botH; }
+
+  ctx.strokeStyle='rgba(159,176,204,0.25)'; ctx.lineWidth=1;
+  for(let j=0;j<=4;j++){
+    const yy=botTop + botH*(1-j/4);
+    ctx.beginPath(); ctx.moveTo(padL,yy); ctx.lineTo(W-padR,yy); ctx.stroke();
+    ctx.fillStyle='rgba(159,176,204,0.8)'; ctx.font='11px system-ui'; ctx.textAlign='right';
+    ctx.fillText((minLog+(maxLog-minLog)*j/4).toFixed(1), padL-6, yy+4);
+  }
+  ctx.textAlign='center';
+  for(let t=0;t<=4;t++){
+    const nn=nMin + (nMax-nMin)*t/4;
+    const xx=xOf(nn);
+    ctx.beginPath(); ctx.moveTo(xx,botTop); ctx.lineTo(xx,botTop+botH); ctx.stroke();
+    ctx.fillText(Math.round(nn), xx, H-14);
+  }
+
+  ctx.strokeStyle='#f59e0b'; ctx.lineWidth=2.5;
+  ctx.beginPath();
+  let first=true;
+  for(let n=nMin;n<=nMax;n++){
+    const b=boundAt(n,c,eps,C);
+    const y=yOf(Math.log(Math.max(b,1)));
+    const x=xOf(n);
+    if(first){ ctx.moveTo(x,y); first=false; } else ctx.lineTo(x,y);
+  }
+  ctx.stroke();
+
+  const xN=xOf(N);
+  const ySize=yOf(Math.log(Math.max(A.size,1)));
+  const yBound=yOf(Math.log(Math.max(B,1)));
+  ctx.fillStyle='#5eead4'; ctx.beginPath(); ctx.arc(xN,ySize,6,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle='#f59e0b'; ctx.beginPath(); ctx.arc(xN,yBound,5,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle='rgba(159,176,204,0.9)'; ctx.font='11px system-ui'; ctx.textAlign='left';
+  ctx.fillText('green: |A|, amber: B(N)', padL+8, botTop+14);
+}
+
+NSlider.addEventListener('input',render);
+kSel.addEventListener('change',render);
+typeSel.addEventListener('change',render);
+pSlider.addEventListener('input',render);
+segSlider.addEventListener('input',render);
+seedSlider.addEventListener('input',render);
+cSlider.addEventListener('input',render);
+epsSlider.addEventListener('input',render);
+CSlider.addEventListener('input',render);
+render();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

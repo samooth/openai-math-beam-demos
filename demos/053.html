@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pixton completeness counterexample (conceptual, result 053)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range]{flex:1 1 220px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:420px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+select{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text)}
+table{width:100%;border-collapse:collapse;font-size:.85rem}
+th,td{padding:.35rem .45rem;border-bottom:1px solid var(--border);text-align:left}
+th{color:var(--muted);font-weight:600}
+td.num{font-family:ui-monospace,monospace}
+.badge{display:inline-block;padding:.15rem .5rem;border-radius:6px;font-size:.75rem;font-weight:700}
+.ok{color:var(--good)} .bad{color:var(--bad)} .warn{color:var(--warn)}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Pixton completeness counterexample (conceptual, result 053)</h1>
+  <p>On (\overline{\mathcal M}_{g,n}), Pixton's span proposes all tautological relations. We construct a formal strata class (Y) that vanishes in rational Chow (hence cohomology) but is not in that span. Tune the number of colors (g) to see the combinatorial size (D_*=\binom g3), (n=3D_*), and the detector coefficient (\prod_{i<j<k}\theta_{ijk}\).</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Disproves the Chow and rational-cohomological forms of Pixton's original completeness conjecture. For (g=10^{60}), (D_*=\binom g3), (n=3D_*), an explicitly defined class (Y\in\mathrm{Salg}_{g,n}^{2D_*}) satisfies (q_{g,n}(Y)=0) in rational Chow (and hence (H^{4D_*})), while (Y\notin\Pspan_{g,n}). The proof uses a formal exterior coefficient ring with independent odd cubic coefficients (\theta_{ijk}) to detect nonmembership, and a surface Quot-scheme nilpotence identity to prove vanishing.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Shows that Pixton's graph-formula span is not complete: there are genuine tautological relations outside it. It separates completeness (all relations among generators) from the Gorenstein property, and motivates refined relation systems or larger spans that include the new cubic/alternating diagonal corrections. The counterexample lives on the full stable compactification, not only compact type.</p>
+  </section>
+  <div class="controls">
+    <label for="g">Colors (g)</label>
+    <input id="g" type="range" min="3" max="7" value="4" step="1">
+    <span class="val" id="gval">4</span>
+    <label for="view">View</label>
+    <select id="view">
+      <option value="detector" selected>Detector coefficient</option>
+      <option value="factors">Strata factors</option>
+      <option value="support">Support descent</option>
+    </select>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Colors (g)</div><div class="value" id="gst">4</div></div>
+    <div class="stat"><div class="label">Cubic factors (D_*=\binom g3)</div><div class="value" id="dst">4</div></div>
+    <div class="stat"><div class="label">Markings (n=3D_*)</div><div class="value" id="nst">12</div></div>
+    <div class="stat"><div class="label">Degree (2D_*)</div><div class="value" id="degst">8</div></div>
+    <div class="stat"><div class="label">Detector (t(Y))</div><div class="value" id="tyst">nonzero</div></div>
+    <div class="stat"><div class="label">Pixton span test</div><div class="value" id="pspanst">0</div></div>
+    <div class="stat"><div class="label">Chow image (q(Y))</div><div class="value" id="qyst">0</div></div>
+    <div class="stat"><div class="label">Support remaining</div><div class="value" id="supst">0</div></div>
+  </div>
+  <canvas id="c" width="900" height="420"></canvas>
+  <section class="box">
+    <h3>Strata data</h3>
+    <table>
+      <thead><tr><th>Quantity</th><th>Formula</th><th>Current</th></tr></thead>
+      <tbody>
+        <tr><td>Colors</td><td class="num">(g)</td><td class="num" id="tg">4</td></tr>
+        <tr><td>Cubic factors</td><td class="num">(\binom g3)</td><td class="num" id="td">4</td></tr>
+        <tr><td>Markings</td><td class="num">(3\binom g3)</td><td class="num" id="tn">12</td></tr>
+        <tr><td>Class degree</td><td class="num">(2\binom g3)</td><td class="num" id="tdeg">8</td></tr>
+        <tr><td>Theorem scale</td><td class="num">(g=10^{60})</td><td class="num">illustrative small (g)</td></tr>
+      </tbody>
+    </table>
+  </section>
+  <section class="box">
+    <h3>Detector comparison</h3>
+    <table>
+      <thead><tr><th>Object</th><th>Test value</th><th>Meaning</th></tr></thead>
+      <tbody>
+        <tr><td>(Y) (candidate)</td><td class="num ok">(\neq 0)</td><td>not in Pixton span</td></tr>
+        <tr><td>(\Pspan_{g,n})</td><td class="num bad">(0)</td><td>annihilated by detector</td></tr>
+        <tr><td>Chow image</td><td class="num bad">(0)</td><td>vanishes in (\mathrm{CH})</td></tr>
+      </tbody>
+    </table>
+  </section>
+</div>
+<script>
+const gSlider=document.getElementById('g');
+const viewSel=document.getElementById('view');
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+
+const gval=document.getElementById('gval');
+const gst=document.getElementById('gst');
+const dst=document.getElementById('dst');
+const nst=document.getElementById('nst');
+const degst=document.getElementById('degst');
+const tyst=document.getElementById('tyst');
+const pspanst=document.getElementById('pspanst');
+const qyst=document.getElementById('qyst');
+const supst=document.getElementById('supst');
+const tg=document.getElementById('tg');
+const td=document.getElementById('td');
+const tn=document.getElementById('tn');
+const tdeg=document.getElementById('tdeg');
+
+function C(n,k){ if(k===0) return 1; if(n<k) return 0; let r=1; for(let i=0;i<k;i++) r=r*(n-i)/(i+1); return Math.round(r); }
+
+function triples(g){
+  const t=[];
+  for(let i=0;i<g;i++) for(let j=i+1;j<g;j++) for(let k=j+1;k<g;k++) t.push([i,j,k]);
+  return t;
+}
+
+function resizeCanvas(){ canvas.width=Math.max(300,canvas.clientWidth); canvas.height=420; }
+window.addEventListener('resize',function(){ resizeCanvas(); update(); });
+resizeCanvas();
+
+function vertexPos(g,i,W,H){
+  const cx=W/2, cy=H/2, R=Math.min(W,H)*0.34;
+  const ang=-Math.PI/2 + (2*Math.PI*i/g);
+  return [cx+R*Math.cos(ang), cy+R*Math.sin(ang)];
+}
+
+function drawDetector(g){
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const cx=W/2, cy=H/2;
+  ctx.fillStyle='#9fb0cc'; ctx.font='13px system-ui'; ctx.textAlign='center';
+  ctx.fillText('Detector coefficient ring R = exterior algebra on \u03b8_{ijk}', cx, 20);
+  const T=triples(g);
+  // draw triangles
+  for(const [i,j,k] of T){
+    const [x1,y1]=vertexPos(g,i,W,H);
+    const [x2,y2]=vertexPos(g,j,W,H);
+    const [x3,y3]=vertexPos(g,k,W,H);
+    ctx.beginPath();
+    ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.lineTo(x3,y3); ctx.closePath();
+    ctx.fillStyle='rgba(94,234,212,0.05)'; ctx.fill();
+    ctx.strokeStyle='rgba(94,234,212,0.35)'; ctx.lineWidth=1; ctx.stroke();
+  }
+  // vertices
+  for(let i=0;i<g;i++){
+    const [x,y]=vertexPos(g,i,W,H);
+    ctx.beginPath(); ctx.arc(x,y,14,0,Math.PI*2);
+    ctx.fillStyle='#1f2a44'; ctx.fill();
+    ctx.strokeStyle='#5eead4'; ctx.lineWidth=2; ctx.stroke();
+    ctx.fillStyle='#e6edf7'; ctx.font='12px system-ui'; ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText(String(i+1), x, y);
+  }
+  ctx.textBaseline='alphabetic';
+  ctx.fillStyle='#5eead4'; ctx.font='14px system-ui'; ctx.textAlign='center';
+  ctx.fillText('t(Y) \u221d \u220f_{i<j<k} \u03b8_{ijk}  \u2260 0', cx, H-52);
+  ctx.fillStyle='#9fb0cc'; ctx.font='12px system-ui';
+  ctx.fillText('Every element of \u03a0span_{g,n} has test 0', cx, H-30);
+  ctx.fillText('colors = '+g+', factors = '+T.length, cx, H-12);
+}
+
+function drawFactors(g){
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const cx=W/2, cy=H/2;
+  ctx.fillStyle='#9fb0cc'; ctx.font='13px system-ui'; ctx.textAlign='center';
+  ctx.fillText('Strata factors: corrected small-diagonal cubics', cx, 20);
+  const T=triples(g);
+  const D=T.length;
+  // draw a grid of factor boxes
+  const cols=Math.min(8, D);
+  const rows=Math.ceil(D/cols);
+  const bw= (W-40)/cols;
+  const bh= (H-90)/Math.max(1,rows);
+  for(let idx=0; idx<D; idx++){
+    const r=Math.floor(idx/cols), c=idx%cols;
+    const x=20+c*bw, y=40+r*bh;
+    ctx.fillStyle='#16203a'; ctx.fillRect(x+4,y+4,bw-8,bh-8);
+    ctx.strokeStyle='#243252'; ctx.lineWidth=1; ctx.strokeRect(x+4,y+4,bw-8,bh-8);
+    const [i,j,k]=T[idx];
+    ctx.fillStyle='#5eead4'; ctx.font='11px system-ui'; ctx.textAlign='center';
+    ctx.fillText('\u03b8_'+(i+1)+(j+1)+(k+1), x+bw/2, y+bh/2+4);
+  }
+  ctx.fillStyle='#9fb0cc'; ctx.font='12px system-ui'; ctx.textAlign='center';
+  ctx.fillText('Y = alternating product over all '+D+' factors; degree 2D = '+ (2*D), cx, H-18);
+}
+
+function drawSupport(g){
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const cx=W/2;
+  ctx.fillStyle='#9fb0cc'; ctx.font='13px system-ui'; ctx.textAlign='center';
+  ctx.fillText('Support descent (conceptual)', cx, 20);
+  const D=C(g,3);
+  // bars: initial support D, then decreasing to 0
+  const steps=6;
+  const barW=(W-60)/steps;
+  for(let s=0;s<steps;s++){
+    const frac=1 - s/(steps-1);
+    const h=(H-90)*frac*0.85 + 10;
+    const x=30+s*barW;
+    const y=H-40-h;
+    ctx.fillStyle = s===steps-1 ? 'rgba(34,197,94,0.6)' : 'rgba(94,234,212,0.35)';
+    ctx.fillRect(x+6,y,barW-12,h);
+    ctx.strokeStyle='#5eead4'; ctx.lineWidth=1; ctx.strokeRect(x+6,y,barW-12,h);
+    ctx.fillStyle='#9fb0cc'; ctx.font='11px system-ui'; ctx.textAlign='center';
+    ctx.fillText(s===steps-1?'0':Math.round(D*frac), x+barW/2, y-6);
+  }
+  ctx.fillStyle='#5eead4'; ctx.font='14px system-ui'; ctx.textAlign='center';
+  ctx.fillText('Support becomes empty \u2192 q(Y)=0', cx, H-18);
+  ctx.fillStyle='#9fb0cc'; ctx.font='12px system-ui';
+  ctx.fillText('Color budget advances through all '+D+' triples', cx, H-2);
+}
+
+function update(){
+  const g=+gSlider.value;
+  const D=C(g,3);
+  const n=3*D;
+  gval.textContent=g;
+  gst.textContent=g;
+  dst.textContent=D;
+  nst.textContent=n;
+  degst.textContent=2*D;
+  tyst.textContent='nonzero';
+  pspanst.textContent='0';
+  qyst.textContent='0';
+  supst.textContent='0';
+  tg.textContent=g;
+  td.textContent=D;
+  tn.textContent=n;
+  tdeg.textContent=2*D;
+  const view=viewSel.value;
+  if(view==='detector') drawDetector(g);
+  else if(view==='factors') drawFactors(g);
+  else drawSupport(g);
+}
+
+gSlider.addEventListener('input',function(){ update(); });
+viewSel.addEventListener('change',function(){ update(); });
+update();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

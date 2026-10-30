@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Brennan's conjecture and the integral-means spectrum (conceptual, result 072)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range]{flex:1 1 220px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:440px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+select{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text)}
+.toggle{display:inline-flex;align-items:center;gap:.4rem}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Brennan's conjecture and the integral-means spectrum (conceptual, result 072)</h1>
+  <p>For a conformal bijection (\phi) from a simply connected plane domain onto the disk, (|\phi'|^s) is area-integrable for (4/3<s<4\). The sharp universal integral-means identity is \(B_{\mathcal S}(t)=|t|-1\) for \(t\le -2\), and a strict bound \(B_b(-1)<1/4\) for bounded univalent functions disproves Kraetzer's prediction at that parameter. Explore the exponent ranges, integral means, and spectrum.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Proves Brennan's conjecture: for every conformal bijection (\phi) from a simply connected plane domain with nontrivial spherical boundary onto the disk, (|\phi'|^s) is area-integrable for (4/3<s<4\). Equivalently, for normalized univalent disk maps \(f\), \(|f'|^t\) is area-integrable for \(-2<t<2/3\). The sharp universal inverse-square bound gives \(B_{\mathcal S}(-2)=1\) and \(B_{\mathcal S}(t)=|t|-1\) for \(t\le -2\), with divergence at all four boundary exponents (Koebe map and its inverse). A strict estimate gives \(0<\varepsilon<1/4\) and \(C<\infty\) such that the normalized circular mean of \(|f'|^{-1}\) is at most \(C(1-r)^{-1/4+\varepsilon}\) for every normalized univalent disk map and \(1/2\le r<1\), yielding \(B_b(-1)<1/4\) and contradicting Kraetzer's prediction.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Resolves a central problem in geometric function theory: the exact integrability range for conformal maps and the value of the integral-means spectrum at (-2). The strict inverse-first-power bound shows Kraetzer's quadratic prediction (B_b(p)=p^2/4) fails for bounded univalent functions, refining the extremal theory of univalent functions and the boundary behavior of conformal maps. It underpins studies of harmonic measure, multifractal spectra, and conformal invariance, and provides sharp constants and divergence examples that calibrate extremal constructions.</p>
+  </section>
+  <div class="controls">
+    <label for="family">Function family</label>
+    <select id="family">
+      <option value="koebe" selected>Koebe (extremal)</option>
+      <option value="identity">Identity</option>
+      <option value="cubic">Cubic perturbation</option>
+    </select>
+    <label for="p">Exponent p</label>
+    <input id="p" type="range" min="-40" max="40" value="-10" step="1">
+    <span class="val" id="pval">-1.0</span>
+    <label for="r">Radius r</label>
+    <input id="r" type="range" min="50" max="99" value="90" step="1">
+    <span class="val" id="rval">0.90</span>
+    <label for="view">View</label>
+    <select id="view">
+      <option value="spectrum" selected>Spectrum</option>
+      <option value="means">Integral means</option>
+      <option value="brennan">Brennan range</option>
+      <option value="kraetzer">Kraetzer test</option>
+    </select>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Family</div><div class="value" id="fstat">—</div></div>
+    <div class="stat"><div class="label">Exponent p</div><div class="value" id="pstat">—</div></div>
+    <div class="stat"><div class="label">Radius r</div><div class="value" id="rstat">—</div></div>
+    <div class="stat"><div class="label">M_p(r)</div><div class="value" id="mstat">—</div></div>
+    <div class="stat"><div class="label">β est.</div><div class="value" id="bestat">—</div></div>
+    <div class="stat"><div class="label">B_S(p) (p≤-2)</div><div class="value" id="bsstat">—</div></div>
+    <div class="stat"><div class="label">Kraetzer(p)</div><div class="value" id="kstat">—</div></div>
+    <div class="stat"><div class="label">Result</div><div class="value" id="resstat">—</div></div>
+  </div>
+  <canvas id="c" width="900" height="440"></canvas>
+</div>
+<script>
+const familySel=document.getElementById('family');
+const pSlider=document.getElementById('p');
+const rSlider=document.getElementById('r');
+const viewSel=document.getElementById('view');
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+
+const pval=document.getElementById('pval');
+const rval=document.getElementById('rval');
+const fstat=document.getElementById('fstat');
+const pstat=document.getElementById('pstat');
+const rstat=document.getElementById('rstat');
+const mstat=document.getElementById('mstat');
+const bestat=document.getElementById('bestat');
+const bsstat=document.getElementById('bsstat');
+const kstat=document.getElementById('kstat');
+const resstat=document.getElementById('resstat');
+
+function derivMag(family,z){
+  const x=z.re,y=z.im;
+  if(family==='koebe'){
+    // f'(z)=(1+z)/(1-z)^3
+    const a=x+1, b=y;
+    const c=1-x, d=-y;
+    // |1-z|^2
+    const denom2=c*c+d*d;
+    const denom=Math.pow(denom2,1.5);
+    const num=Math.hypot(a,b);
+    return num/denom;
+  }
+  if(family==='identity'){
+    return 1;
+  }
+  // cubic: f(z)=z+0.15 z^3, f'=1+0.45 z^2
+  const zx=x, zy=y;
+  const z2re=zx*zx-zy*zy, z2im=2*zx*zy;
+  const re=1+0.45*z2re, im=0.45*z2im;
+  return Math.hypot(re,im);
+}
+
+function integralMean(p,r,family){
+  const N=256;
+  let sum=0;
+  for(let k=0;k<N;k++){
+    const th=-Math.PI + (2*Math.PI*k)/N;
+    const z={re:r*Math.cos(th), im:r*Math.sin(th)};
+    const d=derivMag(family,z);
+    const val = (d<=0)?0:Math.pow(d,p);
+    if(isFinite(val)) sum+=val;
+  }
+  return sum/N;
+}
+
+function kraetzer(p){
+  const ap=Math.abs(p);
+  if(ap<=2) return p*p/4;
+  return ap-1;
+}
+
+function bspectrum(p){
+  // universal identity for p<=-2 (and p>=2)
+  const ap=Math.abs(p);
+  if(ap>=2) return ap-1;
+  return null;
+}
+
+function resizeCanvas(){ canvas.width=Math.max(300,canvas.clientWidth); canvas.height=440; }
+window.addEventListener('resize',function(){ resizeCanvas(); render(); });
+resizeCanvas();
+
+let phase=0;
+
+function updateState(){
+  const family=familySel.value;
+  const p=+pSlider.value/10;
+  const r=+rSlider.value/100;
+  const view=viewSel.value;
+  pval.textContent=p.toFixed(1);
+  rval.textContent=r.toFixed(2);
+  const M=integralMean(p,r,family);
+  const betaEst = (r>0.5 && r<1) ? (Math.log(M)/Math.log(1/(1-r))) : 0;
+  const bs=bspectrum(p);
+  const kr=kraetzer(p);
+  fstat.textContent=family;
+  pstat.textContent=p.toFixed(2);
+  rstat.textContent=r.toFixed(3);
+  mstat.textContent=isFinite(M)?M.toFixed(4):'∞';
+  bestat.textContent=isFinite(betaEst)?betaEst.toFixed(3):'—';
+  bsstat.textContent=(bs===null)?'—':bs.toFixed(3);
+  kstat.textContent=kr.toFixed(3);
+  if(p===-1 && family==='koebe') resstat.textContent='B_b(-1)<1/4 (strict)';
+  else if(p<=-2) resstat.textContent='B_S=|p|-1';
+  else if(p>-2 && p<2/3) resstat.textContent='integrable range';
+  else resstat.textContent='—';
+  state={family,p,r,view,M,betaEst,bs,kr};
+}
+
+function roundRect(x,y,w,h,r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y); ctx.lineTo(x+w-r,y); ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+  ctx.lineTo(x+w,y+h-r); ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+  ctx.lineTo(x+r,y+h); ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+  ctx.lineTo(x,y+r); ctx.quadraticCurveTo(x,y,x+r,y); ctx.closePath();
+}
+
+function drawSpectrum(W,H,s){
+  const pad=60;
+  const xmin=-4,xmax=4;
+  const ymin=0,ymax=4;
+  const sx=v=>pad+(v-xmin)/(xmax-xmin)*(W-2*pad);
+  const sy=v=>H-pad-(v-ymin)/(ymax-ymin)*(H-2*pad);
+  // axes
+  ctx.strokeStyle='rgba(159,176,204,0.35)'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(pad,H-pad); ctx.lineTo(W-pad,H-pad); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(pad,pad); ctx.lineTo(pad,H-pad); ctx.stroke();
+  ctx.fillStyle='#9fb0cc'; ctx.font='11px system-ui';
+  ctx.textAlign='center'; ctx.fillText('p', W/2, H-20);
+  ctx.save(); ctx.translate(18,H/2); ctx.rotate(-Math.PI/2); ctx.fillText('B(p)',0,0); ctx.restore();
+
+  // grid
+  ctx.strokeStyle='rgba(159,176,204,0.12)';
+  for(let k=-4;k<=4;k++){
+    ctx.beginPath(); ctx.moveTo(sx(k),pad); ctx.lineTo(sx(k),H-pad); ctx.stroke();
+  }
+  for(let k=0;k<=4;k++){
+    ctx.beginPath(); ctx.moveTo(pad,sy(k)); ctx.lineTo(W-pad,sy(k)); ctx.stroke();
+  }
+
+  // universal B_S = |p|-1 for |p|>=2
+  ctx.strokeStyle='#5eead4'; ctx.lineWidth=2.5;
+  ctx.beginPath();
+  let first=true;
+  for(let i=0;i<=200;i++){
+    const p=-4+8*i/200;
+    if(Math.abs(p)<2) continue;
+    const b=Math.abs(p)-1;
+    const x=sx(p), y=sy(b);
+    if(first){ ctx.moveTo(x,y); first=false; } else ctx.lineTo(x,y);
+  }
+  ctx.stroke();
+
+  // Kraetzer parabola p^2/4 for |p|<=2
+  ctx.strokeStyle='#f59e0b'; ctx.lineWidth=2.5;
+  ctx.beginPath(); first=true;
+  for(let i=0;i<=200;i++){
+    const p=-2+4*i/200;
+    const b=p*p/4;
+    const x=sx(p), y=sy(b);
+    if(first){ ctx.moveTo(x,y); first=false; } else ctx.lineTo(x,y);
+  }
+  ctx.stroke();
+
+  // strict bound marker at p=-1
+  const mx=sx(-1), my=sy(0.25);
+  ctx.fillStyle='#ef4444';
+  ctx.beginPath(); ctx.arc(mx,my,7,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle='#e6edf7'; ctx.font='11px system-ui'; ctx.textAlign='left';
+  ctx.fillText('Kraetzer: 1/4', mx+10, my-6);
+  ctx.fillStyle='#22c55e';
+  ctx.beginPath(); ctx.moveTo(mx,my); ctx.lineTo(mx,my+22); ctx.stroke();
+  ctx.fillText('strict: <1/4', mx+10, my+26);
+
+  // current p
+  const cx=sx(s.p);
+  ctx.strokeStyle='#a855f7'; ctx.lineWidth=1.5;
+  ctx.beginPath(); ctx.moveTo(cx,pad); ctx.lineTo(cx,H-pad); ctx.stroke();
+  ctx.fillStyle='#a855f7';
+  ctx.beginPath(); ctx.arc(cx,sy(Math.max(0,Math.min(4,kraetzer(s.p)))),6,0,Math.PI*2); ctx.fill();
+
+  // legend
+  ctx.fillStyle='#9fb0cc'; ctx.font='11px system-ui'; ctx.textAlign='left';
+  ctx.fillStyle='#5eead4'; ctx.fillRect(pad+4,H-46,16,4);
+  ctx.fillStyle='#9fb0cc'; ctx.fillText('Universal B_S=|p|-1 (|p|≥2)', pad+26, H-42);
+  ctx.fillStyle='#f59e0b'; ctx.fillRect(pad+4,H-30,16,4);
+  ctx.fillStyle='#9fb0cc'; ctx.fillText('Kraetzer prediction p²/4 (|p|≤2)', pad+26, H-26);
+}
+
+function drawMeans(W,H,s){
+  const pad=50;
+  // plot log M_p(r) vs r for r in [0.5,0.99]
+  const rmin=0.5,rmax=0.995;
+  let ymin=Infinity,ymax=-Infinity;
+  const pts=[];
+  for(let i=0;i<=120;i++){
+    const r=rmin+(rmax-rmin)*i/120;
+    const M=integralMean(s.p,r,s.family);
+    const y=Math.log(Math.max(M,1e-12));
+    pts.push({r,y,M});
+    if(isFinite(y)){ ymin=Math.min(ymin,y); ymax=Math.max(ymax,y); }
+  }
+  if(!isFinite(ymin)){ ymin=-1; ymax=1; }
+  const padY=0.5;
+  ymin-=padY; ymax+=padY;
+  const sx=v=>pad+(v-rmin)/(rmax-rmin)*(W-2*pad);
+  const sy=v=>H-pad-(v-ymin)/(ymax-ymin)*(H-2*pad);
+  ctx.strokeStyle='rgba(159,176,204,0.35)'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(pad,H-pad); ctx.lineTo(W-pad,H-pad); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(pad,pad); ctx.lineTo(pad,H-pad); ctx.stroke();
+  ctx.fillStyle='#9fb0cc'; ctx.font='11px system-ui'; ctx.textAlign='center';
+  ctx.fillText('r', W/2, H-12);
+  ctx.save(); ctx.translate(16,H/2); ctx.rotate(-Math.PI/2); ctx.fillText('log M_p(r)',0,0); ctx.restore();
+
+  ctx.strokeStyle='#5eead4'; ctx.lineWidth=2.5;
+  ctx.beginPath(); let first=true;
+  pts.forEach(pt=>{
+    const x=sx(pt.r), y=sy(pt.y);
+    if(first){ ctx.moveTo(x,y); first=false; } else ctx.lineTo(x,y);
+  });
+  ctx.stroke();
+
+  // current r marker
+  const cur=pts.reduce((a,b)=>Math.abs(b.r-s.r)<Math.abs(a.r-s.r)?b:a);
+  ctx.fillStyle='#f59e0b';
+  ctx.beginPath(); ctx.arc(sx(s.r),sy(Math.log(Math.max(s.M,1e-12))),7,0,Math.PI*2); ctx.fill();
+
+  // reference growth line using beta estimate
+  if(s.bs!==null){
+    const b=s.bs;
+    ctx.strokeStyle='rgba(239,68,68,0.6)'; ctx.lineWidth=1.5; ctx.setLineDash([6,4]);
+    ctx.beginPath(); first=true;
+    pts.forEach(pt=>{
+      const ref=Math.log(1/Math.pow(1-pt.r,b));
+      const x=sx(pt.r), y=sy(ref);
+      if(first){ ctx.moveTo(x,y); first=false;} else ctx.lineTo(x,y);
+    });
+    ctx.stroke(); ctx.setLineDash([]);
+  }
+
+  ctx.fillStyle='#9fb0cc'; ctx.font='11px system-ui'; ctx.textAlign='left';
+  ctx.fillText('family: '+s.family+'   p='+s.p.toFixed(2), pad, pad-10);
+}
+
+function drawBrennan(W,H,s){
+  const y=H/2;
+  // number line for s
+  const pad=60;
+  const xmin=1,xmax=4.5;
+  const sx=v=>pad+(v-xmin)/(xmax-xmin)*(W-2*pad);
+  ctx.strokeStyle='rgba(159,176,204,0.35)'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(pad,y); ctx.lineTo(W-pad,y); ctx.stroke();
+  ctx.fillStyle='#9fb0cc'; ctx.font='12px system-ui'; ctx.textAlign='center';
+  ctx.fillText('s (Brennan exponent for φ)', W/2, y-80);
+
+  // integrable interval (4/3,4)
+  const a=sx(4/3), b=sx(4);
+  ctx.fillStyle='rgba(34,197,94,0.18)';
+  ctx.fillRect(a,y-20,b-a,40);
+  ctx.strokeStyle='#22c55e'; ctx.lineWidth=2;
+  ctx.strokeRect(a,y-20,b-a,40);
+  ctx.fillStyle='#22c55e'; ctx.font='12px system-ui'; ctx.textAlign='center';
+  ctx.fillText('integrable: 4/3 < s < 4', (a+b)/2, y-30);
+
+  // endpoints
+  ctx.fillStyle='#ef4444';
+  ctx.beginPath(); ctx.arc(sx(4/3),y,6,0,Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.arc(sx(4),y,6,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle='#e6edf7'; ctx.font='11px system-ui'; ctx.textAlign='center';
+  ctx.fillText('4/3', sx(4/3), y+28);
+  ctx.fillText('4', sx(4), y+28);
+
+  // t line
+  const y2=y+110;
+  ctx.strokeStyle='rgba(159,176,204,0.35)'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(pad,y2); ctx.lineTo(W-pad,y2); ctx.stroke();
+  ctx.fillStyle='#9fb0cc'; ctx.font='12px system-ui'; ctx.textAlign='center';
+  ctx.fillText('t = 2 - s (disk-map exponent)', W/2, y2-40);
+  const tmin=-2.5,tmax=1;
+  const sx2=v=>pad+(v-tmin)/(tmax-tmin)*(W-2*pad);
+  const c=sx2(-2), d=sx2(2/3);
+  ctx.fillStyle='rgba(94,234,212,0.18)';
+  ctx.fillRect(c,y2-20,d-c,40);
+  ctx.strokeStyle='#5eead4'; ctx.lineWidth=2;
+  ctx.strokeRect(c,y2-20,d-c,40);
+  ctx.fillStyle='#5eead4'; ctx.font='12px system-ui'; ctx.textAlign='center';
+  ctx.fillText('integrable: -2 < t < 2/3', (c+d)/2, y2-30);
+  ctx.fillStyle='#ef4444';
+  ctx.beginPath(); ctx.arc(sx2(-2),y2,6,0,Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.arc(sx2(2/3),y2,6,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle='#e6edf7'; ctx.font='11px system-ui'; ctx.textAlign='center';
+  ctx.fillText('-2', sx2(-2), y2+28);
+  ctx.fillText('2/3', sx2(2/3), y2+28);
+
+  // Koebe note
+  ctx.fillStyle='#9fb0cc'; ctx.font='12px system-ui'; ctx.textAlign='center';
+  ctx.fillText('Koebe map and its inverse give divergence at all four boundary exponents.', W/2, H-20);
+}
+
+function drawKraetzer(W,H,s){
+  const cx=W/2, cy=H/2;
+  // bar at p=-1
+  const barW=120, barH=200;
+  const x1=cx-160, x2=cx+40;
+  // Kraetzer bar height proportional 0.25*barH*? scale 4
+  const scale=barH/0.3;
+  ctx.fillStyle='rgba(245,158,11,0.25)';
+  ctx.fillRect(x1,cy-0.25*scale,barW,0.25*scale);
+  ctx.strokeStyle='#f59e0b'; ctx.lineWidth=2;
+  ctx.strokeRect(x1,cy-0.25*scale,barW,0.25*scale);
+  ctx.fillStyle='#f59e0b'; ctx.font='12px system-ui'; ctx.textAlign='center';
+  ctx.fillText('Kraetzer', x1+barW/2, cy+120);
+  ctx.fillText('1/4', x1+barW/2, cy-0.25*scale-8);
+
+  // strict bound bar slightly lower
+  const sb=0.22;
+  ctx.fillStyle='rgba(34,197,94,0.25)';
+  ctx.fillRect(x2,cy-sb*scale,barW,sb*scale);
+  ctx.strokeStyle='#22c55e'; ctx.lineWidth=2;
+  ctx.strokeRect(x2,cy-sb*scale,barW,sb*scale);
+  ctx.fillStyle='#22c55e'; ctx.font='12px system-ui'; ctx.textAlign='center';
+  ctx.fillText('Strict bound', x2+barW/2, cy+120);
+  ctx.fillText('<1/4', x2+barW/2, cy-sb*scale-8);
+
+  // axis
+  ctx.strokeStyle='rgba(159,176,204,0.35)';
+  ctx.beginPath(); ctx.moveTo(cx-200,cy); ctx.lineTo(cx+200,cy); ctx.stroke();
+  ctx.fillStyle='#9fb0cc'; ctx.font='12px system-ui'; ctx.textAlign='center';
+  ctx.fillText('B_b(-1) comparison (conceptual heights)', cx, 40);
+  ctx.fillText('Result: B_b(-1) < 1/4, disproving Kraetzer at p=-1.', cx, H-20);
+}
+
+function render(){
+  updateState();
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  if(state.view==='spectrum') drawSpectrum(W,H,state);
+  else if(state.view==='means') drawMeans(W,H,state);
+  else if(state.view==='brennan') drawBrennan(W,H,state);
+  else drawKraetzer(W,H,state);
+}
+
+familySel.addEventListener('change',render);
+pSlider.addEventListener('input',render);
+rSlider.addEventListener('input',render);
+viewSel.addEventListener('change',render);
+render();
+
+function tick(){ phase+=16; requestAnimationFrame(tick); }
+requestAnimationFrame(tick);
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

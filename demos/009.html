@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bogomolov--Pop / Milnor K reconstruction — interactive demo</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+select,input[type=range]{background:var(--chip);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:.35rem .5rem;font-size:1rem}
+input[type=range]{flex:1 1 220px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+button.active{background:var(--accent);color:#00130f;border-color:var(--accent);font-weight:600}
+#diagWrap{position:relative;background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+svg{display:block;width:100%;height:420px}
+.node rect{fill:var(--chip);stroke:var(--border);stroke-width:1.5;transition:all .25s}
+.node text{fill:var(--text);font-family:system-ui,sans-serif}
+.node .ntitle{font-size:15px;font-weight:700;fill:var(--accent)}
+.node .nsub{font-size:12px;fill:var(--muted)}
+.node.active rect{stroke:var(--accent);stroke-width:2.5;filter:drop-shadow(0 0 6px rgba(94,234,212,.35))}
+.edge{stroke:var(--muted);stroke-width:2;fill:none;stroke-dasharray:6 6;animation:flow 1.4s linear infinite;opacity:.7}
+.edge.active{stroke:var(--accent);opacity:1}
+@keyframes flow{from{stroke-dashoffset:0}to{stroke-dashoffset:-12}}
+.recovery{font-size:.95rem;line-height:1.6;color:var(--text)}
+.recovery li{margin:.25rem 0;color:var(--muted)}
+.recovery li b{color:var(--accent)}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Bogomolov--Pop / Milnor K reconstruction</h1>
+  <p>Reconstruct a function field from invariants: mod-$\ell$ Milnor K-groups $K^M_1/\ell$, $K^M_2/\ell$ and their product, or from abelian-by-central pro-$\ell$ Galois data. Toggle characteristic vs $\ell$ to see what is recovered.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Reconstructs function fields of transcendence degree at least two over algebraically closed constants from $K^M_1/\ell$, $K^M_2/\ell$, and their product. These data recover the perfect closure and constants when $\ell$ differs from the characteristic, and the original field and its named base in equal characteristic. Also proves Bogomolov--Pop reconstruction from abelian-by-central pro-$\ell$ Galois data away from the characteristic.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Shows that arithmetic/geometric invariants (Milnor K-theory or pro-$\ell$ Galois groups) determine the function field itself, a strong anabelian-type reconstruction result with consequences for absolute Galois groups and field isomorphism problems.</p>
+  </section>
+
+  <div class="controls">
+    <button id="modeK" class="active">Milnor K</button>
+    <button id="modeG">Bogomolov--Pop (Galois)</button>
+    <label for="p">char p</label>
+    <select id="p">
+      <option value="0">0</option>
+      <option value="2">2</option>
+      <option value="3">3</option>
+      <option value="5">5</option>
+      <option value="7">7</option>
+      <option value="11">11</option>
+    </select>
+    <label for="ell">ell</label>
+    <select id="ell">
+      <option value="2">2</option>
+      <option value="3">3</option>
+      <option value="5">5</option>
+      <option value="7">7</option>
+      <option value="11">11</option>
+    </select>
+    <label for="d">deg tr</label>
+    <input id="d" type="range" min="1" max="4" value="2" step="1">
+    <span class="val" id="dval">2</span>
+    <button id="toggleFlow">Pause flow</button>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="label">Transcendence degree</div><div class="value" id="stD">—</div></div>
+    <div class="stat"><div class="label">char p</div><div class="value" id="stP">—</div></div>
+    <div class="stat"><div class="label">ell</div><div class="value" id="stL">—</div></div>
+    <div class="stat"><div class="label">Relation</div><div class="value" id="stRel">—</div></div>
+    <div class="stat"><div class="label">Recovery target</div><div class="value" id="stTarget">—</div></div>
+    <div class="stat"><div class="label">Status</div><div class="value" id="stStatus">—</div></div>
+  </div>
+
+  <div id="diagWrap">
+    <svg id="diag" viewBox="0 0 980 420" preserveAspectRatio="xMidYMid meet">
+      <!-- edges -->
+      <line class="edge e-field-k1" x1="190" y1="210" x2="330" y2="85" />
+      <line class="edge e-field-k2" x1="190" y1="210" x2="330" y2="210" />
+      <line class="edge e-field-prod" x1="190" y1="210" x2="330" y2="335" />
+      <line class="edge e-k1-recon" x1="530" y1="85" x2="600" y2="210" />
+      <line class="edge e-k2-recon" x1="530" y1="210" x2="600" y2="210" />
+      <line class="edge e-prod-recon" x1="530" y1="335" x2="600" y2="210" />
+      <line class="edge e-recon-rec" x1="780" y1="210" x2="810" y2="210" />
+
+      <!-- nodes -->
+      <g class="node" id="node-field">
+        <rect x="40" y="160" width="150" height="100" rx="12" />
+        <text x="115" y="190" text-anchor="middle" class="ntitle">F</text>
+        <text x="115" y="212" text-anchor="middle" class="nsub" id="fieldSub">deg tr = 2</text>
+        <text x="115" y="232" text-anchor="middle" class="nsub">over alg. closed k</text>
+      </g>
+      <g class="node" id="node-k1">
+        <rect x="330" y="50" width="200" height="70" rx="12" />
+        <text x="430" y="78" text-anchor="middle" class="ntitle" id="k1Title">K^M_1(F)/ℓ</text>
+        <text x="430" y="98" text-anchor="middle" class="nsub" id="k1Sub">units mod ℓ</text>
+      </g>
+      <g class="node" id="node-k2">
+        <rect x="330" y="175" width="200" height="70" rx="12" />
+        <text x="430" y="203" text-anchor="middle" class="ntitle" id="k2Title">K^M_2(F)/ℓ</text>
+        <text x="430" y="223" text-anchor="middle" class="nsub" id="k2Sub">symbols mod ℓ</text>
+      </g>
+      <g class="node" id="node-prod">
+        <rect x="330" y="300" width="200" height="70" rx="12" />
+        <text x="430" y="328" text-anchor="middle" class="ntitle" id="prodTitle">product (cup)</text>
+        <text x="430" y="348" text-anchor="middle" class="nsub" id="prodSub">K^M_1 ⊗ K^M_2</text>
+      </g>
+      <g class="node" id="node-recon">
+        <rect x="600" y="150" width="180" height="120" rx="12" />
+        <text x="690" y="185" text-anchor="middle" class="ntitle" id="reconTitle">Reconstruct</text>
+        <text x="690" y="208" text-anchor="middle" class="nsub" id="reconSub">from K-data</text>
+        <text x="690" y="228" text-anchor="middle" class="nsub">deg tr ≥ 2</text>
+      </g>
+      <g class="node" id="node-rec">
+        <rect x="810" y="160" width="150" height="100" rx="12" />
+        <text x="885" y="190" text-anchor="middle" class="ntitle">Recovered</text>
+        <text x="885" y="212" text-anchor="middle" class="nsub" id="recSub">—</text>
+        <text x="885" y="232" text-anchor="middle" class="nsub" id="recSub2"></text>
+      </g>
+    </svg>
+  </div>
+
+  <section class="box">
+    <h3>Recovery details</h3>
+    <ul class="recovery" id="details"></ul>
+  </section>
+</div>
+
+<script>
+const modeKBtn = document.getElementById('modeK');
+const modeGBtn = document.getElementById('modeG');
+const pSel = document.getElementById('p');
+const ellSel = document.getElementById('ell');
+const dSlider = document.getElementById('d');
+const dval = document.getElementById('dval');
+const toggleFlow = document.getElementById('toggleFlow');
+const diag = document.getElementById('diag');
+
+let mode = 'K'; // K or G
+let flowOn = true;
+
+function setMode(m){
+  mode = m;
+  modeKBtn.classList.toggle('active', m==='K');
+  modeGBtn.classList.toggle('active', m==='G');
+  update();
+}
+
+modeKBtn.addEventListener('click', ()=>setMode('K'));
+modeGBtn.addEventListener('click', ()=>setMode('G'));
+
+pSel.addEventListener('change', update);
+ellSel.addEventListener('change', update);
+dSlider.addEventListener('input', ()=>{ dval.textContent = dSlider.value; update(); });
+
+toggleFlow.addEventListener('click', function(){
+  flowOn = !flowOn;
+  diag.querySelectorAll('.edge').forEach(e=>{ e.style.animationPlayState = flowOn ? 'running' : 'paused'; });
+  this.textContent = flowOn ? 'Pause flow' : 'Resume flow';
+});
+
+function p(){ return +pSel.value; }
+function ell(){ return +ellSel.value; }
+function d(){ return +dSlider.value; }
+
+function relation(){
+  const pp = p();
+  const ll = ell();
+  if (pp === 0) return 'ell != p (char 0)';
+  if (pp === ll) return 'ell = p (equal char)';
+  return 'ell != p (away from char)';
+}
+
+function recoveryTarget(){
+  const dd = d();
+  if (dd < 2) return 'none (requires deg tr >= 2)';
+  if (mode === 'K') {
+    const pp = p();
+    const ll = ell();
+    if (pp !== 0 && pp === ll) return 'original field + named base';
+    return 'perfect closure + constants';
+  } else {
+    const pp = p();
+    const ll = ell();
+    if (pp !== 0 && pp === ll) return 'not covered (needs ell != p)';
+    return 'function field F (from Galois data)';
+  }
+}
+
+function status(){
+  const dd = d();
+  if (dd < 2) return 'not applicable';
+  if (mode === 'G') {
+    const pp = p();
+    const ll = ell();
+    if (pp !== 0 && pp === ll) return 'not covered';
+  }
+  return 'reconstructible';
+}
+
+function updateDiagramLabels(){
+  const dd = d();
+  document.getElementById('fieldSub').textContent = 'deg tr = ' + dd;
+  const k1Title = document.getElementById('k1Title');
+  const k1Sub = document.getElementById('k1Sub');
+  const k2Title = document.getElementById('k2Title');
+  const k2Sub = document.getElementById('k2Sub');
+  const prodTitle = document.getElementById('prodTitle');
+  const prodSub = document.getElementById('prodSub');
+  const reconTitle = document.getElementById('reconTitle');
+  const reconSub = document.getElementById('reconSub');
+  const recSub = document.getElementById('recSub');
+  const recSub2 = document.getElementById('recSub2');
+
+  if (mode === 'K') {
+    k1Title.textContent = "K^M_1(F)/ell";
+    k1Sub.textContent = "units mod ell";
+    k2Title.textContent = "K^M_2(F)/ell";
+    k2Sub.textContent = "symbols mod ell";
+    prodTitle.textContent = "product (cup)";
+    prodSub.textContent = "K^M_1 x K^M_2";
+    reconTitle.textContent = "Reconstruct";
+    reconSub.textContent = "from K-data";
+  } else {
+    k1Title.textContent = "G_F^{ab,ell}";
+    k1Sub.textContent = "abelian pro-ell";
+    k2Title.textContent = "central extension";
+    k2Sub.textContent = "commutator data";
+    prodTitle.textContent = "G_F (pro-ell)";
+    prodSub.textContent = "abelian-by-central";
+    reconTitle.textContent = "Bogomolov-Pop";
+    reconSub.textContent = "from Galois data";
+  }
+
+  const tgt = recoveryTarget();
+  recSub.textContent = tgt.length > 26 ? tgt.slice(0,24)+'…' : tgt;
+  recSub2.textContent = '';
+
+  // active nodes based on status
+  const ok = status() === 'reconstructible';
+  document.querySelectorAll('.node').forEach(n=>n.classList.remove('active'));
+  if (ok) {
+    document.getElementById('node-field').classList.add('active');
+    document.getElementById('node-k1').classList.add('active');
+    document.getElementById('node-k2').classList.add('active');
+    document.getElementById('node-prod').classList.add('active');
+    document.getElementById('node-recon').classList.add('active');
+    document.getElementById('node-rec').classList.add('active');
+  }
+  document.querySelectorAll('.edge').forEach(e=>e.classList.toggle('active', ok));
+}
+
+function updateDetails(){
+  const ul = document.getElementById('details');
+  const dd = d();
+  const pp = p();
+  const ll = ell();
+  const tgt = recoveryTarget();
+  const st = status();
+  const items = [];
+  items.push('<li><b>Input:</b> ' + (mode==='K'
+    ? 'mod-ell Milnor K-groups K^M_1/ell, K^M_2/ell and their product (cup product).'
+    : 'abelian-by-central pro-ell Galois group G_F (Bogomolov-Pop data).'));
+  items.push('<li><b>Requirement:</b> transcendence degree at least 2 over algebraically closed constants (current d = ' + dd + ').</li>');
+  if (mode === 'K') {
+    if (pp !== 0 && pp === ll) {
+      items.push('<li><b>Equal characteristic (ell = p):</b> recover the <b>original field F</b> and its <b>named base</b>.</li>');
+    } else {
+      items.push('<li><b>Away from characteristic (ell != p):</b> recover the <b>perfect closure</b> of F and the <b>constants</b>.</li>');
+    }
+    if (pp === 0) items.push('<li><b>Char 0:</b> perfect closure is trivial, so F itself is recovered together with constants.</li>');
+  } else {
+    if (pp !== 0 && pp === ll) {
+      items.push('<li><b>Equal characteristic:</b> this Bogomolov-Pop variant is not covered; use Milnor K reconstruction instead.</li>');
+    } else {
+      items.push('<li><b>Away from characteristic (ell != p):</b> reconstruct F from its abelian-by-central pro-ell Galois data.</li>');
+    }
+  }
+  items.push('<li><b>Result:</b> ' + tgt + ' (' + st + ').</li>');
+  ul.innerHTML = items.join('');
+}
+
+function update(){
+  const dd = d();
+  document.getElementById('stD').textContent = dd;
+  document.getElementById('stP').textContent = p() === 0 ? '0' : p();
+  document.getElementById('stL').textContent = ell();
+  document.getElementById('stRel').textContent = relation();
+  document.getElementById('stTarget').textContent = recoveryTarget();
+  document.getElementById('stStatus').textContent = status();
+  dval.textContent = dd;
+  updateDiagramLabels();
+  updateDetails();
+}
+
+// initial
+update();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

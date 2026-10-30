@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A factor-two approximation for shortest common superstring (conceptual, result 128)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range],select,button{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+input[type=range]{flex:1 1 180px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:460px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button:hover{filter:brightness(1.1)}
+.legend{display:flex;gap:1rem;align-items:center;font-size:.85rem;color:var(--muted);margin:.5rem 0;flex-wrap:wrap}
+.swatch{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:.3rem;vertical-align:middle}
+textarea{width:100%;min-height:90px;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);padding:.6rem;font-family:ui-monospace,monospace;font-size:.95rem}
+.out{font-family:ui-monospace,monospace;color:var(--accent);word-break:break-all;background:var(--chip);border:1px solid var(--border);border-radius:8px;padding:.6rem}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>A factor-two approximation for shortest common superstring (conceptual, result 128)</h1>
+  <p>Gives a deterministic polynomial-time algorithm constructing a common superstring of length at most twice the optimum for every finite family of explicitly represented strings. The running time is polynomial in the full encoded input length, including symbol labels.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">The shortest common superstring problem asks for a shortest string containing every input string as a contiguous substring. Result 128 gives a deterministic polynomial-time algorithm, for explicitly represented strings, whose output length is at most twice the optimum. Its construction uses forced occurrence counts, a balanced hierarchical graph, layers, and a connection procedure whose extra cost is bounded by the same lower bound.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">This settles the factor-two question for polynomial-time superstring approximation in the positive: the output is guaranteed within a factor of $2$ of the optimum, with running time polynomial in the full encoded input size. The interactive model below computes exact optima for small instances by dynamic programming, compares a greedy merge heuristic, and shows the cycle-cover lower bound, illustrating why the guarantee is nontrivial.</p>
+  </section>
+  <div class="controls">
+    <label for="strs">Input strings (one per line)</label>
+  </div>
+  <textarea id="strs">ABC
+BCD
+CDE
+DEA</textarea>
+  <div class="controls">
+    <button id="compute">Compute</button>
+    <span class="val" id="ninfo">—</span>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Strings n</div><div class="value" id="sn">—</div></div>
+    <div class="stat"><div class="label">Sum lengths L</div><div class="value" id="sL">—</div></div>
+    <div class="stat"><div class="label">Cycle-cover weight</div><div class="value" id="sw">—</div></div>
+    <div class="stat"><div class="label">Lower bound L-w</div><div class="value" id="slb">—</div></div>
+    <div class="stat"><div class="label">Greedy length</div><div class="value" id="sgreedy">—</div></div>
+    <div class="stat"><div class="label">Optimal length</div><div class="value" id="sopt">—</div></div>
+    <div class="stat"><div class="label">Greedy / optimum</div><div class="value" id="sratio">—</div></div>
+    <div class="stat"><div class="label">2 * optimum</div><div class="value" id="stwo">—</div></div>
+  </div>
+  <div class="legend">
+    <span><span class="swatch" style="background:#5eead4"></span>Cycle-cover edges</span>
+    <span><span class="swatch" style="background:#9fb0cc"></span>Other overlaps</span>
+    <span><span class="swatch" style="background:#f59e0b"></span>Greedy</span>
+    <span><span class="swatch" style="background:#22c55e"></span>Optimum</span>
+  </div>
+  <canvas id="c" width="900" height="460"></canvas>
+  <p style="font-size:.85rem;color:var(--muted);margin-top:.5rem">Conceptual model: exact optimum for up to eight strings via subset dynamic programming; greedy repeatedly merges the pair of largest overlap. The cycle cover gives a computable lower bound $L-w$.</p>
+  <div class="controls" style="margin-top:.5rem"><label>Greedy superstring</label></div>
+  <div class="out" id="greedyOut"></div>
+  <div class="controls" style="margin-top:.5rem"><label>Optimal superstring</label></div>
+  <div class="out" id="optOut"></div>
+</div>
+<script>
+const strsEl=document.getElementById('strs');
+const computeBtn=document.getElementById('compute');
+const ninfo=document.getElementById('ninfo');
+
+const sn=document.getElementById('sn');
+const sL=document.getElementById('sL');
+const sw=document.getElementById('sw');
+const slb=document.getElementById('slb');
+const sgreedy=document.getElementById('sgreedy');
+const sopt=document.getElementById('sopt');
+const sratio=document.getElementById('sratio');
+const stwo=document.getElementById('stwo');
+
+const greedyOut=document.getElementById('greedyOut');
+const optOut=document.getElementById('optOut');
+
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+
+let cyclePerm=[];
+
+function resizeCanvas(){ canvas.width=Math.max(300,canvas.clientWidth); canvas.height=460; }
+window.addEventListener('resize',function(){ resizeCanvas(); render(); });
+
+function parseStrings(){
+  return strsEl.value.split(/\n|,/).map(s=>s.trim()).filter(s=>s.length>0);
+}
+
+function removeContained(strs){
+  const out=[];
+  for(let i=0;i<strs.length;i++){
+    let contained=false;
+    for(let j=0;j<strs.length;j++){
+      if(i===j) continue;
+      if(strs[j].includes(strs[i]) && (strs[j].length>strs[i].length || (strs[j].length===strs[i].length && j<i))){
+        contained=true; break;
+      }
+    }
+    if(!contained) out.push(strs[i]);
+  }
+  return out;
+}
+
+function overlap(a,b){
+  const max=Math.min(a.length,b.length);
+  for(let k=max;k>=0;k--){
+    if(a.slice(a.length-k)===b.slice(0,k)) return k;
+  }
+  return 0;
+}
+
+function exactSCS(strs){
+  const n=strs.length;
+  if(n===0) return {len:0,perm:[]};
+  if(n===1) return {len:strs[0].length,perm:[0]};
+  const ov=Array.from({length:n},()=>Array(n).fill(0));
+  for(let i=0;i<n;i++) for(let j=0;j<n;j++) if(i!==j) ov[i][j]=overlap(strs[i],strs[j]);
+  const INF=1e9;
+  const dp=Array.from({length:1<<n},()=>Array(n).fill(INF));
+  const par=Array.from({length:1<<n},()=>Array(n).fill(-1));
+  for(let i=0;i<n;i++) dp[1<<i][i]=strs[i].length;
+  for(let mask=1;mask<(1<<n);mask++){
+    for(let i=0;i<n;i++){
+      if(!(mask&(1<<i))) continue;
+      if(dp[mask][i]===INF) continue;
+      for(let j=0;j<n;j++){
+        if(mask&(1<<j)) continue;
+        const nmask=mask|(1<<j);
+        const cand=dp[mask][i]+strs[j].length-ov[i][j];
+        if(cand<dp[nmask][j]){ dp[nmask][j]=cand; par[nmask][j]=i; }
+      }
+    }
+  }
+  const full=(1<<n)-1;
+  let bestI=0,best=dp[full][0];
+  for(let i=1;i<n;i++) if(dp[full][i]<best){best=dp[full][i];bestI=i;}
+  const order=[];
+  let mask=full,last=bestI;
+  while(true){
+    order.unshift(last);
+    const pmask=mask^(1<<last);
+    if(pmask===0) break;
+    let found=-1;
+    for(let i=0;i<n;i++){
+      if(!(pmask&(1<<i))) continue;
+      if(dp[pmask][i]+strs[last].length-ov[i][last]===dp[mask][last]){ found=i; break; }
+    }
+    last=found; mask=pmask;
+  }
+  return {len:best,perm:order};
+}
+
+function greedySCS(strs){
+  let arr=strs.slice();
+  while(arr.length>1){
+    let best=-1,pi=0,pj=1;
+    for(let i=0;i<arr.length;i++){
+      for(let j=0;j<arr.length;j++){
+        if(i===j) continue;
+        const o=overlap(arr[i],arr[j]);
+        if(o>best){ best=o; pi=i; pj=j; }
+      }
+    }
+    if(best<0) best=0;
+    const a=arr[pi], b=arr[pj];
+    const o=overlap(a,b);
+    const merged=a+b.slice(o);
+    const newArr=[];
+    for(let t=0;t<arr.length;t++){
+      if(t===pi || t===pj) continue;
+      newArr.push(arr[t]);
+    }
+    newArr.push(merged);
+    arr=newArr;
+  }
+  return arr.length?arr[0]:'';
+}
+
+function maxCycleCover(strs){
+  const n=strs.length;
+  if(n<=1) return {weight:0,perm:[]};
+  const ov=Array.from({length:n},()=>Array(n).fill(0));
+  for(let i=0;i<n;i++) for(let j=0;j<n;j++) if(i!==j) ov[i][j]=overlap(strs[i],strs[j]);
+  let best=0; let bestPerm=[];
+  const perm=Array.from({length:n},(_,i)=>i);
+  function rec(i){
+    if(i===n){
+      let w=0;
+      for(let k=0;k<n;k++) w+=ov[k][perm[k]];
+      if(w>best){ best=w; bestPerm=perm.slice(); }
+      return;
+    }
+    for(let j=i;j<n;j++){
+      [perm[i],perm[j]]=[perm[j],perm[i]];
+      rec(i+1);
+      [perm[i],perm[j]]=[perm[j],perm[i]];
+    }
+  }
+  rec(0);
+  return {weight:best,perm:bestPerm};
+}
+
+function mergeSeq(strs,perm){
+  if(!perm.length) return '';
+  let s=strs[perm[0]];
+  for(let t=1;t<perm.length;t++){
+    const o=overlap(strs[perm[t-1]],strs[perm[t]]);
+    s += strs[perm[t]].slice(o);
+  }
+  return s;
+}
+
+function fmt(x){ if(!isFinite(x)) return '—'; return (Math.round(x*1000)/1000).toString(); }
+
+let lastData=null;
+
+function compute(){
+  const raw=parseStrings();
+  const strs=removeContained(raw).slice(0,8);
+  ninfo.textContent = raw.length>8 ? (strs.length+' used (capped at 8)') : (strs.length+' strings');
+  if(strs.length===0){
+    sn.textContent='0'; sL.textContent='0'; sw.textContent='0'; slb.textContent='0';
+    sgreedy.textContent='0'; sopt.textContent='0'; sratio.textContent='—'; stwo.textContent='0';
+    greedyOut.textContent=''; optOut.textContent=''; cyclePerm=[]; lastData=null; render(); return;
+  }
+  const L=strs.reduce((a,s)=>a+s.length,0);
+  const cc=maxCycleCover(strs);
+  cyclePerm=cc.perm;
+  const lb=L-cc.weight;
+  const gstr=greedySCS(strs);
+  const exact=exactSCS(strs);
+  const optstr=mergeSeq(strs,exact.perm);
+  const ratio= gstr.length / Math.max(1,exact.len);
+
+  sn.textContent=strs.length;
+  sL.textContent=L;
+  sw.textContent=cc.weight;
+  slb.textContent=lb;
+  sgreedy.textContent=gstr.length;
+  sopt.textContent=exact.len;
+  sratio.textContent=fmt(ratio);
+  stwo.textContent=2*exact.len;
+  sratio.style.color = ratio<=2+1e-9 ? 'var(--good)' : 'var(--warn)';
+
+  greedyOut.textContent=gstr;
+  optOut.textContent=optstr;
+
+  lastData={strs,ov:null};
+  // store ov matrix
+  const n=strs.length;
+  const ov=Array.from({length:n},()=>Array(n).fill(0));
+  for(let i=0;i<n;i++) for(let j=0;j<n;j++) if(i!==j) ov[i][j]=overlap(strs[i],strs[j]);
+  lastData.ov=ov;
+  render();
+}
+
+function render(){
+  resizeCanvas();
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  if(!lastData){ return; }
+  const strs=lastData.strs;
+  const ov=lastData.ov;
+  const n=strs.length;
+  // left: overlap graph
+  const cx=W*0.22, cy=H/2;
+  const R=Math.min(W*0.16,H*0.32);
+  // edges
+  const cycleSet=new Set();
+  for(let k=0;k<cyclePerm.length;k++) cycleSet.add(k+','+cyclePerm[k]);
+  for(let i=0;i<n;i++){
+    for(let j=0;j<n;j++){
+      if(i===j) continue;
+      if(ov[i][j]<=0) continue;
+      const a1= (2*Math.PI*i/n)-Math.PI/2;
+      const a2= (2*Math.PI*j/n)-Math.PI/2;
+      const x1=cx+R*Math.cos(a1), y1=cy+R*Math.sin(a1);
+      const x2=cx+R*Math.cos(a2), y2=cy+R*Math.sin(a2);
+      const isCycle=cycleSet.has(i+','+j);
+      ctx.strokeStyle=isCycle?'#5eead4':'rgba(159,176,204,0.35)';
+      ctx.lineWidth=isCycle?2.5:1;
+      ctx.beginPath();
+      ctx.moveTo(x1,y1);
+      // curved
+      const mx=(x1+x2)/2, my=(y1+y2)/2;
+      const dx=x2-x1, dy=y2-y1;
+      const nx=-dy*0.15, ny=dx*0.15;
+      ctx.quadraticCurveTo(mx+nx,my+ny,x2,y2);
+      ctx.stroke();
+      // arrowhead
+      const ang=Math.atan2(y2-(my+ny), x2-(mx+nx));
+      ctx.fillStyle=isCycle?'#5eead4':'rgba(159,176,204,0.5)';
+      ctx.beginPath();
+      ctx.moveTo(x2,y2);
+      ctx.lineTo(x2-8*Math.cos(ang-0.4), y2-8*Math.sin(ang-0.4));
+      ctx.lineTo(x2-8*Math.cos(ang+0.4), y2-8*Math.sin(ang+0.4));
+      ctx.closePath();
+      ctx.fill();
+      // weight label
+      if(isCycle || ov[i][j]>=2){
+        ctx.fillStyle='rgba(230,237,247,0.85)';
+        ctx.font='11px system-ui';
+        ctx.textAlign='center';
+        ctx.fillText(ov[i][j], (x1+x2)/2+nx*0.5, (y1+y2)/2+ny*0.5-4);
+      }
+    }
+  }
+  // nodes
+  for(let i=0;i<n;i++){
+    const a=(2*Math.PI*i/n)-Math.PI/2;
+    const x=cx+R*Math.cos(a), y=cy+R*Math.sin(a);
+    ctx.fillStyle='#16203a';
+    ctx.strokeStyle='#5eead4';
+    ctx.lineWidth=2;
+    ctx.beginPath();
+    ctx.arc(x,y,16,0,Math.PI*2);
+    ctx.fill();
+    ctx.stroke();
+    ctx.fillStyle='#e6edf7';
+    ctx.font='bold 12px system-ui';
+    ctx.textAlign='center';
+    ctx.textBaseline='middle';
+    ctx.fillText(i,x,y);
+    ctx.textBaseline='alphabetic';
+  }
+  // labels under nodes
+  for(let i=0;i<n;i++){
+    const a=(2*Math.PI*i/n)-Math.PI/2;
+    const x=cx+R*Math.cos(a), y=cy+R*Math.sin(a);
+    ctx.fillStyle='rgba(159,176,204,0.9)';
+    ctx.font='10px system-ui';
+    ctx.textAlign='center';
+    const lab=strs[i].length>8?strs[i].slice(0,8)+'…':strs[i];
+    ctx.fillText(lab,x,y+28);
+  }
+
+  // right: bars
+  const bx=W*0.48, by=40, bw=W*0.48, bh=H-80;
+  ctx.strokeStyle='rgba(159,176,204,0.25)';
+  ctx.strokeRect(bx,by,bw,bh);
+  ctx.fillStyle='#9fb0cc';
+  ctx.font='12px system-ui';
+  ctx.textAlign='left';
+  ctx.fillText('Length comparison', bx+8, by+16);
+
+  const gLen=parseInt(sgreedy.textContent)||0;
+  const oLen=parseInt(sopt.textContent)||0;
+  const Lval=parseInt(sL.textContent)||0;
+  const lb=parseInt(slb.textContent)||0;
+  const two=parseInt(stwo.textContent)||0;
+  const vals=[{label:'L',v:Lval,color:'#9fb0cc'},{label:'lower bound',v:lb,color:'#5eead4'},{label:'greedy',v:gLen,color:'#f59e0b'},{label:'optimum',v:oLen,color:'#22c55e'},{label:'2*opt',v:two,color:'#ef4444'}];
+  const maxv=Math.max(1,...vals.map(v=>v.v));
+  const barW=bw*0.14;
+  const gap=bw*0.04;
+  const base=by+bh-24;
+  const scale=(bh-60)/maxv;
+  vals.forEach((item,idx)=>{
+    const x=bx+12+idx*(barW+gap);
+    const h=item.v*scale;
+    ctx.fillStyle=item.color;
+    ctx.fillRect(x,base-h,barW,h);
+    ctx.fillStyle='rgba(230,237,247,0.9)';
+    ctx.font='10px system-ui';
+    ctx.textAlign='center';
+    ctx.fillText(item.v,x+barW/2,base+12);
+    ctx.save();
+    ctx.translate(x+barW/2,base+26);
+    ctx.rotate(-0.5);
+    ctx.fillText(item.label,0,0);
+    ctx.restore();
+  });
+}
+
+computeBtn.addEventListener('click',compute);
+strsEl.addEventListener('input',function(){ /* live optional */ });
+compute();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

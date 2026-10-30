@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Subpolynomial dimension reduction in L_p (conceptual, result 094)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range],select{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+input[type=range]{flex:1 1 180px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:440px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+.toggle{display:inline-flex;align-items:center;gap:.4rem}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Subpolynomial dimension reduction in (L_p) (conceptual, result 094)</h1>
+  <p>For every fixed (1&lt;p&lt;\infty) and distortion (D&gt;1), every (n)-point subset of real (L_p) embeds into (\ell_p^d) with distortion at most (D) and dimension (d=n^{o(1)}), answering Naor's sublinear-dimension question for (p\ne2). Exact embeddings can require worst-case dimension (\Theta(n^2)) when (p\ne2).</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">For (p&gt;1), (p\ne2), the least dimension needed to embed every (n)-point subset of real (L_p) with distortion (D) is bounded as follows. For each fixed (D&gt;1), there is (C=C(p,D)) such that the dimension lies between (\log n/\log(1+2D)) and (\exp(C(\log n)^{\gamma(p)})) for (n\ge2), with (\gamma(p)=2-p) for (p&lt;2) and (1-2/p) for (p&gt;2). At distortion (1) and (n\ge9), it lies between (\lfloor (n-1)/4\rfloor^2) and (\binom n2). The least dimension is attained, and (\log d/\log n\to0) for (D&gt;1) while (\to2) for (D=1).</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Dimension reduction in (L_p) governs approximate nearest-neighbor search, compressed sensing, and metric embedding algorithms. The (D&gt;1) bound shows approximate (\ell_p) geometry is compressible to subpolynomial dimension, while (D=1) retains a quadratic worst case, exposing a sharp phase transition at exactness. The exponent (\gamma(p)) captures how the (p)-dependent geometry controls the subpolynomial rate.</p>
+  </section>
+  <div class="controls">
+    <label for="p">p</label>
+    <input id="p" type="range" min="11" max="40" value="15">
+    <span class="val" id="pval">1.50</span>
+    <label for="D">Distortion D</label>
+    <input id="D" type="range" min="100" max="500" value="200">
+    <span class="val" id="Dval">2.00</span>
+    <label for="C">Constant C</label>
+    <input id="C" type="range" min="5" max="30" value="10">
+    <span class="val" id="Cval">1.00</span>
+    <label for="n">n</label>
+    <input id="n" type="range" min="2" max="1000" value="100">
+    <span class="val" id="nval">100</span>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Regime</div><div class="value" id="regime">—</div></div>
+    <div class="stat"><div class="label">(\gamma(p))</div><div class="value" id="gammastat">—</div></div>
+    <div class="stat"><div class="label">Lower bound d</div><div class="value" id="lowerstat">—</div></div>
+    <div class="stat"><div class="label">Upper bound d</div><div class="value" id="upperstat">—</div></div>
+    <div class="stat"><div class="label">Selected n</div><div class="value" id="nstat">—</div></div>
+    <div class="stat"><div class="label">Exponent (upper) (\log d/\log n)</div><div class="value" id="expstat">—</div></div>
+    <div class="stat"><div class="label">Exact scale (n^2)</div><div class="value" id="n2stat">—</div></div>
+    <div class="stat"><div class="label">Status</div><div class="value" id="status">—</div></div>
+  </div>
+  <canvas id="c" width="900" height="440"></canvas>
+  <p style="font-size:.85rem;color:var(--muted);margin-top:.5rem">Log-log plot of dimension versus (n). Blue band: allowed dimension range for the chosen (D). Gray dashed line: exact worst-case scale (n^2). Gold line: selected (n).</p>
+</div>
+<script>
+const pSlider=document.getElementById('p');
+const DSlider=document.getElementById('D');
+const CSlider=document.getElementById('C');
+const nSlider=document.getElementById('n');
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+
+const pval=document.getElementById('pval');
+const Dval=document.getElementById('Dval');
+const Cval=document.getElementById('Cval');
+const nval=document.getElementById('nval');
+const regime=document.getElementById('regime');
+const gammastat=document.getElementById('gammastat');
+const lowerstat=document.getElementById('lowerstat');
+const upperstat=document.getElementById('upperstat');
+const nstat=document.getElementById('nstat');
+const expstat=document.getElementById('expstat');
+const n2stat=document.getElementById('n2stat');
+const status=document.getElementById('status');
+
+function pValue(){ return +pSlider.value/10; }
+function DValue(){ return +DSlider.value/100; }
+function CValue(){ return +CSlider.value/10; }
+
+function gamma(p){ if(p<2) return 2-p; return 1-2/p; }
+
+function lowerApprox(n,D){ return Math.log(n)/Math.log(1+2*D); }
+function upperApprox(n,p,D,C){ const g=gamma(p); return Math.exp(C*Math.pow(Math.log(n),g)); }
+function lowerExact(n){ return Math.pow(Math.floor((n-1)/4),2); }
+function upperExact(n){ return n*(n-1)/2; }
+
+function resizeCanvas(){ canvas.width=Math.max(300,canvas.clientWidth); canvas.height=440; }
+window.addEventListener('resize',function(){ resizeCanvas(); render(); });
+resizeCanvas();
+
+let yMin=0,yMax=1;
+function updateYRange(){
+  const D=DValue(), p=pValue(), C=CValue();
+  let mn=Infinity, mx=-Infinity;
+  const add=(y)=>{ if(isFinite(y) && y>0){ mn=Math.min(mn,Math.log(y)); mx=Math.max(mx,Math.log(y)); } };
+  for(let i=2;i<=1000;i++){
+    if(D>1.0005){
+      add(lowerApprox(i,D));
+      add(upperApprox(i,p,D,C));
+    } else {
+      add(Math.max(lowerExact(i),1));
+      add(Math.max(upperExact(i),1));
+    }
+    add(i*i);
+  }
+  yMin = Math.max(0, mn-0.5);
+  yMax = mx+0.5;
+  if(yMax-yMin < 1) yMax = yMin+1;
+}
+
+function drawAxes(W,H){
+  const padL=58,padR=18,padT=20,padB=42;
+  const plotW=W-padL-padR, plotH=H-padT-padB;
+  ctx.clearRect(0,0,W,H);
+  ctx.strokeStyle='rgba(159,176,204,0.12)';
+  ctx.lineWidth=1;
+  for(let i=0;i<=5;i++){
+    const x=padL+plotW*i/5;
+    const y=padT+plotH*i/5;
+    ctx.beginPath(); ctx.moveTo(x,padT); ctx.lineTo(x,H-padB); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(W-padR,y); ctx.stroke();
+  }
+  ctx.strokeStyle='#475569';
+  ctx.beginPath(); ctx.moveTo(padL,H-padB); ctx.lineTo(W-padR,H-padB); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(padL,padT); ctx.lineTo(padL,H-padB); ctx.stroke();
+  const X=v=>padL+plotW*(v-Math.log(2))/(Math.log(1000)-Math.log(2));
+  const Y=v=>padT+plotH*(1-(v-yMin)/(yMax-yMin));
+  ctx.fillStyle='#9fb0cc'; ctx.font='12px system-ui';
+  ctx.fillText('log n', W/2-20, H-8);
+  ctx.save(); ctx.translate(14,H/2); ctx.rotate(-Math.PI/2); ctx.fillText('log dimension',0,0); ctx.restore();
+  // x ticks
+  ctx.fillStyle='#9fb0cc'; ctx.font='10px system-ui'; ctx.textAlign='center';
+  [2,10,100,1000].forEach(v=>{
+    const x=X(Math.log(v));
+    ctx.fillText(v, x, H-padB+14);
+  });
+  // y ticks powers of e? show dimension values
+  ctx.textAlign='right';
+  let tick=1;
+  while(Math.log(tick) <= yMax+0.01){
+    if(Math.log(tick) >= yMin-0.01){
+      const y=Y(Math.log(tick));
+      ctx.fillText(tick, padL-6, y+4);
+    }
+    tick*=10;
+    if(tick>1e8) break;
+  }
+  ctx.textAlign='left';
+  return {X,Y,padL,padR,padT,padB,plotW,plotH};
+}
+
+function render(){
+  const p=pValue(), D=DValue(), C=CValue(), n=+nSlider.value;
+  pval.textContent=p.toFixed(2);
+  Dval.textContent=D.toFixed(2);
+  Cval.textContent=C.toFixed(2);
+  nval.textContent=n;
+  updateYRange();
+  const {X,Y}=drawAxes(canvas.width,canvas.height);
+  const W=canvas.width,H=canvas.height;
+
+  const approx = D>1.0005;
+  regime.textContent = approx ? 'D>1 (subpolynomial)' : 'D=1 (exact)';
+  gammastat.textContent = gamma(p).toFixed(3);
+  nstat.textContent = n;
+  n2stat.textContent = (n*n).toLocaleString();
+
+  if(approx){
+    // lower band
+    ctx.strokeStyle='rgba(94,234,212,0.35)';
+    ctx.fillStyle='rgba(94,234,212,0.08)';
+    // draw filled band between lower and upper
+    ctx.beginPath();
+    let started=false;
+    for(let i=2;i<=1000;i++){
+      const x=X(Math.log(i));
+      const y= Y(Math.log(Math.max(lowerApprox(i,D),1e-9)));
+      if(!started){ ctx.moveTo(x,y); started=true; } else ctx.lineTo(x,y);
+    }
+    for(let i=1000;i>=2;i--){
+      const x=X(Math.log(i));
+      const y= Y(Math.log(Math.max(upperApprox(i,p,D,C),1e-9)));
+      ctx.lineTo(x,y);
+    }
+    ctx.closePath();
+    ctx.fill();
+    // lower curve
+    ctx.strokeStyle='#5eead4'; ctx.lineWidth=2;
+    ctx.beginPath(); started=false;
+    for(let i=2;i<=1000;i++){
+      const x=X(Math.log(i));
+      const y=Y(Math.log(Math.max(lowerApprox(i,D),1e-9)));
+      if(!started){ctx.moveTo(x,y);started=true;}else ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+    // upper curve
+    ctx.strokeStyle='#a78bfa'; ctx.lineWidth=2;
+    ctx.beginPath(); started=false;
+    for(let i=2;i<=1000;i++){
+      const x=X(Math.log(i));
+      const y=Y(Math.log(Math.max(upperApprox(i,p,D,C),1e-9)));
+      if(!started){ctx.moveTo(x,y);started=true;}else ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+    lowerstat.textContent = lowerApprox(n,D).toFixed(3);
+    upperstat.textContent = upperApprox(n,p,D,C).toFixed(3);
+    const expv = (Math.log(upperApprox(n,p,D,C))/Math.log(n));
+    expstat.textContent = expv.toFixed(3);
+  } else {
+    ctx.strokeStyle='rgba(94,234,212,0.35)';
+    ctx.fillStyle='rgba(94,234,212,0.08)';
+    ctx.beginPath();
+    let started=false;
+    for(let i=9;i<=1000;i++){
+      const x=X(Math.log(i));
+      const y=Y(Math.log(Math.max(lowerExact(i),1)));
+      if(!started){ctx.moveTo(x,y);started=true;}else ctx.lineTo(x,y);
+    }
+    for(let i=1000;i>=9;i--){
+      const x=X(Math.log(i));
+      const y=Y(Math.log(Math.max(upperExact(i),1)));
+      ctx.lineTo(x,y);
+    }
+    ctx.closePath(); ctx.fill();
+    ctx.strokeStyle='#5eead4'; ctx.lineWidth=2;
+    ctx.beginPath(); started=false;
+    for(let i=9;i<=1000;i++){
+      const x=X(Math.log(i));
+      const y=Y(Math.log(Math.max(lowerExact(i),1)));
+      if(!started){ctx.moveTo(x,y);started=true;}else ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+    ctx.strokeStyle='#a78bfa'; ctx.lineWidth=2;
+    ctx.beginPath(); started=false;
+    for(let i=9;i<=1000;i++){
+      const x=X(Math.log(i));
+      const y=Y(Math.log(Math.max(upperExact(i),1)));
+      if(!started){ctx.moveTo(x,y);started=true;}else ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+    lowerstat.textContent = lowerExact(n).toLocaleString();
+    upperstat.textContent = upperExact(n).toLocaleString();
+    expstat.textContent = '2.000';
+  }
+
+  // exact scale n^2 dashed
+  ctx.strokeStyle='rgba(159,176,204,0.55)';
+  ctx.setLineDash([6,4]);
+  ctx.lineWidth=1.5;
+  ctx.beginPath();
+  let started=false;
+  for(let i=2;i<=1000;i++){
+    const x=X(Math.log(i));
+    const y=Y(Math.log(i*i));
+    if(!started){ctx.moveTo(x,y);started=true;}else ctx.lineTo(x,y);
+  }
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // selected n
+  ctx.strokeStyle='#f59e0b'; ctx.setLineDash([4,4]); ctx.lineWidth=1.5;
+  const xn=X(Math.log(n));
+  ctx.beginPath(); ctx.moveTo(xn,0); ctx.lineTo(xn,canvas.height); ctx.stroke();
+  ctx.setLineDash([]);
+  // dot on upper/lower?
+  
+  // legend
+  ctx.font='11px system-ui'; ctx.textAlign='left';
+  let ly=18;
+  ctx.fillStyle='#5eead4'; ctx.fillRect(12,ly,12,3); ctx.fillStyle='#9fb0cc'; ctx.fillText(approx?'Lower: log n / log(1+2D)':'Lower: floor((n-1)/4)^2',30,ly+4);
+  ly+=16;
+  ctx.fillStyle='#a78bfa'; ctx.fillRect(12,ly,12,3); ctx.fillStyle='#9fb0cc'; ctx.fillText(approx?'Upper: exp(C (log n)^γ)':'Upper: C(n,2)',30,ly+4);
+  ly+=16;
+  ctx.fillStyle='rgba(159,176,204,0.55)'; ctx.fillRect(12,ly,12,3); ctx.fillStyle='#9fb0cc'; ctx.fillText('Exact scale n^2',30,ly+4);
+
+  status.textContent = approx ? 'subpolynomial' : (n>=9?'exact (n≥9)':'n<9');
+}
+
+pSlider.addEventListener('input',render);
+DSlider.addEventListener('input',render);
+CSlider.addEventListener('input',render);
+nSlider.addEventListener('input',render);
+render();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

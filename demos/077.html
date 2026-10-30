@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fourier restriction for positively curved surfaces (conceptual, result 077)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range]{flex:1 1 220px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:440px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+select{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text)}
+.stat .value.ok{color:var(--good)} .stat .value.warn{color:var(--warn)} .stat .value.bad{color:var(--bad)}
+.toggle{display:inline-flex;align-items:center;gap:.4rem}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Fourier restriction for positively curved surfaces (conceptual, result 077)</h1>
+  <p>For every compact smooth positively curved surface (\Sigma\subset\mathbb R^3), possibly with smooth boundary, the Fourier extension operator (E_\Sigma f(x)=\int_\Sigma f(\xi)e^{2\pi i x\cdot\xi}d\sigma(\xi)) is bounded from (L^p(\Sigma)) to (L^p(\mathbb R^3)) for every (3<p<\infty\). Explore curvature, exponent, and the resulting smoothing threshold.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Proves the diagonal Fourier extension conjecture in three dimensions for positively curved surfaces: for every compact smooth surface (\Sigma\subset\mathbb R^3) whose second fundamental form is definite, including surfaces with smooth boundary, and for every (3<p<\infty\), there is \(C_{\Sigma,p}\) with \(\|E_\Sigma f\|_{L^p(\mathbb R^3)}\le C_{\Sigma,p}\|f\|_{L^p(\Sigma)}\). It covers spheres, compact elliptic paraboloid patches, and general smooth elliptic graphs, with the surface and exponent fixed in each estimate.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Settles the diagonal case of the restriction problem for positively curved surfaces in \(\mathbb R^3\), fixing the sharp threshold \(p>3\). It advances beyond earlier bounded-data and partial diagonal estimates, and yields a free Schrödinger local smoothing estimate with Sobolev threshold \(s>2-6/p), plus scaling (N^{-3/p}) for associated oscillatory integrals. These feed restriction theory, dispersive estimates, and local smoothing for the Schrödinger equation.</p>
+  </section>
+  <div class="controls">
+    <label for="surface">Surface model</label>
+    <select id="surface">
+      <option value="sphere" selected>Sphere (constant curvature)</option>
+      <option value="ellipsoid">Ellipsoid (variable curvature)</option>
+      <option value="paraboloid">Paraboloid patch</option>
+      <option value="general">General elliptic graph</option>
+    </select>
+    <label for="kappa">Curvature contrast</label>
+    <input id="kappa" type="range" min="20" max="100" value="60" step="1">
+    <span class="val" id="kappaval">0.60</span>
+    <label for="p">Exponent (p)</label>
+    <input id="p" type="range" min="250" max="800" value="400" step="1">
+    <span class="val" id="pval">4.00</span>
+    <label for="view">View</label>
+    <select id="view">
+      <option value="admissible" selected>Admissible exponents</option>
+      <option value="curvature">Curvature map</option>
+      <option value="smoothing">Schrödinger smoothing</option>
+    </select>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">p</div><div class="value" id="pstat">—</div></div>
+    <div class="stat"><div class="label">Threshold</div><div class="value" id="thstat">3</div></div>
+    <div class="stat"><div class="label">Bounded?</div><div class="value" id="bstat">—</div></div>
+    <div class="stat"><div class="label">(\kappa_{\min})</div><div class="value" id="kminstat">—</div></div>
+    <div class="stat"><div class="label">Smoothing (s)</div><div class="value" id="sstat">—</div></div>
+    <div class="stat"><div class="label">Scaling</div><div class="value" id="scstat">—</div></div>
+  </div>
+  <canvas id="c" width="900" height="440"></canvas>
+</div>
+<script>
+const surfaceSel=document.getElementById('surface');
+const kappaSlider=document.getElementById('kappa');
+const pSlider=document.getElementById('p');
+const viewSel=document.getElementById('view');
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+
+const kappaval=document.getElementById('kappaval');
+const pval=document.getElementById('pval');
+const pstat=document.getElementById('pstat');
+const bstat=document.getElementById('bstat');
+const kminstat=document.getElementById('kminstat');
+const sstat=document.getElementById('sstat');
+const scstat=document.getElementById('scstat');
+
+function resizeCanvas(){ canvas.width=Math.max(300,canvas.clientWidth); canvas.height=440; }
+window.addEventListener('resize',function(){ resizeCanvas(); render(); });
+resizeCanvas();
+
+function kappaMin(surface,k){
+  if(surface==='sphere') return 1.0;
+  if(surface==='ellipsoid') return 0.35+0.65*k;
+  if(surface==='paraboloid') return 0.45+0.55*k;
+  return 0.25+0.75*k;
+}
+
+function curvatureAt(surface,k,r){
+  const km=kappaMin(surface,k);
+  if(surface==='sphere') return 1.0;
+  const base=km+(1-km)*r*r;
+  if(surface==='general') return km+(1-km)*Math.abs(Math.sin(3*r*Math.PI/2));
+  return base;
+}
+
+function updateState(){
+  const surface=surfaceSel.value;
+  const k=+kappaSlider.value/100;
+  const p=+pSlider.value/100;
+  const view=viewSel.value;
+  const km=kappaMin(surface,k);
+  const bounded = p > 3 + 1e-9;
+  const s=2-6/p;
+  const scaling=Math.pow(1000,-3/p).toFixed(4);
+  kappaval.textContent=k.toFixed(2);
+  pval.textContent=p.toFixed(2);
+  pstat.textContent=p.toFixed(3);
+  bstat.textContent=bounded?'Yes':'No';
+  bstat.className='value '+(bounded?'good':'bad');
+  kminstat.textContent=km.toFixed(3);
+  sstat.textContent=s.toFixed(4);
+  scstat.textContent='N^-3/p';
+  return {surface,k,p,view,km,bounded,s,scaling};
+}
+
+function axis(W,H,margin,xlabel,ylabel){
+  const x0=margin,y0=H-margin,x1=W-margin,y1=margin;
+  ctx.strokeStyle='rgba(159,176,204,0.35)'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(x0,y0); ctx.lineTo(x1,y0); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(x0,y0); ctx.lineTo(x0,y1); ctx.stroke();
+  ctx.fillStyle='#9fb0cc'; ctx.font='11px system-ui'; ctx.textAlign='center';
+  ctx.fillText(xlabel,(x0+x1)/2,y0+28);
+  ctx.save(); ctx.translate(x0-34,(y0+y1)/2); ctx.rotate(-Math.PI/2); ctx.fillText(ylabel,0,0); ctx.restore();
+  return {x0,y0,x1,y1};
+}
+
+function drawAdmissible(W,H,s){
+  const m=axis(W,H,60,'p','status');
+  const {x0,y0,x1,y1}=m;
+  // threshold marker at p=3
+  const frac3=(3-2)/(10-2);
+  const xt=x0+(x1-x0)*frac3;
+  ctx.fillStyle='rgba(239,68,68,0.10)';
+  ctx.fillRect(x0,y1,xt-x0,y0-y1);
+  ctx.fillStyle='rgba(34,197,94,0.14)';
+  ctx.fillRect(xt,y1,x1-xt,y0-y1);
+  ctx.strokeStyle='#f59e0b'; ctx.lineWidth=2.5;
+  ctx.beginPath(); ctx.moveTo(xt,y1); ctx.lineTo(xt,y0); ctx.stroke();
+  ctx.fillStyle='#f59e0b'; ctx.font='11px system-ui'; ctx.textAlign='center';
+  ctx.fillText('p=3', xt, y1+14);
+  // ticks
+  for(let k=2;k<=10;k++){
+    const x=x0+(x1-x0)*(k-2)/8;
+    ctx.strokeStyle='rgba(159,176,204,0.18)';
+    ctx.beginPath(); ctx.moveTo(x,y0); ctx.lineTo(x,y0+5); ctx.stroke();
+    ctx.fillStyle='#9fb0cc'; ctx.font='10px system-ui'; ctx.textAlign='center';
+    ctx.fillText(String(k), x, y0+16);
+  }
+  // current
+  let frac=(s.p-2)/8;
+  frac=Math.max(0,Math.min(1,frac));
+  const cx=x0+(x1-x0)*frac;
+  const cy=(y0+y1)/2;
+  ctx.fillStyle=s.bounded?'#22c55e':'#ef4444';
+  ctx.beginPath(); ctx.arc(cx,cy,8,0,Math.PI*2); ctx.fill();
+  ctx.strokeStyle='#e6edf7'; ctx.lineWidth=1.5; ctx.beginPath(); ctx.arc(cx,cy,8,0,Math.PI*2); ctx.stroke();
+  ctx.fillStyle='#e6edf7'; ctx.font='12px system-ui'; ctx.textAlign='left';
+  ctx.fillText('current p='+s.p.toFixed(2), cx+12, cy-12);
+  ctx.fillStyle='#9fb0cc'; ctx.font='12px system-ui'; ctx.textAlign='left';
+  ctx.fillText('red: p≤3 (not covered)', x0+10, y1+20);
+  ctx.fillText('green: p>3 (bounded)', x0+10, y1+40);
+}
+
+function drawCurvature(W,H,s){
+  const cx=W/2, cy=H/2;
+  const R=Math.min(W,H)*0.34;
+  // rings
+  const steps=40;
+  for(let i=steps;i>=0;i--){
+    const r=i/steps;
+    const rr=(i+1)/steps;
+    const k=curvatureAt(s.surface,s.k,r);
+    // color scale green by curvature
+    const t=Math.max(0,Math.min(1,k));
+    const red=Math.round(239*(1-t)*0.6);
+    const green=Math.round(34+201*t);
+    const blue=Math.round(68+170*t*0.4);
+    ctx.fillStyle='rgba('+red+','+green+','+blue+',0.85)';
+    ctx.beginPath();
+    ctx.arc(cx,cy,R*rr,0,Math.PI*2);
+    ctx.arc(cx,cy,R*r,0,Math.PI*2,true);
+    ctx.closePath(); ctx.fill();
+  }
+  // outline
+  ctx.strokeStyle='rgba(159,176,204,0.5)'; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.arc(cx,cy,R,0,Math.PI*2); ctx.stroke();
+  // labels
+  ctx.fillStyle='#e6edf7'; ctx.font='13px system-ui'; ctx.textAlign='center';
+  ctx.fillText(s.surface+' curvature map', cx, 30);
+  ctx.font='12px system-ui';
+  ctx.fillText('κ_min = '+s.km.toFixed(3), cx, H-20);
+  ctx.textAlign='left';
+  ctx.fillStyle='#9fb0cc';
+  ctx.fillText('Positive curvature ⇒ definite second fundamental form.', 20, H-44);
+}
+
+function drawSmoothing(W,H,s){
+  const m=axis(W,H,60,'p','s threshold');
+  const {x0,y0,x1,y1}=m;
+  // curve s=2-6/p for p in (3,10]
+  ctx.strokeStyle='#5eead4'; ctx.lineWidth=2.5;
+  ctx.beginPath();
+  let first=true;
+  for(let i=0;i<=200;i++){
+    const p=3.001+(i/200)*(10-3.001);
+    const ss=2-6/p;
+    const x=x0+(x1-x0)*(p-3)/(10-3);
+    const y=y0-(y0-y1)*(ss- (2-6/3))/( (2-6/10)-(2-6/3) ); // scale
+    // better scale 0..1
+    if(first){ctx.moveTo(x,y);first=false;}else ctx.lineTo(x,y);
+  }
+  ctx.stroke();
+  // ticks
+  for(let k=3;k<=10;k++){
+    const x=x0+(x1-x0)*(k-3)/7;
+    ctx.strokeStyle='rgba(159,176,204,0.18)';
+    ctx.beginPath(); ctx.moveTo(x,y0); ctx.lineTo(x,y0+5); ctx.stroke();
+    ctx.fillStyle='#9fb0cc'; ctx.font='10px system-ui'; ctx.textAlign='center';
+    ctx.fillText(String(k), x, y0+16);
+  }
+  // current
+  const pcur=Math.max(3.001,Math.min(10,s.p));
+  const scur=2-6/pcur;
+  const xmin=x0+(x1-x0)*(pcur-3)/7;
+  // y scale using min/max of curve
+  const smin=2-6/10; // 1.4
+  const smax=2-6/3; // 0 (at 3) actually -? 2-2=0
+  // as p increases from 3 to 10, s from 0 to 1.4
+  const ymin=y0; // s=0 at bottom? We want s increasing upward
+  const ymax=y1;
+  const ycur=y0-(y0-y1)*(scur-0)/(1.4-0);
+  ctx.fillStyle=s.bounded?'#22c55e':'#ef4444';
+  ctx.beginPath(); ctx.arc(xmin,ycur,8,0,Math.PI*2); ctx.fill();
+  ctx.strokeStyle='#e6edf7'; ctx.lineWidth=1.5; ctx.beginPath(); ctx.arc(xmin,ycur,8,0,Math.PI*2); ctx.stroke();
+  ctx.fillStyle='#e6edf7'; ctx.font='12px system-ui'; ctx.textAlign='left';
+  ctx.fillText('s>'+s.s.toFixed(4)+' needed', xmin+12, ycur-12);
+  ctx.fillStyle='#9fb0cc'; ctx.font='12px system-ui';
+  ctx.fillText('Rogers necessary condition: threshold cannot be lowered.', 20, 30);
+}
+
+function render(){
+  const s=updateState();
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  if(s.view==='admissible') drawAdmissible(W,H,s);
+  else if(s.view==='curvature') drawCurvature(W,H,s);
+  else drawSmoothing(W,H,s);
+}
+
+surfaceSel.addEventListener('change',render);
+kappaSlider.addEventListener('input',render);
+pSlider.addEventListener('input',render);
+viewSel.addEventListener('change',render);
+render();
+
+function tick(){ render(); requestAnimationFrame(tick); }
+requestAnimationFrame(tick);
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

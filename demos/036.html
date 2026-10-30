@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Numerical semiampleness and generalized minimal models (conceptual, result 036)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range]{flex:1 1 220px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:500px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+select{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text)}
+.legend{display:flex;gap:1rem;align-items:center;font-size:.85rem;color:var(--muted);margin:.5rem 0;flex-wrap:wrap}
+.swatch{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:.3rem;vertical-align:middle}
+table{width:100%;border-collapse:collapse;font-size:.85rem}
+th,td{padding:.35rem .45rem;border-bottom:1px solid var(--border);text-align:left}
+th{color:var(--muted);font-weight:600}
+td.num{font-family:ui-monospace,monospace}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Numerical semiampleness and generalized minimal models (conceptual, result 036)</h1>
+  <p>For a klt pair ((X,B)) with (K_X+B) pseudo-effective and (M) nef, the adjoint (D=K_X+B+M), when nef, need not be semiample as a line bundle; but it is numerically semiample: there is a semiample (L) with (D\equiv L) (same real Chern class). Tune dimension, numerical dimension, flat part, and pseudo-effectivity to see the status. Generalized lc pairs with pseudo-effective adjoints admit minimal models; otherwise Mori fiber spaces, with nef b-data fixed.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Proves numerical semiampleness for nef adjoints (K_X+B+M) with (K_X+B) pseudo-effective and (M) nef rational, for projective klt rational pairs over algebraically closed characteristic-zero fields and smooth compact Kähler rational klt simple-normal-crossing pairs, using Bott–Chern cohomology in the latter case. Separately, projective generalized log canonical rational pairs over such fields admit minimal models for pseudo-effective adjoints and Mori fiber spaces otherwise, with nef b-data fixed.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Replaces direct semiampleness by numerical equivalence, allowing a flat change of line bundle; turns nef adjoints into semiample morphisms up to numerical equivalence, supporting minimal models, Iitaka fibrations, and generalized pairs with fixed nef b-data.</p>
+  </section>
+  <div class="controls">
+    <label for="geom">Geometry</label>
+    <select id="geom">
+      <option value="projective" selected>projective klt</option>
+      <option value="kahler">Kähler snc</option>
+    </select>
+    <label for="n">dim X (n)</label>
+    <input id="n" type="range" min="1" max="6" value="3" step="1">
+    <span class="val" id="nval">3</span>
+    <label for="nu">num dim ν(D)</label>
+    <input id="nu" type="range" min="0" max="6" value="2" step="1">
+    <span class="val" id="nuval">2</span>
+    <label for="KBpe">K+B pseudo-eff</label>
+    <select id="KBpe">
+      <option value="1" selected>yes</option>
+      <option value="0">no</option>
+    </select>
+    <label for="Mnef">M nef</label>
+    <select id="Mnef">
+      <option value="1" selected>yes</option>
+      <option value="0">no</option>
+    </select>
+    <label for="Dnef">D nef</label>
+    <select id="Dnef">
+      <option value="1" selected>yes</option>
+      <option value="0">no</option>
+    </select>
+    <label for="flat">Flat part of M</label>
+    <select id="flat">
+      <option value="torsion" selected>torsion</option>
+      <option value="nontorsion">nontorsion</option>
+    </select>
+    <label for="adjPE">Adjoint pseudo-eff</label>
+    <select id="adjPE">
+      <option value="1" selected>yes</option>
+      <option value="0">no</option>
+    </select>
+    <label for="q">boundary denom q</label>
+    <input id="q" type="range" min="2" max="12" value="6" step="1">
+    <span class="val" id="qval">6</span>
+    <label for="bdata">nef b-data fixed</label>
+    <select id="bdata">
+      <option value="1" selected>yes</option>
+      <option value="0">no</option>
+    </select>
+    <button id="play">Play</button>
+    <button id="reset">Reset</button>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">dim X</div><div class="value" id="sn">—</div></div>
+    <div class="stat"><div class="label">num dim ν(D)</div><div class="value" id="snu">—</div></div>
+    <div class="stat"><div class="label">Flat part</div><div class="value" id="sflat">—</div></div>
+    <div class="stat"><div class="label">K+B pseudo-eff</div><div class="value" id="skb">—</div></div>
+    <div class="stat"><div class="label">M nef</div><div class="value" id="sm">—</div></div>
+    <div class="stat"><div class="label">D nef</div><div class="value" id="sd">—</div></div>
+    <div class="stat"><div class="label">Numerically semiample</div><div class="value" id="sns">—</div></div>
+    <div class="stat"><div class="label">Ordinary semiample D</div><div class="value" id="sord">—</div></div>
+    <div class="stat"><div class="label">Generalized model</div><div class="value" id="smodel">—</div></div>
+    <div class="stat"><div class="label">Boundary denom q</div><div class="value" id="sq">—</div></div>
+    <div class="stat"><div class="label">Phase</div><div class="value" id="sph">0.00</div></div>
+  </div>
+  <div class="legend">
+    <span><span class="swatch" style="background:#22c55e"></span>nef M / sections</span>
+    <span><span class="swatch" style="background:#f59e0b"></span>K+B pseudo-effective</span>
+    <span><span class="swatch" style="background:#60a5fa"></span>semiample representative L</span>
+    <span><span class="swatch" style="background:#ef4444"></span>not semiample / obstruction</span>
+  </div>
+  <canvas id="c" width="900" height="500"></canvas>
+  <section class="box">
+    <h3>Conceptual generalized-pair data</h3>
+    <table>
+      <thead><tr><th>quantity</th><th>value</th><th>meaning</th></tr></thead>
+      <tbody id="tbl"></tbody>
+    </table>
+  </section>
+</div>
+<script>
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+const geomSel = document.getElementById('geom');
+const nSlider = document.getElementById('n');
+const nuSlider = document.getElementById('nu');
+const KBpeSel = document.getElementById('KBpe');
+const MnefSel = document.getElementById('Mnef');
+const DnefSel = document.getElementById('Dnef');
+const flatSel = document.getElementById('flat');
+const adjPESel = document.getElementById('adjPE');
+const qSlider = document.getElementById('q');
+const bdataSel = document.getElementById('bdata');
+const nval = document.getElementById('nval');
+const nuval = document.getElementById('nuval');
+const qval = document.getElementById('qval');
+const sn = document.getElementById('sn');
+const snu = document.getElementById('snu');
+const sflat = document.getElementById('sflat');
+const skb = document.getElementById('skb');
+const sm = document.getElementById('sm');
+const sd = document.getElementById('sd');
+const sns = document.getElementById('sns');
+const sord = document.getElementById('sord');
+const smodel = document.getElementById('smodel');
+const sq = document.getElementById('sq');
+const sph = document.getElementById('sph');
+let phase = 0;
+let playing = false;
+let playTimer = null;
+
+function resize(){ canvas.width = Math.max(300, canvas.clientWidth); canvas.height = 500; }
+window.addEventListener('resize', function(){ resize(); draw(); });
+resize();
+
+function draw(){
+  const geom = geomSel.value;
+  const n = +nSlider.value;
+  let nu = +nuSlider.value;
+  if (nu > n) { nu = n; nuSlider.value = nu; }
+  const KBpe = KBpeSel.value === '1';
+  const Mnef = MnefSel.value === '1';
+  const Dnef = DnefSel.value === '1';
+  const flatTorsion = flatSel.value === 'torsion';
+  const adjPEinput = adjPESel.value === '1';
+  const adjPE = Dnef ? true : adjPEinput;
+  const q = +qSlider.value;
+  const bdata = bdataSel.value === '1';
+
+  const ns = Dnef && KBpe && Mnef;
+  const ordinary = ns && flatTorsion;
+  const modelType = adjPE ? (bdata ? 'minimal model (fixed b-data)' : 'minimal model (b-data not fixed)') : 'Mori fiber space';
+
+  nval.textContent = n;
+  nuval.textContent = nu;
+  qval.textContent = q;
+  sn.textContent = n;
+  snu.textContent = nu;
+  sflat.textContent = flatTorsion ? 'torsion' : 'nontorsion';
+  skb.textContent = KBpe ? 'yes' : 'no';
+  sm.textContent = Mnef ? 'yes' : 'no';
+  sd.textContent = Dnef ? 'yes' : 'no';
+  sns.textContent = ns ? 'YES (numerical)' : 'NO';
+  sns.style.color = ns ? 'var(--good)' : 'var(--bad)';
+  sord.textContent = ordinary ? 'YES' : 'NO (numerical only)';
+  sord.style.color = ordinary ? 'var(--good)' : 'var(--warn)';
+  smodel.textContent = modelType;
+  sq.textContent = q;
+  sph.textContent = phase.toFixed(2);
+
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const padL=50, padR=50, padT=40, padB=70;
+  const plotW=W-padL-padR, plotH=H-padT-padB;
+  const x0=padL, y0=padT, x1=padL+plotW, y1=padT+plotH;
+
+  ctx.fillStyle='rgba(30,41,59,0.6)';
+  ctx.fillRect(x0,y0,plotW,plotH);
+  ctx.strokeStyle = Dnef ? '#60a5fa' : 'rgba(159,176,204,0.5)';
+  ctx.lineWidth = Dnef ? 3 : 2;
+  ctx.strokeRect(x0,y0,plotW,plotH);
+  ctx.fillStyle='#9fb0cc';
+  ctx.font='12px system-ui';
+  ctx.textAlign='left';
+  ctx.fillText('X (dim '+n+', '+geom+')', x0+8, y0+18);
+
+  if (KBpe) {
+    ctx.fillStyle='rgba(245,158,11,0.18)';
+    ctx.fillRect(x0,y0,plotW*0.38,plotH);
+    ctx.fillStyle='#f59e0b';
+    ctx.font='11px system-ui';
+    ctx.fillText('K+B pseudo-effective', x0+8, y0+36);
+  }
+
+  if (Mnef) {
+    ctx.fillStyle='rgba(34,197,94,0.9)';
+    const cols = Math.max(2, Math.min(8, n+1));
+    const rows = Math.max(2, Math.min(6, nu+1));
+    for (let i=0;i<cols;i++){
+      for (let j=0;j<rows;j++){
+        const xx = x0 + plotW*(i+0.5)/cols;
+        const yy = y0 + plotH*(j+0.5)/rows;
+        const r = 4 + 2*Math.sin(phase + i + j);
+        ctx.beginPath(); ctx.arc(xx, yy, r, 0, Math.PI*2); ctx.fill();
+      }
+    }
+  }
+
+  if (ns) {
+    ctx.fillStyle='rgba(96,165,250,0.95)';
+    const cols = Math.max(3, Math.min(10, n+2));
+    for (let i=0;i<cols;i++){
+      const xx = x0 + plotW*(i+0.5)/cols;
+      ctx.fillRect(xx-2, y1+8, 4, 18);
+    }
+    ctx.fillStyle='#5eead4';
+    ctx.font='bold 12px system-ui';
+    ctx.textAlign='center';
+    ctx.fillText('semiample L ≡ D (numerical)', x0+plotW/2, y1+40);
+    if (!flatTorsion) {
+      ctx.strokeStyle='#ef4444';
+      ctx.lineWidth=2;
+      ctx.beginPath();
+      ctx.arc(x0+plotW/2, y0+plotH/2, 20, 0, Math.PI*2);
+      ctx.stroke();
+      ctx.fillStyle='#ef4444';
+      ctx.font='11px system-ui';
+      ctx.textAlign='center';
+      ctx.fillText('D itself may have no sections (flat nontorsion)', x0+plotW/2, y0+plotH/2+38);
+    }
+  } else {
+    ctx.fillStyle='#ef4444';
+    ctx.font='bold 12px system-ui';
+    ctx.textAlign='center';
+    ctx.fillText('numerical semiampleness fails (need D,K+B,M conditions)', x0+plotW/2, y1+40);
+  }
+
+  const baseY = y1 + 48;
+  if (adjPE) {
+    ctx.strokeStyle='rgba(34,197,94,0.9)';
+    ctx.lineWidth=2;
+    ctx.beginPath();
+    ctx.moveTo(x0+plotW/2, y1+6);
+    ctx.lineTo(x0+plotW/2, baseY-2);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(x0+plotW/2-6, baseY-8);
+    ctx.lineTo(x0+plotW/2, baseY-2);
+    ctx.lineTo(x0+plotW/2+6, baseY-8);
+    ctx.stroke();
+    ctx.fillStyle='rgba(34,197,94,0.18)';
+    ctx.fillRect(x0+plotW*0.3, baseY, plotW*0.4, 14);
+    ctx.fillStyle='#9fb0cc';
+    ctx.font='11px system-ui';
+    ctx.textAlign='center';
+    ctx.fillText('minimal model X_min (adjoint pseudo-effective; b-data fixed)', x0+plotW/2, baseY+28);
+  } else {
+    ctx.strokeStyle='rgba(96,165,250,0.55)';
+    ctx.lineWidth=1.5;
+    ctx.setLineDash([6,4]);
+    const nfibers = Math.max(1, Math.min(12, Math.pow(2, Math.max(0,nu))));
+    for (let i=1;i<nfibers;i++){
+      const xx = x0 + plotW*i/nfibers;
+      ctx.beginPath();
+      ctx.moveTo(xx, y0);
+      ctx.lineTo(xx, y1);
+      ctx.stroke();
+    }
+    ctx.setLineDash([]);
+    ctx.fillStyle='rgba(245,158,11,0.9)';
+    ctx.fillRect(x0, baseY, plotW, 12);
+    ctx.fillStyle='#9fb0cc';
+    ctx.font='11px system-ui';
+    ctx.textAlign='center';
+    ctx.fillText('Mori fiber space (adjoint not pseudo-effective)', x0+plotW/2, baseY+28);
+  }
+
+  ctx.fillStyle = ns ? '#22c55e' : '#ef4444';
+  ctx.font='bold 14px system-ui';
+  ctx.textAlign='right';
+  ctx.fillText(ns ? 'NUMERICALLY SEMIAMPLE' : 'NOT numerically semiample', x1, y0-12);
+  ctx.fillStyle='#9fb0cc';
+  ctx.font='11px system-ui';
+  ctx.textAlign='left';
+  ctx.fillText('flat: '+(flatTorsion?'torsion':'nontorsion')+'  |  geom: '+geom, x0, y0-12);
+
+  const tbody = document.getElementById('tbl');
+  tbody.innerHTML = '';
+  const tableRows = [
+    ['Geometry', geom, 'projective klt or compact Kähler snc setting'],
+    ['dim X', n, 'dimension of the pair (X,B)'],
+    ['num dim ν(D)', nu, 'numerical dimension of the adjoint class'],
+    ['K+B pseudo-eff', KBpe ? 'yes' : 'no', 'required for numerical semiampleness'],
+    ['M nef', Mnef ? 'yes' : 'no', 'nef rational summand'],
+    ['D nef', Dnef ? 'yes' : 'no', 'nefness of the adjoint'],
+    ['Flat part', flatTorsion ? 'torsion' : 'nontorsion', 'torsion permits ordinary semiampleness'],
+    ['Numerical semiampleness', ns ? 'yes' : 'no', 'exists semiample L with D≡L'],
+    ['Ordinary semiampleness of D', ordinary ? 'yes' : 'no', 'D itself semiample'],
+    ['Adjoint pseudo-eff', adjPE ? 'yes' : 'no', 'determines model branch'],
+    ['Generalized model', modelType, 'minimal model or Mori fiber space'],
+    ['Boundary denom q', q, 'rational boundary coefficient denominator'],
+    ['nef b-data fixed', bdata ? 'yes' : 'no', 'required for generalized models'],
+  ];
+  for (const r of tableRows){
+    const tr = document.createElement('tr');
+    tr.innerHTML = '<td>'+r[0]+'</td><td class="num">'+r[1]+'</td><td>'+r[2]+'</td>';
+    tbody.appendChild(tr);
+  }
+}
+
+function update(){ draw(); }
+geomSel.addEventListener('change', update);
+nSlider.addEventListener('input', update);
+nuSlider.addEventListener('input', update);
+KBpeSel.addEventListener('change', update);
+MnefSel.addEventListener('change', update);
+DnefSel.addEventListener('change', update);
+flatSel.addEventListener('change', update);
+adjPESel.addEventListener('change', update);
+qSlider.addEventListener('input', update);
+bdataSel.addEventListener('change', update);
+
+const playBtn = document.getElementById('play');
+playBtn.addEventListener('click', function(){
+  playing = !playing;
+  this.textContent = playing ? 'Pause' : 'Play';
+  if (playing) animate(); else clearTimeout(playTimer);
+});
+function animate(){
+  if (!playing) return;
+  phase += 0.05;
+  if (phase > Math.PI*2) phase -= Math.PI*2;
+  draw();
+  playTimer = setTimeout(animate, 60);
+}
+document.getElementById('reset').addEventListener('click', function(){
+  playing=false; clearTimeout(playTimer); playBtn.textContent='Play';
+  phase=0;
+  geomSel.value='projective';
+  nSlider.value=3; nuSlider.value=2; KBpeSel.value='1'; MnefSel.value='1'; DnefSel.value='1';
+  flatSel.value='torsion'; adjPESel.value='1'; qSlider.value=6; bdataSel.value='1';
+  update();
+});
+
+update();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

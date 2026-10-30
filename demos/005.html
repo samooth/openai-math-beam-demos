@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Catalan's constant — interactive demo</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range]{flex:1 1 260px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.1rem;font-weight:600}
+canvas{width:100%;height:420px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Catalan's constant G</h1>
+  <p>G = Σ (−1)^k/(2k+1)^2. Drag to change the number of terms and watch the partial sums converge.</p>
+  <section style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0">
+    <h3 style="margin:0 0 .5rem;font-size:1.15rem;color:var(--accent)">Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Catalan's constant appears in number theory and combinatorics. The series is alternating with decreasing terms, so the partial sums bracket the limit and the error is bounded by the first omitted term.</p>
+  </section>
+  <section style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0">
+    <h3 style="margin:0 0 .5rem;font-size:1.15rem;color:var(--accent)">Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Establishing irrationality settles a classical open problem and informs L-value and hypergeometric evaluations.</p>
+  </section>
+  <div class="controls">
+    <label for="n">Terms N</label>
+    <input id="n" type="range" min="0" max="2000" value="20" step="1">
+    <span class="val" id="nval">20</span>
+    <button id="play" style="padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer">Play</button>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Partial sum S_N</div><div class="value" id="s">—</div></div>
+    <div class="stat"><div class="label">Reference G (high precision)</div><div class="value">0.915965594177219…</div></div>
+    <div class="stat"><div class="label">Absolute error</div><div class="value" id="err">—</div></div>
+  </div>
+  <canvas id="c" width="900" height="320"></canvas>
+</div>
+<script>
+const G = 0.915965594177219015054603514932384110774;
+const nSlider = document.getElementById('n');
+const nval = document.getElementById('nval');
+const sEl = document.getElementById('s');
+const errEl = document.getElementById('err');
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+function resizeCanvas(){ canvas.width = Math.max(300, canvas.clientWidth); canvas.height = 420; }
+window.addEventListener('resize', function(){ resizeCanvas(); update(); });
+resizeCanvas();
+
+function partialSum(N){
+  let s=0;
+  for(let k=0;k<=N;k++){ s += (k%2===0?1:-1)/((2*k+1)*(2*k+1)); }
+  return s;
+}
+
+function draw(N){
+  const W=canvas.width, H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const padL=56, padR=14, padT=18, padB=36;
+  const plotW=W-padL-padR, plotH=H-padT-padB;
+  ctx.strokeStyle='#475569'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(padL, H-padB); ctx.lineTo(W-padR, H-padB); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(padL, padT); ctx.lineTo(padL, H-padB); ctx.stroke();
+  const maxN = +nSlider.max;
+  const limit = Math.min(N, maxN);
+  const xs = i => (limit>0 ? padL + plotW*(i/limit) : padL);
+  const ymin=0.84, ymax=0.96;
+  const ys = v => padT + plotH*(1 - (v-ymin)/(ymax-ymin));
+  // target
+  ctx.strokeStyle='#5eead4'; ctx.setLineDash([5,5]);
+  ctx.beginPath(); ctx.moveTo(padL, ys(G)); ctx.lineTo(W-padR, ys(G)); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle='#5eead4'; ctx.font='12px system-ui'; ctx.fillText('G', W-padR+2, ys(G)+4);
+  // partial sums
+  const ps=[1];
+  let cur=1;
+  const lim=Math.min(N,maxN);
+  for(let k=1;k<=lim;k++){
+    cur += (k%2===0?1:-1)/((2*k+1)*(2*k+1));
+    ps.push(cur);
+  }
+  ctx.strokeStyle='#f59e0b'; ctx.lineWidth=2;
+  ctx.beginPath();
+  for(let k=0;k<ps.length;k++){
+    const x=xs(k), y=ys(ps[k]);
+    if(k===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  }
+  ctx.stroke();
+  // markers recent
+  const start=Math.max(0, ps.length-80);
+  ctx.fillStyle='#f59e0b';
+  for(let k=start;k<ps.length;k++){
+    ctx.beginPath(); ctx.arc(xs(k), ys(ps[k]), 3, 0, Math.PI*2); ctx.fill();
+  }
+  // current point
+  const vN=ps[ps.length-1];
+  ctx.fillStyle='#5eead4';
+  ctx.beginPath(); ctx.arc(xs(ps.length-1), ys(vN), 6, 0, Math.PI*2); ctx.fill();
+}
+
+let playing=false, playTimer=null;
+function animate(){
+  if(!playing) return;
+  let v=+nSlider.value;
+  if(v>=+nSlider.max){ playing=false; document.getElementById('play').textContent='Play'; return; }
+  nSlider.value = Math.min(+nSlider.max, v+5);
+  update();
+  playTimer=setTimeout(animate, 120);
+}
+const playBtn=document.getElementById('play');
+if(playBtn){
+  playBtn.addEventListener('click', function(){
+    playing=!playing;
+    this.textContent = playing ? 'Pause' : 'Play';
+    if(playing) animate(); else clearTimeout(playTimer);
+  });
+}
+
+function update(){
+  const N = +nSlider.value;
+  nval.textContent = N;
+  const s = partialSum(N);
+  sEl.textContent = s.toFixed(12);
+  errEl.textContent = Math.abs(s-G).toExponential(3);
+  draw(N);
+}
+nSlider.addEventListener('input', update);
+update();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

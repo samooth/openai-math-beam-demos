@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Unbounded bin-packing gaps and the modified integer round-up conjecture (conceptual, result 118)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range]{flex:1 1 180px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:460px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+.legend{display:flex;gap:1rem;align-items:center;font-size:.85rem;color:var(--muted);margin:.5rem 0;flex-wrap:wrap}
+.swatch{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:.3rem;vertical-align:middle}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Unbounded bin-packing gaps and the modified integer round-up conjecture (conceptual, result 118)</h1>
+  <p>Disproves the modified integer round-up conjecture of Scheithauer and Terno: the integral bin-packing optimum can exceed its configuration linear-programming value by an arbitrarily large additive constant. Approximating the optimum within any fixed additive constant is also NP-hard, even when every item exceeds $1/6$ and each bin holds at most five items.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">For every integer $c\ge 0$, there is a finite rational bin-packing instance $I$ and an integer $B$ such that every item size exceeds $1/6$, $\mathrm{OPT}_{\mathrm{LP}}(I)=B$, and $\mathrm{OPT}(I)>B+c$. The same holds for the stronger configuration LP whose patterns are subsets of individual item copies, so the modified integer round-up bound $\mathrm{OPT}(I)\le \lceil \mathrm{OPT}_{\mathrm{LP}}(I)\rceil+1$ fails. Moreover, for every fixed $c\ge 0$, distinguishing instances that pack into $B$ bins from those needing more than $B+c$ bins is NP-hard; hence no deterministic polynomial-time algorithm can guarantee $\mathrm{OPT}(I)+C$ bins for an absolute constant $C$ unless $\mathrm{P}=\mathrm{NP}$. Since every item exceeds $1/6$, each feasible bin contains at most five items.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">This settles the constant-additive approximation question for bin packing in the negative and refutes the modified integer round-up conjecture. It shows that configuration-LP rounding cannot by itself yield a fixed additive approximation, even in the restricted regime of small bin cardinality. The result is compatible with logarithmic additive upper bounds obtained by grouping and discrepancy-based rounding, because the constructed instances grow rapidly with the prescribed gap.</p>
+  </section>
+  <div class="controls">
+    <label for="gap">Target gap c</label>
+    <input id="gap" type="range" min="0" max="50" value="5" step="1">
+    <span class="val" id="gapval">5</span>
+    <label for="B">Fractional optimum B</label>
+    <input id="B" type="range" min="1" max="200" value="20" step="1">
+    <span class="val" id="Bval">20</span>
+    <label for="m">Max items per bin</label>
+    <input id="m" type="range" min="3" max="5" value="5" step="1">
+    <span class="val" id="mval">5</span>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">OPT_LP</div><div class="value" id="slp">—</div></div>
+    <div class="stat"><div class="label">OPT (constructed)</div><div class="value" id="sopt">—</div></div>
+    <div class="stat"><div class="label">Additive gap</div><div class="value" id="sgap">—</div></div>
+    <div class="stat"><div class="label">Max items/bin</div><div class="value" id="smax">—</div></div>
+    <div class="stat"><div class="label">Item size lower bound</div><div class="value" id="ssize">&gt; 1/6</div></div>
+    <div class="stat"><div class="label">Fixed-c hardness</div><div class="value" id="shard">NP-hard</div></div>
+  </div>
+  <div class="legend">
+    <span><span class="swatch" style="background:#5eead4"></span>Configuration LP value B</span>
+    <span><span class="swatch" style="background:#ef4444"></span>Integral optimum B+c+1</span>
+    <span><span class="swatch" style="background:#f59e0b"></span>Conceptual instance-size growth</span>
+  </div>
+  <canvas id="c" width="900" height="460"></canvas>
+  <p style="font-size:.85rem;color:var(--muted);margin-top:.5rem">Conceptual model: the additive gap can be prescribed arbitrarily large, while each feasible bin contains at most five items because every item exceeds $1/6$. The growth curve illustrates that the instance size required grows rapidly with the gap.</p>
+</div>
+<script>
+const gapSlider=document.getElementById('gap');
+const BSlider=document.getElementById('B');
+const mSlider=document.getElementById('m');
+
+const gapval=document.getElementById('gapval');
+const Bval=document.getElementById('Bval');
+const mval=document.getElementById('mval');
+
+const slp=document.getElementById('slp');
+const sopt=document.getElementById('sopt');
+const sgap=document.getElementById('sgap');
+const smax=document.getElementById('smax');
+
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+
+function resizeCanvas(){ canvas.width=Math.max(300,canvas.clientWidth); canvas.height=460; }
+window.addEventListener('resize',function(){ resizeCanvas(); render(); });
+resizeCanvas();
+
+function updateStats(){
+  const c=+gapSlider.value;
+  const B=+BSlider.value;
+  const m=+mSlider.value;
+  gapval.textContent=c;
+  Bval.textContent=B;
+  mval.textContent=m;
+  const opt=B+c+1;
+  slp.textContent=B;
+  sopt.textContent=opt;
+  sgap.textContent=(c+1);
+  smax.textContent=m;
+}
+
+function render(){
+  updateStats();
+  const c=+gapSlider.value;
+  const B=+BSlider.value;
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+
+  const padL=52,padR=20,padT=30,padB=46;
+  const plotW=W-padL-padR;
+  const plotH=H-padT-padB;
+  const halfW=plotW/2;
+
+  // Left panel: bars
+  const x0=padL;
+  const y0=padT;
+  const w=halfW-10;
+  const h=plotH;
+  ctx.strokeStyle='rgba(159,176,204,0.25)';
+  ctx.lineWidth=1;
+  ctx.strokeRect(x0,y0,w,h);
+  ctx.fillStyle='#9fb0cc';
+  ctx.font='12px system-ui';
+  ctx.textAlign='left';
+  ctx.fillText('OPT vs OPT_LP', x0+8, y0+16);
+
+  const barW=w*0.28;
+  const base=y0+h-20;
+  const scale=h*0.7/Math.max(B+c+1,1);
+  const x1=x0+w*0.2;
+  const x2=x0+w*0.55;
+  ctx.fillStyle='#5eead4';
+  ctx.fillRect(x1, base-B*scale, barW, B*scale);
+  ctx.fillStyle='#ef4444';
+  ctx.fillRect(x2, base-(B+c+1)*scale, barW, (B+c+1)*scale);
+  ctx.fillStyle='rgba(159,176,204,0.9)';
+  ctx.font='11px system-ui';
+  ctx.textAlign='center';
+  ctx.fillText('OPT_LP='+B, x1+barW/2, base+14);
+  ctx.fillText('OPT='+ (B+c+1), x2+barW/2, base+14);
+  ctx.fillText('gap '+(c+1), x0+w/2, y0+28);
+
+  // Right panel: conceptual growth
+  const xR=x0+halfW+10;
+  const wR=halfW-10;
+  ctx.strokeStyle='rgba(159,176,204,0.25)';
+  ctx.strokeRect(xR,y0,wR,h);
+  ctx.fillStyle='#9fb0cc';
+  ctx.font='12px system-ui';
+  ctx.textAlign='left';
+  ctx.fillText('Instance size vs gap (conceptual)', xR+8, y0+16);
+
+  const maxGap=Math.max(c,1);
+  function xOf(g){ return xR+ (g/maxGap)* (wR-20)+10; }
+  function yOf(v){ return y0+h-20 - (Math.log(v+1)/Math.log(1000))* (h-40); }
+  ctx.strokeStyle='#f59e0b';
+  ctx.lineWidth=2.5;
+  ctx.beginPath();
+  for(let i=0;i<=100;i++){
+    const g=maxGap*i/100;
+    const size=Math.pow(10, 1+g/10);
+    const x=xOf(g);
+    const y=yOf(size);
+    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  }
+  ctx.stroke();
+  ctx.fillStyle='rgba(159,176,204,0.9)';
+  ctx.font='11px system-ui';
+  ctx.textAlign='center';
+  ctx.fillText('gap', xR+wR/2, y0+h-4);
+  ctx.save();
+  ctx.translate(xR+4, y0+h/2);
+  ctx.rotate(-Math.PI/2);
+  ctx.fillText('instance size',0,0);
+  ctx.restore();
+}
+
+gapSlider.addEventListener('input',render);
+BSlider.addEventListener('input',render);
+mSlider.addEventListener('input',render);
+render();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

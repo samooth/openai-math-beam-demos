@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ford–Konyagin–Luca prime predecessors — interactive demo</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range]{flex:1 1 260px}
+select{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.1rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:440px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Ford–Konyagin–Luca prime predecessors</h1>
+  <p>For each prime p ≤ N, factor p−1 and count its prime factors. The histogram shows how many primes have each factor count.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Proves that the normalized ordered logarithms of the prime factors of p−1, counted with multiplicity, converge jointly to the Poisson–Dirichlet law PD(1) as p ranges uniformly over primes up to x and x→∞. This resolves the Ford–Konyagin–Luca conjecture. It also proves that infinitely many integers n have more than n^{1−ε} totient preimages, for every ε>0.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Gives a universal law for the multiplicative structure of prime predecessors p−1, with consequences for totient fibers and smooth shifted primes.</p>
+  </section>
+  <div class="controls">
+    <label for="N">Primes up to N</label>
+    <input id="N" type="range" min="2000" max="200000" value="50000" step="1000">
+    <span class="val" id="Nval">50000</span>
+    <label for="mode">Count</label>
+    <select id="mode">
+      <option value="mult">with multiplicity (Ω)</option>
+      <option value="distinct">distinct (ω)</option>
+    </select>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label"># primes ≤ N</div><div class="value" id="nprimes">—</div></div>
+    <div class="stat"><div class="label">Mean factor count</div><div class="value" id="mean">—</div></div>
+    <div class="stat"><div class="label">Max factor count</div><div class="value" id="maxc">—</div></div>
+    <div class="stat"><div class="label">Most common count</div><div class="value" id="modev">—</div></div>
+  </div>
+  <canvas id="c" width="900" height="440"></canvas>
+</div>
+<script>
+const Nslider = document.getElementById('N');
+const Nval = document.getElementById('Nval');
+const modeSel = document.getElementById('mode');
+const nprimesEl = document.getElementById('nprimes');
+const meanEl = document.getElementById('mean');
+const maxcEl = document.getElementById('maxc');
+const modevEl = document.getElementById('modev');
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+
+function resizeCanvas(){ canvas.width = Math.max(300, canvas.clientWidth); canvas.height = 440; }
+window.addEventListener('resize', function(){ resizeCanvas(); update(); });
+resizeCanvas();
+
+function sieveSpf(limit){
+  const spf = new Int32Array(limit+1);
+  for(let i=0;i<=limit;i++) spf[i]=i;
+  for(let i=2;i*i<=limit;i++){
+    if(spf[i]===i){
+      for(let j=i*i;j<=limit;j+=i){
+        if(spf[j]===j) spf[j]=i;
+      }
+    }
+  }
+  return spf;
+}
+
+function countFactors(n, spf, distinct){
+  if(n<=1) return 0;
+  let c=0, last=0;
+  while(n>1){
+    const p=spf[n];
+    if(distinct){
+      if(p!==last){ c++; last=p; }
+    } else {
+      c++;
+    }
+    n/=p;
+  }
+  return c;
+}
+
+function update(){
+  const N = +Nslider.value;
+  Nval.textContent = N;
+  const distinct = modeSel.value === 'distinct';
+  const spf = sieveSpf(N);
+  // primes up to N
+  const isComp = new Uint8Array(N+1);
+  const primes = [];
+  for(let i=2;i<=N;i++){
+    if(!isComp[i]){
+      primes.push(i);
+      for(let j=i*i;j<=N;j+=i) isComp[j]=1;
+    }
+  }
+  const counts = [];
+  for(const p of primes){
+    counts.push(countFactors(p-1, spf, distinct));
+  }
+  const maxCount = counts.reduce((a,b)=>Math.max(a,b),0);
+  const hist = new Array(maxCount+1).fill(0);
+  for(const c of counts) hist[c]++;
+  let sum=0;
+  for(const c of counts) sum+=c;
+  const mean = counts.length? sum/counts.length : 0;
+  let best=0, bestIdx=0;
+  hist.forEach((v,i)=>{ if(v>best){ best=v; bestIdx=i; } });
+
+  nprimesEl.textContent = counts.length;
+  meanEl.textContent = mean.toFixed(3);
+  maxcEl.textContent = maxCount;
+  modevEl.textContent = bestIdx + ' (' + best + ')';
+
+  draw(hist, counts.length, distinct);
+}
+
+function draw(hist, total, distinct){
+  const W=canvas.width, H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const padL=60, padR=20, padT=30, padB=50;
+  const plotW=W-padL-padR, plotH=H-padT-padB;
+  const n=hist.length;
+  if(n===0) return;
+  const maxH = Math.max(...hist,1);
+  const barW = plotW/n;
+  // axes
+  ctx.strokeStyle='#9fb0cc'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(padL,padT); ctx.lineTo(padL,padT+plotH); ctx.lineTo(padL+plotW,padT+plotH); ctx.stroke();
+  // y ticks
+  ctx.fillStyle='#9fb0cc'; ctx.font='11px ui-monospace,monospace'; ctx.textAlign='right'; ctx.textBaseline='middle';
+  const ySteps=5;
+  for(let i=0;i<=ySteps;i++){
+    const v = maxH*i/ySteps;
+    const y = padT+plotH - (v/maxH)*plotH;
+    ctx.fillText(Math.round(v).toString(), padL-6, y);
+    ctx.strokeStyle='rgba(159,176,204,0.12)';
+    ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(padL+plotW,y); ctx.stroke();
+  }
+  // bars
+  for(let i=0;i<n;i++){
+    const h = (hist[i]/maxH)*plotH;
+    const x = padL + i*barW;
+    const y = padT+plotH-h;
+    const grad = ctx.createLinearGradient(0,y,0,y+h);
+    grad.addColorStop(0,'#5eead4'); grad.addColorStop(1,'#0f766e');
+    ctx.fillStyle=grad;
+    ctx.fillRect(x+barW*0.1, y, barW*0.8, h);
+    // x label
+    ctx.fillStyle='#9fb0cc'; ctx.font='11px ui-monospace,monospace'; ctx.textAlign='center'; ctx.textBaseline='top';
+    ctx.fillText(String(i), x+barW/2, padT+plotH+6);
+  }
+  // axis titles
+  ctx.fillStyle='#9fb0cc'; ctx.font='12px system-ui'; ctx.textAlign='center';
+  ctx.fillText('number of prime factors of p−1', padL+plotW/2, H-12);
+  ctx.save(); ctx.translate(16, padT+plotH/2); ctx.rotate(-Math.PI/2); ctx.fillText('number of primes',0,0); ctx.restore();
+  // total label
+  ctx.fillStyle='#e6edf7'; ctx.font='12px system-ui'; ctx.textAlign='left'; ctx.textBaseline='top';
+  ctx.fillText('N primes total: ' + total, padL, padT-20);
+}
+
+Nslider.addEventListener('input', update);
+modeSel.addEventListener('change', update);
+update();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>L log L Fourier convergence (conceptual, result 075)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range]{flex:1 1 220px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:460px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+select{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text)}
+.toggle{display:inline-flex;align-items:center;gap:.4rem}
+.legend{display:flex;gap:1rem;align-items:center;font-size:.85rem;color:var(--muted);margin:.5rem 0;flex-wrap:wrap}
+.swatch{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:.3rem;vertical-align:middle}
+.wrap{max-width:100%}
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>L log L Fourier convergence (conceptual, result 075)</h1>
+  <p>For $f\in L\log L(\mathbb T)$, the symmetric partial sums $S_N f(x)=\sum_{k=-N}^N \widehat f(k)e^{ikx}$ converge to $f(x)$ for almost every $x$. Adjust the function and $N$ to watch the partial sums track $f$ pointwise, including at discontinuities where Gibbs overshoot persists but the value at the point still converges.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Proves that for every measurable complex-valued function on $\mathbb T=\mathbb R/(2\pi\mathbb Z)$ with $\int_{\mathbb T}|f|\log(2+|f|)<\infty$, the full symmetric Fourier partial sums converge almost everywhere: outside one measurable null set, $\sum_{k=-N}^{N}\widehat f(k)e^{ikx}\to f(x)$ as $N\to\infty$. This resolves the classical sufficiency conjecture at the $L\log L$ integrability scale.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Shows that the $L\log L$ Orlicz condition is exactly the natural borderline for almost-everywhere convergence of ordinary symmetric partial sums: it is weaker than $L^p$ for $p>1$ yet strong enough to rule out the $L^1$ counterexamples. It underpins harmonic analysis on the circle, maximal-function and singular-integral methods, and any application needing pointwise reconstruction from Fourier coefficients at the critical integrability scale.</p>
+  </section>
+  <div class="controls">
+    <label for="func">Function</label>
+    <select id="func">
+      <option value="square" selected>Square wave</option>
+      <option value="saw">Sawtooth</option>
+      <option value="tri">Triangle wave</option>
+      <option value="step">Heaviside step</option>
+      <option value="spike">Spike (L log L)</option>
+      <option value="smooth">Smooth (Gaussian)</option>
+    </select>
+    <label for="N">Partial-sum order N</label>
+    <input id="N" type="range" min="0" max="120" value="8" step="1">
+    <span class="val" id="Nval">8</span>
+    <label for="xp">Evaluation point x</label>
+    <input id="xp" type="range" min="-314" max="314" value="0" step="1">
+    <span class="val" id="xpval">0.00</span>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">N</div><div class="value" id="sN">—</div></div>
+    <div class="stat"><div class="label">x</div><div class="value" id="sx">—</div></div>
+    <div class="stat"><div class="label">f(x)</div><div class="value" id="sf">—</div></div>
+    <div class="stat"><div class="label">S_N(x)</div><div class="value" id="ss">—</div></div>
+    <div class="stat"><div class="label">Error |S_N-f|</div><div class="value" id="se">—</div></div>
+    <div class="stat"><div class="label">Max grid error</div><div class="value" id="smax">—</div></div>
+    <div class="stat"><div class="label">Integrability</div><div class="value" id="sint">L log L</div></div>
+    <div class="stat"><div class="label">Modes used</div><div class="value" id="smodes">—</div></div>
+  </div>
+  <div class="legend">
+    <span><span class="swatch" style="background:#3b82f6"></span>f(x)</span>
+    <span><span class="swatch" style="background:#5eead4"></span>S_N f(x)</span>
+    <span><span class="swatch" style="background:#f59e0b"></span>evaluation point</span>
+  </div>
+  <canvas id="c" width="900" height="460"></canvas>
+</div>
+<script>
+const M = 2048;
+const NMAX = 120;
+const PI = Math.PI;
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+
+const funcSel = document.getElementById('func');
+const NSlider = document.getElementById('N');
+const xSlider = document.getElementById('xp');
+const Nval = document.getElementById('Nval');
+const xpval = document.getElementById('xpval');
+
+const sN = document.getElementById('sN');
+const sx = document.getElementById('sx');
+const sf = document.getElementById('sf');
+const ss = document.getElementById('ss');
+const se = document.getElementById('se');
+const smax = document.getElementById('smax');
+const smodes = document.getElementById('smodes');
+
+let xs = new Array(M);
+for (let i = 0; i < M; i++) xs[i] = -PI + (2*PI*i)/M;
+
+function fval(type, x) {
+  const t = ((x+PI) % (2*PI) + 2*PI) % (2*PI) - PI;
+  switch (type) {
+    case 'square': return (Math.sin(t) >= 0) ? 1 : -1;
+    case 'saw': return t;
+    case 'tri': {
+      const u = Math.abs(t);
+      return (u <= PI/2) ? (2*u/PI) : (2 - 2*u/PI);
+    }
+    case 'step': return (t >= 0) ? 1 : 0;
+    case 'spike': {
+      const a = Math.abs(t) + 0.05;
+      return 1/Math.sqrt(a);
+    }
+    case 'smooth': return Math.exp(-4*(t*t));
+    default: return 0;
+  }
+}
+
+// complex helpers
+function cadd(a,b){return {re:a.re+b.re,im:a.im+b.im};}
+function csub(a,b){return {re:a.re-b.re,im:a.im-b.im};}
+function cmul(a,b){return {re:a.re*b.re - a.im*b.im, im:a.re*b.im + a.im*b.re};}
+function cexp(theta){return {re:Math.cos(theta), im:Math.sin(theta)};}
+
+let coeffs = null; // array indexed k+NMAX
+let fvals = null;
+
+function computeCoeffs(type) {
+  fvals = new Array(M);
+  for (let i=0;i<M;i++) fvals[i]=fval(type, xs[i]);
+  coeffs = new Array(2*NMAX+1);
+  for (let idx=0; idx<=2*NMAX; idx++) {
+    const k = idx - NMAX;
+    let re=0, im=0;
+    for (let i=0;i<M;i++) {
+      const th = -k*xs[i];
+      const c = Math.cos(th), s = Math.sin(th);
+      re += fvals[i]*c;
+      im += fvals[i]*s;
+    }
+    coeffs[idx] = {re: re/M, im: im/M};
+  }
+}
+
+function partialSum(x, N) {
+  let re=0, im=0;
+  for (let k=-N; k<=N; k++) {
+    const ck = coeffs[k+NMAX];
+    const e = cexp(k*x);
+    const p = cmul(ck, e);
+    re += p.re; im += p.im;
+  }
+  return {re, im};
+}
+
+function resizeCanvas(){ canvas.width=Math.max(300,canvas.clientWidth); canvas.height=460; }
+
+let currentType='square';
+computeCoeffs(currentType);
+
+function render() {
+  const N = +NSlider.value;
+  const xq = +xSlider.value/100;
+  Nval.textContent = N;
+  xpval.textContent = xq.toFixed(2);
+
+  // partial sums on grid
+  const Svals = new Array(M);
+  let maxerr = 0;
+  for (let i=0;i<M;i++) {
+    const s = partialSum(xs[i], N);
+    Svals[i] = s.re; // f real-valued
+    const err = Math.abs(s.re - fvals[i]);
+    if (err > maxerr) maxerr = err;
+  }
+
+  const sp = partialSum(xq, N);
+  const fxq = fval(currentType, xq);
+
+  sN.textContent = N;
+  sx.textContent = xq.toFixed(3);
+  sf.textContent = fxq.toFixed(4);
+  ss.textContent = sp.re.toFixed(4);
+  se.textContent = Math.abs(sp.re - fxq).toFixed(4);
+  smax.textContent = maxerr.toFixed(4);
+  smodes.textContent = (2*N+1);
+
+  resizeCanvas();
+  const W = canvas.width, H = canvas.height;
+  const padL=50, padR=20, padT=20, padB=40;
+  const plotW = W-padL-padR, plotH = H-padT-padB;
+  // y range
+  let ymin=-1.5, ymax=1.5;
+  if (currentType==='spike') { ymin=0; ymax=5; }
+  if (currentType==='saw') { ymin=-PI-0.5; ymax=PI+0.5; }
+  if (currentType==='tri') { ymin=-0.2; ymax=1.2; }
+  if (currentType==='smooth') { ymin=-0.2; ymax=1.2; }
+  if (currentType==='step') { ymin=-0.2; ymax=1.2; }
+
+  function X(x){ return padL + (x+PI)/(2*PI)*plotW; }
+  function Y(y){ return padT + (ymax-y)/(ymax-ymin)*plotH; }
+
+  ctx.clearRect(0,0,W,H);
+  // axes
+  ctx.strokeStyle='#243252'; ctx.lineWidth=1;
+  ctx.beginPath();
+  ctx.moveTo(padL, padT); ctx.lineTo(padL, H-padB); ctx.lineTo(W-padR, H-padB); ctx.stroke();
+  // zero line
+  ctx.strokeStyle='rgba(159,176,204,0.3)'; ctx.beginPath();
+  ctx.moveTo(padL, Y(0)); ctx.lineTo(W-padR, Y(0)); ctx.stroke();
+
+  // f
+  ctx.strokeStyle='#3b82f6'; ctx.lineWidth=2;
+  ctx.beginPath();
+  for (let i=0;i<M;i++){
+    const xx=X(xs[i]), yy=Y(fvals[i]);
+    if (i===0) ctx.moveTo(xx,yy); else ctx.lineTo(xx,yy);
+  }
+  ctx.stroke();
+
+  // S_N
+  ctx.strokeStyle='#5eead4'; ctx.lineWidth=2;
+  ctx.beginPath();
+  for (let i=0;i<M;i++){
+    const xx=X(xs[i]), yy=Y(Svals[i]);
+    if (i===0) ctx.moveTo(xx,yy); else ctx.lineTo(xx,yy);
+  }
+  ctx.stroke();
+
+  // eval point
+  ctx.strokeStyle='#f59e0b'; ctx.lineWidth=1.5;
+  ctx.beginPath();
+  ctx.moveTo(X(xq), padT); ctx.lineTo(X(xq), H-padB); ctx.stroke();
+  ctx.fillStyle='#f59e0b';
+  ctx.beginPath(); ctx.arc(X(xq), Y(fxq), 5, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.arc(X(xq), Y(sp.re), 5, 0, Math.PI*2); ctx.fill();
+
+  // labels
+  ctx.fillStyle='#9fb0cc'; ctx.font='11px system-ui'; ctx.textAlign='left';
+  ctx.fillText('x', W-padR-8, H-padB+14);
+  ctx.fillText('y', 8, padT+4);
+}
+
+funcSel.addEventListener('change', function(){
+  currentType = funcSel.value;
+  computeCoeffs(currentType);
+  render();
+});
+NSlider.addEventListener('input', render);
+xSlider.addEventListener('input', render);
+window.addEventListener('resize', render);
+render();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

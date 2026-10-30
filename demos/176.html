@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The second Kahn--Kalai conjecture (conceptual, result 176)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+select{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+input[type=range]{flex:1 1 180px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:520px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+.legend{display:flex;gap:1rem;align-items:center;font-size:.85rem;color:var(--muted);margin:.5rem 0;flex-wrap:wrap}
+.swatch{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:.3rem;vertical-align:middle}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>The second Kahn--Kalai conjecture (conceptual, result 176)</h1>
+  <p>Studies when a fixed graph $H$ appears as a subgraph of the Erdős--Rényi random graph $G(n,p)$, comparing the sharp appearance threshold with the expectation threshold $p_{\mathrm E}(n,H)$.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">For a finite simple graph $H$ with $h\ge 1$ edges and at most $n$ vertices, the appearance threshold in $G(n,p)$ is the probability $p$ at which $H$ becomes likely to occur as a (not necessarily induced) subgraph. Result 176 proves the second Kahn--Kalai conjecture: this threshold is at most $Cp_{\mathrm E}(n,H)(1+\log_2 h)$ for a universal constant $C$. Here $p_{\mathrm E}(n,H)$ is the least density such that every subgraph $F\subseteq H$ has expected copy count at least $1/2$ in $G(n,p)$. Thus the threshold is controlled, up to a logarithmic factor in the number of edges, by the densest substructure of $H$.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">This resolves a central random-graph threshold problem and explains why thresholds are governed by densest subgraphs rather than by $H$ as a whole. It underlies phase transitions in random networks, motif appearance, and the general theory of Boolean functions and thresholds. The demo lets you choose a pattern $H$, vary $n$ and $p$, and see the sampled graph, the expectation threshold, the logarithmic bound, and whether an embedding of $H$ is present.</p>
+  </section>
+  <div class="controls">
+    <label for="pat">Pattern $H$</label>
+    <select id="pat">
+      <option value="tri">Triangle $K_3$</option>
+      <option value="k4">Clique $K_4$</option>
+      <option value="star">Star $K_{1,3}$</option>
+      <option value="path">Path $P_4$</option>
+      <option value="c4">Cycle $C_4$</option>
+      <option value="k23">Complete bipartite $K_{2,3}$</option>
+    </select>
+    <label for="n">Vertices $n$</label>
+    <input id="n" type="range" min="4" max="12" value="8" step="1">
+    <span class="val" id="nval">8</span>
+  </div>
+  <div class="controls">
+    <label for="p">Density $p$</label>
+    <input id="p" type="range" min="0.01" max="0.99" value="0.35" step="0.01">
+    <span class="val" id="pval">0.35</span>
+    <label for="seed">Seed</label>
+    <input id="seed" type="range" min="1" max="999" value="42" step="1">
+    <span class="val" id="seedval">42</span>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Pattern vertices $v(H)$</div><div class="value" id="sv">—</div></div>
+    <div class="stat"><div class="label">Pattern edges $h$</div><div class="value" id="sh">—</div></div>
+    <div class="stat"><div class="label">Densest subgraph ratio $m(H)$</div><div class="value" id="sm">—</div></div>
+    <div class="stat"><div class="label">Expectation threshold $p_{\mathrm E}$</div><div class="value" id="spe">—</div></div>
+    <div class="stat"><div class="label">Bound $p_{\mathrm E}(1+\log_2 h)$</div><div class="value" id="sbound">—</div></div>
+    <div class="stat"><div class="label">Expected copies of $H$</div><div class="value" id="sexp">—</div></div>
+    <div class="stat"><div class="label">Embedding found</div><div class="value" id="sfound">—</div></div>
+    <div class="stat"><div class="label">Sample density</div><div class="value" id="sdens">—</div></div>
+  </div>
+  <div class="legend">
+    <span><span class="swatch" style="background:#5eead4"></span>Vertex of sampled graph</span>
+    <span><span class="swatch" style="background:#f59e0b"></span>Highlighted embedding of $H$</span>
+  </div>
+  <canvas id="c" width="900" height="520"></canvas>
+  <p id="reason" style="font-size:.9rem;color:var(--muted);margin-top:.5rem"></p>
+</div>
+<script>
+const patSel=document.getElementById('pat');
+const nSlider=document.getElementById('n');
+const pSlider=document.getElementById('p');
+const seedSlider=document.getElementById('seed');
+const nval=document.getElementById('nval');
+const pval=document.getElementById('pval');
+const seedval=document.getElementById('seedval');
+const sv=document.getElementById('sv');
+const sh=document.getElementById('sh');
+const sm=document.getElementById('sm');
+const spe=document.getElementById('spe');
+const sbound=document.getElementById('sbound');
+const sexp=document.getElementById('sexp');
+const sfound=document.getElementById('sfound');
+const sdens=document.getElementById('sdens');
+const reason=document.getElementById('reason');
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+
+const PATTERNS={
+  tri:{edges:[[0,1],[1,2],[0,2]]},
+  k4:{edges:[[0,1],[0,2],[0,3],[1,2],[1,3],[2,3]]},
+  star:{edges:[[0,1],[0,2],[0,3]]},
+  path:{edges:[[0,1],[1,2],[2,3]]},
+  c4:{edges:[[0,1],[1,2],[2,3],[3,0]]},
+  k23:{edges:[[0,2],[0,3],[0,4],[1,2],[1,3],[1,4]]}
+};
+
+function mulberry(a){ return function(){ a=(a*1664525+1013904223)>>>0; return a/4294967296; }; }
+
+function falling(n,v){
+  if(v>n) return 0;
+  let r=1;
+  for(let i=0;i<v;i++) r*=(n-i);
+  return r;
+}
+
+function patternInfo(key){
+  const E=PATTERNS[key].edges;
+  const v=new Set();
+  E.forEach(e=>{v.add(e[0]);v.add(e[1]);});
+  return {edges:E, v:v.size, h:E.length};
+}
+
+function subsets(arr){
+  const out=[[]];
+  for(const x of arr){
+    const cur=out.length;
+    for(let i=0;i<cur;i++) out.push(out[i].concat([x]));
+  }
+  return out;
+}
+
+function computePE(key,n){
+  const info=patternInfo(key);
+  const E=info.edges;
+  const subs=subsets(E).filter(s=>s.length>0);
+  let best=0;
+  let bestRatio=0;
+  for(const s of subs){
+    const vs=new Set();
+    s.forEach(e=>{vs.add(e[0]);vs.add(e[1]);});
+    const v=vs.size, e=s.length;
+    const fall=falling(n,v);
+    if(fall<=0) continue;
+    const pF=Math.pow(1/(2*fall),1/e);
+    if(pF>best){ best=pF; }
+    const ratio=e/v;
+    if(ratio>bestRatio) bestRatio=ratio;
+  }
+  return {pe:best, m:bestRatio};
+}
+
+function findEmbedding(edges,n,adj){
+  const vCount=Math.max(...edges.flat())+1;
+  const adjPattern=Array.from({length:vCount},()=>new Set());
+  edges.forEach(e=>{adjPattern[e[0]].add(e[1]);adjPattern[e[1]].add(e[0]);});
+  const order=Array.from({length:vCount},(_,i)=>i).sort((a,b)=>adjPattern[b].size-adjPattern[a].size);
+  const map=new Array(vCount).fill(-1);
+  const used=new Array(n).fill(false);
+  function backtrack(k){
+    if(k===vCount) return true;
+    const pv=order[k];
+    for(let gv=0;gv<n;gv++){
+      if(used[gv]) continue;
+      let ok=true;
+      for(let j=0;j<k;j++){
+        const pv2=order[j];
+        const gv2=map[pv2];
+        const need=adjPattern[pv].has(pv2);
+        const has=adj[gv][gv2];
+        if(need!==has){ ok=false; break; }
+      }
+      // require pattern edges present; non-edges may be either (subgraph)
+      if(ok){
+        // also ensure all earlier pattern edges to pv are edges in G
+        // already checked need===has for all j, but non-edge need false allows has true/false; ok
+        map[pv]=gv; used[gv]=true;
+        if(backtrack(k+1)) return true;
+        map[pv]=-1; used[gv]=false;
+      }
+    }
+    return false;
+  }
+  // The above check need===has is too strict for non-edges? For subgraph embedding, non-edges need not be non-edges in G, so need false should allow has true. So condition should be: if need && !has fail; if !need no restriction. Fix:
+  function backtrack2(k){
+    if(k===vCount) return true;
+    const pv=order[k];
+    for(let gv=0;gv<n;gv++){
+      if(used[gv]) continue;
+      let ok=true;
+      for(let j=0;j<k;j++){
+        const pv2=order[j];
+        const gv2=map[pv2];
+        if(adjPattern[pv].has(pv2) && !adj[gv][gv2]){ ok=false; break; }
+      }
+      if(ok){
+        map[pv]=gv; used[gv]=true;
+        if(backtrack2(k+1)) return true;
+        map[pv]=-1; used[gv]=false;
+      }
+    }
+    return false;
+  }
+  if(backtrack2(0)){
+    const res=new Array(vCount);
+    for(let i=0;i<vCount;i++) res[i]=map[i];
+    return res;
+  }
+  return null;
+}
+
+function generateGraph(n,p,seed){
+  const rnd=mulberry(seed);
+  const adj=Array.from({length:n},()=>Array(n).fill(false));
+  let edges=0;
+  for(let i=0;i<n;i++){
+    for(let j=i+1;j<n;j++){
+      if(rnd()<p){ adj[i][j]=adj[j][i]=true; edges++; }
+    }
+  }
+  return {adj,edges};
+}
+
+function resizeCanvas(){ canvas.width=Math.max(300,canvas.clientWidth); canvas.height=520; }
+window.addEventListener('resize',function(){ resizeCanvas(); render(); });
+resizeCanvas();
+
+function render(){
+  const key=patSel.value;
+  const n=+nSlider.value;
+  const p=+pSlider.value;
+  const seed=+seedSlider.value;
+  nval.textContent=n;
+  pval.textContent=p.toFixed(2);
+  seedval.textContent=seed;
+  const info=patternInfo(key);
+  const peInfo=computePE(key,n);
+  sv.textContent=info.v;
+  sh.textContent=info.h;
+  sm.textContent=peInfo.m.toFixed(3);
+  spe.textContent=peInfo.pe.toFixed(4);
+  sbound.textContent=(peInfo.pe*(1+Math.log2(info.h))).toFixed(4);
+  const {adj,edges}=generateGraph(n,p,seed);
+  const found=findEmbedding(info.edges,n,adj);
+  const fall=falling(n,info.v);
+  const exp=fall>0 ? fall*Math.pow(p,info.h) : 0;
+  sexp.textContent=exp.toExponential(2);
+  sfound.textContent=found ? 'Yes' : 'No';
+  sfound.className='value '+(found?'good':'bad');
+  sdens.textContent=(edges/(n*(n-1)/2)).toFixed(3);
+  if(found){
+    reason.textContent='An embedding of '+key+' was found in this sample; p is above or near the appearance regime.';
+  } else {
+    reason.textContent='No embedding of '+key+' was found in this sample; the threshold may not yet be crossed.';
+  }
+
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const cx=W/2, cy=H/2;
+  const R=Math.min(W,H)*0.38;
+  const pos=[];
+  for(let i=0;i<n;i++){
+    const a=-Math.PI/2+2*Math.PI*i/n;
+    pos.push([cx+R*Math.cos(a), cy+R*Math.sin(a)]);
+  }
+  // edges
+  for(let i=0;i<n;i++){
+    for(let j=i+1;j<n;j++){
+      if(adj[i][j]){
+        let hl=false;
+        if(found){
+          // check if edge is between consecutive mapped vertices
+          const inv=new Array(n).fill(-1);
+          found.forEach((gv,pv)=>{inv[gv]=pv;});
+          // pattern edges
+          // highlight if (inv[i],inv[j]) is pattern edge
+          if(inv[i]>=0 && inv[j]>=0){
+            hl=info.edges.some(e=>(e[0]===inv[i]&&e[1]===inv[j])||(e[1]===inv[i]&&e[0]===inv[j]));
+          }
+        }
+        ctx.strokeStyle=hl?'#f59e0b':'rgba(159,176,204,0.28)';
+        ctx.lineWidth=hl?2.5:1;
+        ctx.beginPath();
+        ctx.moveTo(pos[i][0],pos[i][1]);
+        ctx.lineTo(pos[j][0],pos[j][1]);
+        ctx.stroke();
+      }
+    }
+  }
+  // vertices
+  pos.forEach((p,i)=>{
+    let hl=false;
+    if(found && found.indexOf(i)>=0) hl=true;
+    ctx.fillStyle=hl?'#f59e0b':'#5eead4';
+    ctx.beginPath();
+    ctx.arc(p[0],p[1],hl?8:6,0,Math.PI*2);
+    ctx.fill();
+    ctx.strokeStyle='rgba(255,255,255,0.35)';
+    ctx.lineWidth=1;
+    ctx.stroke();
+    ctx.fillStyle='#e6edf7';
+    ctx.font='11px system-ui';
+    ctx.textAlign='center';
+    ctx.fillText(String(i+1),p[0],p[1]-12);
+  });
+  // pattern inset
+  const ix=16, iy=16, sc=26;
+  ctx.fillStyle='rgba(17,26,46,0.8)';
+  ctx.fillRect(ix-8,iy-8,info.v*sc+24,info.v*sc?info.v*sc+24:60);
+  ctx.strokeStyle='var(--border)';
+  ctx.strokeRect(ix-8,iy-8,info.v*sc+24,info.v*sc+24);
+  const ppos=[];
+  for(let i=0;i<info.v;i++){
+    const a=-Math.PI/2+2*Math.PI*i/info.v;
+    ppos.push([ix+ (info.v*sc)/2 + (info.v*sc*0.35)*Math.cos(a), iy+(info.v*sc)/2 + (info.v*sc*0.35)*Math.sin(a)]);
+  }
+  info.edges.forEach(e=>{
+    ctx.strokeStyle='#5eead4';
+    ctx.lineWidth=1.5;
+    ctx.beginPath();
+    ctx.moveTo(ppos[e[0]][0],ppos[e[0]][1]);
+    ctx.lineTo(ppos[e[1]][0],ppos[e[1]][1]);
+    ctx.stroke();
+  });
+  ppos.forEach((pp,i)=>{
+    ctx.fillStyle='#5eead4';
+    ctx.beginPath();
+    ctx.arc(pp[0],pp[1],4,0,Math.PI*2);
+    ctx.fill();
+  });
+}
+
+patSel.addEventListener('change',render);
+nSlider.addEventListener('input',render);
+pSlider.addEventListener('input',render);
+seedSlider.addEventListener('input',render);
+render();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

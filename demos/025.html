@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Erdős short Egyptian fractions — interactive demo</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#34d399; --bad:#f87171; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#059669; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range]{flex:1 1 260px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:440px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+table{width:100%;border-collapse:collapse;font-size:.85rem}
+th,td{padding:.35rem .45rem;border-bottom:1px solid var(--border);text-align:left}
+th{color:var(--muted);font-weight:600}
+td.num{font-family:ui-monospace,monospace}
+.term{font-family:ui-monospace,monospace;font-size:.9rem;word-break:break-all}
+.status{color:var(--muted);font-size:.9rem}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap" style="position:relative">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Erdős short Egyptian fractions</h1>
+  <p>Greedy Egyptian-fraction decomposition of a/b into distinct unit fractions; compare the number of terms to log log b.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Every rational a/b with 1≤a&lt;b is a sum of O(log log b) distinct positive unit fractions. The worst-case minimum number of terms has the same order, resolving Erdős’s conjecture on short Egyptian fractions. For every sufficiently large b, every such a/b admits an expansion with an absolute implied constant; this order is best possible when the numerator varies. The number of exact k-term expansions of 1 and the least integer ≥2 missing from all of them both grow doubly exponentially in k (double logarithms of order k).</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Settles the optimal order of Egyptian-fraction expansions and underlies counting and denominator-growth phenomena (doubly exponential in the number of terms).</p>
+  </section>
+  <div class="controls">
+    <label for="a">numerator a</label>
+    <input id="a" type="range" min="1" max="99" value="11" step="1">
+    <span class="val" id="aval">11</span>
+    <label for="b">denominator b</label>
+    <input id="b" type="range" min="2" max="500" value="199" step="1">
+    <span class="val" id="bval">199</span>
+  </div>
+  <div class="controls">
+    <label for="B">scan max b</label>
+    <input id="B" type="range" min="10" max="200" value="80" step="1">
+    <span class="val" id="Bval">80</span>
+    <button id="rescan">Rescan</button>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">a/b</div><div class="value" id="stFrac">—</div></div>
+    <div class="stat"><div class="label">terms k</div><div class="value" id="stK">—</div></div>
+    <div class="stat"><div class="label">log log b</div><div class="value" id="stLL">—</div></div>
+    <div class="stat"><div class="label">k / log log b</div><div class="value" id="stRatio">—</div></div>
+    <div class="stat"><div class="label">worst k for this b</div><div class="value" id="stWorst">—</div></div>
+    <div class="stat"><div class="label">scan progress</div><div class="value" id="stProg">—</div></div>
+  </div>
+  <div style="position:relative">
+    <canvas id="c" width="900" height="440"></canvas>
+  </div>
+  <section class="box">
+    <h3>Greedy decomposition</h3>
+    <div id="termswrap" style="overflow:auto;max-height:320px"></div>
+  </section>
+</div>
+<script>
+function bgcd(x,y){
+  x=x<0n?-x:x; y=y<0n?-y:y;
+  while(y!==0n){ const t=x%y; x=y; y=t; }
+  return x===0n?1n:x;
+}
+function greedyCount(a0,b0){
+  let a=BigInt(a0), b=BigInt(b0);
+  let last=0n, k=0, safety=0;
+  while(a!==0n && safety<10000){
+    safety++;
+    let n;
+    if(a===1n) n=b; else n=(b+a-1n)/a;
+    if(n<=last) n=last+1n;
+    const num=a*n-b;
+    const den=b*n;
+    if(num<0n) return k;
+    if(num===0n){ k++; return k; }
+    const g=bgcd(num,den);
+    a=num/g; b=den/g;
+    k++; last=n;
+  }
+  return k;
+}
+function greedyTerms(a0,b0){
+  let a=BigInt(a0), b=BigInt(b0);
+  const terms=[]; let last=0n, safety=0;
+  while(a!==0n && safety<10000){
+    safety++;
+    let n;
+    if(a===1n) n=b; else n=(b+a-1n)/a;
+    if(n<=last) n=last+1n;
+    const num=a*n-b;
+    const den=b*n;
+    if(num<0n) break;
+    if(num===0n){ terms.push(n); return terms; }
+    const g=bgcd(num,den);
+    a=num/g; b=den/g;
+    terms.push(n); last=n;
+  }
+  return terms;
+}
+function abbrevBigInt(x){
+  const s=x.toString();
+  if(s.length<=46) return s;
+  return s.slice(0,20)+'…'+s.slice(-8)+' ('+s.length+' digits)';
+}
+function loglog(x){ return Math.log(Math.log(Math.max(x,Math.E))); }
+
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+function resizeCanvas(){ canvas.width=Math.max(300,canvas.clientWidth); canvas.height=440; }
+window.addEventListener('resize',()=>{ resizeCanvas(); draw(); });
+resizeCanvas();
+
+let maxCountByB=[]; // index b
+let scanUpTo=0;
+let scanBusy=false;
+
+function ensureScan(upTo){
+  if(upTo<=scanUpTo) return;
+  // extend
+  const start=scanUpTo+1;
+  // do in chunks to keep UI responsive-ish
+  for(let b=start;b<=upTo;b++){
+    let mx=0;
+    for(let a=1;a<b;a++){
+      const k=greedyCount(a,b);
+      if(k>mx) mx=k;
+    }
+    maxCountByB[b]=mx;
+  }
+  scanUpTo=upTo;
+}
+
+const aSlider=document.getElementById('a');
+const bSlider=document.getElementById('b');
+const BSlider=document.getElementById('B');
+const aval=document.getElementById('aval');
+const bval=document.getElementById('bval');
+const Bval=document.getElementById('Bval');
+
+function updateStats(){
+  const a=+aSlider.value;
+  const b=+bSlider.value;
+  if(a>=b){ aSlider.value=b-1; }
+  const aa=+aSlider.value;
+  aval.textContent=aa;
+  bval.textContent=b;
+  Bval.textContent=BSlider.value;
+  const frac=aa+'/'+b;
+  document.getElementById('stFrac').textContent=frac;
+  const terms=greedyTerms(aa,b);
+  document.getElementById('stK').textContent=terms.length;
+  const ll=loglog(b);
+  document.getElementById('stLL').textContent=ll.toFixed(4);
+  document.getElementById('stRatio').textContent= ll>0 ? (terms.length/ll).toFixed(3) : '—';
+  // worst for this b
+  if(maxCountByB[b]===undefined){
+    // compute just this b
+    let mx=0;
+    for(let x=1;x<b;x++){ const k=greedyCount(x,b); if(k>mx) mx=k; }
+    maxCountByB[b]=mx;
+    if(b>scanUpTo) scanUpTo=Math.max(scanUpTo,b);
+  }
+  document.getElementById('stWorst').textContent=maxCountByB[b];
+  // progress
+  const target=+BSlider.value;
+  if(scanUpTo<target){
+    document.getElementById('stProg').textContent=scanUpTo+'/'+target;
+  } else {
+    document.getElementById('stProg').textContent='done';
+  }
+  // terms list
+  const wrap=document.getElementById('termswrap');
+  let html='<table><thead><tr><th>#</th><th>denominator</th><th>unit fraction</th></tr></thead><tbody>';
+  terms.forEach((d,i)=>{
+    html+='<tr><td class="num">'+(i+1)+'</td><td class="term">'+abbrevBigInt(d)+'</td><td class="term">1/'+abbrevBigInt(d)+'</td></tr>';
+  });
+  html+='</tbody></table>';
+  if(terms.length===0) html='<p class="status">No terms.</p>';
+  wrap.innerHTML=html;
+  draw();
+}
+
+function draw(){
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const B=+BSlider.value;
+  // ensure scan up to B (may be heavy; do synchronously)
+  if(!scanBusy){
+    scanBusy=true;
+    try{ ensureScan(B); } finally{ scanBusy=false; }
+    document.getElementById('stProg').textContent='done';
+  }
+  const padL=60,padR=20,padT=30,padB=50;
+  const plotW=W-padL-padR, plotH=H-padT-padB;
+  // gather points
+  const pts=[];
+  let maxY=1;
+  for(let b=2;b<=B;b++){
+    const mc=maxCountByB[b];
+    if(mc===undefined) continue;
+    const x=loglog(b);
+    pts.push({b,x,y:mc});
+    if(mc>maxY) maxY=mc;
+  }
+  // current fraction point
+  const cb=+bSlider.value;
+  const ca=+aSlider.value;
+  const curK=greedyCount(ca,cb);
+  const curX=loglog(cb);
+  // axes ranges
+  let minX=Infinity,maxX=-Infinity;
+  pts.forEach(p=>{ if(p.x<minX)minX=p.x; if(p.x>maxX)maxX=p.x; });
+  if(!isFinite(minX)){ minX=0; maxX=1; }
+  if(minX===maxX){ minX-=1; maxX+=1; }
+  const xPad=(maxX-minX)*0.08;
+  minX-=xPad; maxX+=xPad;
+  maxY=Math.max(maxY,curK)+1;
+  // draw grid
+  ctx.strokeStyle='rgba(159,176,204,0.15)'; ctx.lineWidth=1;
+  const yTicks=Math.ceil(maxY);
+  for(let t=0;t<=yTicks;t++){
+    const yy=padT + plotH - (t/maxY)*plotH;
+    ctx.beginPath(); ctx.moveTo(padL,yy); ctx.lineTo(padL+plotW,yy); ctx.stroke();
+    ctx.fillStyle='#9fb0cc'; ctx.font='11px ui-monospace,monospace'; ctx.textAlign='right';
+    ctx.fillText(String(t), padL-6, yy+3);
+  }
+  // x ticks
+  const nTicks=6;
+  for(let i=0;i<=nTicks;i++){
+    const x=minX+(maxX-minX)*i/nTicks;
+    const px=padL+(x-minX)/(maxX-minX)*plotW;
+    ctx.beginPath(); ctx.moveTo(px,padT); ctx.lineTo(px,padT+plotH); ctx.stroke();
+    ctx.fillStyle='#9fb0cc'; ctx.font='11px ui-monospace,monospace'; ctx.textAlign='center';
+    ctx.fillText(x.toFixed(2), px, padT+plotH+14);
+  }
+  // guide line O(log log b): y = 2.5*x + 2 (clamped)
+  ctx.strokeStyle='rgba(248,113,113,0.6)'; ctx.setLineDash([6,4]); ctx.lineWidth=1.5;
+  ctx.beginPath();
+  let first=true;
+  for(let i=0;i<=100;i++){
+    const x=minX+(maxX-minX)*i/100;
+    const y=2.5*x+2;
+    const yy=padT+plotH-(y/maxY)*plotH;
+    const px=padL+(x-minX)/(maxX-minX)*plotW;
+    if(first){ ctx.moveTo(px,yy); first=false; } else ctx.lineTo(px,yy);
+  }
+  ctx.stroke(); ctx.setLineDash([]);
+  // points
+  pts.forEach(p=>{
+    const px=padL+(p.x-minX)/(maxX-minX)*plotW;
+    const py=padT+plotH-(p.y/maxY)*plotH;
+    ctx.fillStyle='rgba(94,234,212,0.75)';
+    ctx.beginPath(); ctx.arc(px,py,3.5,0,Math.PI*2); ctx.fill();
+  });
+  // current point
+  const cpx=padL+(curX-minX)/(maxX-minX)*plotW;
+  const cpy=padT+plotH-(curK/maxY)*plotH;
+  ctx.fillStyle='#fbbf24';
+  ctx.beginPath(); ctx.arc(cpx,cpy,6,0,Math.PI*2); ctx.fill();
+  ctx.strokeStyle='#fff'; ctx.lineWidth=1.5; ctx.stroke();
+  // labels
+  ctx.fillStyle='#9fb0cc'; ctx.font='12px system-ui'; ctx.textAlign='center';
+  ctx.fillText('log log b', padL+plotW/2, H-12);
+  ctx.save(); ctx.translate(16,padT+plotH/2); ctx.rotate(-Math.PI/2); ctx.fillText('number of terms',0,0); ctx.restore();
+  // legend
+  ctx.font='11px system-ui'; ctx.textAlign='left';
+  ctx.fillStyle='rgba(94,234,212,0.9)'; ctx.fillRect(padL+8,padT+6,12,12);
+  ctx.fillStyle='#9fb0cc'; ctx.fillText('worst-case greedy terms for b', padL+26, padT+16);
+  ctx.strokeStyle='rgba(248,113,113,0.8)'; ctx.setLineDash([6,4]); ctx.beginPath(); ctx.moveTo(padL+8,padT+30); ctx.lineTo(padL+20,padT+30); ctx.stroke(); ctx.setLineDash([]);
+  ctx.fillStyle='#9fb0cc'; ctx.fillText('O(log log b) guide', padL+26, padT+34);
+  ctx.fillStyle='#fbbf24'; ctx.beginPath(); ctx.arc(padL+14,padT+48,5,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle='#9fb0cc'; ctx.fillText('current a/b', padL+26, padT+52);
+}
+
+aSlider.addEventListener('input', updateStats);
+bSlider.addEventListener('input', updateStats);
+BSlider.addEventListener('input', ()=>{ updateStats(); });
+document.getElementById('rescan').addEventListener('click', ()=>{
+  scanUpTo=0; maxCountByB=[]; ensureScan(+BSlider.value); updateStats();
+});
+updateStats();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dimension-free logarithmic Sobolev inequality for subgaussian log-concave measures (conceptual, result 093)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range],select{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+input[type=range]{flex:1 1 180px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:460px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+.toggle{display:inline-flex;align-items:center;gap:.4rem}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Dimension-free logarithmic Sobolev inequality for subgaussian log-concave measures (conceptual, result 093)</h1>
+  <p>For a centered log-concave probability measure on (\mathbb R^n) with linear subgaussian parameter (a), the entropy of any smooth test satisfies (\operatorname{Ent}_\mu(f^2)\le C a^2\int |Df|^2d\mu) with one universal (C). Explore how prior bounds grew with dimension and how subgaussian tails look.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Proves a dimension-free logarithmic Sobolev inequality for centered log-concave densities with uniformly subgaussian linear marginals, with constant bounded by a universal multiple of the squared linear subgaussian parameter. Every centered log-concave probability measure with a Lebesgue density on (\mathbb R^n) and linear subgaussian parameter (a) satisfies (\operatorname{Ent}_\mu(f^2)\le C a^2\int |Df|^2d\mu) for compactly supported smooth (f), with one universal constant (C). This resolves positively the dimension-free logarithmic Sobolev conjecture for subgaussian log-concave measures.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">A dimension-free logarithmic Sobolev inequality gives Gaussian concentration and quadratic transport-entropy bounds independent of dimension for log-concave measures whose one-dimensional projections have Gaussian tails. It improves earlier criteria whose constants grew with (n), and applies to uniform measures on convex bodies without curvature assumptions.</p>
+  </section>
+  <div class="controls">
+    <label for="view">View</label>
+    <select id="view">
+      <option value="bounds" selected>Bounds vs dimension</option>
+      <option value="tail">Subgaussian tail</option>
+      <option value="proj">Projected density</option>
+    </select>
+    <label for="dist">Distribution</label>
+    <select id="dist">
+      <option value="gauss">Gaussian</option>
+      <option value="ball">Uniform ball</option>
+      <option value="cube">Uniform cube</option>
+      <option value="laplace">Laplace product</option>
+    </select>
+    <label for="n">Dimension n</label>
+    <input id="n" type="range" min="1" max="12" value="6">
+    <span class="val" id="nval">6</span>
+    <label for="a">Scale a</label>
+    <input id="a" type="range" min="50" max="400" value="150">
+    <span class="val" id="aval">1.50</span>
+    <label for="t">Threshold t</label>
+    <input id="t" type="range" min="0" max="400" value="200">
+    <span class="val" id="tval">2.00</span>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Dimension n</div><div class="value" id="stn">6</div></div>
+    <div class="stat"><div class="label">Scale a</div><div class="value" id="sta">1.50</div></div>
+    <div class="stat"><div class="label">New bound C a²</div><div class="value" id="stnew">—</div></div>
+    <div class="stat"><div class="label">Bobkov bound n a²</div><div class="value" id="stbob">—</div></div>
+    <div class="stat"><div class="label">Bizeul bound n^{1/4} a²</div><div class="value" id="stbiz">—</div></div>
+    <div class="stat"><div class="label">Tail bound 2e^{-t²/a²}</div><div class="value" id="sttail">—</div></div>
+  </div>
+  <canvas id="c" width="900" height="460"></canvas>
+  <p style="font-size:.85rem;color:var(--muted);margin-top:.5rem">Conceptual visualization: prior coefficients grow with dimension; the theorem's coefficient stays (C a^2). Tail plot uses the Markov bound (P(|\langle X,\theta\rangle|\ge t)\le 2e^{-t^2/a^2}).</p>
+</div>
+<script>
+const viewSel=document.getElementById('view');
+const distSel=document.getElementById('dist');
+const nSlider=document.getElementById('n');
+const aSlider=document.getElementById('a');
+const tSlider=document.getElementById('t');
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+
+const nval=document.getElementById('nval');
+const aval=document.getElementById('aval');
+const tval=document.getElementById('tval');
+const stn=document.getElementById('stn');
+const sta=document.getElementById('sta');
+const stnew=document.getElementById('stnew');
+const stbob=document.getElementById('stbob');
+const stbiz=document.getElementById('stbiz');
+const sttail=document.getElementById('sttail');
+
+function getN(){ return +nSlider.value; }
+function getA(){ return +aSlider.value/100; }
+function getT(){ return +tSlider.value/100; }
+
+function updateLabels(){
+  const n=getN(), a=getA(), t=getT();
+  nval.textContent=n;
+  aval.textContent=a.toFixed(2);
+  tval.textContent=t.toFixed(2);
+  stn.textContent=n;
+  sta.textContent=a.toFixed(2);
+  stnew.textContent=(a*a).toFixed(4);
+  stbob.textContent=(n*a*a).toFixed(4);
+  stbiz.textContent=(Math.pow(n,0.25)*a*a).toFixed(4);
+  sttail.textContent=(2*Math.exp(-(t*t)/(a*a))).toFixed(6);
+}
+
+function resizeCanvas(){ canvas.width=Math.max(300,canvas.clientWidth); canvas.height=460; }
+window.addEventListener('resize',function(){ resizeCanvas(); render(); });
+resizeCanvas();
+
+function axes(padX,padY){
+  const W=canvas.width,H=canvas.height;
+  ctx.strokeStyle='rgba(159,176,204,0.5)';
+  ctx.lineWidth=1;
+  ctx.beginPath();
+  ctx.moveTo(padX,H-padY); ctx.lineTo(W-padX,H-padY);
+  ctx.moveTo(padX,padY); ctx.lineTo(padX,H-padY);
+  ctx.stroke();
+}
+
+function drawBounds(){
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const pad=56;
+  const n=getN(), a=getA();
+  const maxN=20;
+  const maxCoeff=Math.max(1, maxN*a*a*1.05);
+  function X(v){ return pad+(v-1)/(maxN-1)*(W-2*pad); }
+  function Y(v){ return H-pad - v/maxCoeff*(H-2*pad); }
+  axes(pad,pad);
+  // grid labels
+  ctx.fillStyle='var(--muted)';
+  ctx.font='12px ui-monospace,monospace';
+  ctx.fillStyle='#9fb0cc';
+  for(let i=1;i<=maxN;i+=2){
+    ctx.fillText(i, X(i)-4, H-pad+16);
+  }
+  // Bobkov
+  ctx.strokeStyle='#ef4444'; ctx.lineWidth=2;
+  ctx.beginPath();
+  for(let i=1;i<=maxN;i++){
+    const x=X(i), y=Y(i*a*a);
+    if(i===1) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  }
+  ctx.stroke();
+  // Bizeul
+  ctx.strokeStyle='#f59e0b'; ctx.lineWidth=2;
+  ctx.beginPath();
+  for(let i=1;i<=maxN;i++){
+    const x=X(i), y=Y(Math.pow(i,0.25)*a*a);
+    if(i===1) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  }
+  ctx.stroke();
+  // New
+  ctx.strokeStyle='#5eead4'; ctx.lineWidth=3;
+  ctx.beginPath();
+  ctx.moveTo(X(1),Y(a*a)); ctx.lineTo(X(maxN),Y(a*a));
+  ctx.stroke();
+  // highlight
+  const hx=X(n), hy=Y(a*a);
+  ctx.fillStyle='#5eead4';
+  ctx.beginPath(); ctx.arc(hx,hy,6,0,Math.PI*2); ctx.fill();
+  ctx.strokeStyle='#f59e0b';
+  ctx.beginPath(); ctx.arc(X(n),Y(Math.pow(n,0.25)*a*a),5,0,Math.PI*2); ctx.stroke();
+  ctx.strokeStyle='#ef4444';
+  ctx.beginPath(); ctx.arc(X(n),Y(n*a*a),5,0,Math.PI*2); ctx.stroke();
+  // legend
+  ctx.font='13px system-ui,sans-serif';
+  ctx.fillStyle='#ef4444'; ctx.fillText('Bobkov: O(n a²)', pad, pad-10);
+  ctx.fillStyle='#f59e0b'; ctx.fillText('Bizeul: O(n^{1/4} a²)', pad+150, pad-10);
+  ctx.fillStyle='#5eead4'; ctx.fillText('Theorem: O(a²)', pad+330, pad-10);
+  ctx.fillStyle='#9fb0cc'; ctx.fillText('coefficient', 8, pad);
+}
+
+function drawTail(){
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const pad=56;
+  const a=getA(), t=getT();
+  const tMax=Math.max(4*a, t+1);
+  const yMin=-12, yMax=1;
+  function X(v){ return pad + v/tMax*(W-2*pad); }
+  function Y(v){ return H-pad - (v-yMin)/(yMax-yMin)*(H-2*pad); }
+  axes(pad,pad);
+  // subgaussian bound
+  ctx.strokeStyle='#5eead4'; ctx.lineWidth=2;
+  ctx.beginPath();
+  for(let i=0;i<=200;i++){
+    const tt=i/200*tMax;
+    const v=Math.log(2)-tt*tt/(a*a);
+    const x=X(tt), y=Y(v);
+    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  }
+  ctx.stroke();
+  // Gaussian tail with same a (sigma^2=a^2/(8/3))
+  ctx.strokeStyle='#60a5fa'; ctx.lineWidth=2;
+  ctx.beginPath();
+  const sigma2=a*a/(8/3);
+  for(let i=0;i<=200;i++){
+    const tt=i/200*tMax;
+    const v=-tt*tt/(2*sigma2);
+    const x=X(tt), y=Y(v);
+    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  }
+  ctx.stroke();
+  // threshold marker
+  ctx.strokeStyle='#f59e0b'; ctx.lineWidth=1;
+  ctx.beginPath();
+  ctx.moveTo(X(t),pad); ctx.lineTo(X(t),H-pad); ctx.stroke();
+  ctx.fillStyle='#f59e0b';
+  ctx.fillText('t='+t.toFixed(2), X(t)+4, pad+12);
+  ctx.font='13px system-ui,sans-serif';
+  ctx.fillStyle='#5eead4'; ctx.fillText('Subgaussian bound', pad, pad-10);
+  ctx.fillStyle='#60a5fa'; ctx.fillText('Gaussian tail', pad+180, pad-10);
+  ctx.fillStyle='#9fb0cc'; ctx.fillText('t', W/2, H-8);
+  ctx.save(); ctx.translate(10,H/2); ctx.rotate(-Math.PI/2); ctx.fillText('log survival',0,0); ctx.restore();
+}
+
+function drawProj(){
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const n=getN(), dist=distSel.value;
+  const pad=24;
+  if(n<2){
+    // 1D density
+    const xs=[]; for(let i=0;i<=200;i++) xs.push(-4+8*i/200);
+    let maxv=0;
+    const vals=xs.map(x=>{
+      let v=0;
+      if(dist==='gauss') v=Math.exp(-x*x/2);
+      else if(dist==='ball') v=(Math.abs(x)<=1)?0.5:0;
+      else if(dist==='cube') v=(Math.abs(x)<=1)?0.5:0;
+      else v=0.5*Math.exp(-Math.abs(x));
+      if(v>maxv)maxv=v;
+      return v;
+    });
+    axes(pad,pad);
+    ctx.strokeStyle='#5eead4'; ctx.lineWidth=2;
+    ctx.beginPath();
+    for(let i=0;i<vals.length;i++){
+      const x=pad+ (xs[i]+4)/8*(W-2*pad);
+      const y=H-pad - vals[i]/(maxv||1)*(H-2*pad)*0.9;
+      if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+    ctx.fillStyle='#9fb0cc'; ctx.font='13px system-ui,sans-serif';
+    ctx.fillText('1D projection (n='+n+')', pad, pad-4);
+    return;
+  }
+  const range = (dist==='ball'||dist==='cube')?1.3:3.2;
+  const cells=150;
+  const cell=(W-2*pad)/cells;
+  let maxv=0;
+  const grid=[];
+  for(let iy=0;iy<cells;iy++){
+    const row=[];
+    for(let ix=0;ix<cells;ix++){
+      const x=-range+ (2*range*ix)/(cells-1);
+      const y=range - (2*range*iy)/(cells-1);
+      let v=0;
+      if(dist==='gauss') v=Math.exp(-(x*x+y*y)/2);
+      else if(dist==='ball'){
+        const r2=x*x+y*y;
+        v=(r2<=1)?Math.pow(1-r2,(n-2)/2):0;
+      } else if(dist==='cube'){
+        v=(Math.abs(x)<=1&&Math.abs(y)<=1)?1:0;
+      } else {
+        v=Math.exp(-(Math.abs(x)+Math.abs(y)));
+      }
+      row.push(v);
+      if(v>maxv)maxv=v;
+    }
+    grid.push(row);
+  }
+  for(let iy=0;iy<cells;iy++){
+    for(let ix=0;ix<cells;ix++){
+      const v=grid[iy][ix]/(maxv||1);
+      const r=Math.round(20+180*v);
+      const g=Math.round(40+120*v);
+      const b=Math.round(80+170*v);
+      ctx.fillStyle='rgb('+r+','+g+','+b+')';
+      ctx.fillRect(pad+ix*cell, pad+iy*cell, cell+1, cell+1);
+    }
+  }
+  ctx.strokeStyle='rgba(159,176,204,0.6)';
+  ctx.strokeRect(pad,pad,cells*cell,cells*cell);
+  ctx.fillStyle='#9fb0cc'; ctx.font='13px system-ui,sans-serif';
+  ctx.fillText('Projected density, first two coordinates, n='+n, pad, pad-4);
+}
+
+function render(){
+  updateLabels();
+  const view=viewSel.value;
+  if(view==='bounds') drawBounds();
+  else if(view==='tail') drawTail();
+  else drawProj();
+}
+
+viewSel.addEventListener('change',render);
+distSel.addEventListener('change',render);
+nSlider.addEventListener('input',render);
+aSlider.addEventListener('input',render);
+tSlider.addEventListener('input',render);
+render();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

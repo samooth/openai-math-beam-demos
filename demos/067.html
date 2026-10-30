@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Campana–Peternell in dimension six (conceptual, result 067)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; --info:#60a5fa; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; --info:#2563eb; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range]{flex:1 1 180px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:460px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+select{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text)}
+table{width:100%;border-collapse:collapse;font-size:.82rem}
+th,td{padding:.3rem .4rem;border-bottom:1px solid var(--border);text-align:left}
+th{color:var(--muted);font-weight:600}
+td.num{font-family:ui-monospace,monospace}
+.badge{display:inline-block;padding:.15rem .5rem;border-radius:6px;font-size:.75rem;font-weight:700}
+.ok{color:var(--good)} .warn{color:var(--warn)} .bad{color:var(--bad)} .info{color:var(--info)}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Campana–Peternell in dimension six (conceptual, result 067)</h1>
+  <p>A smooth Fano variety with nef tangent bundle is rational homogeneous; in dimension six this is now proved. Tune dimension, Fano property, nefness of (T_X), and a candidate homogeneous type to see when the conjecture forces (X\simeq G/P).</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Proves the Campana--Peternell conjecture in complex dimension six: every smooth connected complex projective Fano sixfold with nef tangent bundle is rational homogeneous. Equivalently, if (X) is Fano and (T_X) is nef, then (X\simeq G/P) for a semisimple algebraic group (G) and a parabolic subgroup (P). The proof combines Mori theory, varieties of minimal rational tangents (VMRT), and the geometry of nef tangent bundles; dimension six is the newly settled case, extending the previously known low-dimensional cases.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Classifies Fano manifolds with nef tangent bundle through dimension six: their rational curves and tangent directions are forced to be homogeneous, determining automorphism groups, moduli, and Picard/anticanonical data. It separates genuine rational homogeneous spaces (projective spaces, quadrics, Grassmannians, and exceptional (G/P)) from non-homogeneous Fano varieties, for which the tangent bundle must have a negative direction. The result supports the full Campana--Peternell conjecture in arbitrary dimension via VMRT.</p>
+  </section>
+  <div class="controls">
+    <label for="n">Dimension (n)</label>
+    <input id="n" type="range" min="1" max="8" value="6" step="1">
+    <span class="val" id="nval">6</span>
+    <label for="fano">Fano?</label>
+    <select id="fano">
+      <option value="yes" selected>Yes</option>
+      <option value="no">No</option>
+    </select>
+    <label for="nef">(T_X) nef?</label>
+    <select id="nef">
+      <option value="yes" selected>Yes</option>
+      <option value="no">No</option>
+    </select>
+    <label for="cand">Candidate type</label>
+    <select id="cand">
+      <option value="pn" selected>Projective space (\mathbb P^n)</option>
+      <option value="quadric">Smooth quadric (Q^n)</option>
+      <option value="grass">Grassmannian (\operatorname{Gr}(2,5)) (dim 6)</option>
+      <option value="lg">Lagrangian Grassmannian (\operatorname{LG}(3,6))</option>
+      <option value="exc">Exceptional homogeneous (G/P)</option>
+      <option value="nonhom">Non-homogeneous Fano</option>
+    </select>
+    <label for="view">View</label>
+    <select id="view">
+      <option value="nef" selected>Nefness test</option>
+      <option value="vmrt">VMRT / rational curves</option>
+      <option value="class">Classification</option>
+    </select>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Dimension (n)</div><div class="value" id="nst">—</div></div>
+    <div class="stat"><div class="label">Fano?</div><div class="value" id="fanost">—</div></div>
+    <div class="stat"><div class="label">(T_X) nef?</div><div class="value" id="nefst">—</div></div>
+    <div class="stat"><div class="label">Hypotheses hold?</div><div class="value" id="hypst">—</div></div>
+    <div class="stat"><div class="label">Candidate</div><div class="value" id="candst">—</div></div>
+    <div class="stat"><div class="label">Candidate nef?</div><div class="value" id="cnefst">—</div></div>
+    <div class="stat"><div class="label">Theorem applies?</div><div class="value" id="thmst">—</div></div>
+    <div class="stat"><div class="label">Conclusion</div><div class="value" id="concst">—</div></div>
+  </div>
+  <canvas id="c" width="900" height="460"></canvas>
+  <section class="box">
+    <h3>Rational homogeneous examples</h3>
+    <table>
+      <thead><tr><th>Type</th><th>Dimension</th><th>(T_X) nef?</th><th>Fano?</th><th>Conclusion</th></tr></thead>
+      <tbody>
+        <tr><td>(\mathbb P^n)</td><td class="num">(n)</td><td class="ok">Yes</td><td class="ok">Yes</td><td class="ok">Homogeneous</td></tr>
+        <tr><td>Quadric (Q^n)</td><td class="num">(n)</td><td class="ok">Yes</td><td class="ok">Yes</td><td class="ok">Homogeneous</td></tr>
+        <tr><td>(\operatorname{Gr}(k,m))</td><td class="num">(k(m-k))</td><td class="ok">Yes</td><td class="ok">Yes</td><td class="ok">Homogeneous</td></tr>
+        <tr><td>Non-homogeneous Fano</td><td class="num">(n)</td><td class="bad">No</td><td class="ok">Yes</td><td class="bad">Not forced</td></tr>
+        <tr><td>Non-Fano with nef tangent</td><td class="num">(n)</td><td class="ok">Yes</td><td class="bad">No</td><td class="info">Conjecture N/A</td></tr>
+      </tbody>
+    </table>
+  </section>
+</div>
+<script>
+const nSlider=document.getElementById('n');
+const fanoSel=document.getElementById('fano');
+const nefSel=document.getElementById('nef');
+const candSel=document.getElementById('cand');
+const viewSel=document.getElementById('view');
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+
+const nval=document.getElementById('nval');
+const nst=document.getElementById('nst');
+const fanost=document.getElementById('fanost');
+const nefst=document.getElementById('nefst');
+const hypst=document.getElementById('hypst');
+const candst=document.getElementById('candst');
+const cnefst=document.getElementById('cnefst');
+const thmst=document.getElementById('thmst');
+const concst=document.getElementById('concst');
+
+const candLabel={
+ pn:'Projective space P^n',
+ quadric:'Smooth quadric Q^n',
+ grass:'Grassmannian Gr(2,5)',
+ lg:'Lagrangian Grassmannian LG(3,6)',
+ exc:'Exceptional homogeneous G/P',
+ nonhom:'Non-homogeneous Fano'
+};
+const candNef={
+ pn:true, quadric:true, grass:true, lg:true, exc:true, nonhom:false
+};
+
+function resizeCanvas(){ canvas.width=Math.max(300,canvas.clientWidth); canvas.height=460; }
+window.addEventListener('resize',function(){ resizeCanvas(); update(); });
+resizeCanvas();
+
+function drawNef(W,H,cx,cy,n,fano,nef,thm){
+ ctx.clearRect(0,0,W,H);
+ // base variety
+ ctx.fillStyle='rgba(94,234,212,0.08)';
+ ctx.strokeStyle='#5eead4'; ctx.lineWidth=2;
+ const bw=Math.min(300,W*0.46), bh=150;
+ const x0=cx-bw/2, y0=cy-bh/2-30;
+ ctx.fillRect(x0,y0,bw,bh); ctx.strokeRect(x0,y0,bw,bh);
+ ctx.fillStyle='#e6edf7'; ctx.font='14px system-ui'; ctx.textAlign='center';
+ ctx.fillText('X  (dim '+n+')',cx,y0+bh/2+4);
+ // tangent arrows
+ const dirs = nef ? 5 : 3;
+ for(let i=0;i<dirs;i++){
+  const ang = (i/(dirs-1))*Math.PI - Math.PI/2;
+  const len = 58;
+  const sx=cx, sy=y0+bh/2;
+  const ex=sx+len*Math.cos(ang), ey=sy+len*Math.sin(ang);
+  ctx.strokeStyle = nef ? '#22c55e' : (i===1?'#ef4444':'#22c55e');
+  ctx.lineWidth=2;
+  ctx.beginPath(); ctx.moveTo(sx,sy); ctx.lineTo(ex,ey); ctx.stroke();
+  // arrowhead
+  ctx.beginPath(); ctx.moveTo(ex,ey); ctx.lineTo(ex-7*Math.cos(ang-0.35),ey-7*Math.sin(ang-0.35)); ctx.lineTo(ex-7*Math.cos(ang+0.35),ey-7*Math.sin(ang+0.35)); ctx.closePath();
+  ctx.fillStyle = nef ? '#22c55e' : (i===1?'#ef4444':'#22c55e');
+  ctx.fill();
+ }
+ ctx.fillStyle='#9fb0cc'; ctx.font='12px system-ui'; ctx.textAlign='center';
+ if(nef){
+  ctx.fillText('All tangent directions have nonnegative degree',cx,y0-14);
+ } else {
+  ctx.fillText('Some tangent direction has negative degree',cx,y0-14);
+ }
+ ctx.fillStyle = thm ? '#22c55e' : (fano?'#f59e0b':'#9fb0cc');
+ ctx.font='14px system-ui'; ctx.textAlign='center';
+ ctx.fillText(thm ? 'Hypotheses force X ≃ G/P' : (fano?'Nefness fails: not forced':'Not Fano: conjecture N/A'),cx,H-20);
+}
+
+function drawVMRT(W,H,cx,cy,n,nef,thm){
+ ctx.clearRect(0,0,W,H);
+ // VMRT as a subvariety of projectivized tangent space
+ const cx0=cx, cy0=cy-20;
+ ctx.strokeStyle='#9fb0cc'; ctx.lineWidth=1.5;
+ ctx.beginPath(); ctx.arc(cx0,cy0,110,0,Math.PI*2); ctx.stroke();
+ ctx.fillStyle='rgba(94,234,212,0.06)'; ctx.fill();
+ ctx.fillStyle='#e6edf7'; ctx.font='13px system-ui'; ctx.textAlign='center';
+ ctx.fillText('ℙ(T_x X)  (VMRT)',cx0,cy0-125);
+ if(thm){
+  // homogeneous VMRT: union of orbits, symmetric
+  for(let k=0;k<8;k++){
+   const ang=k*Math.PI/4;
+   const r=70;
+   ctx.fillStyle='#22c55e';
+   ctx.beginPath(); ctx.arc(cx0+r*Math.cos(ang),cy0+r*Math.sin(ang),7,0,Math.PI*2); ctx.fill();
+   ctx.strokeStyle='#5eead4'; ctx.lineWidth=1;
+   ctx.beginPath(); ctx.moveTo(cx0,cy0); ctx.lineTo(cx0+r*Math.cos(ang),cy0+r*Math.sin(ang)); ctx.stroke();
+  }
+  ctx.fillStyle='#22c55e'; ctx.font='13px system-ui'; ctx.textAlign='center';
+  ctx.fillText('VMRT is (almost) homogeneous',cx0,cy0+145);
+ } else if(nef){
+  // nef but not Fano: no forced homogeneity
+  ctx.fillStyle='#60a5fa';
+  for(let k=0;k<6;k++){
+   const ang=k*Math.PI/3;
+   const r=60+(k%2)*25;
+   ctx.beginPath(); ctx.arc(cx0+r*Math.cos(ang),cy0+r*Math.sin(ang),6,0,Math.PI*2); ctx.fill();
+  }
+  ctx.fillStyle='#60a5fa'; ctx.font='13px system-ui'; ctx.textAlign='center';
+  ctx.fillText('VMRT unconstrained (not Fano)',cx0,cy0+145);
+ } else {
+  // negative direction marked
+  ctx.strokeStyle='#ef4444'; ctx.lineWidth=3;
+  ctx.beginPath(); ctx.moveTo(cx0,cy0); ctx.lineTo(cx0+95,cy0+40); ctx.stroke();
+  ctx.fillStyle='#ef4444'; ctx.font='13px system-ui'; ctx.textAlign='center';
+  ctx.fillText('Negative tangent direction ⇒ VMRT singular',cx0,cy0+145);
+ }
+ ctx.fillStyle='#9fb0cc'; ctx.font='12px system-ui'; ctx.textAlign='center';
+ ctx.fillText('Rational curves through x encode tangent directions',cx,H-18);
+}
+
+function drawClass(W,H,cx,cy,n,cand,thm){
+ ctx.clearRect(0,0,W,H);
+ // Dynkin-like diagram
+ const nodes = (cand==='exc') ? 6 : (cand==='grass' ? 4 : (cand==='lg' ? 3 : 3));
+ const spacing=70;
+ const startX=cx-(nodes-1)*spacing/2;
+ const y=cy-40;
+ for(let i=0;i<nodes;i++){
+  ctx.fillStyle = thm ? '#22c55e' : '#9fb0cc';
+  ctx.beginPath(); ctx.arc(startX+i*spacing,y,14,0,Math.PI*2); ctx.fill();
+  ctx.strokeStyle='#e6edf7'; ctx.lineWidth=1.5; ctx.stroke();
+  if(i<nodes-1){
+   ctx.strokeStyle='#5eead4'; ctx.lineWidth=2;
+   ctx.beginPath(); ctx.moveTo(startX+i*spacing+14,y); ctx.lineTo(startX+(i+1)*spacing-14,y); ctx.stroke();
+  }
+ }
+ ctx.fillStyle='#e6edf7'; ctx.font='14px system-ui'; ctx.textAlign='center';
+ ctx.fillText('Homogeneous type G/P',cx,y-60);
+ ctx.fillStyle='#9fb0cc'; ctx.font='12px system-ui'; ctx.textAlign='center';
+ ctx.fillText('Dimension n = '+n+'  (theorem settled for n ≤ 6)',cx,y+60);
+ // conclusion box
+ const bw=360,bh=70; const x0=cx-bw/2, y0=cy+90;
+ ctx.fillStyle = thm ? 'rgba(34,197,94,0.12)' : 'rgba(239,68,68,0.12)';
+ ctx.fillRect(x0,y0,bw,bh);
+ ctx.strokeStyle = thm ? '#22c55e' : '#ef4444'; ctx.lineWidth=2;
+ ctx.strokeRect(x0,y0,bw,bh);
+ ctx.fillStyle = thm ? '#22c55e' : '#ef4444';
+ ctx.font='14px system-ui'; ctx.textAlign='center';
+ ctx.fillText(thm ? 'X is rational homogeneous' : 'Homogeneity not forced',cx,y0+bh/2+5);
+ ctx.fillStyle='#9fb0cc'; ctx.font='11px system-ui'; ctx.textAlign='center';
+ ctx.fillText('Candidate: '+candLabel[cand],cx,H-14);
+}
+
+function update(){
+ const n=+nSlider.value;
+ const fano=fanoSel.value==='yes';
+ const nef=nefSel.value==='yes';
+ const cand=candSel.value;
+ const view=viewSel.value;
+ nval.textContent=n;
+ nst.textContent=n;
+ fanost.textContent=fano?'Yes':'No';
+ fanost.className='value '+(fano?'ok':'bad');
+ nefst.textContent=nef?'Yes':'No';
+ nefst.className='value '+(nef?'ok':'bad');
+ const hyp = fano && nef && n<=6;
+ hypst.textContent = hyp ? 'Yes' : 'No';
+ hypst.className='value '+(hyp?'ok':'bad');
+ candst.textContent = candLabel[cand];
+ candst.className='value info';
+ const cnef = candNef[cand];
+ cnefst.textContent = cnef?'Yes':'No';
+ cnefst.className='value '+(cnef?'ok':'bad');
+ const thm = fano && nef && n<=6;
+ thmst.textContent = thm ? 'Yes (n≤6)' : (n>6?'Open (n>6)':'No');
+ thmst.className='value '+(thm?'ok':'warn');
+ let conc;
+ if(!fano) conc='Conjecture N/A';
+ else if(!nef) conc='Not forced';
+ else if(n<=6) conc='Rational homogeneous';
+ else conc='Open in general';
+ concst.textContent=conc;
+ concst.className='value '+(conc==='Rational homogeneous'?'ok':(conc==='Open in general'?'warn':'bad'));
+
+ const W=canvas.width,H=canvas.height;
+ const cx=W/2,cy=H/2;
+ if(view==='nef') drawNef(W,H,cx,cy,n,fano,nef,thm);
+ else if(view==='vmrt') drawVMRT(W,H,cx,cy,n,nef,thm);
+ else drawClass(W,H,cx,cy,n,cand,thm);
+}
+
+nSlider.addEventListener('input',update);
+fanoSel.addEventListener('change',update);
+nefSel.addEventListener('change',update);
+candSel.addEventListener('change',update);
+viewSel.addEventListener('change',update);
+update();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

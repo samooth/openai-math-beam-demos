@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A counterexample to Kaplansky’s zero-divisor conjecture (conceptual, result 196)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+select,button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+input[type=range]{flex:1 1 180px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:460px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+.legend{display:flex;gap:1rem;align-items:center;font-size:.85rem;color:var(--muted);margin:.5rem 0;flex-wrap:wrap}
+.swatch{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:.3rem;vertical-align:middle}
+table{width:100%;border-collapse:collapse;font-family:ui-monospace,monospace;font-size:.85rem}
+th,td{border:1px solid var(--border);padding:.3rem .45rem;text-align:left}
+th{color:var(--muted);background:var(--chip)}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>A counterexample to Kaplansky’s zero-divisor conjecture (conceptual, result 196)</h1>
+  <p>Builds a small analogue of the cancellation mechanism: finite sets $A,B$, label sets with odd intersections, and matchings produce a graph on $A\times B$ whose connected components all have even size, so the product $\alpha\beta$ vanishes in $\mathbb F_2[G]$.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Kaplansky’s zero-divisor conjecture asserts that $K[G]$ is a domain whenever $K$ is a field and $G$ is torsion-free. Result 196 disproves it over $\mathbb F_2$: there is a finitely presented torsion-free group $G$ and nonzero $\alpha,\beta\in\mathbb F_2[G]$ with $\alpha\beta=0$. The construction uses two immersed graphs $\Gamma_A,\Gamma_B$ on vertex sets $A,B$; their outgoing label sets $S_x,S_y\subset T$ are prescribed so that $|S_x\cap S_y|$ is odd for every $x\in A$, $y\in B$. The factors are $\alpha=\sum_{x\in A'}g_x$ and $\beta=\sum_{y\in B'}h_y^{-1}$ in $\mathbb F_2[G]$. Edges of a common label $t$ connect $(x,y)$ to the $t$-successors, preserving the product $g_xh_y^{-1}$; since every vertex has odd degree $|S_x\cap S_y|$, each connected component of this graph has even cardinality, and its contributions cancel in characteristic two.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Shows that torsion-freeness alone does not make a group algebra a domain: the unique-product property can fail in a way that produces genuine zero divisors, not merely nontrivial units. The two safeguards are that each factor is nonzero (root separation) and that $G$ is torsion-free (asphericity of the coned complex $X$, giving a finite two-dimensional classifying space). This demo isolates the cancellation half of the argument in a finite, computable setting.</p>
+  </section>
+  <div class="controls">
+    <label for="na">|A|</label>
+    <input id="na" type="range" min="2" max="6" value="3" step="1">
+    <span class="val" id="nav">3</span>
+    <label for="nb">|B|</label>
+    <input id="nb" type="range" min="2" max="6" value="3" step="1">
+    <span class="val" id="nbv">3</span>
+    <label for="m">letters |T|</label>
+    <select id="m">
+      <option value="4">4</option>
+      <option value="6" selected>6</option>
+      <option value="8">8</option>
+    </select>
+    <button id="randBtn">Randomize</button>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">|A|</div><div class="value" id="sa">—</div></div>
+    <div class="stat"><div class="label">|B|</div><div class="value" id="sb">—</div></div>
+    <div class="stat"><div class="label">|A×B|</div><div class="value" id="sab">—</div></div>
+    <div class="stat"><div class="label">components</div><div class="value" id="sc">—</div></div>
+    <div class="stat"><div class="label">all even?</div><div class="value" id="seven">—</div></div>
+    <div class="stat"><div class="label">cancelled terms</div><div class="value" id="sterms">—</div></div>
+  </div>
+  <div class="legend">
+    <span><span class="swatch" style="background:#5eead4"></span>component 1</span>
+    <span><span class="swatch" style="background:#f59e0b"></span>component 2</span>
+    <span><span class="swatch" style="background:#ef4444"></span>component 3</span>
+    <span><span class="swatch" style="background:#a855f7"></span>component 4+</span>
+    <span style="color:var(--muted)">edges preserve $g_xh_y^{-1}$</span>
+  </div>
+  <canvas id="c" width="900" height="460"></canvas>
+  <section class="box">
+    <h3>Connected components of $A\times B$</h3>
+    <div id="compTable"></div>
+  </section>
+  <section class="box">
+    <h3>Cancellation check</h3>
+    <p id="cancel" style="margin:0;font-size:1rem;line-height:1.6;font-family:ui-monospace,monospace;word-break:break-word">—</p>
+  </section>
+</div>
+<script>
+const naSlider=document.getElementById('na');
+const nbSlider=document.getElementById('nb');
+const mSel=document.getElementById('m');
+const randBtn=document.getElementById('randBtn');
+const nav=document.getElementById('nav');
+const nbv=document.getElementById('nbv');
+const sa=document.getElementById('sa');
+const sb=document.getElementById('sb');
+const sab=document.getElementById('sab');
+const sc=document.getElementById('sc');
+const seven=document.getElementById('seven');
+const sterms=document.getElementById('sterms');
+const compTable=document.getElementById('compTable');
+const cancel=document.getElementById('cancel');
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+
+let nA=3,nB=3,m=6;
+let SA=[],SB=[],comp=[];
+let currentSeed=12345;
+
+function inv(t){ return t%2===0 ? t+1 : t-1; }
+
+function counts(S){
+  const c=new Array(m).fill(0);
+  for(const s of S) for(const t of s) c[t]++;
+  return c;
+}
+
+function generate(na,nb,mm,seed){
+  // Constructive valid instance: at least one side must be even.
+  let genA=na, genB=nb;
+  if(genA%2===1 && genB%2===1){ genB=Math.min(6,genB+1); }
+  // choose an inverse pair to use
+  const pairs=Math.floor(mm/2);
+  let p=(seed>>>0)%pairs;
+  const t=2*p, u=2*p+1;
+  const SA=[]; const SB=[];
+  let splitA = (genA%2===0) && ((genA%4===0) ? ((seed&1)===0) : true);
+  if(genA%2!==0) splitA=false; // must split B
+  if(genB%2!==0) splitA=true;  // must split A
+  if(splitA){
+    const half=genA/2;
+    for(let i=0;i<genA;i++) SA.push(new Set(i<half?[t]:[u]));
+    for(let j=0;j<genB;j++) SB.push(new Set([t,u]));
+  } else {
+    for(let i=0;i<genA;i++) SA.push(new Set([t,u]));
+    const half=genB/2;
+    for(let j=0;j<genB;j++) SB.push(new Set(j<half?[t]:[u]));
+  }
+  // pad to requested? gen dimensions are actual
+  return {SA,SB,trial:0,genA,genB};
+}
+
+function intersectionSize(a,b){
+  let n=0; for(const t of a) if(b.has(t)) n++; return n;
+}
+
+function buildMatchings(S, mm, seed){
+  let s=seed>>>0;
+  function rnd(){ s=(s*1664525+1013904223)>>>0; return s/0x100000000; }
+  function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(rnd()*(i+1)); const tmp=arr[i]; arr[i]=arr[j]; arr[j]=tmp; } return arr; }
+  const maps=[];
+  for(let t=0;t<mm;t++){
+    const tails=[];const heads=[];
+    for(let i=0;i<S.length;i++){
+      if(S[i].has(t)) tails.push(i);
+      if(S[i].has(inv(t))) heads.push(i);
+    }
+    const map=new Map();
+    const len=Math.min(tails.length,heads.length);
+    const headsShuf=shuffle(heads.slice());
+    for(let k=0;k<len;k++) map.set(tails[k],headsShuf[k]);
+    maps.push(map);
+  }
+  return maps;
+}
+
+function buildGraph(){
+  const mapsA=buildMatchings(SA,m,currentSeed);
+  const mapsB=buildMatchings(SB,m,currentSeed);
+  const N=nA*nB;
+  const adj=Array.from({length:N},()=>[]);
+  for(let i=0;i<nA;i++){
+    for(let j=0;j<nB;j++){
+      const a=SA[i], b=SB[j];
+      for(const t of a){
+        if(!b.has(t)) continue;
+        const i2=mapsA[t].get(i);
+        const j2=mapsB[t].get(j);
+        if(i2===undefined || j2===undefined) continue;
+        const u=i*nB+j;
+        const v=i2*nB+j2;
+        adj[u].push(v);
+      }
+    }
+  }
+  // connected components
+  const seen=new Array(N).fill(-1);
+  const comps=[];
+  for(let s=0;s<N;s++){
+    if(seen[s]!==-1) continue;
+    const stack=[s]; seen[s]=comps.length; const nodes=[];
+    while(stack.length){ const u=stack.pop(); nodes.push(u); for(const v of adj[u]) if(seen[v]===-1){seen[v]=seen[s];stack.push(v);} }
+    comps.push(nodes);
+  }
+  comp={seen,comps,adj,N};
+}
+
+function colorForComp(k){
+  const cols=['#5eead4','#f59e0b','#ef4444','#a855f7','#3b82f6','#22c55e','#eab308','#f472b6'];
+  return cols[k % cols.length];
+}
+
+function draw(){
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='#1f2a44';
+  ctx.fillRect(0,0,W,H);
+  const {seen,comps,adj,N}=comp;
+  const marginX=70, marginY=50;
+  const cellX=(W-2*marginX)/(nB-1||1);
+  const cellY=(H-2*marginY)/(nA-1||1);
+  function pos(id){ const i=Math.floor(id/nB); const j=id%nB; return {x:marginX+j*cellX, y:marginY+i*cellY}; }
+  // edges
+  ctx.lineWidth=1;
+  const edgeSet=new Set();
+  for(let u=0;u<N;u++){
+    for(const v of adj[u]){
+      const key=u<v?u+','+v:v+','+u;
+      if(edgeSet.has(key)) continue;
+      edgeSet.add(key);
+      const pu=pos(u), pv=pos(v);
+      ctx.strokeStyle='rgba(159,176,204,0.35)';
+      ctx.beginPath(); ctx.moveTo(pu.x,pu.y); ctx.lineTo(pv.x,pv.y); ctx.stroke();
+    }
+  }
+  // nodes
+  for(let id=0;id<N;id++){
+    const p=pos(id);
+    const k=seen[id];
+    ctx.fillStyle=colorForComp(k);
+    ctx.beginPath(); ctx.arc(p.x,p.y,7,0,Math.PI*2); ctx.fill();
+    ctx.strokeStyle='#0b1220'; ctx.lineWidth=1.5; ctx.stroke();
+  }
+  // labels for A (left) and B (top)
+  ctx.fillStyle='#9fb0cc'; ctx.font='12px system-ui'; ctx.textAlign='right';
+  for(let i=0;i<nA;i++){ const y=marginY+i*cellY; ctx.fillText('a'+(i+1), marginX-12, y+4); }
+  ctx.textAlign='center';
+  for(let j=0;j<nB;j++){ const x=marginX+j*cellX; ctx.fillText('b'+(j+1), x, marginY-16); }
+}
+
+function updateTables(){
+  const {comps,N}=comp;
+  let html='<table><tr><th>component</th><th>vertices (i,j)</th><th>size</th><th>size mod 2</th></tr>';
+  comps.forEach((nodes,k)=>{
+    const verts=nodes.map(id=>'(a'+(Math.floor(id/nB)+1)+',b'+(id%nB+1)+')').join(', ');
+    html+='<tr><td style="color:'+colorForComp(k)+'">C'+(k+1)+'</td><td>'+verts+'</td><td>'+nodes.length+'</td><td>'+(nodes.length%2)+'</td></tr>';
+  });
+  html+='</table>';
+  compTable.innerHTML=html;
+  const allEven=comps.every(c=>c.length%2===0);
+  const cancelled=comps.reduce((a,c)=>a+(c.length%2===0?c.length:0),0);
+  sa.textContent=nA; sb.textContent=nB; sab.textContent=N;
+  sc.textContent=comps.length;
+  seven.textContent=allEven?'yes':'no';
+  seven.style.color=allEven?'var(--good)':'var(--bad)';
+  sterms.textContent=cancelled+'/'+N;
+  cancel.textContent = allEven
+    ? 'Every component has even size, so in F_2 each contributes 0*g = 0. Hence alpha*beta = 0. Each component size: '+comps.map(c=>c.length).join(', ')+'.'
+    : 'Not all components are even; regenerate.';
+  cancel.style.color=allEven?'var(--good)':'var(--bad)';
+}
+
+function rebuild(seed){
+  currentSeed=seed;
+  nA=+naSlider.value; nB=+nbSlider.value; m=+mSel.value;
+  const res=generate(nA,nB,m,seed);
+  nA=res.genA; nB=res.genB;
+  if(nA!==+naSlider.value){ naSlider.value=nA; }
+  if(nB!==+nbSlider.value){ nbSlider.value=nB; }
+  nav.textContent=nA; nbv.textContent=nB;
+  SA=res.SA; SB=res.SB;
+  buildGraph();
+  draw();
+  updateTables();
+}
+
+let seed=12345;
+randBtn.addEventListener('click',()=>{ seed=Math.floor(Math.random()*1e9); rebuild(seed); });
+for(const el of [naSlider,nbSlider,mSel]){
+  el.addEventListener('input',()=>{ seed=Math.floor(Math.random()*1e9); rebuild(seed); });
+}
+rebuild(seed);
+window.addEventListener('resize',draw);
+</script>
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

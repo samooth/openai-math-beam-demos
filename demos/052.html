@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tangent-bundle splittings and universal covers (conceptual, result 052)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range]{flex:1 1 220px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:420px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+select{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text)}
+table{width:100%;border-collapse:collapse;font-size:.85rem}
+th,td{padding:.35rem .45rem;border-bottom:1px solid var(--border);text-align:left}
+th{color:var(--muted);font-weight:600}
+td.num{font-family:ui-monospace,monospace}
+.badge{display:inline-block;padding:.15rem .5rem;border-radius:6px;font-size:.75rem;font-weight:700}
+.ok{color:var(--good)} .bad{color:var(--bad)} .warn{color:var(--warn)}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Tangent-bundle splittings and universal covers (conceptual, result 052)</h1>
+  <p>A holomorphic splitting (TX=E\oplus F) of the tangent bundle of a compact connected Kähler manifold can induce a compatible product decomposition (\tilde X\simeq Y_1\times Y_2) of the universal cover. Tune the ranks and integrability hypotheses to see when the product structure is forced.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Proves the two-summand form of Beauville's splitting conjecture: for a compact connected Kähler manifold whose tangent bundle splits holomorphically into two positive-rank integrable subbundles, the universal cover is a product of connected simply connected complex manifolds of the prescribed dimensions, and the differential identifies the two tangent factors with the original summands. Both integrability hypotheses are required. On smooth rationally connected projective manifolds, both summands are automatically integrable, establishing Höring's conjecture.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Connects a holomorphic decomposition of tangent spaces to a global product structure of the universal cover, with consequences for de Rham/Beauville-type decompositions and for product decompositions of rationally connected manifolds. The automatic integrability case shows that on rationally connected projective manifolds, the existence of a holomorphic tangent splitting already implies the corresponding product decomposition.</p>
+  </section>
+  <div class="controls">
+    <label for="scenario">Scenario</label>
+    <select id="scenario">
+      <option value="product" selected>Integrable splitting (product)</option>
+      <option value="nonint">Non-integrable splitting</option>
+      <option value="rc">Rationally connected (automatic)</option>
+    </select>
+    <label for="n">Complex dimension (n)</label>
+    <input id="n" type="range" min="2" max="4" value="2" step="1">
+    <span class="val" id="nval">2</span>
+    <label for="r1">Rank (r_1) of (E)</label>
+    <input id="r1" type="range" min="1" max="3" value="1" step="1">
+    <span class="val" id="r1val">1</span>
+    <label for="eint">(E) integrable?</label>
+    <select id="eint">
+      <option value="yes" selected>yes</option>
+      <option value="no">no</option>
+    </select>
+    <label for="fint">(F) integrable?</label>
+    <select id="fint">
+      <option value="yes" selected>yes</option>
+      <option value="no">no</option>
+    </select>
+    <label for="rc">Rationally connected?</label>
+    <select id="rc">
+      <option value="no" selected>no</option>
+      <option value="yes">yes</option>
+    </select>
+    <label for="proj">Projective?</label>
+    <select id="proj">
+      <option value="no" selected>no</option>
+      <option value="yes">yes</option>
+    </select>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Complex dimension (n)</div><div class="value" id="nst">—</div></div>
+    <div class="stat"><div class="label">Rank (r_1) of (E)</div><div class="value" id="r1st">—</div></div>
+    <div class="stat"><div class="label">Rank (r_2) of (F)</div><div class="value" id="r2st">—</div></div>
+    <div class="stat"><div class="label">(E) integrable?</div><div class="value" id="eist">—</div></div>
+    <div class="stat"><div class="label">(F) integrable?</div><div class="value" id="fist">—</div></div>
+    <div class="stat"><div class="label">Automatic integrability?</div><div class="value" id="aist">—</div></div>
+    <div class="stat"><div class="label">Rationally connected?</div><div class="value" id="rcst">—</div></div>
+    <div class="stat"><div class="label">Projective?</div><div class="value" id="prst">—</div></div>
+    <div class="stat"><div class="label">Universal cover (\tilde X)</div><div class="value" id="ucst">—</div></div>
+    <div class="stat"><div class="label">Product decomposition?</div><div class="value" id="pdst">—</div></div>
+  </div>
+  <canvas id="c" width="900" height="420"></canvas>
+  <section class="box">
+    <h3>Examples</h3>
+    <table>
+      <thead><tr><th>Case</th><th>Integrable (E)?</th><th>Integrable (F)?</th><th>Universal cover</th></tr></thead>
+      <tbody>
+        <tr><td>Product-type splitting</td><td class="num ok">yes</td><td class="num ok">yes</td><td class="num ok">(Y_1\times Y_2)</td></tr>
+        <tr><td>Only (E) integrable</td><td class="num ok">yes</td><td class="num bad">no</td><td class="num warn">not a product</td></tr>
+        <tr><td>Neither integrable</td><td class="num bad">no</td><td class="num bad">no</td><td class="num bad">not a product</td></tr>
+        <tr><td>Rationally connected projective</td><td class="num ok">automatic</td><td class="num ok">automatic</td><td class="num ok">(Y_1\times Y_2)</td></tr>
+      </tbody>
+    </table>
+  </section>
+</div>
+<script>
+const scenarioSel=document.getElementById('scenario');
+const nSlider=document.getElementById('n');
+const r1Slider=document.getElementById('r1');
+const eSel=document.getElementById('eint');
+const fSel=document.getElementById('fint');
+const rcSel=document.getElementById('rc');
+const projSel=document.getElementById('proj');
+
+const nval=document.getElementById('nval');
+const r1val=document.getElementById('r1val');
+const nst=document.getElementById('nst');
+const r1st=document.getElementById('r1st');
+const r2st=document.getElementById('r2st');
+const eist=document.getElementById('eist');
+const fist=document.getElementById('fist');
+const aist=document.getElementById('aist');
+const rcst=document.getElementById('rcst');
+const prst=document.getElementById('prst');
+const ucst=document.getElementById('ucst');
+const pdst=document.getElementById('pdst');
+
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+
+const presets={
+  product:{n:2,r1:1,eint:'yes',fint:'yes',rc:'no',proj:'no'},
+  nonint:{n:2,r1:1,eint:'no',fint:'no',rc:'no',proj:'no'},
+  rc:{n:3,r1:1,eint:'yes',fint:'yes',rc:'yes',proj:'yes'}
+};
+
+function resizeCanvas(){ canvas.width=Math.max(300,canvas.clientWidth); canvas.height=420; }
+window.addEventListener('resize',function(){ resizeCanvas(); update(); });
+resizeCanvas();
+
+function update(){
+  const preset=presets[scenarioSel.value];
+  if(preset){
+    nSlider.value=preset.n;
+    r1Slider.value=preset.r1;
+    eSel.value=preset.eint;
+    fSel.value=preset.fint;
+    rcSel.value=preset.rc;
+    projSel.value=preset.proj;
+  }
+  let n=+nSlider.value;
+  if(n<2) n=2;
+  let r1=+r1Slider.value;
+  if(r1<1) r1=1;
+  if(r1>n-1) r1=n-1;
+  r1Slider.value=r1;
+  const r2=n-r1;
+  const rc=rcSel.value==='yes';
+  const proj=projSel.value==='yes';
+  const auto = rc && proj;
+  if(auto){
+    eSel.value='yes';
+    fSel.value='yes';
+  }
+  const eInt = auto || eSel.value==='yes';
+  const fInt = auto || fSel.value==='yes';
+  const product = eInt && fInt;
+
+  nval.textContent=n;
+  r1val.textContent=r1;
+  nst.textContent=n;
+  r1st.textContent=r1;
+  r2st.textContent=r2;
+  eist.textContent=eInt?'yes':'no';
+  eist.className='value '+(eInt?'ok':'bad');
+  fist.textContent=fInt?'yes':'no';
+  fist.className='value '+(fInt?'ok':'bad');
+  aist.textContent=auto?'yes':'no';
+  aist.className='value '+(auto?'ok':'warn');
+  rcst.textContent=rc?'yes':'no';
+  rcst.className='value '+(rc?'ok':'warn');
+  prst.textContent=proj?'yes':'no';
+  prst.className='value '+(proj?'ok':'warn');
+  ucst.textContent=product?('Y_1 (dim '+r1+') × Y_2 (dim '+r2+')'):'not a product';
+  ucst.className='value '+(product?'ok':'bad');
+  pdst.textContent=product?'yes':'no';
+  pdst.className='value '+(product?'ok':'bad');
+
+  draw(n,r1,r2,eInt,fInt,rc,proj,product,scenarioSel.value);
+}
+
+function arrow(x1,y1,x2,y2,color){
+  ctx.strokeStyle=color; ctx.fillStyle=color; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+  const a=Math.atan2(y2-y1,x2-x1);
+  ctx.beginPath();
+  ctx.moveTo(x2,y2);
+  ctx.lineTo(x2-8*Math.cos(a-0.4), y2-8*Math.sin(a-0.4));
+  ctx.lineTo(x2-8*Math.cos(a+0.4), y2-8*Math.sin(a+0.4));
+  ctx.closePath(); ctx.fill();
+}
+
+function draw(n,r1,r2,eInt,fInt,rc,proj,product,scenario){
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const leftCx=W*0.23, cy=H/2;
+  const R=Math.min(W,H)*0.20;
+
+  // base manifold
+  ctx.beginPath();
+  ctx.ellipse(leftCx,cy,R*1.35,R*0.85,0,0,Math.PI*2);
+  ctx.fillStyle='rgba(94,234,212,0.06)';
+  ctx.fill();
+  ctx.strokeStyle='#5eead4';
+  ctx.lineWidth=2;
+  ctx.stroke();
+
+  const px=leftCx, py=cy-10;
+  ctx.beginPath(); ctx.arc(px,py,5,0,Math.PI*2);
+  ctx.fillStyle='#e6edf7'; ctx.fill();
+
+  // tangent decomposition
+  const s=52;
+  arrow(px,py,px+s,py,'#ef4444');
+  arrow(px,py,px,py-s,'#3b82f6');
+  arrow(px,py,px+s,py-s,'#e6edf7');
+
+  ctx.fillStyle='#ef4444'; ctx.font='12px system-ui'; ctx.textAlign='left';
+  ctx.fillText('E (rank '+r1+')', px+s+6, py+4);
+  ctx.fillStyle='#3b82f6';
+  ctx.fillText('F (rank '+r2+')', px+6, py-s-4);
+  ctx.fillStyle='#9fb0cc';
+  ctx.textAlign='center';
+  ctx.fillText('Base manifold X', leftCx, cy+R*0.85+24);
+  ctx.fillText('Tangent splitting at p', leftCx, H-16);
+
+  // right panel
+  const rx=W*0.68, ry=H/2;
+  const gw=Math.min(200,W*0.34), gh=200;
+  const x0=rx-gw/2, y0=ry-gh/2;
+
+  if(product){
+    ctx.strokeStyle='#5eead4'; ctx.lineWidth=2;
+    ctx.strokeRect(x0,y0,gw,gh);
+    ctx.fillStyle='rgba(94,234,212,0.05)';
+    ctx.fillRect(x0,y0,gw,gh);
+    // grid
+    const nx=5, ny=5;
+    ctx.strokeStyle='rgba(239,68,68,0.55)'; ctx.lineWidth=1.2;
+    for(let i=0;i<=nx;i++){
+      const xx=x0+i*gw/nx;
+      ctx.beginPath(); ctx.moveTo(xx,y0); ctx.lineTo(xx,y0+gh); ctx.stroke();
+    }
+    ctx.strokeStyle='rgba(59,130,246,0.55)';
+    for(let j=0;j<=ny;j++){
+      const yy=y0+j*gh/ny;
+      ctx.beginPath(); ctx.moveTo(x0,yy); ctx.lineTo(x0+gw,yy); ctx.stroke();
+    }
+    ctx.fillStyle='#e6edf7'; ctx.font='13px system-ui'; ctx.textAlign='center';
+    ctx.fillText('Universal cover \u1E70X \u2243 Y_1 \u00d7 Y_2', rx, y0-14);
+    ctx.fillStyle='#9fb0cc'; ctx.font='12px system-ui';
+    ctx.fillText('Y_1 (dim '+r1+') \u00d7 Y_2 (dim '+r2+')', rx, y0+gh+20);
+    ctx.fillText('product decomposition', rx, H-16);
+  } else if(eInt && !fInt){
+    // red foliation only
+    ctx.strokeStyle='#5eead4'; ctx.lineWidth=2;
+    ctx.strokeRect(x0,y0,gw,gh);
+    ctx.fillStyle='rgba(94,234,212,0.05)';
+    ctx.fillRect(x0,y0,gw,gh);
+    ctx.strokeStyle='rgba(239,68,68,0.7)'; ctx.lineWidth=1.5;
+    for(let i=0;i<=6;i++){
+      const xx=x0+i*gw/6;
+      ctx.beginPath(); ctx.moveTo(xx,y0); ctx.lineTo(xx,y0+gh); ctx.stroke();
+    }
+    // twisted blue
+    ctx.strokeStyle='rgba(59,130,246,0.7)'; ctx.lineWidth=1.5;
+    for(let j=0;j<4;j++){
+      ctx.beginPath();
+      for(let t=0;t<=20;t++){
+        const frac=t/20;
+        const x=x0+frac*gw;
+        const y=y0+ (j*gh/4) + 30*Math.sin(frac*Math.PI*2 + j);
+        if(t===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+      }
+      ctx.stroke();
+    }
+    ctx.fillStyle='#e6edf7'; ctx.font='13px system-ui'; ctx.textAlign='center';
+    ctx.fillText('E integrable, F not: no product', rx, y0-14);
+    ctx.fillStyle='#9fb0cc'; ctx.font='12px system-ui';
+    ctx.fillText('partial foliation only', rx, H-16);
+  } else if(!eInt && fInt){
+    ctx.strokeStyle='#5eead4'; ctx.lineWidth=2;
+    ctx.strokeRect(x0,y0,gw,gh);
+    ctx.fillStyle='rgba(94,234,212,0.05)';
+    ctx.fillRect(x0,y0,gw,gh);
+    ctx.strokeStyle='rgba(59,130,246,0.7)'; ctx.lineWidth=1.5;
+    for(let j=0;j<=6;j++){
+      const yy=y0+j*gh/6;
+      ctx.beginPath(); ctx.moveTo(x0,yy); ctx.lineTo(x0+gw,yy); ctx.stroke();
+    }
+    ctx.strokeStyle='rgba(239,68,68,0.7)'; ctx.lineWidth=1.5;
+    for(let i=0;i<4;i++){
+      ctx.beginPath();
+      for(let t=0;t<=20;t++){
+        const frac=t/20;
+        const y=y0+frac*gh;
+        const x=x0+ (i*gw/4) + 30*Math.sin(frac*Math.PI*2 + i);
+        if(t===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+      }
+      ctx.stroke();
+    }
+    ctx.fillStyle='#e6edf7'; ctx.font='13px system-ui'; ctx.textAlign='center';
+    ctx.fillText('F integrable, E not: no product', rx, y0-14);
+    ctx.fillStyle='#9fb0cc'; ctx.font='12px system-ui';
+    ctx.fillText('partial foliation only', rx, H-16);
+  } else {
+    ctx.strokeStyle='#5eead4'; ctx.lineWidth=2;
+    ctx.strokeRect(x0,y0,gw,gh);
+    ctx.fillStyle='rgba(94,234,212,0.05)';
+    ctx.fillRect(x0,y0,gw,gh);
+    // tangled curves
+    ctx.strokeStyle='rgba(239,68,68,0.6)'; ctx.lineWidth=1.5;
+    for(let i=0;i<3;i++){
+      ctx.beginPath();
+      for(let t=0;t<=30;t++){
+        const frac=t/30;
+        const x=x0+frac*gw;
+        const y=y0+ (i*gh/3)+20*Math.sin(frac*Math.PI*4 + i*1.3);
+        if(t===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+      }
+      ctx.stroke();
+    }
+    ctx.strokeStyle='rgba(59,130,246,0.6)'; ctx.lineWidth=1.5;
+    for(let i=0;i<3;i++){
+      ctx.beginPath();
+      for(let t=0;t<=30;t++){
+        const frac=t/30;
+        const y=y0+frac*gh;
+        const x=x0+ (i*gw/3)+20*Math.cos(frac*Math.PI*4 + i*0.9);
+        if(t===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+      }
+      ctx.stroke();
+    }
+    ctx.fillStyle='#e6edf7'; ctx.font='13px system-ui'; ctx.textAlign='center';
+    ctx.fillText('Neither integrable: no product', rx, y0-14);
+    ctx.fillStyle='#9fb0cc'; ctx.font='12px system-ui';
+    ctx.fillText('tangled distribution', rx, H-16);
+  }
+}
+
+scenarioSel.addEventListener('change',function(){ update(); });
+nSlider.addEventListener('input',function(){ scenarioSel.value=''; update(); });
+r1Slider.addEventListener('input',function(){ scenarioSel.value=''; update(); });
+eSel.addEventListener('change',function(){ scenarioSel.value=''; update(); });
+fSel.addEventListener('change',function(){ scenarioSel.value=''; update(); });
+rcSel.addEventListener('change',function(){ scenarioSel.value=''; update(); });
+projSel.addEventListener('change',function(){ scenarioSel.value=''; update(); });
+update();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

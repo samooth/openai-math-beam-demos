@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Counterexamples to Shafarevich holomorphic convexity (conceptual, result 046)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range]{flex:1 1 220px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:420px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+select{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text)}
+table{width:100%;border-collapse:collapse;font-size:.85rem}
+th,td{padding:.35rem .45rem;border-bottom:1px solid var(--border);text-align:left}
+th{color:var(--muted);font-weight:600}
+td.num{font-family:ui-monospace,monospace}
+.badge{display:inline-block;padding:.15rem .5rem;border-radius:6px;font-size:.75rem;font-weight:700}
+.ok{color:var(--good)} .bad{color:var(--bad)} .warn{color:var(--warn)}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Counterexamples to Shafarevich holomorphic convexity (conceptual, result 046)</h1>
+  <p>Shafarevich asked whether the universal cover of every smooth connected projective complex variety is holomorphically convex. Toggle the scenarios to compare the conjectured behavior with the two counterexamples: a surface whose cover contains an infinite Nori string of rational curves, and a fourfold with large fundamental group whose cover has no compact subvarieties but is not Stein.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Constructs a smooth projective complex fourfold with large fundamental group whose universal cover contains no positive-dimensional compact analytic subvariety but is neither Stein nor holomorphically convex. A separate smooth projective complex surface already disproves unrestricted Shafarevich holomorphic convexity in dimension two: its universal cover contains a closed connected noncompact locally finite union of compact rational curves (an infinite Nori string), so the holomorphic hull of a point is noncompact.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Shows that holomorphic convexity can fail in the smallest possible complex dimension and also under the large-fundamental-group hypothesis. The surface obstruction is a connected curve with trivial component fundamental groups but infinite image of its nodal incidence graph; the fourfold obstruction is topological, coming from a rank-three lattice cover of a simple abelian surface with nonzero third homology, which no Stein surface can have.</p>
+  </section>
+  <div class="controls">
+    <label for="scenario">Scenario</label>
+    <select id="scenario">
+      <option value="classical" selected>Classical expectation (no obstruction)</option>
+      <option value="surface">Surface counterexample (infinite Nori string)</option>
+      <option value="fourfold">Fourfold counterexample (large (\pi_1))</option>
+    </select>
+    <label for="dim">Dimension</label>
+    <input id="dim" type="range" min="2" max="6" value="2" step="1">
+    <span class="val" id="dimval">2</span>
+    <label for="components">Curve components</label>
+    <input id="components" type="range" min="1" max="12" value="1" step="1">
+    <span class="val" id="compval">1</span>
+    <label for="image">(\pi_1) image</label>
+    <select id="image">
+      <option value="finite">finite</option>
+      <option value="infinite" selected>infinite</option>
+    </select>
+    <label for="compact">Compact subvarieties in (\tilde X)</label>
+    <select id="compact">
+      <option value="none">none</option>
+      <option value="present" selected>present</option>
+    </select>
+    <label for="obstruction">Topological obstruction</label>
+    <select id="obstruction">
+      <option value="none" selected>none</option>
+      <option value="nori">infinite Nori string</option>
+      <option value="lattice">rank-3 lattice cover</option>
+    </select>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Dimension</div><div class="value" id="sdim">—</div></div>
+    <div class="stat"><div class="label">Curve components</div><div class="value" id="scomp">—</div></div>
+    <div class="stat"><div class="label">(\pi_1) image</div><div class="value" id="simg">—</div></div>
+    <div class="stat"><div class="label">Compact subvarieties in (\tilde X)</div><div class="value" id="scmp">—</div></div>
+    <div class="stat"><div class="label">Large (\pi_1)?</div><div class="value" id="slarge">—</div></div>
+    <div class="stat"><div class="label">Shafarevich prediction</div><div class="value" id="spred">convex</div></div>
+    <div class="stat"><div class="label">Actual Stein?</div><div class="value" id="sstein">—</div></div>
+    <div class="stat"><div class="label">Actual holomorphically convex?</div><div class="value" id="sconv">—</div></div>
+    <div class="stat"><div class="label">Holomorphic hull of a point</div><div class="value" id="shull">—</div></div>
+    <div class="stat"><div class="label">Obstruction</div><div class="value" id="sobs">—</div></div>
+  </div>
+  <canvas id="c" width="900" height="420"></canvas>
+  <section class="box">
+    <h3>Examples</h3>
+    <table>
+      <thead><tr><th>Case</th><th>Dimension</th><th>Compact subvarieties in (\tilde X)</th><th>Stein?</th><th>Convex?</th></tr></thead>
+      <tbody>
+        <tr><td>Classical large (\pi_1) expectation</td><td class="num">any</td><td class="num">none</td><td class="ok">yes (expected)</td><td class="ok">yes (conjectured)</td></tr>
+        <tr><td>Surface counterexample</td><td class="num">2</td><td class="num">rational curves</td><td class="bad">no</td><td class="bad">no</td></tr>
+        <tr><td>Fourfold counterexample</td><td class="num">4</td><td class="num">none</td><td class="bad">no</td><td class="bad">no</td></tr>
+      </tbody>
+    </table>
+  </section>
+</div>
+<script>
+const scenarioSel=document.getElementById('scenario');
+const dimSlider=document.getElementById('dim');
+const compSlider=document.getElementById('components');
+const imageSel=document.getElementById('image');
+const compactSel=document.getElementById('compact');
+const obsSel=document.getElementById('obstruction');
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+
+const dimval=document.getElementById('dimval');
+const compval=document.getElementById('compval');
+const sdim=document.getElementById('sdim');
+const scomp=document.getElementById('scomp');
+const simg=document.getElementById('simg');
+const scmp=document.getElementById('scmp');
+const slarge=document.getElementById('slarge');
+const sstein=document.getElementById('sstein');
+const sconv=document.getElementById('sconv');
+const shull=document.getElementById('shull');
+const sobs=document.getElementById('sobs');
+
+const presets={
+  classical:{dim:2,components:1,image:'finite',compact:'none',obstruction:'none'},
+  surface:{dim:2,components:8,image:'infinite',compact:'present',obstruction:'nori'},
+  fourfold:{dim:4,components:1,image:'infinite',compact:'none',obstruction:'lattice'}
+};
+
+function resizeCanvas(){ canvas.width=Math.max(300,canvas.clientWidth); canvas.height=420; }
+window.addEventListener('resize',function(){ resizeCanvas(); update(); });
+resizeCanvas();
+
+function update(){
+  const preset=presets[scenarioSel.value];
+  if(preset){
+    dimSlider.value=preset.dim;
+    compSlider.value=preset.components;
+    imageSel.value=preset.image;
+    compactSel.value=preset.compact;
+    obsSel.value=preset.obstruction;
+  }
+  const dim=+dimSlider.value;
+  const comps=+compSlider.value;
+  const image=imageSel.value;
+  const compact=compactSel.value;
+  const obs=obstructionValue();
+  dimval.textContent=dim;
+  compval.textContent=comps;
+  sdim.textContent=dim;
+  scomp.textContent=comps;
+  simg.textContent=image;
+  scmp.textContent=compact;
+  const large = (compact==='none' && image==='infinite');
+  slarge.textContent = large ? 'yes' : 'no';
+  slarge.className='value '+(large?'ok':'warn');
+
+  const predictedConvex = true;
+  document.getElementById('spred').textContent = predictedConvex ? 'convex (conjectured)' : '—';
+
+  let actualStein, actualConvex, hull;
+  if(scenarioSel.value==='classical'){
+    actualStein = (compact==='none');
+    actualConvex = true;
+    hull = actualStein ? 'compact' : 'compact (convex)';
+  } else if(scenarioSel.value==='surface'){
+    actualStein = false;
+    actualConvex = false;
+    hull = 'noncompact';
+  } else {
+    actualStein = false;
+    actualConvex = false;
+    hull = 'noncompact (topological)';
+  }
+  // manual overrides
+  if(obs==='nori'){ actualConvex=false; hull='noncompact'; }
+  if(obs==='lattice'){ actualStein=false; actualConvex=false; }
+  if(compact==='present' && scenarioSel.value==='classical'){ actualStein=false; }
+
+  sstein.textContent = actualStein ? 'yes' : 'no';
+  sstein.className='value '+(actualStein?'ok':'bad');
+  sconv.textContent = actualConvex ? 'yes' : 'no';
+  sconv.className='value '+(actualConvex?'ok':'bad');
+  shull.textContent=hull;
+  shull.className='value '+(hull.indexOf('noncompact')>=0?'bad':'ok');
+  sobs.textContent=obs==='none'?'none':(obs==='nori'?'infinite Nori string':'rank-3 lattice cover');
+  sobs.className='value '+(obs==='none'?'ok':'bad');
+
+  draw(dim,comps,image,compact,obs,scenarioSel.value);
+}
+
+function obstructionValue(){ return obsSel.value; }
+
+function draw(dim,comps,image,compact,obs,scenario){
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const midY=H/2;
+  if(scenario==='surface' || obs==='nori'){
+    const n=Math.max(3,comps);
+    const spacing=W/(n+1);
+    const r=24;
+    for(let i=0;i<n;i++){
+      const x=spacing*(i+1);
+      ctx.beginPath();
+      ctx.arc(x,midY,r,0,Math.PI*2);
+      ctx.fillStyle='rgba(245,158,11,0.22)';
+      ctx.fill();
+      ctx.strokeStyle='#f59e0b';
+      ctx.lineWidth=2;
+      ctx.stroke();
+      if(i<n-1){
+        ctx.strokeStyle='#9fb0cc';
+        ctx.lineWidth=1.5;
+        ctx.beginPath();
+        ctx.moveTo(x+r,midY);
+        ctx.lineTo(spacing*(i+2)-r,midY);
+        ctx.stroke();
+      }
+    }
+    ctx.fillStyle='#ef4444';
+    ctx.font='13px system-ui';
+    ctx.textAlign='left';
+    ctx.fillText('infinite Nori string: hull extends forever', 20, 30);
+    ctx.strokeStyle='#ef4444';
+    ctx.lineWidth=2;
+    ctx.beginPath();
+    ctx.moveTo(spacing*n+10,midY);
+    ctx.lineTo(W-20,midY);
+    ctx.stroke();
+    ctx.fillStyle='#ef4444';
+    ctx.font='16px system-ui';
+    ctx.fillText('→', W-26, midY+6);
+  } else if(scenario==='fourfold' || obs==='lattice'){
+    // cylinder R x T^3 projection
+    const x0=60,y0=80,w=W-120,h=H-160;
+    ctx.strokeStyle='#5eead4';
+    ctx.lineWidth=2;
+    ctx.strokeRect(x0,y0,w,h);
+    ctx.fillStyle='rgba(94,234,212,0.08)';
+    ctx.fillRect(x0,y0,w,h);
+    // periodic lines
+    ctx.strokeStyle='rgba(94,234,212,0.35)';
+    ctx.lineWidth=1;
+    for(let i=1;i<4;i++){
+      const yy=y0+i*h/4;
+      ctx.beginPath(); ctx.moveTo(x0,yy); ctx.lineTo(x0+w,yy); ctx.stroke();
+    }
+    for(let i=1;i<5;i++){
+      const xx=x0+i*w/5;
+      ctx.beginPath(); ctx.moveTo(xx,y0); ctx.lineTo(xx,y0+h); ctx.stroke();
+    }
+    // loop
+    ctx.strokeStyle='#f59e0b';
+    ctx.lineWidth=3;
+    ctx.beginPath();
+    ctx.ellipse(x0+w/2,y0+h/2, w/4, h/4, 0, 0, Math.PI*2);
+    ctx.stroke();
+    ctx.fillStyle='#e6edf7';
+    ctx.font='13px system-ui';
+    ctx.textAlign='center';
+    ctx.fillText('cover of simple abelian surface: R × (S^1)^3', W/2, y0-12);
+    ctx.fillStyle='#ef4444';
+    ctx.textAlign='left';
+    ctx.fillText('nonzero H_3 → not Stein; no compact subvarieties', 60, H-30);
+  } else {
+    // classical: bounded hull
+    const cx=W/2,cy=H/2,r=90;
+    ctx.fillStyle='rgba(34,197,94,0.18)';
+    ctx.beginPath();
+    ctx.arc(cx,cy,r,0,Math.PI*2);
+    ctx.fill();
+    ctx.strokeStyle='#22c55e';
+    ctx.lineWidth=2;
+    ctx.stroke();
+    ctx.fillStyle='#e6edf7';
+    ctx.font='13px system-ui';
+    ctx.textAlign='center';
+    ctx.fillText('point', cx, cy+4);
+    ctx.fillText('holomorphic hull compact', cx, cy+r+22);
+    ctx.fillStyle='#9fb0cc';
+    ctx.font='12px system-ui';
+    ctx.fillText('Shafarevich conjecture holds in this case', cx, 30);
+  }
+}
+
+scenarioSel.addEventListener('change',function(){ update(); });
+dimSlider.addEventListener('input',function(){ scenarioSel.value=''; update(); });
+compSlider.addEventListener('input',function(){ scenarioSel.value=''; update(); });
+imageSel.addEventListener('change',function(){ scenarioSel.value=''; update(); });
+compactSel.addEventListener('change',function(){ scenarioSel.value=''; update(); });
+obsSel.addEventListener('change',function(){ scenarioSel.value=''; update(); });
+update();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

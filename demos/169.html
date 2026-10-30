@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Shareshian–Wachs elementary positivity (conceptual, result 169)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range]{flex:1 1 180px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+select{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:420px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{padding:.4rem .5rem;border-bottom:1px solid var(--border);text-align:left}
+th{color:var(--muted);font-weight:600}
+td.num{font-family:ui-monospace,monospace}
+td.poly{font-family:ui-monospace,monospace;color:var(--accent)}
+.status-good{color:var(--good);font-weight:600}
+.status-bad{color:var(--bad);font-weight:600}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Shareshian–Wachs elementary positivity (conceptual, result 169)</h1>
+  <p>For a natural unit interval graph (G) on ([n]), enumerate proper colorings, compute monomial coefficients, convert to the elementary basis, and verify nonnegativity. Also displays the permutation witness (D_G^0) degree distribution.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Resolves the elementary-positivity part of the Shareshian–Wachs conjecture: the chromatic quasisymmetric function of every natural unit interval graph has elementary-basis coefficients in (\mathbb N[q]). The coefficients count explicitly described permutations, giving a combinatorial explanation of positivity. Formalized uniformly in (n) and (G).</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Specializing (q=1) proves the classical Stanley–Stembridge elementary positivity for incomparability graphs of ((3+1))-free posets. The refined degree data also gives, via Brosnan–Chow/Guay-Paquet, the cohomology of regular semisimple Hessenberg varieties as direct sums of Young permutation modules.</p>
+  </section>
+
+  <div class="controls">
+    <label for="n">n</label>
+    <select id="n">
+      <option value="3">3</option>
+      <option value="4">4</option>
+      <option value="5">5</option>
+      <option value="6">6</option>
+    </select>
+    <label for="preset">Preset</label>
+    <select id="preset">
+      <option value="path">Path</option>
+      <option value="complete">Complete</option>
+      <option value="empty">Empty edges</option>
+      <option value="stair">Staircase</option>
+    </select>
+    <button id="recompute">Recompute</button>
+  </div>
+  <div id="hcontrols" class="controls"></div>
+
+  <div class="stats">
+    <div class="stat"><div class="label">Vertices n</div><div class="value" id="sn">—</div></div>
+    <div class="stat"><div class="label">Edges |E|</div><div class="value" id="se">—</div></div>
+    <div class="stat"><div class="label">Max ginv degree</div><div class="value" id="sd">—</div></div>
+    <div class="stat"><div class="label">Partitions of n</div><div class="value" id="sp">—</div></div>
+    <div class="stat"><div class="label">|D_G^0|</div><div class="value" id="sD">—</div></div>
+    <div class="stat"><div class="label">Elementary coeffs</div><div class="value" id="spos">—</div></div>
+  </div>
+
+  <canvas id="gcanvas" width="900" height="420"></canvas>
+
+  <section class="box">
+    <h3>Elementary coefficients (E_\mu(q))</h3>
+    <div id="elemTable"></div>
+  </section>
+  <section class="box">
+    <h3>Monomial coefficients (c_\lambda(q))</h3>
+    <div id="monTable"></div>
+  </section>
+  <section class="box">
+    <h3>Permutation witness (D_G^0) degree distribution</h3>
+    <div id="permTable"></div>
+  </section>
+</div>
+
+<script>
+const BASIS = {"3":{"partitions":[[3],[2,1],[1,1,1]],"invT":[[3,-3,1],[-3,1,0],[1,0,0]]},"4":{"partitions":[[4],[3,1],[2,2],[2,1,1],[1,1,1,1]],"invT":[[-4,4,2,-4,1],[4,-1,-2,1,0],[2,-2,1,0,0],[-4,1,0,0,0],[1,0,0,0,0]]},"5":{"partitions":[[5],[4,1],[3,2],[3,1,1],[2,2,1],[2,1,1,1],[1,1,1,1,1]],"invT":[[5,-5,-5,5,5,-5,1],[-5,1,5,-1,-3,1,0],[-5,5,-1,-2,1,0,0],[5,-1,-2,1,0,0,0],[5,-3,1,0,0,0,0],[-5,1,0,0,0,0,0],[1,0,0,0,0,0,0]]},"6":{"partitions":[[6],[5,1],[4,2],[4,1,1],[3,3],[3,2,1],[3,1,1,1],[2,2,2],[2,2,1,1],[2,1,1,1,1],[1,1,1,1,1,1]],"invT":[[-6,6,6,-6,3,-12,6,-2,9,-6,1],[6,-1,-6,1,-3,7,-1,2,-4,1,0],[6,-6,2,2,-3,4,-2,-2,1,0,0],[-6,1,2,-1,3,-3,1,0,0,0,0],[3,-3,-3,3,3,-3,0,1,0,0,0],[-12,7,4,-3,-3,1,0,0,0,0,0],[6,-1,-2,1,0,0,0,0,0,0,0],[-2,2,-2,0,1,0,0,0,0,0,0],[9,-4,1,0,0,0,0,0,0,0,0],[-6,1,0,0,0,0,0,0,0,0,0],[1,0,0,0,0,0,0,0,0,0,0]]}};
+
+function partitions(n){ return BASIS[String(n)].partitions; }
+
+let n = 3;
+let h = [];
+let edges = [];
+
+function buildHControls(){
+  const cont = document.getElementById('hcontrols');
+  cont.innerHTML = '';
+  for (let i=0;i<n;i++){
+    const wrap = document.createElement('div');
+    wrap.style.display='flex'; wrap.style.alignItems='center'; wrap.style.gap='.4rem';
+    const lab = document.createElement('label');
+    lab.textContent = 'h('+(i+1)+')';
+    const sl = document.createElement('input');
+    sl.type='range'; sl.min=String(i+1); sl.max=String(n); sl.value=String(h[i]);
+    sl.id='h'+i;
+    const val = document.createElement('span');
+    val.className='val'; val.id='hv'+i; val.textContent=h[i];
+    sl.addEventListener('input', ()=>{ h[i]=+sl.value; val.textContent=h[i]; schedule(); });
+    wrap.appendChild(lab); wrap.appendChild(sl); wrap.appendChild(val);
+    cont.appendChild(wrap);
+  }
+}
+
+function applyPreset(name){
+  if (name==='path'){
+    for (let i=0;i<n;i++) h[i]=Math.min(i+2,n);
+  } else if (name==='complete'){
+    for (let i=0;i<n;i++) h[i]=n;
+  } else if (name==='empty'){
+    for (let i=0;i<n;i++) h[i]=i+1;
+  } else if (name==='stair'){
+    for (let i=0;i<n;i++) h[i]=Math.min(i+Math.floor(n/2)+1,n);
+  }
+}
+
+function graphEdges(){
+  const E=[];
+  for (let i=1;i<=n;i++){
+    for (let j=i+1;j<=h[i-1];j++){
+      E.push([i,j]);
+    }
+  }
+  return E;
+}
+
+function edgeSet(edges){
+  const s=new Set();
+  for (const [a,b] of edges) s.add(a+'-'+b);
+  return s;
+}
+
+function hasEdge(es,a,b){
+  const x=Math.min(a,b), y=Math.max(a,b);
+  return es.has(x+'-'+y);
+}
+
+function enumerateColorings(){
+  const D=edges.length;
+  const ps=partitions(n);
+  const repIndex={};
+  ps.forEach((p,i)=>{ const rep=p.concat(Array(n-p.length).fill(0)); repIndex[rep.join(',')] = i; });
+  const c=ps.map(()=>Array(D+1).fill(0));
+  const colors=Array(n);
+  const es=edgeSet(edges);
+  function proper(colors){
+    for (const [a,b] of edges) if (colors[a-1]===colors[b-1]) return false;
+    return true;
+  }
+  function rec(v){
+    if (v===n){
+      if (!proper(colors)) return;
+      let d=0;
+      for (const [a,b] of edges) if (colors[a-1] < colors[b-1]) d++;
+      const e=Array(n).fill(0);
+      for (let i=0;i<n;i++) e[colors[i]-1]++;
+      const idx=repIndex[e.join(',')];
+      if (idx!==undefined) c[idx][d]++;
+      return;
+    }
+    for (let col=1; col<=n; col++){
+      colors[v]=col;
+      rec(v+1);
+    }
+  }
+  rec(0);
+  return {c,D};
+}
+
+function enumeratePerms(){
+  const es=edgeSet(edges);
+  const esArr=edges;
+  // permutations of 1..n
+  const perms=[];
+  const arr=Array.from({length:n},(_,i)=>i+1);
+  function rec(rest, cur){
+    if (rest.length===0){ perms.push(cur.slice()); return; }
+    for (let i=0;i<rest.length;i++){
+      const r=rest.slice(); const x=r.splice(i,1)[0];
+      cur.push(x); rec(r,cur); cur.pop();
+    }
+  }
+  rec(arr,[]);
+  const degCount=Array(edges.length+1).fill(0);
+  let total=0;
+  for (const sigma of perms){
+    // check D^0
+    let ok=true;
+    for (let i=0;i<n-1;i++){
+      if (sigma[i] > sigma[i+1]){
+        if (!hasEdge(es,sigma[i],sigma[i+1])){ ok=false; break; }
+      }
+    }
+    if (!ok) continue;
+    total++;
+    let g=0;
+    for (let i=0;i<n;i++){
+      for (let j=i+1;j<n;j++){
+        if (sigma[i] > sigma[j] && hasEdge(es,sigma[i],sigma[j])) g++;
+      }
+    }
+    degCount[g]++;
+  }
+  return {total,degCount};
+}
+
+function fmtPoly(arr){
+  const terms=[];
+  for (let d=0; d<arr.length; d++){
+    const coef=arr[d];
+    if (coef===0) continue;
+    let t='';
+    if (d===0) t=String(coef);
+    else if (d===1) t = coef===1 ? 'q' : (coef===-1 ? '-q' : coef+'q');
+    else t = coef===1 ? 'q^'+d : (coef===-1 ? '-q^'+d : coef+'q^'+d);
+    terms.push(t);
+  }
+  if (terms.length===0) return '0';
+  // join with + handling negatives
+  let s=terms[0];
+  for (let i=1;i<terms.length;i++){
+    if (terms[i].startsWith('-')) s += ' - ' + terms[i].slice(1);
+    else s += ' + ' + terms[i];
+  }
+  return s;
+}
+
+let recomputeTimer=null;
+function schedule(){ if (recomputeTimer) clearTimeout(recomputeTimer); recomputeTimer=setTimeout(recompute, 40); }
+
+function drawGraph(){
+  const canvas=document.getElementById('gcanvas');
+  const ctx=canvas.getContext('2d');
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const padL=40,padR=40,padT=60,padB=40;
+  const xs=[];
+  for (let i=0;i<n;i++) xs.push(padL + (W-padL-padR)*i/(n-1 || 1));
+  const y=padT+80;
+  // edges as arcs
+  ctx.strokeStyle='rgba(94,234,212,0.55)';
+  ctx.lineWidth=2;
+  for (const [a,b] of edges){
+    const x1=xs[a-1], x2=xs[b-1];
+    const mid=(x1+x2)/2;
+    const height=Math.min(120, 40+30*(b-a));
+    ctx.beginPath();
+    ctx.moveTo(x1,y);
+    ctx.quadraticCurveTo(mid, y-height, x2, y);
+    ctx.stroke();
+  }
+  // vertices
+  for (let i=0;i<n;i++){
+    ctx.fillStyle='rgba(94,234,212,0.9)';
+    ctx.beginPath(); ctx.arc(xs[i],y,16,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#0b1220'; ctx.font='bold 14px system-ui'; ctx.textAlign='center';
+    ctx.fillText(String(i+1), xs[i], y+5);
+  }
+  ctx.fillStyle='var(--muted)'; ctx.font='12px system-ui'; ctx.textAlign='left';
+  ctx.fillText('h(i): '+h.join(', '), padL, H-12);
+}
+
+function recompute(){
+  edges=graphEdges();
+  const {c,D}=enumerateColorings();
+  const ps=partitions(n);
+  const inv=BASIS[String(n)].invT;
+  // E polynomials
+  const E=ps.map(()=>Array(D+1).fill(0));
+  for (let d=0; d<=D; d++){
+    const cd=c.map(row=>row[d]);
+    for (let i=0;i<ps.length;i++){
+      let s=0;
+      for (let j=0;j<ps.length;j++) s+=inv[i][j]*cd[j];
+      E[i][d]=s;
+    }
+  }
+  const perm=enumeratePerms();
+
+  // stats
+  document.getElementById('sn').textContent=n;
+  document.getElementById('se').textContent=edges.length;
+  document.getElementById('sd').textContent=D;
+  document.getElementById('sp').textContent=ps.length;
+  document.getElementById('sD').textContent=perm.total;
+  const allNonneg=E.every(row=>row.every(v=>v>=0));
+  const posEl=document.getElementById('spos');
+  posEl.textContent=allNonneg?'All ≥0':'Negative found';
+  posEl.className='value '+(allNonneg?'status-good':'status-bad');
+
+  // elem table
+  let html='<table><thead><tr><th>μ</th><th>E_μ(q)</th></tr></thead><tbody>';
+  for (let i=0;i<ps.length;i++){
+    html+='<tr><td>('+ps[i].join(',')+')</td><td class="poly">'+fmtPoly(E[i])+'</td></tr>';
+  }
+  html+='</tbody></table>';
+  document.getElementById('elemTable').innerHTML=html;
+
+  // monomial table
+  let mhtml='<table><thead><tr><th>λ</th><th>c_λ(q)</th></tr></thead><tbody>';
+  for (let i=0;i<ps.length;i++){
+    mhtml+='<tr><td>('+ps[i].join(',')+')</td><td class="poly">'+fmtPoly(c[i])+'</td></tr>';
+  }
+  mhtml+='</tbody></table>';
+  document.getElementById('monTable').innerHTML=mhtml;
+
+  // perm table
+  let phtml='<table><thead><tr><th>degree d</th><th># in D_G^0</th></tr></thead><tbody>';
+  for (let d=0; d<=D; d++){
+    if (perm.degCount[d]===0 && d>0 && perm.degCount.slice(d).every(x=>x===0)) continue;
+    phtml+='<tr><td>'+d+'</td><td class="num">'+perm.degCount[d]+'</td></tr>';
+  }
+  phtml+='</tbody></table>';
+  document.getElementById('permTable').innerHTML=phtml;
+
+  // check sum E at q=1 equals |D|
+  const sumE=E.reduce((s,row)=>s+row.reduce((a,b)=>a+b,0),0);
+  if (sumE !== perm.total){
+    console.warn('sum E',sumE,'!= |D|',perm.total);
+  }
+
+  drawGraph();
+}
+
+document.getElementById('n').addEventListener('change', (e)=>{
+  n=+e.target.value;
+  h=Array(n).fill(0);
+  applyPreset(document.getElementById('preset').value);
+  buildHControls();
+  schedule();
+});
+document.getElementById('preset').addEventListener('change', (e)=>{
+  applyPreset(e.target.value);
+  // update sliders
+  for (let i=0;i<n;i++){
+    const sl=document.getElementById('h'+i);
+    const val=document.getElementById('hv'+i);
+    if (sl){ sl.value=h[i]; val.textContent=h[i]; }
+  }
+  schedule();
+});
+document.getElementById('recompute').addEventListener('click', recompute);
+
+// init
+n=+document.getElementById('n').value;
+h=Array(n).fill(0);
+applyPreset('path');
+buildHControls();
+// set sliders
+for (let i=0;i<n;i++){
+  const sl=document.getElementById('h'+i);
+  const val=document.getElementById('hv'+i);
+  if (sl){ sl.value=h[i]; val.textContent=h[i]; }
+}
+recompute();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

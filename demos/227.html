@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Critical SK autocorrelation processes and dynamics across the temperature transition (conceptual, result 227)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+select,button{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+input[type=range]{flex:1 1 160px}
+input[type=number]{width:6rem;padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text)}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:5ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+canvas{width:100%;height:auto;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.legend{display:flex;gap:1rem;align-items:center;font-size:.85rem;color:var(--muted);margin:.5rem 0;flex-wrap:wrap}
+.swatch{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:.3rem;vertical-align:middle}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Critical SK autocorrelation processes and dynamics across the temperature transition (conceptual, result 227)</h1>
+  <p>Zero-field Gaussian Sherrington–Kirkpatrick heat-bath dynamics: high-temperature spectral gaps and cutoff, critical slowing down with universal autocorrelation limits, and stretched-exponential barriers below the transition.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">For zero-field Gaussian SK heat-bath dynamics with rate-one updates per spin, at fixed $0\le\beta<1$ the worst-start mixing time is controlled on the $\log n$ scale, with mixing time $n^{2/3+o(1)}$ at $\beta=1$ and stretched-exponential mixing from Gibbs-sampled starts for $\beta>1$, in probability over disorder. At criticality, rescaled stationary and quench autocorrelation processes have universal random limits for Gaussian and Rademacher disorder, and the quench limit relaxes to the stationary limit. The formalization also gives dimension-independent Poincaré inequalities for $0<\beta<1$ and mixing obstructions at $\beta>1$.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Captures the full temperature transition of spin-glass dynamics: fast high-temperature relaxation and cutoff, critical slowing down with universal autocorrelation processes, and exponentially long barriers in the glass phase. The interactive view simulates small SK instances, estimates spin autocorrelation decay, and locates the current parameters in the phase diagram.</p>
+  </section>
+  <div class="controls">
+    <label for="beta">inverse temp $\beta$</label>
+    <input id="beta" type="range" min="0" max="2" value="1" step="0.01">
+    <span class="val" id="bval">1.00</span>
+    <label for="N">spins $N$</label>
+    <input id="N" type="range" min="6" max="12" value="8" step="1">
+    <span class="val" id="nval">8</span>
+  </div>
+  <div class="controls">
+    <label for="T">steps $T$</label>
+    <input id="T" type="range" min="200" max="2000" value="800" step="100">
+    <span class="val" id="tval">800</span>
+    <label for="R">trajectories $R$</label>
+    <input id="R" type="range" min="50" max="400" value="150" step="50">
+    <span class="val" id="rval">150</span>
+  </div>
+  <div class="controls">
+    <label for="seed">seed</label>
+    <input id="seed" type="number" value="42">
+    <button id="run">Resample / Run</button>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Regime</div><div class="value" id="regime">—</div></div>
+    <div class="stat"><div class="label">Estimated decay time</div><div class="value" id="decay">—</div></div>
+    <div class="stat"><div class="label">Theoretical scale</div><div class="value" id="scale">—</div></div>
+    <div class="stat"><div class="label">Final autocorrelation</div><div class="value" id="finalq">—</div></div>
+    <div class="stat"><div class="label">Coupling variance</div><div class="value" id="varj">1/N</div></div>
+    <div class="stat"><div class="label">Status</div><div class="value" id="status">ready</div></div>
+  </div>
+  <div class="legend">
+    <span><span class="swatch" style="background:#5eead4"></span>empirical autocorrelation $q(t)$</span>
+    <span><span class="swatch" style="background:#f59e0b"></span>$1/e$ reference</span>
+    <span><span class="swatch" style="background:#9fb0cc"></span>zero</span>
+  </div>
+  <canvas id="cv" width="920" height="360"></canvas>
+  <canvas id="phase" width="920" height="120"></canvas>
+</div>
+<script>
+const betaSlider=document.getElementById('beta');
+const NSlider=document.getElementById('N');
+const TSlider=document.getElementById('T');
+const RSlider=document.getElementById('R');
+const seedInput=document.getElementById('seed');
+const bval=document.getElementById('bval');
+const nval=document.getElementById('nval');
+const tval=document.getElementById('tval');
+const rval=document.getElementById('rval');
+const regimeEl=document.getElementById('regime');
+const decayEl=document.getElementById('decay');
+const scaleEl=document.getElementById('scale');
+const finalqEl=document.getElementById('finalq');
+const statusEl=document.getElementById('status');
+const cv=document.getElementById('cv');
+const ctx=cv.getContext('2d');
+const phase=document.getElementById('phase');
+const pctx=phase.getContext('2d');
+
+let state={beta:1,N:8,T:800,R:150,seed:42,J:[],curve:[],decayTime:0};
+
+function mulberry32(a){ a|=0; return function(){ a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; };
+
+function randn(rng){
+  let u=0,v=0;
+  while(u===0) u=rng();
+  while(v===0) v=rng();
+  return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);
+}
+
+function genCouplings(N,seed){
+  const rng=mulberry32(seed);
+  const J=Array.from({length:N},()=>new Float64Array(N));
+  for(let i=0;i<N;i++) for(let j=i+1;j<N;j++){
+    const w=randn(rng)/Math.sqrt(N);
+    J[i][j]=w; J[j][i]=w;
+  }
+  return J;
+}
+
+function regimeText(beta){
+  if(beta<0.99) return 'High-temp (beta<1)';
+  if(beta>1.01) return 'Low-temp (beta>1)';
+  return 'Critical (beta=1)';
+}
+
+function theoreticalScale(beta,n){
+  if(beta<0.99) return n*Math.log(Math.max(n,2));
+  if(beta>1.01) return Math.exp(Math.pow(n,1/10000));
+  return Math.pow(n,2/3);
+}
+
+function runSim(){
+  state.beta=+betaSlider.value;
+  state.N=+NSlider.value;
+  state.T=+TSlider.value;
+  state.R=+RSlider.value;
+  state.seed=+seedInput.value || 42;
+  bval.textContent=state.beta.toFixed(2);
+  nval.textContent=state.N;
+  tval.textContent=state.T;
+  rval.textContent=state.R;
+  state.J=genCouplings(state.N,state.seed);
+  statusEl.textContent='computing';
+  setTimeout(()=>{
+    const beta=state.beta,N=state.N,J=state.J,T=state.T,R=state.R;
+    const acc=new Float64Array(T+1);
+    for(let r=0;r<R;r++){
+      const rng=mulberry32(state.seed*100003 + r*7919 + 1);
+      const s=new Int8Array(N);
+      for(let i=0;i<N;i++) s[i]=rng()<0.5?1:-1;
+      const s0=s.slice();
+      let q=0; for(let i=0;i<N;i++) q+=s[i]*s0[i];
+      acc[0]+=q/N;
+      for(let t=1;t<=T;t++){
+        const i=Math.floor(rng()*N);
+        let h=0; for(let j=0;j<N;j++) h+=J[i][j]*s[j];
+        const x=2*beta*h;
+        const p= x>0 ? 1/(1+Math.exp(-x)) : Math.exp(x)/(1+Math.exp(x));
+        s[i]=rng()<p?1:-1;
+        let qq=0; for(let k=0;k<N;k++) qq+=s[k]*s0[k];
+        acc[t]+=qq/N;
+      }
+    }
+    for(let t=0;t<=T;t++) acc[t]/=R;
+    state.curve=acc;
+    let decay= T;
+    for(let t=0;t<=T;t++){
+      if(Math.abs(acc[t])<1/Math.E){ decay=t; break; }
+    }
+    state.decayTime=decay;
+    regimeEl.textContent=regimeText(state.beta);
+    decayEl.textContent=decay;
+    scaleEl.textContent=theoreticalScale(state.beta,state.N).toExponential? theoreticalScale(state.beta,state.N).toExponential(2):theoreticalScale(state.beta,state.N);
+    finalqEl.textContent=acc[T].toFixed(3);
+    statusEl.textContent='done';
+    draw();
+    drawPhase();
+  },20);
+}
+
+function draw(){
+  const W=cv.width,H=cv.height;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='#1f2a44';
+  ctx.fillRect(0,0,W,H);
+  const acc=state.curve;
+  if(!acc || acc.length===0) return;
+  const T=acc.length-1;
+  const pad=40;
+  // axes
+  ctx.strokeStyle='#9fb0cc';
+  ctx.lineWidth=1;
+  ctx.beginPath();
+  ctx.moveTo(pad, pad); ctx.lineTo(pad,H-pad); ctx.lineTo(W-pad,H-pad); ctx.stroke();
+  ctx.fillStyle='#9fb0cc';
+  ctx.font='12px system-ui';
+  ctx.textAlign='center';
+  ctx.fillText('step t', W/2, H-8);
+  ctx.save(); ctx.translate(12,H/2); ctx.rotate(-Math.PI/2); ctx.fillText('q(t)',0,0); ctx.restore();
+  // zero line
+  const y0=H/2;
+  ctx.strokeStyle='rgba(159,176,204,0.5)';
+  ctx.setLineDash([4,4]);
+  ctx.beginPath(); ctx.moveTo(pad,y0); ctx.lineTo(W-pad,y0); ctx.stroke();
+  // 1/e line positive
+  const yinv= y0 - (1/Math.E)*(H/2-pad);
+  ctx.strokeStyle='rgba(245,158,11,0.6)';
+  ctx.beginPath(); ctx.moveTo(pad,yinv); ctx.lineTo(W-pad,yinv); ctx.stroke();
+  ctx.setLineDash([]);
+  // curve
+  ctx.strokeStyle='#5eead4';
+  ctx.lineWidth=2;
+  ctx.beginPath();
+  for(let t=0;t<=T;t++){
+    const x=pad + (t/T)*(W-2*pad);
+    const y= y0 - acc[t]*(H/2-pad);
+    if(t===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  }
+  ctx.stroke();
+  ctx.fillStyle='#9fb0cc';
+  ctx.textAlign='left';
+  ctx.fillText('T='+T, pad, pad-6);
+}
+
+function drawPhase(){
+  const W=phase.width,H=phase.height;
+  pctx.clearRect(0,0,W,H);
+  pctx.fillStyle='#1f2a44';
+  pctx.fillRect(0,0,W,H);
+  const pad=40;
+  // axis beta 0..2
+  pctx.strokeStyle='#9fb0cc';
+  pctx.beginPath();
+  pctx.moveTo(pad,H/2); pctx.lineTo(W-pad,H/2); pctx.stroke();
+  pctx.fillStyle='#9fb0cc';
+  pctx.font='12px system-ui';
+  pctx.textAlign='center';
+  for(let b=0;b<=2;b+=0.5){
+    const x=pad + (b/2)*(W-2*pad);
+    pctx.fillText(b.toFixed(1), x, H-10);
+  }
+  // regions
+  const xc=pad + (1/2)*(W-2*pad);
+  pctx.fillStyle='rgba(34,197,94,0.18)';
+  pctx.fillRect(pad,8,xc-pad,H-16);
+  pctx.fillStyle='rgba(239,68,68,0.18)';
+  pctx.fillRect(xc,8,W-pad-xc,H-16);
+  pctx.fillStyle='#9fb0cc';
+  pctx.fillText('high-temp', (pad+xc)/2, 20);
+  pctx.fillText('glass', (xc+W-pad)/2, 20);
+  pctx.fillStyle='#f59e0b';
+  pctx.fillRect(xc-2,8,4,H-16);
+  // marker
+  const xm=pad + (state.beta/2)*(W-2*pad);
+  pctx.fillStyle='#5eead4';
+  pctx.beginPath();
+  pctx.arc(xm,H/2,7,0,Math.PI*2);
+  pctx.fill();
+  pctx.fillStyle='#e6edf7';
+  pctx.fillText('critical', xc, H-26);
+}
+
+betaSlider.addEventListener('input',()=>{ bval.textContent=(+betaSlider.value).toFixed(2); });
+NSlider.addEventListener('input',()=>{ nval.textContent=NSlider.value; });
+TSlider.addEventListener('input',()=>{ tval.textContent=TSlider.value; });
+RSlider.addEventListener('input',()=>{ rval.textContent=RSlider.value; });
+document.getElementById('run').addEventListener('click',runSim);
+runSim();
+</script>
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

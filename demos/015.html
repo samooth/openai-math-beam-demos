@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Torus-packet equidistribution — interactive demo</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range]{flex:1 1 260px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:420px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+@media(max-width:900px){.grid2{grid-template-columns:1fr}}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Torus-packet equidistribution</h1>
+  <p>Points from successive torus packets accumulate on the flat torus T² = ℝ²/ℤ². Drag the slider to add packets and watch the cell counts flatten toward uniform (Haar) measure.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Proves Haar equidistribution without escape of mass for complete volume-weighted torus packets from totally real fields: arbitrary lattices and prescribed local types in fixed prime degree at least five, arbitrary-order Picard packets in primitive quartic fields, and maximal-order ideal-class packets in primitive sextic fields. Here primitive means having no proper intermediate field; the relevant order or field discriminant tends to infinity.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Establishes that volume-weighted packets of periodic orbits on the torus of unimodular lattices converge to Haar measure with no escape of mass, in prime, quartic and sextic degrees.</p>
+  </section>
+  <div class="controls">
+    <label for="np">Packets</label>
+    <input id="np" type="range" min="1" max="300" value="12" step="1">
+    <span class="val" id="npval">12</span>
+    <label for="pp">Points / packet</label>
+    <input id="pp" type="range" min="4" max="24" value="12" step="1">
+    <span class="val" id="ppval">12</span>
+    <label for="grid">Grid</label>
+    <select id="grid">
+      <option value="8">8×8</option>
+      <option value="12" selected>12×12</option>
+      <option value="16">16×16</option>
+    </select>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Packets</div><div class="value" id="stP">—</div></div>
+    <div class="stat"><div class="label">Total points</div><div class="value" id="stN">—</div></div>
+    <div class="stat"><div class="label">Cells</div><div class="value" id="stC">—</div></div>
+    <div class="stat"><div class="label">Expected / cell</div><div class="value" id="stE">—</div></div>
+    <div class="stat"><div class="label">Max cell count</div><div class="value" id="stMax">—</div></div>
+    <div class="stat"><div class="label">Discrepancy (max−exp)</div><div class="value" id="stDisc">—</div></div>
+  </div>
+  <div class="grid2">
+    <canvas id="torus" width="520" height="520"></canvas>
+    <canvas id="heat" width="520" height="520"></canvas>
+  </div>
+  <p style="font-size:.85rem;color:var(--muted);margin:.5rem 0 0">Left: points on the torus (wrapped square). Right: cell-count heatmap (darker = denser than uniform). As packets grow, the heatmap flattens.</p>
+</div>
+<script>
+const sqrt2 = Math.sqrt(2), sqrt3 = Math.sqrt(3), sqrt5 = Math.sqrt(5), sqrt7 = Math.sqrt(7);
+const npSlider = document.getElementById('np');
+const npval = document.getElementById('npval');
+const ppSlider = document.getElementById('pp');
+const ppval = document.getElementById('ppval');
+const gridSel = document.getElementById('grid');
+const torus = document.getElementById('torus');
+const heat = document.getElementById('heat');
+const tctx = torus.getContext('2d');
+const hctx = heat.getContext('2d');
+
+function resize(){ 
+  const w = Math.max(260, torus.clientWidth);
+  torus.width = w; torus.height = w;
+  heat.width = w; heat.height = w;
+}
+window.addEventListener('resize', function(){ resize(); update(); });
+resize();
+
+function pointsFor(P, K){
+  const pts = [];
+  for(let k=0;k<P;k++){
+    for(let j=0;j<K;j++){
+      const x = (k*sqrt2 + j*sqrt3) % 1;
+      const y = (k*sqrt5 + j*sqrt7) % 1;
+      pts.push([x<0?x+1:x, y<0?y+1:y]);
+    }
+  }
+  return pts;
+}
+
+function update(){
+  const P = +npSlider.value;
+  const K = +ppSlider.value;
+  const G = +gridSel.value;
+  npval.textContent = P;
+  ppval.textContent = K;
+  const pts = pointsFor(P,K);
+  const N = pts.length;
+  // counts
+  const counts = new Array(G*G).fill(0);
+  for(const [x,y] of pts){
+    const ix = Math.min(G-1, Math.floor(x*G));
+    const iy = Math.min(G-1, Math.floor(y*G));
+    counts[iy*G+ix]++;
+  }
+  const exp = N/(G*G);
+  let maxc = 0;
+  for(const c of counts) if(c>maxc) maxc=c;
+  let maxdev = 0;
+  for(const c of counts) maxdev = Math.max(maxdev, Math.abs(c-exp));
+  document.getElementById('stP').textContent = P;
+  document.getElementById('stN').textContent = N;
+  document.getElementById('stC').textContent = G*G;
+  document.getElementById('stE').textContent = exp.toFixed(2);
+  document.getElementById('stMax').textContent = maxc;
+  document.getElementById('stDisc').textContent = maxdev.toFixed(2);
+
+  drawTorus(pts);
+  drawHeat(counts, G, exp);
+}
+
+function drawTorus(pts){
+  const W=torus.width, H=torus.height;
+  tctx.clearRect(0,0,W,H);
+  // background
+  tctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--card').trim() || '#16203a';
+  tctx.fillRect(0,0,W,H);
+  // grid
+  tctx.strokeStyle = 'rgba(159,176,204,0.18)';
+  tctx.lineWidth = 1;
+  const G = 8;
+  for(let i=1;i<G;i++){
+    const x = W*i/G, y = H*i/G;
+    tctx.beginPath(); tctx.moveTo(x,0); tctx.lineTo(x,H); tctx.stroke();
+    tctx.beginPath(); tctx.moveTo(0,y); tctx.lineTo(W,y); tctx.stroke();
+  }
+  // border
+  tctx.strokeStyle = '#9fb0cc'; tctx.lineWidth = 1.5;
+  tctx.strokeRect(0.5,0.5,W-1,H-1);
+  // points
+  const acc = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#5eead4';
+  tctx.fillStyle = acc;
+  for(const [x,y] of pts){
+    tctx.beginPath();
+    tctx.arc(x*W, y*H, 2.2, 0, Math.PI*2);
+    tctx.fill();
+  }
+  // axes labels
+  tctx.fillStyle = '#9fb0cc'; tctx.font='11px system-ui'; tctx.textAlign='center';
+  tctx.fillText('torus T² (wrapped)', W/2, H-6);
+}
+
+function drawHeat(counts, G, exp){
+  const W=heat.width, H=heat.height;
+  hctx.clearRect(0,0,W,H);
+  const cellW = W/G, cellH = H/G;
+  // find max deviation for color scale
+  let maxdev = 0;
+  for(const c of counts) maxdev = Math.max(maxdev, Math.abs(c-exp));
+  if(maxdev < 1) maxdev = 1;
+  for(let iy=0;iy<G;iy++){
+    for(let ix=0;ix<G;ix++){
+      const c = counts[iy*G+ix];
+      const dev = (c - exp)/maxdev; // -1..1
+      // color: blue-ish for sparse, teal accent for dense
+      let r,g,b;
+      if(dev >= 0){
+        // dense: accent
+        r = Math.round(30 + 60*dev);
+        g = Math.round(120 + 100*dev);
+        b = Math.round(110 + 40*dev);
+      } else {
+        // sparse: muted blue
+        const a = -dev;
+        r = Math.round(20 + 10*a);
+        g = Math.round(40 + 30*a);
+        b = Math.round(70 + 60*a);
+      }
+      hctx.fillStyle = `rgb(${r},${g},${b})`;
+      hctx.fillRect(ix*cellW, iy*cellH, cellW, cellH);
+      // count text for small grids
+      if(G <= 12){
+        hctx.fillStyle = 'rgba(230,237,247,0.85)';
+        hctx.font = '10px ui-monospace,monospace';
+        hctx.textAlign='center'; hctx.textBaseline='middle';
+        hctx.fillText(String(c), ix*cellW+cellW/2, iy*cellH+cellH/2);
+      }
+    }
+  }
+  // grid lines
+  hctx.strokeStyle = 'rgba(159,176,204,0.25)';
+  hctx.lineWidth = 1;
+  for(let i=0;i<=G;i++){
+    hctx.beginPath(); hctx.moveTo(i*cellW,0); hctx.lineTo(i*cellW,H); hctx.stroke();
+    hctx.beginPath(); hctx.moveTo(0,i*cellH); hctx.lineTo(W,i*cellH); hctx.stroke();
+  }
+  hctx.fillStyle = '#9fb0cc'; hctx.font='11px system-ui'; hctx.textAlign='center';
+  hctx.fillText('cell counts (heatmap)', W/2, H-6);
+}
+
+npSlider.addEventListener('input', update);
+ppSlider.addEventListener('input', update);
+gridSel.addEventListener('change', update);
+update();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

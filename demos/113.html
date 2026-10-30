@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Approximate counting and entropy of perfect matchings (conceptual, result 113)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range]{flex:1 1 180px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:460px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+.legend{display:flex;gap:1rem;align-items:center;font-size:.85rem;color:var(--muted);margin:.5rem 0;flex-wrap:wrap}
+.swatch{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:.3rem;vertical-align:middle}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Approximate counting and entropy of perfect matchings (conceptual, result 113)</h1>
+  <p>A fully polynomial randomized approximation scheme counts perfect matchings in every finite simple undirected graph, with exact detection of zero counts. For feasible edge marginals of perfect matchings in a loopless multigraph on $2m$ vertices, the maximum matching entropy $H(x)$ satisfies $F(x)-(2-2/m)B(x)\le H(x)\le F(x)$, including boundary points.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">The formalization gives a fully polynomial randomized approximation scheme for counting perfect matchings in every finite simple undirected graph. For rational $0<\varepsilon<1$ and $0<\delta<1/2$, it returns a nonnegative rational estimate with relative error at most $\varepsilon$ with probability at least $1-\delta$. If the graph has no perfect matching, every execution returns zero. The algorithm is a fixed finite-alphabet randomized machine whose worst-case running time is polynomial in the binary input length, $\varepsilon^{-1}$, and $\log(\delta^{-1})$, including on unsuccessful random tapes. For feasible edge marginals $x$ of perfect matchings in a loopless multigraph on $2m$ vertices, with $F(x)=-\sum_e x_e\log x_e$ and $B(x)=-\sum_e(1-x_e)\log(1-x_e)$, it proves $F(x)-(2-2/m)B(x)\le H(x)\le F(x)$ for $m\ge1$, including boundary points of the polytope. It retains the earlier coefficient-eight entropy bound and deterministic counting approximations with factors $512^n$ for loopless graphs and $2^{18n}$ with singleton loops. A further statement identifies the exact face obtained by expanding a degree-three vertex into a triangle and shows that minimal faces are carried to minimal faces by the expansion.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">This settles approximate counting of perfect matchings in general graphs with a uniform randomized machine and exact zero detection, and proves the perfect-matching entropy conjecture of Anari, Oveis Gharan, and Vinzant at every feasible edge-marginal vector, including boundary points. The entropy sandwich removes the previous coefficient-eight slack and gives sharp linear correction in $1/m$; the deterministic approximations and face correspondence under triangle expansion remain available as complementary statements.</p>
+  </section>
+  <div class="controls">
+    <label for="m">m (half-vertices)</label>
+    <input id="m" type="range" min="1" max="20" value="4" step="1">
+    <span class="val" id="mval">4</span>
+    <label for="E">Edges E</label>
+    <input id="E" type="range" min="1" max="200" value="24" step="1">
+    <span class="val" id="Eval">24</span>
+    <label for="p">Uniform marginal p</label>
+    <input id="p" type="range" min="0.01" max="0.99" value="0.25" step="0.01">
+    <span class="val" id="pval">0.25</span>
+  </div>
+  <div class="controls">
+    <label for="eps">epsilon</label>
+    <input id="eps" type="range" min="0.01" max="0.5" value="0.1" step="0.01">
+    <span class="val" id="epsval">0.10</span>
+    <label for="delta">delta</label>
+    <input id="delta" type="range" min="0.001" max="0.49" value="0.05" step="0.001">
+    <span class="val" id="deltaval">0.050</span>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Vertices 2m</div><div class="value" id="sv">—</div></div>
+    <div class="stat"><div class="label">F(x)</div><div class="value" id="sF">—</div></div>
+    <div class="stat"><div class="label">B(x)</div><div class="value" id="sB">—</div></div>
+    <div class="stat"><div class="label">Lower bound</div><div class="value" id="sLb">—</div></div>
+    <div class="stat"><div class="label">Upper bound</div><div class="value" id="sUb">—</div></div>
+    <div class="stat"><div class="label">Correction coeff</div><div class="value" id="sCoeff">—</div></div>
+    <div class="stat"><div class="label">Input length L</div><div class="value" id="sL">—</div></div>
+    <div class="stat"><div class="label">Time bound t</div><div class="value" id="st">—</div></div>
+    <div class="stat"><div class="label">Success prob</div><div class="value" id="ssucc">—</div></div>
+  </div>
+  <div class="legend">
+    <span><span class="swatch" style="background:#5eead4"></span>Upper bound F(x)</span>
+    <span><span class="swatch" style="background:#f59e0b"></span>Lower bound F-(2-2/m)B</span>
+    <span><span class="swatch" style="background:#22c55e"></span>Complement entropy B(x)</span>
+  </div>
+  <canvas id="c" width="900" height="460"></canvas>
+  <p style="font-size:.85rem;color:var(--muted);margin-top:.5rem">Conceptual model: uniform edge marginal $p$ over $E$ edges. The entropy sandwich is shown as functions of $p$ for the selected $m$ and $E$.</p>
+</div>
+<script>
+const mSlider=document.getElementById('m');
+const ESlider=document.getElementById('E');
+const pSlider=document.getElementById('p');
+const epsSlider=document.getElementById('eps');
+const deltaSlider=document.getElementById('delta');
+
+const mval=document.getElementById('mval');
+const Eval=document.getElementById('Eval');
+const pval=document.getElementById('pval');
+const epsval=document.getElementById('epsval');
+const deltaval=document.getElementById('deltaval');
+
+const sv=document.getElementById('sv');
+const sF=document.getElementById('sF');
+const sB=document.getElementById('sB');
+const sLb=document.getElementById('sLb');
+const sUb=document.getElementById('sUb');
+const sCoeff=document.getElementById('sCoeff');
+const sL=document.getElementById('sL');
+const st=document.getElementById('st');
+const ssucc=document.getElementById('ssucc');
+
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+
+function resizeCanvas(){ canvas.width=Math.max(300,canvas.clientWidth); canvas.height=460; }
+window.addEventListener('resize',function(){ resizeCanvas(); render(); });
+resizeCanvas();
+
+function log(x){ return Math.log(x); }
+function Fterm(p){ if(p<=0||p>=1) return 0; return -p*log(p); }
+function Bterm(p){ if(p<=0||p>=1) return 0; return -(1-p)*log(1-p); }
+
+function updateStats(){
+  const m=+mSlider.value;
+  const E=+ESlider.value;
+  const p=+pSlider.value;
+  const eps=+epsSlider.value;
+  const delta=+deltaSlider.value;
+  mval.textContent=m;
+  Eval.textContent=E;
+  pval.textContent=p.toFixed(2);
+  epsval.textContent=eps.toFixed(2);
+  deltaval.textContent=delta.toFixed(3);
+
+  const coeff=2-2/m;
+  const F=E*(-p*log(Math.max(p,1e-12)));
+  const B=E*(-(1-p)*log(Math.max(1-p,1e-12)));
+  const lower=F-coeff*B;
+  const upper=F;
+  sv.textContent=(2*m);
+  sF.textContent=F.toFixed(4);
+  sB.textContent=B.toFixed(4);
+  sLb.textContent=lower.toFixed(4);
+  sUb.textContent=upper.toFixed(4);
+  sCoeff.textContent=coeff.toFixed(4);
+
+  const L=2*m+E*2+10;
+  const t=Math.ceil(2*Math.pow(L+Math.ceil(1/eps)+Math.ceil(Math.log(1/delta)/Math.log(2))+1,3));
+  sL.textContent=L;
+  st.textContent=t;
+  ssucc.textContent=(1-delta).toFixed(4);
+}
+
+function render(){
+  updateStats();
+  const m=+mSlider.value;
+  const E=+ESlider.value;
+  const pSel=+pSlider.value;
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const padL=52,padR=20,padT=30,padB=46;
+  const plotW=W-padL-padR;
+  const plotH=H-padT-padB;
+  const pMin=0.001,pMax=0.999;
+  function xOf(pp){ return padL+(pp-pMin)/(pMax-pMin)*plotW; }
+  let ymax=1;
+  for(let i=0;i<=200;i++){
+    const pp=pMin+(pMax-pMin)*i/200;
+    const F=E*(-pp*log(Math.max(pp,1e-12)));
+    const B=E*(-(1-pp)*log(Math.max(1-pp,1e-12)));
+    const lower=F-(2-2/m)*B;
+    ymax=Math.max(ymax,F,Math.abs(lower),B);
+  }
+  ymax*=1.15;
+  function yOf(v){ return padT+plotH - (v/ymax)*plotH; }
+
+  ctx.strokeStyle='rgba(159,176,204,0.35)';
+  ctx.lineWidth=1;
+  for(let i=0;i<=5;i++){
+    const y=padT+i*plotH/5;
+    ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(padL+plotW,y); ctx.stroke();
+  }
+  for(let i=0;i<=4;i++){
+    const x=padL+i*plotW/4;
+    ctx.beginPath(); ctx.moveTo(x,padT); ctx.lineTo(x,padT+plotH); ctx.stroke();
+  }
+
+  ctx.fillStyle='rgba(159,176,204,0.9)';
+  ctx.font='12px system-ui';
+  ctx.textAlign='center';
+  for(let pp of [0.0,0.25,0.5,0.75,1.0]){
+    ctx.fillText(pp.toFixed(2), xOf(Math.max(pMin,Math.min(pMax,pp))), H-padB+18);
+  }
+  ctx.textAlign='right';
+  for(let i=0;i<=5;i++){
+    const v=ymax*(1-i/5);
+    ctx.fillText(v.toFixed(2), padL-8, padT+i*plotH/5+4);
+  }
+  ctx.save();
+  ctx.translate(16, padT+plotH/2);
+  ctx.rotate(-Math.PI/2);
+  ctx.textAlign='center';
+  ctx.fillText('entropy',0,0);
+  ctx.restore();
+  ctx.fillText('p', padL+plotW/2, H-8);
+
+  function drawCurve(fn,color,width){
+    ctx.strokeStyle=color;
+    ctx.lineWidth=width;
+    ctx.beginPath();
+    for(let i=0;i<=200;i++){
+      const pp=pMin+(pMax-pMin)*i/200;
+      const x=xOf(pp);
+      const y=yOf(fn(pp));
+      if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+  }
+  drawCurve(pp=>E*(-pp*log(Math.max(pp,1e-12))), '#5eead4', 2.5);
+  drawCurve(pp=>E*(-pp*log(Math.max(pp,1e-12)))-(2-2/m)*E*(-(1-pp)*log(Math.max(1-pp,1e-12))), '#f59e0b', 2.5);
+  drawCurve(pp=>E*(-(1-pp)*log(Math.max(1-pp,1e-12))), '#22c55e', 1.5);
+
+  const xs=xOf(pSel);
+  ctx.strokeStyle='rgba(255,255,255,0.35)';
+  ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(xs,padT); ctx.lineTo(xs,padT+plotH); ctx.stroke();
+
+  function dot(pp,val,color){
+    ctx.fillStyle=color;
+    ctx.beginPath();
+    ctx.arc(xOf(pp), yOf(val), 5, 0, Math.PI*2);
+    ctx.fill();
+  }
+  const Fsel=E*(-pSel*log(Math.max(pSel,1e-12)));
+  const Bsel=E*(-(1-pSel)*log(Math.max(1-pSel,1e-12)));
+  const lowersel=Fsel-(2-2/m)*Bsel;
+  dot(pSel,Fsel,'#5eead4');
+  dot(pSel,lowersel,'#f59e0b');
+}
+
+mSlider.addEventListener('input',render);
+ESlider.addEventListener('input',render);
+pSlider.addEventListener('input',render);
+epsSlider.addEventListener('input',render);
+deltaSlider.addEventListener('input',render);
+render();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

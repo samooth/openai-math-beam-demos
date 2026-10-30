@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pointwise multiple ergodic averages for mixing transformations (conceptual, result 154)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+select{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+input[type=range]{flex:1 1 180px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:420px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+.legend{display:flex;gap:1rem;align-items:center;font-size:.85rem;color:var(--muted);margin:.5rem 0;flex-wrap:wrap}
+.swatch{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:.3rem;vertical-align:middle}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Pointwise multiple ergodic averages for mixing transformations (conceptual, result 154)</h1>
+  <p>For an invertible mixing map (T), the Cesàro averages of (\prod_{j=1}^k f_j(T^{jn}x)) converge almost everywhere to (\prod_{j=1}^k \int f_jd\mu). Vary the map, the number of factors, the horizon, and the starting point to watch the running average approach the predicted limit.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Proves almost-everywhere convergence of consecutive multiple ergodic averages of every finite length for invertible mixing probability-preserving transformations. For each fixed tuple of bounded functions, the limit is the product of their integrals, along all positive averaging lengths. No mixing rate or standardness assumption on the probability space is required.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Extends pointwise ergodic theorems to multiple correlations along arithmetic progressions (n,2n,\dots,kn) without quantitative mixing rates or standardness of the space. It underpins multiple recurrence, combinatorial applications such as Szemerédi-type patterns, and the reduction of higher-order correlations to first-order integrals for mixing systems.</p>
+  </section>
+  <div class="controls">
+    <label for="map">Map</label>
+    <select id="map">
+      <option value="mixing">Mixing: Arnold cat map</option>
+      <option value="rotation">Non-mixing: torus rotation</option>
+    </select>
+    <label for="k">Factors k</label>
+    <input id="k" type="range" min="2" max="6" value="3" step="1">
+    <span class="val" id="kv">3</span>
+    <label for="N">Horizon N</label>
+    <input id="N" type="range" min="200" max="4000" value="1200" step="100">
+    <span class="val" id="Nv">1200</span>
+  </div>
+  <div class="controls">
+    <label for="x0">Start x</label>
+    <input id="x0" type="range" min="0" max="0.999" value="0.173" step="0.001">
+    <span class="val" id="x0v">0.173</span>
+    <label for="y0">Start y</label>
+    <input id="y0" type="range" min="0" max="0.999" value="0.421" step="0.001">
+    <span class="val" id="y0v">0.421</span>
+    <button id="rand">Random start</button>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Map</div><div class="value" id="smap">—</div></div>
+    <div class="stat"><div class="label">Factors k</div><div class="value" id="sk">—</div></div>
+    <div class="stat"><div class="label">Horizon N</div><div class="value" id="sN">—</div></div>
+    <div class="stat"><div class="label">Averaging value (A_N)</div><div class="value" id="sA">—</div></div>
+    <div class="stat"><div class="label">Predicted limit</div><div class="value" id="slim">—</div></div>
+    <div class="stat"><div class="label">Error (|A_N-L|)</div><div class="value" id="serr">—</div></div>
+    <div class="stat"><div class="label">Individual mean</div><div class="value" id="smu">—</div></div>
+    <div class="stat"><div class="label">Mixing class</div><div class="value" id="smix">—</div></div>
+  </div>
+  <div class="legend">
+    <span><span class="swatch" style="background:#5eead4"></span>Running average (A_n)</span>
+    <span><span class="swatch" style="background:#f59e0b"></span>Predicted limit (L)</span>
+  </div>
+  <canvas id="c" width="900" height="420"></canvas>
+  <p style="font-size:.85rem;color:var(--muted);margin-top:.5rem">Conceptual model: each factor is (f_j(u,v)=\frac12+\frac25\cos(2\pi(u+c_j v))) with mean (1/2), so (L=(1/2)^k) for a mixing map. The orbit is computed deterministically; for the non-mixing rotation, correlations along (n,2n,\dots) need not collapse to the product of means.</p>
+</div>
+<script>
+const mapSel=document.getElementById('map');
+const kSlider=document.getElementById('k');
+const NSlider=document.getElementById('N');
+const xSlider=document.getElementById('x0');
+const ySlider=document.getElementById('y0');
+const kv=document.getElementById('kv');
+const Nv=document.getElementById('Nv');
+const x0v=document.getElementById('x0v');
+const y0v=document.getElementById('y0v');
+const smap=document.getElementById('smap');
+const sk=document.getElementById('sk');
+const sN=document.getElementById('sN');
+const sA=document.getElementById('sA');
+const slim=document.getElementById('slim');
+const serr=document.getElementById('serr');
+const smu=document.getElementById('smu');
+const smix=document.getElementById('smix');
+const randBtn=document.getElementById('rand');
+
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+
+function resizeCanvas(){ canvas.width=Math.max(300,canvas.clientWidth); canvas.height=420; }
+window.addEventListener('resize',function(){ resizeCanvas(); render(); });
+resizeCanvas();
+
+function mod1(t){ t=t-Math.floor(t); if(t<0) t+=1; return t; }
+
+function Tmix(x,y){ const nx=mod1(2*x+y); const ny=mod1(x+y); return [nx,ny]; }
+function Trot(x,y){ const a=Math.sqrt(2)-1; const b=Math.sqrt(3)-1; return [mod1(x+a), mod1(y+b)]; }
+
+function T(x,y){ return mapSel.value==='mixing' ? Tmix(x,y) : Trot(x,y); }
+
+const phases=[0.13,0.37,0.61,0.89,0.27,0.73];
+function f(j,x,y){ const th=2*Math.PI*(x+phases[j]*y); return 0.5+0.4*Math.cos(th); }
+
+function render(){
+  const k=+kSlider.value;
+  const N=+NSlider.value;
+  const x0=+xSlider.value;
+  const y0=+ySlider.value;
+  kv.textContent=k;
+  Nv.textContent=N;
+  x0v.textContent=x0.toFixed(3);
+  y0v.textContent=y0.toFixed(3);
+
+  const M=N*k;
+  const pos=new Array(M+1);
+  let x=x0, y=y0;
+  pos[0]=[x,y];
+  for(let i=1;i<=M;i++){
+    const r=T(x,y);
+    x=r[0]; y=r[1];
+    pos[i]=[x,y];
+  }
+
+  const running=new Array(N);
+  let sum=0;
+  for(let n=1;n<=N;n++){
+    let prod=1;
+    for(let j=1;j<=k;j++){
+      const p=pos[j*n];
+      prod*=f(j-1,p[0],p[1]);
+    }
+    sum+=prod;
+    running[n-1]=sum/n;
+  }
+
+  const limit=Math.pow(0.5,k);
+  const last=running[N-1];
+  smap.textContent=mapSel.value==='mixing' ? 'Arnold cat map' : 'Torus rotation';
+  sk.textContent=k;
+  sN.textContent=N;
+  sA.textContent=last.toFixed(6);
+  slim.textContent=limit.toFixed(6);
+  serr.textContent=Math.abs(last-limit).toFixed(6);
+  smu.textContent='0.500000';
+  smix.textContent=mapSel.value==='mixing' ? 'Mixing' : 'Not mixing';
+  smix.style.color=mapSel.value==='mixing' ? 'var(--good)' : 'var(--warn)';
+
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const padL=62,padR=20,padT=28,padB=44;
+  const plotW=W-padL-padR;
+  const plotH=H-padT-padB;
+
+  let minY=limit, maxY=limit;
+  for(let i=0;i<N;i++){ minY=Math.min(minY,running[i]); maxY=Math.max(maxY,running[i]); }
+  const margin=Math.max(0.02,(maxY-minY)*0.12);
+  minY-=margin; maxY+=margin;
+  if(maxY-minY<1e-9){ minY-=0.1; maxY+=0.1; }
+
+  function xOf(i){ return padL + (i/(N-1||1))*plotW; }
+  function yOf(v){ return padT + plotH - (v-minY)/(maxY-minY)*plotH; }
+
+  ctx.strokeStyle='rgba(159,176,204,0.35)';
+  ctx.lineWidth=1;
+  for(let g=0;g<=5;g++){
+    const x=padL+g*plotW/5;
+    const y=padT+g*plotH/5;
+    ctx.beginPath(); ctx.moveTo(x,padT); ctx.lineTo(x,padT+plotH); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(padL+plotW,y); ctx.stroke();
+  }
+  ctx.fillStyle='rgba(159,176,204,0.9)';
+  ctx.font='12px system-ui';
+  ctx.textAlign='center';
+  for(let g=0;g<=5;g++){
+    const n=Math.round((N-1)*g/5)+1;
+    ctx.fillText(String(n), padL+g*plotW/5, H-padB+16);
+  }
+  ctx.textAlign='right';
+  for(let g=0;g<=5;g++){
+    const v=minY+(maxY-minY)*(5-g)/5;
+    ctx.fillText(v.toFixed(4), padL-6, padT+g*plotH/5+4);
+  }
+  ctx.fillStyle='#e6edf7';
+  ctx.textAlign='center';
+  ctx.fillText('averaging length n', padL+plotW/2, H-8);
+  ctx.save(); ctx.translate(16,padT+plotH/2); ctx.rotate(-Math.PI/2); ctx.fillText('A_n',0,0); ctx.restore();
+
+  ctx.strokeStyle='#f59e0b';
+  ctx.lineWidth=1.8;
+  ctx.setLineDash([6,4]);
+  ctx.beginPath();
+  ctx.moveTo(padL,yOf(limit));
+  ctx.lineTo(padL+plotW,yOf(limit));
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  ctx.strokeStyle='#5eead4';
+  ctx.lineWidth=2.2;
+  ctx.beginPath();
+  for(let i=0;i<N;i++){
+    const x=xOf(i);
+    const y=yOf(running[i]);
+    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  }
+  ctx.stroke();
+
+  const lastX=xOf(N-1);
+  const lastY=yOf(last);
+  ctx.fillStyle='#5eead4';
+  ctx.beginPath();
+  ctx.arc(lastX,lastY,4,0,Math.PI*2);
+  ctx.fill();
+
+  ctx.fillStyle='rgba(159,176,204,0.9)';
+  ctx.font='12px system-ui';
+  ctx.textAlign='left';
+  ctx.fillText(mapSel.value==='mixing' ? 'Mixing: A_n -> L' : 'Non-mixing: convergence not guaranteed', padL+8, padT+14);
+}
+
+mapSel.addEventListener('change',render);
+kSlider.addEventListener('input',render);
+NSlider.addEventListener('input',render);
+xSlider.addEventListener('input',render);
+ySlider.addEventListener('input',render);
+randBtn.addEventListener('click',function(){
+  xSlider.value=Math.random().toFixed(3);
+  ySlider.value=Math.random().toFixed(3);
+  render();
+});
+render();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

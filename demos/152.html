@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Zero entropy does not guarantee a smooth positive-volume model (conceptual, result 152)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+select{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+input[type=range]{flex:1 1 180px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:420px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+.legend{display:flex;gap:1rem;align-items:center;font-size:.85rem;color:var(--muted);margin:.5rem 0;flex-wrap:wrap}
+.swatch{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:.3rem;vertical-align:middle}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Zero entropy does not guarantee a smooth positive-volume model (conceptual, result 152)</h1>
+  <p>A standard nonatomic probability space carries an ergodic invertible transformation with zero Kolmogorov-Sinai entropy, yet it is not measurably conjugate to any $C^\infty$ diffeomorphism preserving a strictly positive smooth probability density on a compact finite-dimensional manifold. One example excludes every finite dimension.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Result 152 gives a negative answer to the smooth positive-volume realization problem already in zero entropy. A smooth model would force, at dyadic times $n=2^k$, a partition of the manifold into at most $\exp(C B_k n)$ cells with $B_k$ summable, and a switch with output measure bounded by twice the original volume. The constructed symbolic system has high window entropy in short label lists and orthogonality constraints that cannot be reconciled with that smooth cost. Hence zero Kolmogorov-Sinai entropy does not suffice for realization by a smooth volume-preserving diffeomorphism.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">This separates finite entropy from smooth positive-volume realizability and shows that regularity and dimension impose constraints beyond metric entropy. It guides the smooth realization problem: one needs invariants beyond Kolmogorov-Sinai entropy, such as slow entropy or derivative-growth profiles, to decide whether an abstract system admits a smooth volume model.</p>
+  </section>
+  <div class="controls">
+    <label for="k">Dyadic scale k ($n=2^k$)</label>
+    <input id="k" type="range" min="1" max="12" value="6" step="1">
+    <span class="val" id="kval">6</span>
+    <label for="alpha">Abstract window entropy rate</label>
+    <input id="alpha" type="range" min="0.1" max="2.0" value="1.0" step="0.1">
+    <span class="val" id="alphaval">1.0</span>
+  </div>
+  <div class="controls">
+    <label for="beta">Smooth cost coefficient $\beta$</label>
+    <input id="beta" type="range" min="0.01" max="1.0" value="0.20" step="0.01">
+    <span class="val" id="betaval">0.20</span>
+    <label for="dim">Manifold dimension $d$</label>
+    <input id="dim" type="range" min="1" max="8" value="3" step="1">
+    <span class="val" id="dimval">3</span>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Scale k</div><div class="value" id="sk">—</div></div>
+    <div class="stat"><div class="label">n = 2^k</div><div class="value" id="sn">—</div></div>
+    <div class="stat"><div class="label">B_k = beta/k^2</div><div class="value" id="sb">—</div></div>
+    <div class="stat"><div class="label">Abstract window entropy</div><div class="value" id="sabs">—</div></div>
+    <div class="stat"><div class="label">Smooth partition capacity</div><div class="value" id="scap">—</div></div>
+    <div class="stat"><div class="label">Ratio abs/cap</div><div class="value" id="sratio">—</div></div>
+    <div class="stat"><div class="label">Smooth model possible?</div><div class="value" id="sposs">—</div></div>
+  </div>
+  <div class="legend">
+    <span><span class="swatch" style="background:#ef4444"></span>Abstract window entropy</span>
+    <span><span class="swatch" style="background:#5eead4"></span>Smooth partition capacity</span>
+    <span><span class="swatch" style="background:#f59e0b"></span>Current scale</span>
+  </div>
+  <canvas id="c" width="900" height="420"></canvas>
+  <p style="font-size:.85rem;color:var(--muted);margin-top:.5rem">Conceptual model: a smooth positive-volume model would require the abstract window entropy to stay below the smooth partition capacity at every sufficiently large dyadic scale. Because $B_k$ is summable and tends to $0$, the capacity eventually loses to the abstract entropy, giving the obstruction. Values are illustrative, not exact constants from the paper.</p>
+</div>
+<script>
+const kSlider=document.getElementById('k');
+const aSlider=document.getElementById('alpha');
+const bSlider=document.getElementById('beta');
+const dSlider=document.getElementById('dim');
+
+const kval=document.getElementById('kval');
+const aval=document.getElementById('alphaval');
+const bval=document.getElementById('betaval');
+const dval=document.getElementById('dimval');
+
+const sk=document.getElementById('sk');
+const sn=document.getElementById('sn');
+const sb=document.getElementById('sb');
+const sabs=document.getElementById('sabs');
+const scap=document.getElementById('scap');
+const sratio=document.getElementById('sratio');
+const sposs=document.getElementById('sposs');
+
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+
+function resizeCanvas(){ canvas.width=Math.max(300,canvas.clientWidth); canvas.height=420; }
+window.addEventListener('resize',function(){ resizeCanvas(); render(); });
+resizeCanvas();
+
+function fmt(x){ return (Math.abs(x)>=1e4|| (Math.abs(x)>0 && Math.abs(x)<1e-3)) ? x.toExponential(2) : x.toFixed(3); }
+
+function BK(k,beta){ return beta/(k*k); }
+function nOf(k){ return Math.pow(2,k); }
+
+function updateStats(){
+  const k=+kSlider.value;
+  const alpha=+aSlider.value;
+  const beta=+bSlider.value;
+  const d=+dSlider.value;
+  kval.textContent=k;
+  aval.textContent=alpha.toFixed(1);
+  bval.textContent=beta.toFixed(2);
+  dval.textContent=d;
+  const n=nOf(k);
+  const B=BK(k,beta);
+  const Habs=alpha*n;
+  const Hcap=d*B*n;
+  const ratio=Habs/Hcap;
+  sk.textContent=k;
+  sn.textContent=fmt(n);
+  sb.textContent=fmt(B);
+  sabs.textContent=fmt(Habs);
+  scap.textContent=fmt(Hcap);
+  sratio.textContent=fmt(ratio);
+  const poss = ratio <= 1 ? 'Yes' : 'No';
+  sposs.textContent=poss;
+  sposs.className='value '+(poss==='Yes'?'good':'bad');
+}
+
+function render(){
+  updateStats();
+  const k=+kSlider.value;
+  const alpha=+aSlider.value;
+  const beta=+bSlider.value;
+  const d=+dSlider.value;
+  const Kmax=12;
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const padL=64,padR=20,padT=30,padB=44;
+  const plotW=W-padL-padR;
+  const plotH=H-padT-padB;
+  function xOf(kk){ return padL + ((kk-1)/(Kmax-1))*plotW; }
+  // y log10
+  let ymin=0,ymax=1;
+  const vals=[];
+  for(let kk=1;kk<=Kmax;kk++){
+    const n=nOf(kk);
+    const B=BK(kk,beta);
+    vals.push(Math.log10(Math.max(1e-6,alpha*n)));
+    vals.push(Math.log10(Math.max(1e-6,d*B*n)));
+  }
+  ymin=Math.min(...vals); ymax=Math.max(...vals);
+  const span=ymax-ymin||1;
+  function yOf(v){ return padT + plotH - ((v-ymin)/span)*plotH; }
+  // grid
+  ctx.strokeStyle='rgba(159,176,204,0.25)';
+  ctx.lineWidth=1;
+  for(let kk=1;kk<=Kmax;kk+=1){
+    ctx.beginPath(); ctx.moveTo(xOf(kk),padT); ctx.lineTo(xOf(kk),H-padB); ctx.stroke();
+  }
+  ctx.fillStyle='rgba(159,176,204,0.9)';
+  ctx.font='12px system-ui'; ctx.textAlign='center';
+  for(let kk=1;kk<=Kmax;kk+=2){ ctx.fillText(String(kk),xOf(kk),H-18); }
+  ctx.textAlign='right';
+  for(let j=0;j<=4;j++){
+    const yy=padT + plotH*(1-j/4);
+    ctx.beginPath(); ctx.moveTo(padL,yy); ctx.lineTo(W-padR,yy); ctx.stroke();
+    const v=ymin + (span*j/4);
+    ctx.fillText(v.toFixed(1),padL-6,yy+4);
+  }
+  ctx.fillStyle='#e6edf7'; ctx.font='12px system-ui'; ctx.textAlign='center';
+  ctx.fillText('scale k',padL+plotW/2,H-4);
+  ctx.save(); ctx.translate(16,padT+plotH/2); ctx.rotate(-Math.PI/2); ctx.fillText('log10 value',0,0); ctx.restore();
+
+  // abstract curve
+  ctx.strokeStyle='#ef4444'; ctx.lineWidth=2.5;
+  ctx.beginPath();
+  for(let kk=1;kk<=Kmax;kk++){
+    const n=nOf(kk);
+    const y=yOf(Math.log10(Math.max(1e-6,alpha*n)));
+    if(kk===1) ctx.moveTo(xOf(kk),y); else ctx.lineTo(xOf(kk),y);
+  }
+  ctx.stroke();
+  // capacity curve
+  ctx.strokeStyle='#5eead4'; ctx.lineWidth=2.5;
+  ctx.beginPath();
+  for(let kk=1;kk<=Kmax;kk++){
+    const n=nOf(kk);
+    const B=BK(kk,beta);
+    const y=yOf(Math.log10(Math.max(1e-6,d*B*n)));
+    if(kk===1) ctx.moveTo(xOf(kk),y); else ctx.lineTo(xOf(kk),y);
+  }
+  ctx.stroke();
+  // current scale marker
+  const x=xOf(k);
+  ctx.strokeStyle='#f59e0b'; ctx.lineWidth=1.5; ctx.setLineDash([6,4]);
+  ctx.beginPath(); ctx.moveTo(x,padT); ctx.lineTo(x,H-padB); ctx.stroke(); ctx.setLineDash([]);
+}
+
+kSlider.addEventListener('input',render);
+aSlider.addEventListener('input',render);
+bSlider.addEventListener('input',render);
+dSlider.addEventListener('input',render);
+render();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

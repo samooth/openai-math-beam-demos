@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Zilber–Pink: atypical subvarieties — interactive demo</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range]{flex:1 1 260px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:520px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+.legend{display:flex;gap:1rem;align-items:center;font-size:.85rem;color:var(--muted);margin:.5rem 0;flex-wrap:wrap}
+.swatch{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:.3rem;vertical-align:middle}
+table{width:100%;border-collapse:collapse;font-size:.9rem}
+th,td{padding:.4rem .5rem;border-bottom:1px solid var(--border);text-align:left}
+th{color:var(--muted);font-weight:600}
+td.num{font-family:ui-monospace,monospace}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Zilber–Pink: atypical subvarieties (conceptual)</h1>
+  <p>A Hodge-generic curve meets special loci (CM points, torsion cosets). Intersections with excess dimension are atypical; Zilber–Pink predicts only finitely many maximal atypical subvarieties. Drag controls to see the finite highlighted set.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Proves the abelian Zilber–Pink conjecture over $\overline{\mathbb Q}$: every irreducible subvariety of an abelian variety has finitely many maximal atypical subvarieties relative to its smallest containing torsion coset. Also proves the full curve case in the Siegel threefold $\mathcal A_2$ for Hodge-generic curves over $\overline{\mathbb Q}$, without boundary or reduction assumptions.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Gives finiteness of atypical intersections such as CM points and elliptic-square loci on curves in moduli spaces; supports arithmetic and unlikely-intersection problems.</p>
+  </section>
+  <div class="controls">
+    <label for="n">Special points</label>
+    <input id="n" type="range" min="10" max="240" value="80" step="10">
+    <span class="val" id="nval">80</span>
+    <label for="w">Curve wiggle</label>
+    <input id="w" type="range" min="0" max="6" value="3" step="1">
+    <span class="val" id="wval">3</span>
+    <label for="t">Atypicality threshold</label>
+    <input id="t" type="range" min="1" max="3" value="1" step="1">
+    <span class="val" id="tval">1</span>
+    <button id="play">Play</button>
+    <button id="reset">Reset</button>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Special points</div><div class="value" id="sp">—</div></div>
+    <div class="stat"><div class="label">Special lines</div><div class="value" id="sl">3</div></div>
+    <div class="stat"><div class="label">Candidate intersections</div><div class="value" id="ci">—</div></div>
+    <div class="stat"><div class="label">Atypical intersections</div><div class="value" id="ai">—</div></div>
+    <div class="stat"><div class="label">Maximal atypical</div><div class="value" id="ma">—</div></div>
+    <div class="stat"><div class="label">Curve phase</div><div class="value" id="ph">0.00</div></div>
+  </div>
+  <div class="legend">
+    <span><span class="swatch" style="background:#94a3b8"></span>special point</span>
+    <span><span class="swatch" style="background:rgba(96,165,250,0.9)"></span>special line (torsion coset)</span>
+    <span><span class="swatch" style="background:#f59e0b"></span>curve</span>
+    <span><span class="swatch" style="background:#f87171"></span>atypical intersection</span>
+    <span><span class="swatch" style="background:#5eead4"></span>maximal atypical cluster</span>
+  </div>
+  <canvas id="c" width="900" height="520"></canvas>
+  <section class="box">
+    <h3>Maximal atypical subvarieties (conceptual)</h3>
+    <table>
+      <thead><tr><th>#</th><th>x</th><th>y</th><th>type</th></tr></thead>
+      <tbody id="tbl"></tbody>
+    </table>
+  </section>
+</div>
+<script>
+function mulberry32(a){ a|=0; return function(){ a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+const nSlider = document.getElementById('n');
+const wSlider = document.getElementById('w');
+const tSlider = document.getElementById('t');
+const nval = document.getElementById('nval');
+const wval = document.getElementById('wval');
+const tval = document.getElementById('tval');
+let phase = 0;
+let playing = false;
+let playTimer = null;
+const M = 500;
+
+function resize(){ canvas.width = Math.max(300, canvas.clientWidth); canvas.height = 520; }
+window.addEventListener('resize', function(){ resize(); draw(); });
+resize();
+
+function specialPoints(N){
+  const r = mulberry32(9001 + N*37);
+  const pts = [];
+  for (let i=0;i<N;i++){
+    const x = 0.08 + 0.84*r();
+    const y = 0.08 + 0.84*r();
+    const depth = 1 + (i%7===0 ? 1 : 0) + (Math.abs(x-y)<0.08 ? 1 : 0);
+    pts.push({x,y,depth});
+  }
+  return pts;
+}
+
+function toPx(v,W,H){ return {x: v.x*W, y: v.y*H}; }
+
+function curveY(u, phase, wiggle){
+  return 0.5 + 0.16*Math.sin(2*Math.PI*u + phase) + 0.05*wiggle*Math.sin(4*Math.PI*u + phase*0.7) + 0.03*Math.cos(6*Math.PI*u + phase*0.3);
+}
+
+function curvePoints(phase, wiggle){
+  const W=canvas.width, H=canvas.height;
+  const padL=40, padR=40, padT=40, padB=40;
+  const plotW=W-padL-padR, plotH=H-padT-padB;
+  const pts=[];
+  for (let i=0;i<M;i++){
+    const u=i/(M-1);
+    const x=padL+plotW*u;
+    const y=padT+plotH*curveY(u,phase,wiggle);
+    pts.push({x,y,u});
+  }
+  return {pts,padL,padR,padT,padB,plotW,plotH};
+}
+
+function lines(phase, wiggle){
+  const W=canvas.width, H=canvas.height;
+  const padL=40, padR=40, padT=40, padB=40;
+  return [
+    {type:'horizontal', y: padT + (H-padT-padB)*0.35, x1:padL, x2:W-padR},
+    {type:'vertical', x: padL + (W-padL-padR)*0.62, y1:padT, y2:H-padB},
+    {type:'diagonal', a: (H-padT-padB)/(W-padL-padR), b: padT - (H-padT-padB)/(W-padL-padR)*padL}
+  ];
+}
+
+function lineYatX(L,x){
+  if (L.type==='horizontal') return L.y;
+  if (L.type==='vertical') return null;
+  return L.a*x + L.b;
+}
+
+function intersections(phase, wiggle, N, threshold){
+  const W=canvas.width, H=canvas.height;
+  const C = curvePoints(phase,wiggle);
+  const pts = C.pts;
+  const sp = specialPoints(N);
+  const Ls = lines(phase,wiggle);
+  const hits = [];
+  for (let i=0;i<sp.length;i++){
+    const p = sp[i];
+    const px = C.padL + (W-C.padL-C.padR)*p.x;
+    const py = C.padT + (H-C.padT-C.padB)*p.y;
+    let best=1e9, bi=0;
+    for (let j=0;j<pts.length;j++){
+      const d = Math.hypot(pts[j].x-px, pts[j].y-py);
+      if (d<best){ best=d; bi=j; }
+    }
+    if (best < 14){
+      let score = p.depth;
+      for (let k=0;k<Ls.length;k++){
+        const L=Ls[k];
+        if (L.type==='horizontal' && Math.abs(py-L.y)<10) score+=1;
+        if (L.type==='vertical' && Math.abs(px-L.x)<10) score+=1;
+        if (L.type==='diagonal' && Math.abs(py-(L.a*px+L.b))<10) score+=1;
+      }
+      if (score>=threshold){
+        hits.push({x:px,y:py,score,type:'CM point',idx:bi});
+      }
+    }
+  }
+  for (let k=0;k<Ls.length;k++){
+    const L=Ls[k];
+    if (L.type==='horizontal'){
+      for (let j=0;j<pts.length-1;j++){
+        const a = pts[j].y - L.y;
+        const b = pts[j+1].y - L.y;
+        if (a===0||b===0) continue;
+        if (a*b<0){
+          const u = pts[j].u + (L.y-pts[j].y)/(pts[j+1].y-pts[j].y)*(pts[j+1].u-pts[j].u);
+          const x = C.padL + C.plotW*u;
+          hits.push({x:x,y:L.y,score:2,type:'torsion coset',idx: Math.round(u*(M-1))});
+        }
+      }
+    } else if (L.type==='vertical'){
+      const x=L.x;
+      const u=(x-C.padL)/C.plotW;
+      if (u>=0 && u<=1){
+        const y=C.padT+C.plotH*curveY(u,phase,wiggle);
+        hits.push({x:x,y:y,score:2,type:'torsion coset',idx:Math.round(u*(M-1))});
+      }
+    } else {
+      for (let j=0;j<pts.length-1;j++){
+        const a = pts[j].y - (L.a*pts[j].x+L.b);
+        const b = pts[j+1].y - (L.a*pts[j+1].x+L.b);
+        if (a*b<0){
+          const u = pts[j].u + (-(L.a*pts[j].x+L.b))/( (pts[j+1].y-pts[j].y) - L.a*(pts[j+1].x-pts[j].x) )*(pts[j+1].u-pts[j].u);
+          const x = C.padL + C.plotW*u;
+          const y = C.padT + C.plotH*curveY(u,phase,wiggle);
+          hits.push({x:x,y:y,score:2,type:'torsion coset',idx:Math.round(u*(M-1))});
+        }
+      }
+    }
+  }
+  const allHits = hits;
+  const atypical = allHits.filter(h=>h.score>=threshold);
+  const sorted = atypical.slice().sort((a,b)=>a.idx-b.idx);
+  const clusters = [];
+  let cur = [];
+  for (let i=0;i<sorted.length;i++){
+    if (cur.length===0 || sorted[i].idx - cur[cur.length-1].idx <= 6){
+      cur.push(sorted[i]);
+    } else {
+      clusters.push(cur);
+      cur=[sorted[i]];
+    }
+  }
+  if (cur.length) clusters.push(cur);
+  const maximal = clusters.map(cl=>{
+    const mx = cl.reduce((s,h)=>s+h.x,0)/cl.length;
+    const my = cl.reduce((s,h)=>s+h.y,0)/cl.length;
+    const types = [...new Set(cl.map(h=>h.type))];
+    return {x:mx,y:my,type: types.join(' + '), count:cl.length};
+  });
+  return {hits:allHits,atypical,maximal,C,sp,Ls};
+}
+
+function draw(){
+  const W=canvas.width, H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const N=+nSlider.value;
+  const wiggle=+wSlider.value;
+  const threshold=+tSlider.value;
+  nval.textContent=N;
+  wval.textContent=wiggle;
+  tval.textContent=threshold;
+  const R = intersections(phase,wiggle,N,threshold);
+  const C=R.C;
+  const padL=C.padL, padR=C.padR, padT=C.padT, padB=C.padB;
+  ctx.strokeStyle='rgba(159,176,204,0.12)';
+  ctx.lineWidth=1;
+  for (let i=0;i<=8;i++){
+    const x=padL+C.plotW*i/8;
+    const y=padT+C.plotH*i/8;
+    ctx.beginPath(); ctx.moveTo(x,padT); ctx.lineTo(x,H-padB); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(W-padR,y); ctx.stroke();
+  }
+  ctx.strokeStyle='#475569'; ctx.lineWidth=1.5;
+  ctx.beginPath(); ctx.moveTo(padL,H-padB); ctx.lineTo(W-padR,H-padB); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(padL,padT); ctx.lineTo(padL,H-padB); ctx.stroke();
+  const sp = R.sp;
+  for (let i=0;i<sp.length;i++){
+    const p=sp[i];
+    const px=padL+C.plotW*p.x;
+    const py=padT+C.plotH*p.y;
+    ctx.fillStyle='rgba(148,163,184,0.85)';
+    ctx.beginPath(); ctx.arc(px,py,3.5,0,Math.PI*2); ctx.fill();
+  }
+  const Ls=R.Ls;
+  ctx.strokeStyle='rgba(96,165,250,0.9)';
+  ctx.lineWidth=2;
+  for (let i=0;i<Ls.length;i++){
+    const L=Ls[i];
+    ctx.beginPath();
+    if (L.type==='horizontal'){ ctx.moveTo(L.x1,L.y); ctx.lineTo(L.x2,L.y); }
+    else if (L.type==='vertical'){ ctx.moveTo(L.x,L.y1); ctx.lineTo(L.x,L.y2); }
+    else { ctx.moveTo(padL,L.a*padL+L.b); ctx.lineTo(W-padR,L.a*(W-padR)+L.b); }
+    ctx.stroke();
+  }
+  ctx.strokeStyle='#f59e0b';
+  ctx.lineWidth=3;
+  ctx.beginPath();
+  C.pts.forEach((pt,i)=>{ if (i===0) ctx.moveTo(pt.x,pt.y); else ctx.lineTo(pt.x,pt.y); });
+  ctx.stroke();
+  for (let i=0;i<R.atypical.length;i++){
+    const h=R.atypical[i];
+    ctx.fillStyle='rgba(248,113,113,0.95)';
+    ctx.beginPath(); ctx.arc(h.x,h.y,6,0,Math.PI*2); ctx.fill();
+    ctx.strokeStyle='rgba(248,113,113,0.35)';
+    ctx.lineWidth=2;
+    ctx.beginPath(); ctx.arc(h.x,h.y,12,0,Math.PI*2); ctx.stroke();
+  }
+  for (let i=0;i<R.maximal.length;i++){
+    const m=R.maximal[i];
+    ctx.fillStyle='#5eead4';
+    ctx.beginPath(); ctx.arc(m.x,m.y,9,0,Math.PI*2); ctx.fill();
+    ctx.strokeStyle='#0b1220'; ctx.lineWidth=2; ctx.stroke();
+  }
+  document.getElementById('sp').textContent = N;
+  document.getElementById('ci').textContent = R.hits.length;
+  document.getElementById('ai').textContent = R.atypical.length;
+  document.getElementById('ma').textContent = R.maximal.length;
+  document.getElementById('ph').textContent = phase.toFixed(2);
+  const tbody=document.getElementById('tbl');
+  tbody.innerHTML='';
+  R.maximal.forEach((m,i)=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML = '<td>'+(i+1)+'</td><td class="num">'+(m.x/W).toFixed(3)+'</td><td class="num">'+(m.y/H).toFixed(3)+'</td><td>'+m.type+'</td>';
+    tbody.appendChild(tr);
+  });
+}
+
+function update(){ draw(); }
+nSlider.addEventListener('input', update);
+wSlider.addEventListener('input', update);
+tSlider.addEventListener('input', update);
+
+const playBtn=document.getElementById('play');
+playBtn.addEventListener('click', function(){
+  playing=!playing;
+  this.textContent = playing ? 'Pause' : 'Play';
+  if (playing) animate(); else clearTimeout(playTimer);
+});
+function animate(){
+  if (!playing) return;
+  phase += 0.04;
+  if (phase > Math.PI*2) phase -= Math.PI*2;
+  draw();
+  playTimer=setTimeout(animate, 60);
+}
+document.getElementById('reset').addEventListener('click', function(){
+  playing=false; clearTimeout(playTimer); playBtn.textContent='Play';
+  phase=0; nSlider.value=80; wSlider.value=3; tSlider.value=1;
+  update();
+});
+
+update();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

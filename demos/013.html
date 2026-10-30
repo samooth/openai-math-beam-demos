@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ostmann's inverse Goldbach conjecture — interactive demo</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range]{flex:1 1 260px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+.result{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0;font-family:ui-monospace,monospace;font-size:1rem}
+.result.ok{color:#5eead4} .result.bad{color:#f59e0b}
+.chips{display:flex;flex-wrap:wrap;gap:.4rem;margin:.5rem 0}
+.chip{font-family:ui-monospace,monospace;font-size:.9rem;padding:.2rem .5rem;border-radius:6px;background:var(--chip);border:1px solid var(--border)}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Ostmann's inverse Goldbach conjecture</h1>
+  <p>Can the set of primes (up to finite modification) be written as a sumset A+B with A,B subsets of the nonnegative integers, each with at least two elements? The theorem says no.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Ostmann's inverse Goldbach conjecture asks whether the primes are additively decomposable: whether there exist A,B ⊆ ℤ_{\ge 0}, |A|,|B| ≥ 2, such that A+B equals the primes (possibly after finitely many insertions/deletions). The result proves that no finite modification of the primes can be so expressed; the primes are additively indecomposable.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">This settles a classical additive-combinatorics question about the primes: unlike the integers (which are 1+ℕ), the primes cannot be factored as a sum of two substantial sets, even permitting finite errors. The checker below verifies indecomposability by exhaustive search for small N.</p>
+  </section>
+  <div class="controls">
+    <label for="n">Max prime bound N</label>
+    <input id="n" type="range" min="2" max="16" value="10" step="1">
+    <span class="val" id="nval">10</span>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">N</div><div class="value" id="nstat">—</div></div>
+    <div class="stat"><div class="label">Primes ≤ N</div><div class="value" id="pcnt">—</div></div>
+    <div class="stat"><div class="label">Search time</div><div class="value" id="time">—</div></div>
+    <div class="stat"><div class="label">Result</div><div class="value" id="res">—</div></div>
+  </div>
+  <div class="box">
+    <h3>Primes ≤ N</h3>
+    <div class="chips" id="primes"></div>
+  </div>
+  <div class="result" id="detail">—</div>
+</div>
+<script>
+function isPrime(x){ if(x<2) return false; if(x%2===0) return x===2; for(let i=3;i*i<=x;i+=2) if(x%i===0) return false; return true; }
+function primesUpTo(N){ const out=[]; for(let i=2;i<=N;i++) if(isPrime(i)) out.push(i); return out; }
+function popcount(x){ let c=0; while(x){ c+=x&1; x>>=1;} return c; }
+function bits(mask,N){ const out=[]; for(let i=0;i<=N;i++) if(mask&(1<<i)) out.push(i); return out; }
+
+function decomposable(N){
+  const T = primesUpTo(N);
+  const tset = new Set(T);
+  const size = N+1;
+  const S = new Array(size);
+  for(let a=0;a<=N;a++){
+    let mask=0;
+    for(let b=0;b<=N;b++) if(tset.has(a+b)) mask |= (1<<b);
+    S[a]=mask;
+  }
+  const allB = (1<<(size))-1;
+  const total = 1<<size;
+  for(let Amask=0; Amask<total; Amask++){
+    if(popcount(Amask)<2) continue;
+    let B = allB;
+    let ok=true;
+    for(let i=0;i<=N;i++){
+      if(Amask&(1<<i)){ B &= S[i]; if(B===0){ ok=false; break; } }
+    }
+    if(!ok) continue;
+    if(popcount(B)<2) continue;
+    let covered=true;
+    for(const t of T){
+      let rep=false;
+      for(let i=0;i<=N;i++){
+        if(Amask&(1<<i)){
+          const b=t-i;
+          if(b>=0 && b<=N && (B&(1<<b))){ rep=true; break; }
+        }
+      }
+      if(!rep){ covered=false; break; }
+    }
+    if(covered){
+      return {found:true, A:bits(Amask,N), B:bits(B,N)};
+    }
+  }
+  return {found:false};
+}
+
+const nSlider=document.getElementById('n');
+const nval=document.getElementById('nval');
+
+function update(){
+  const N=+nSlider.value;
+  nval.textContent=N;
+  const t0=performance.now();
+  const res=decomposable(N);
+  const dt=performance.now()-t0;
+  const T=primesUpTo(N);
+  document.getElementById('nstat').textContent=N;
+  document.getElementById('pcnt').textContent=T.length;
+  document.getElementById('time').textContent=dt.toFixed(1)+' ms';
+  document.getElementById('primes').innerHTML=T.map(p=>'<span class="chip">'+p+'</span>').join('');
+  const rEl=document.getElementById('res');
+  const detail=document.getElementById('detail');
+  if(res.found){
+    rEl.textContent='Decomposable';
+    rEl.style.color='#f59e0b';
+    detail.className='result bad';
+    detail.textContent='Found: A = ['+res.A.join(', ')+'], B = ['+res.B.join(', ')+'] (A+B = primes ≤ '+N+')';
+  } else {
+    rEl.textContent='Indecomposable';
+    rEl.style.color='#5eead4';
+    detail.className='result ok';
+    detail.textContent='No A,B (|A|,|B|≥2) with A+B = primes ≤ '+N+'. Consistent with Ostmannś conjecture.';
+  }
+}
+nSlider.addEventListener('input', update);
+update();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

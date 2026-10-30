@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The asymptotic Gotsman--Linial conjecture (conceptual, result 127)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range],select{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+input[type=range]{flex:1 1 180px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:460px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+.legend{display:flex;gap:1rem;align-items:center;font-size:.85rem;color:var(--muted);margin:.5rem 0;flex-wrap:wrap}
+.swatch{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:.3rem;vertical-align:middle}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>The asymptotic Gotsman--Linial conjecture (conceptual, result 127)</h1>
+  <p>Proves that a degree-at-most-(d) polynomial threshold function on the uniform (n)-dimensional Boolean cube has average sensitivity at most (8d\sqrt n), uniformly for (1\le d\le n). Average sensitivity counts expected output changes under single-bit flips.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">A polynomial threshold function (PTF) is (f(x)=\operatorname{sign}(p(x))) with (p) a real polynomial of degree at most (d) on the Boolean cube (\{\pm 1\}^n). Its average sensitivity is (\mathbb{E}_x[#\{i:f(x)\neq f(x\oplus e_i)\}]), the expected number of coordinates whose flip changes the output. Result 127 establishes the asymptotic Gotsman--Linial conjecture: for every such PTF, this quantity is at most (8d\sqrt n), uniformly for (1\le d\le n), allowing (\operatorname{sign}(0)=1). This replaces the trivial bound (n) with a bound growing only like (d\sqrt n).</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Average sensitivity governs noise stability, learning complexity, and the influence of variables in Boolean analysis. The (8d\sqrt n) bound shows that low-degree threshold functions are far more stable than worst-case Boolean functions, and it is tight up to constants for the asymptotic regime. The interactive view compares the bound with the trivial (n) bound and samples random PTFs on small cubes to verify that their measured average sensitivity stays below (8d\sqrt n).</p>
+  </section>
+  <div class="controls">
+    <label for="n">Asymptotic dimension n</label>
+    <input id="n" type="range" min="10" max="1000" value="100" step="10">
+    <span class="val" id="nval">100</span>
+    <label for="d">Asymptotic degree d</label>
+    <input id="d" type="range" min="1" max="50" value="5" step="1">
+    <span class="val" id="dval">5</span>
+  </div>
+  <div class="controls">
+    <label for="N">Exact cube dimension N</label>
+    <input id="N" type="range" min="2" max="6" value="4" step="1">
+    <span class="val" id="Nval">4</span>
+    <label for="D">Exact degree D</label>
+    <input id="D" type="range" min="1" max="6" value="2" step="1">
+    <span class="val" id="Dval">2</span>
+    <label for="T">Trials</label>
+    <input id="T" type="range" min="5" max="60" value="20" step="5">
+    <span class="val" id="Tval">20</span>
+  </div>
+  <div class="controls">
+    <label for="seed">Seed</label>
+    <input id="seed" type="range" min="1" max="999" value="1" step="1">
+    <span class="val" id="seedval">1</span>
+    <button id="regen">Regenerate</button>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">n</div><div class="value" id="sn">—</div></div>
+    <div class="stat"><div class="label">d</div><div class="value" id="sd">—</div></div>
+    <div class="stat"><div class="label">Bound 8 d sqrt n</div><div class="value" id="sbound">—</div></div>
+    <div class="stat"><div class="label">Trivial n</div><div class="value" id="striv">—</div></div>
+    <div class="stat"><div class="label">Ratio bound/trivial</div><div class="value" id="sratio">—</div></div>
+    <div class="stat"><div class="label">Exact N</div><div class="value" id="sN">—</div></div>
+    <div class="stat"><div class="label">Exact D</div><div class="value" id="sD">—</div></div>
+    <div class="stat"><div class="label">Mean AS</div><div class="value" id="smean">—</div></div>
+    <div class="stat"><div class="label">Exact bound 8 D sqrt N</div><div class="value" id="sexbound">—</div></div>
+    <div class="stat"><div class="label">Max AS</div><div class="value" id="smax">—</div></div>
+    <div class="stat"><div class="label">Trials within bound</div><div class="value" id="swithin">—</div></div>
+  </div>
+  <div class="legend">
+    <span><span class="swatch" style="background:#ef4444"></span>Trivial bound n</span>
+    <span><span class="swatch" style="background:#5eead4"></span>Asymptotic bound 8 d sqrt n</span>
+    <span><span class="swatch" style="background:#f59e0b"></span>Sampled PTF sensitivity</span>
+    <span><span class="swatch" style="background:#22c55e"></span>Empirical mean</span>
+  </div>
+  <canvas id="c" width="900" height="460"></canvas>
+  <p style="font-size:.85rem;color:var(--muted);margin-top:.5rem">Left: asymptotic bound versus degree for the chosen dimension. Right: distribution of exact average sensitivities of random degree-(D) PTFs on the (N)-cube; the vertical line is (8D\sqrt N).</p>
+</div>
+<script>
+const nSlider=document.getElementById('n');
+const dSlider=document.getElementById('d');
+const NSlider=document.getElementById('N');
+const DSlider=document.getElementById('D');
+const TSlider=document.getElementById('T');
+const seedSlider=document.getElementById('seed');
+const regenBtn=document.getElementById('regen');
+
+const nval=document.getElementById('nval');
+const dval=document.getElementById('dval');
+const Nval=document.getElementById('Nval');
+const Dval=document.getElementById('Dval');
+const Tval=document.getElementById('Tval');
+const seedval=document.getElementById('seedval');
+
+const sn=document.getElementById('sn');
+const sd=document.getElementById('sd');
+const sbound=document.getElementById('sbound');
+const striv=document.getElementById('striv');
+const sratio=document.getElementById('sratio');
+const sN=document.getElementById('sN');
+const sD=document.getElementById('sD');
+const smean=document.getElementById('smean');
+const sexbound=document.getElementById('sexbound');
+const smax=document.getElementById('smax');
+const swithin=document.getElementById('swithin');
+
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+
+let trialAS=[];
+
+function mulberry32(a){ a|=0; return function(){ a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+
+function randn(rng){const u=Math.max(1e-12,rng());const v=rng();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);}
+
+function resizeCanvas(){canvas.width=Math.max(300,canvas.clientWidth);canvas.height=460;}
+window.addEventListener('resize',function(){resizeCanvas();render();});
+resizeCanvas();
+
+function exactAS(N,D,seed){
+  const rng=mulberry32(seed);
+  // coefficients for subsets size<=D
+  const coeffs=[];
+  for(let mask=0;mask<(1<<N);mask++){
+    const sz=__builtin_popcount(mask);
+    if(sz<=D){
+      coeffs.push({mask:mask, a:randn(rng)});
+    }
+  }
+  const M=1<<N;
+  const f=new Int8Array(M);
+  for(let x=0;x<M;x++){
+    let p=0;
+    for(const c of coeffs){
+      let prod=1;
+      for(let i=0;i<N;i++){
+        if((c.mask>>i)&1){
+          const bit=(x>>i)&1?1:-1;
+          prod*=bit;
+        }
+      }
+      p+=c.a*prod;
+    }
+    f[x]= (p>=0)?1:-1;
+  }
+  let total=0;
+  for(let x=0;x<M;x++){
+    for(let i=0;i<N;i++){
+      const y=x^(1<<i);
+      if(f[x]!==f[y]) total++;
+    }
+  }
+  return total/M;
+}
+
+function __builtin_popcount(x){let c=0;while(x){c+=x&1;x>>=1;}return c;}
+
+function computeTrials(){
+  const N=+NSlider.value;
+  const D=Math.min(+DSlider.value,N);
+  const T=+TSlider.value;
+  const seed=+seedSlider.value;
+  trialAS=[];
+  for(let t=0;t<T;t++){
+    trialAS.push(exactAS(N,D,seed*100000+t*97+1));
+  }
+}
+
+function updateStats(){
+  const n=+nSlider.value;
+  const d=Math.min(+dSlider.value,n);
+  const N=+NSlider.value;
+  const D=Math.min(+DSlider.value,N);
+  nval.textContent=n;
+  dval.textContent=d;
+  Nval.textContent=N;
+  Dval.textContent=D;
+  Tval.textContent=+TSlider.value;
+  seedval.textContent=+seedSlider.value;
+  const bound=8*d*Math.sqrt(n);
+  const trivial=n;
+  sn.textContent=n;
+  sd.textContent=d;
+  sbound.textContent=bound.toFixed(3);
+  striv.textContent=trivial;
+  sratio.textContent=(bound/trivial).toFixed(4);
+  sN.textContent=N;
+  sD.textContent=D;
+  computeTrials();
+  const mean=trialAS.reduce((a,b)=>a+b,0)/trialAS.length;
+  const max=Math.max(...trialAS);
+  const exactBound=8*D*Math.sqrt(N);
+  const within=trialAS.filter(v=>v<=exactBound+1e-9).length;
+  smean.textContent=mean.toFixed(4);
+  sexbound.textContent=exactBound.toFixed(4);
+  smax.textContent=max.toFixed(4);
+  swithin.textContent=within+'/'+trialAS.length;
+}
+
+function render(){
+  updateStats();
+  const n=+nSlider.value;
+  const dSel=Math.min(+dSlider.value,n);
+  const N=+NSlider.value;
+  const D=Math.min(+DSlider.value,N);
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const pad=48;
+  const mid=W/2;
+  // LEFT: asymptotic bound vs degree
+  const maxD=Math.min(n,60);
+  const ymin=0;
+  const ymax=Math.max(n, 8*maxD*Math.sqrt(n))*1.1;
+  function xLeft(dd){return pad+(dd-1)/(Math.max(1,maxD-1))*(mid-pad*1.5);}
+  function yLeft(v){return H-pad-(v-ymin)/(ymax-ymin)*(H-2*pad);}
+  // axes
+  ctx.strokeStyle='rgba(159,176,204,0.35)';
+  ctx.lineWidth=1;
+  for(let i=0;i<=5;i++){
+    const y=pad+i*(H-2*pad)/5;
+    ctx.beginPath();ctx.moveTo(pad,y);ctx.lineTo(mid-10,y);ctx.stroke();
+  }
+  ctx.fillStyle='rgba(159,176,204,0.9)';
+  ctx.font='11px system-ui';
+  ctx.textAlign='right';
+  for(let i=0;i<=5;i++){
+    const v=ymax*(1-i/5);
+    ctx.fillText(v.toFixed(0), pad-6, pad+i*(H-2*pad)/5+4);
+  }
+  ctx.textAlign='center';
+  // trivial line
+  ctx.strokeStyle='#ef4444';
+  ctx.lineWidth=2;
+  ctx.beginPath();
+  ctx.moveTo(pad,yLeft(n));
+  ctx.lineTo(mid-10,yLeft(n));
+  ctx.stroke();
+  // bound curve
+  ctx.strokeStyle='#5eead4';
+  ctx.lineWidth=2.5;
+  ctx.beginPath();
+  for(let dd=1;dd<=maxD;dd++){
+    const x=xLeft(dd);
+    const y=yLeft(8*dd*Math.sqrt(n));
+    if(dd===1) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  }
+  ctx.stroke();
+  // selected d
+  const xs=xLeft(dSel);
+  ctx.strokeStyle='rgba(255,255,255,0.4)';
+  ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(xs,pad);ctx.lineTo(xs,H-pad);ctx.stroke();
+  ctx.fillStyle='#f59e0b';
+  ctx.beginPath();ctx.arc(xs,yLeft(8*dSel*Math.sqrt(n)),5,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='rgba(159,176,204,0.9)';
+  ctx.textAlign='center';
+  ctx.fillText('degree d', (pad+mid-10)/2, H-12);
+
+  // RIGHT: histogram of trial AS
+  const rleft=mid+10;
+  const rright=W-pad;
+  const rwidth=rright-rleft;
+  const exactBound=8*D*Math.sqrt(N);
+  const vmax=Math.max(exactBound, ...trialAS, 1)*1.15;
+  const bins=16;
+  const counts=new Array(bins).fill(0);
+  for(const v of trialAS){
+    const idx=Math.min(bins-1, Math.floor(v/vmax*bins));
+    counts[idx]++;
+  }
+  const cmax=Math.max(...counts,1);
+  const barW=rwidth/bins;
+  for(let i=0;i<bins;i++){
+    const h=(counts[i]/cmax)*(H-2*pad);
+    ctx.fillStyle='rgba(245,158,11,0.7)';
+    ctx.fillRect(rleft+i*barW, H-pad-h, barW-2, h);
+  }
+  // bound vertical
+  const xb=rleft+(exactBound/vmax)*rwidth;
+  ctx.strokeStyle='#5eead4';
+  ctx.lineWidth=2;
+  ctx.beginPath();ctx.moveTo(xb,pad);ctx.lineTo(xb,H-pad);ctx.stroke();
+  // mean vertical
+  const mean=trialAS.reduce((a,b)=>a+b,0)/trialAS.length;
+  const xm=rleft+(mean/vmax)*rwidth;
+  ctx.strokeStyle='#22c55e';
+  ctx.lineWidth=2;
+  ctx.beginPath();ctx.moveTo(xm,pad);ctx.lineTo(xm,H-pad);ctx.stroke();
+  // axes
+  ctx.strokeStyle='rgba(159,176,204,0.35)';
+  ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(rleft,H-pad);ctx.lineTo(rright,H-pad);ctx.stroke();
+  ctx.fillStyle='rgba(159,176,204,0.9)';
+  ctx.textAlign='center';
+  ctx.fillText('average sensitivity', (rleft+rright)/2, H-12);
+  ctx.textAlign='left';
+  ctx.fillText('0', rleft, H-pad+14);
+  ctx.textAlign='right';
+  ctx.fillText(vmax.toFixed(2), rright, H-pad+14);
+}
+
+nSlider.addEventListener('input',render);
+dSlider.addEventListener('input',render);
+NSlider.addEventListener('input',function(){ if(+DSlider.value>+NSlider.value) DSlider.value=+NSlider.value; render();});
+DSlider.addEventListener('input',function(){ if(+DSlider.value>+NSlider.value) DSlider.value=+NSlider.value; render();});
+TSlider.addEventListener('input',render);
+seedSlider.addEventListener('input',render);
+regenBtn.addEventListener('click',function(){ seedSlider.value=(+seedSlider.value%999)+1; render();});
+render();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Maximal and variational bounds for the triangular Hilbert transform (conceptual, result 082)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range]{flex:1 1 220px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:440px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block;cursor:crosshair}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+select{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text)}
+.toggle{display:inline-flex;align-items:center;gap:.4rem}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Maximal and variational bounds for the triangular Hilbert transform (conceptual, result 082)</h1>
+  <p>The triangular Hilbert transform is the bilinear singular integral with kernel \(1/t\) coupling \(F(x+t,y)\) and \(G(x,y+t)\). Result 082 proves maximal and annular \(r\)-variation bounds, \(r>2), from complex (L^3(\mathbb R^2)\times L^3(\mathbb R^2)) to (L^{3/2}(\mathbb R^2)), controlling both hard-truncation endpoints and giving a.e. and norm convergence; pairing with a third input settles the symmetric (L^3\times L^3\times L^3) point. Tune the inner/outer truncations, the variation exponent, and the base point.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Proves maximal and annular \(r\)-variation bounds, for every \(r>2), from complex (L^3(\mathbb R^2)\times L^3(\mathbb R^2)) to (L^{3/2}(\mathbb R^2)). The maximal estimate controls both hard-truncation endpoints and gives almost-everywhere and norm convergence of the truncated triangular Hilbert integrals. On a common full-measure set the truncated integrals are defined, and the maximal output is almost-everywhere measurable. Pairing with a third input settles the triangular Hilbert transform estimate at the symmetric (L^3\times L^3\times L^3) point.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Supplies the missing maximal and variational control for the triangular Hilbert transform at the symmetric exponent, enabling almost-everywhere and norm convergence and the trilinear \(L^3\) endpoint. The inner and outer truncation parameters and the \(r>2) variation quantify robustness of the singular integral, while the exponent pair (L^3\times L^3\to L^{3/2}) matches scaling and feeds multilinear harmonic analysis. The third-input pairing promotes the bilinear bound to the full trilinear triangular Hilbert transform estimate.</p>
+  </section>
+  <div class="controls">
+    <label for="eps">Inner truncation ε</label>
+    <input id="eps" type="range" min="1" max="100" value="10" step="1">
+    <span class="val" id="epsval">0.10</span>
+    <label for="R">Outer truncation R</label>
+    <input id="R" type="range" min="10" max="80" value="40" step="1">
+    <span class="val" id="Rval">4.00</span>
+    <label for="r">Variation r</label>
+    <input id="r" type="range" min="21" max="60" value="30" step="1">
+    <span class="val" id="rval">3.00</span>
+    <label for="view">View</label>
+    <select id="view">
+      <option value="integrand" selected>Integrand</option>
+      <option value="maximal">Maximal</option>
+      <option value="annular">Annular</option>
+      <option value="inv">Invariants</option>
+    </select>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Base point x</div><div class="value" id="xstat">—</div></div>
+    <div class="stat"><div class="label">Base point y</div><div class="value" id="ystat">—</div></div>
+    <div class="stat"><div class="label">Inner ε</div><div class="value" id="epsstat">—</div></div>
+    <div class="stat"><div class="label">Outer R</div><div class="value" id="Rstat">—</div></div>
+    <div class="stat"><div class="label">Truncated integral |T|</div><div class="value" id="Tstat">—</div></div>
+    <div class="stat"><div class="label">Max dyadic |T|</div><div class="value" id="maxstat">—</div></div>
+    <div class="stat"><div class="label">r-variation</div><div class="value" id="varstat">—</div></div>
+    <div class="stat"><div class="label">Exponent r</div><div class="value" id="rstat">—</div></div>
+  </div>
+  <canvas id="c" width="900" height="440"></canvas>
+  <p style="font-size:.9rem;color:var(--muted)">Click on the canvas to move the base point ((x,y)). Drag sliders to change the inner/outer truncations and the variation exponent.</p>
+</div>
+<script>
+const epsSlider=document.getElementById('eps');
+const RSlider=document.getElementById('R');
+const rSlider=document.getElementById('r');
+const viewSel=document.getElementById('view');
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+
+const epsval=document.getElementById('epsval');
+const Rval=document.getElementById('Rval');
+const rval=document.getElementById('rval');
+const xstat=document.getElementById('xstat');
+const ystat=document.getElementById('ystat');
+const epsstat=document.getElementById('epsstat');
+const Rstat=document.getElementById('Rstat');
+const Tstat=document.getElementById('Tstat');
+const maxstat=document.getElementById('maxstat');
+const varstat=document.getElementById('varstat');
+const rstat=document.getElementById('rstat');
+
+let focal={x:0.3,y:-0.2};
+let state={};
+const scales=[-4,-3,-2,-1,0,1,2,3].map(k=>Math.pow(2,k));
+
+function C(re,im){return {re:re,im:im};}
+function cadd(a,b){return {re:a.re+b.re,im:a.im+b.im};}
+function csub(a,b){return {re:a.re-b.re,im:a.im-b.im};}
+function cmul(a,b){return {re:a.re*b.re-a.im*b.im,im:a.re*b.im+a.im*b.re};}
+function cdivReal(c,t){return {re:c.re/t,im:c.im/t};}
+function cabs(c){return Math.hypot(c.re,c.im);}
+
+function F(x,y){
+  const amp=Math.exp(-(x*x+y*y)/2);
+  const ph=0.8*x-0.5*y;
+  return {re:amp*Math.cos(ph), im:0.6*amp*Math.sin(ph)};
+}
+function G(x,y){
+  const dx=x-0.8, dy=y+0.4;
+  const amp=Math.exp(-(dx*dx+dy*dy)/2);
+  const ph=-0.6*x+1.1*y;
+  return {re:amp*Math.cos(ph), im:0.4*amp*Math.sin(ph)};
+}
+function integrand(zx,zy,t){
+  const f=F(zx+t,zy);
+  const g=G(zx,zy+t);
+  return cdivReal(cmul(f,g),t);
+}
+function integrateComplex(f,a,b,n){
+  if(a>b){const r=integrateComplex(f,b,a,n); return {re:-r.re,im:-r.im};}
+  n = Math.max(2, n);
+  if(n%2) n+=1;
+  const h=(b-a)/n;
+  let sRe=f(a).re+f(b).re;
+  let sIm=f(a).im+f(b).im;
+  for(let i=1;i<n;i++){
+    const t=a+i*h;
+    const v=f(t);
+    if(i%2===0){ sRe+=2*v.re; sIm+=2*v.im; }
+    else { sRe+=4*v.re; sIm+=4*v.im; }
+  }
+  return {re:sRe*h/3, im:sIm*h/3};
+}
+function trunc(zx,zy,a,b){
+  // annulus a<|t|<b (a>=0)
+  const lo=Math.min(a,b), hi=Math.max(a,b);
+  const pos=integrateComplex(t=>integrand(zx,zy,t), lo, hi, 128);
+  const neg=integrateComplex(t=>integrand(zx,zy,t), -hi, -lo, 128);
+  return cadd(pos,neg);
+}
+function truncSigned(zx,zy,lo,hi){
+  // interval [lo,hi] (may be negative)
+  return integrateComplex(t=>integrand(zx,zy,t), lo, hi, 128);
+}
+
+function updateState(){
+  const eps=+epsSlider.value/100;
+  const R=+RSlider.value/10;
+  const r=+rSlider.value/10;
+  const view=viewSel.value;
+  const zx=focal.x, zy=focal.y;
+  const T=trunc(zx,zy,eps,R);
+  // dyadic maximal
+  let maxMag=0;
+  const magGrid=[];
+  for(let i=0;i<scales.length;i++){
+    for(let j=i+1;j<scales.length;j++){
+      const a=scales[i], b=scales[j];
+      const val=trunc(zx,zy,a,b);
+      const m=cabs(val);
+      magGrid.push({i,j,a,b,mag:m,val:val});
+      if(m>maxMag) maxMag=m;
+    }
+  }
+  // annular contributions
+  const ann=[];
+  for(let k=0;k<scales.length-1;k++){
+    const a=scales[k], b=scales[k+1];
+    const val=trunc(zx,zy,a,b);
+    ann.push({a,b,val:val,mag:cabs(val)});
+  }
+  // r-variation of annular sequence (cumulative from small to large)
+  let varSum=0;
+  for(const item of ann){
+    varSum += Math.pow(item.mag, r);
+  }
+  const rVar=Math.pow(varSum, 1/r);
+  state={eps,R,r,view,zx,zy,T,maxMag,magGrid,ann,rVar};
+}
+
+function updateStats(){
+  const s=state;
+  epsval.textContent=s.eps.toFixed(2);
+  Rval.textContent=s.R.toFixed(2);
+  rval.textContent=s.r.toFixed(2);
+  xstat.textContent=s.zx.toFixed(3);
+  ystat.textContent=s.zy.toFixed(3);
+  epsstat.textContent=s.eps.toFixed(3);
+  Rstat.textContent=s.R.toFixed(3);
+  Tstat.textContent=cabs(s.T).toFixed(4);
+  maxstat.textContent=s.maxMag.toFixed(4);
+  varstat.textContent=s.rVar.toFixed(4);
+  rstat.textContent=s.r.toFixed(2);
+}
+
+function resizeCanvas(){ canvas.width=Math.max(300,canvas.clientWidth); canvas.height=440; }
+window.addEventListener('resize',function(){ resizeCanvas(); render(); });
+resizeCanvas();
+
+function worldToCanvas(x,y,W,H){
+  const pad=40;
+  const size=Math.min(W,H)-2*pad;
+  const cx=W/2, cy=H/2;
+  const scale=size/4;
+  return {x:cx+x*scale, y:cy-y*scale};
+}
+
+function drawIntegrand(W,H,s){
+  const pad=50;
+  const zx=s.zx, zy=s.zy, eps=s.eps, R=s.R;
+  const tmax=Math.max(R,4);
+  const xscale=(W-2*pad)/(2*tmax);
+  const X=t=>W/2+t*xscale;
+  // y scale
+  let ymax=0.01;
+  const samples=[];
+  for(let i=0;i<=400;i++){
+    const t=-tmax + 2*tmax*i/400;
+    if(Math.abs(t)<eps) continue;
+    const v=integrand(zx,zy,t);
+    samples.push(v);
+    ymax=Math.max(ymax, Math.abs(v.re), Math.abs(v.im));
+  }
+  ymax*=1.35;
+  const Y=v=>H/2 - v*(H/2-pad)/ymax;
+  // axes
+  ctx.strokeStyle='rgba(159,176,204,0.35)'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(pad,H/2); ctx.lineTo(W-pad,H/2); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(W/2,pad); ctx.lineTo(W/2,H-pad); ctx.stroke();
+  ctx.fillStyle='#9fb0cc'; ctx.font='11px system-ui'; ctx.textAlign='center';
+  ctx.fillText('t (integration parameter)', W/2, H-12);
+  ctx.save(); ctx.translate(16,H/2); ctx.rotate(-Math.PI/2); ctx.fillText('integrand',0,0); ctx.restore();
+  // excluded band
+  ctx.fillStyle='rgba(239,68,68,0.12)';
+  ctx.fillRect(X(-eps), pad, X(eps)-X(-eps), H-2*pad);
+  ctx.fillStyle='#9fb0cc'; ctx.font='11px system-ui'; ctx.textAlign='center';
+  ctx.fillText('excluded |t|<ε', W/2, pad-8);
+  // plot real and imag over [-tmax,-eps] and [eps,tmax]
+  function plotRange(a,b,color,prop){
+    ctx.strokeStyle=color; ctx.lineWidth=2.2;
+    ctx.beginPath();
+    let first=true;
+    const N=240;
+    for(let i=0;i<=N;i++){
+      const t=a+(b-a)*i/N;
+      if(Math.abs(t)<eps) continue;
+      const v=integrand(zx,zy,t);
+      const val=prop==='re'?v.re:v.im;
+      const px=X(t), py=Y(val);
+      if(first){ctx.moveTo(px,py);first=false;} else ctx.lineTo(px,py);
+    }
+    ctx.stroke();
+  }
+  plotRange(-tmax,-eps,'#5eead4','re');
+  plotRange(eps,tmax,'#5eead4','re');
+  plotRange(-tmax,-eps,'#f59e0b','im');
+  plotRange(eps,tmax,'#f59e0b','im');
+  // truncation markers
+  ctx.strokeStyle='#e6edf7'; ctx.lineWidth=1.5; ctx.setLineDash([4,3]);
+  ctx.beginPath(); ctx.moveTo(X(-R),pad); ctx.lineTo(X(-R),H-pad); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(X(R),pad); ctx.lineTo(X(R),H-pad); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle='#e6edf7'; ctx.font='11px system-ui'; ctx.textAlign='center';
+  ctx.fillText('-R', X(-R), H-pad+14);
+  ctx.fillText('R', X(R), H-pad+14);
+  // legend
+  ctx.fillStyle='#5eead4'; ctx.font='12px system-ui'; ctx.textAlign='left';
+  ctx.fillText('Re I(t)', pad, pad-10);
+  ctx.fillStyle='#f59e0b'; ctx.fillText('Im I(t)', pad+90, pad-10);
+  // truncated integral annotation
+  ctx.fillStyle='#e6edf7'; ctx.font='13px system-ui'; ctx.textAlign='right';
+  ctx.fillText('T(ε,R) = ∫_{ε<|t|<R} F(x+t,y)G(x,y+t)/t dt', W-pad, pad-10);
+  ctx.fillStyle='#9fb0cc'; ctx.font='12px system-ui'; ctx.textAlign='center';
+  ctx.fillText('Truncated integral magnitude |T| = '+cabs(s.T).toFixed(4)+'   (base point ('+zx.toFixed(2)+','+zy.toFixed(2)+'))', W/2, H-28);
+}
+
+function drawMaximal(W,H,s){
+  const pad=50;
+  const n=scales.length;
+  const cell=Math.min((W-2*pad)/(n+1), (H-2*pad)/(n+1));
+  const ox=pad+20, oy=H-pad- (n-1)*cell;
+  // axes labels
+  ctx.fillStyle='#9fb0cc'; ctx.font='11px system-ui'; ctx.textAlign='center';
+  ctx.fillText('upper endpoint R (dyadic)', W/2, H-12);
+  ctx.save(); ctx.translate(16,H/2); ctx.rotate(-Math.PI/2); ctx.fillText('lower endpoint ε (dyadic)',0,0); ctx.restore();
+  // scale tick labels
+  for(let k=0;k<n;k++){
+    const x=ox+k*cell;
+    const y=oy-k*cell;
+    ctx.fillStyle='#9fb0cc'; ctx.font='10px system-ui'; ctx.textAlign='center';
+    ctx.fillText(scales[k].toFixed(3), x, H-pad+12);
+    ctx.textAlign='right';
+    ctx.fillText(scales[k].toFixed(3), ox-8, y+4);
+  }
+  // draw cells
+  for(const item of s.magGrid){
+    const x=ox+item.j*cell;
+    const y=oy-item.i*cell;
+    const alpha= s.maxMag>0 ? 0.15+0.75*(item.mag/s.maxMag) : 0.15;
+    ctx.fillStyle='rgba(94,234,212,'+alpha.toFixed(3)+')';
+    ctx.fillRect(x-cell/2, y-cell/2, cell-2, cell-2);
+    ctx.strokeStyle='rgba(159,176,204,0.25)'; ctx.lineWidth=1;
+    ctx.strokeRect(x-cell/2, y-cell/2, cell-2, cell-2);
+    if(item.mag===s.maxMag){
+      ctx.strokeStyle='#f59e0b'; ctx.lineWidth=2;
+      ctx.strokeRect(x-cell/2, y-cell/2, cell-2, cell-2);
+    }
+  }
+  // legend text
+  ctx.fillStyle='#e6edf7'; ctx.font='13px system-ui'; ctx.textAlign='left';
+  ctx.fillText('Maximal dyadic value max |T(a,b)| = '+s.maxMag.toFixed(4), pad, pad-10);
+  ctx.fillStyle='#9fb0cc'; ctx.font='12px system-ui';
+  ctx.fillText('Color intensity = |T(a,b)| / max. Orange border = maximizer.', pad, pad+8);
+  // top 3 pairs
+  const sorted=s.magGrid.slice().sort((a,b)=>b.mag-a.mag).slice(0,4);
+  let yy=pad+30;
+  ctx.fillStyle='#e6edf7'; ctx.font='12px system-ui';
+  ctx.fillText('Top dyadic intervals:', pad, yy); yy+=16;
+  for(const it of sorted){
+    ctx.fillStyle='#9fb0cc';
+    ctx.fillText('a='+it.a.toFixed(3)+'  b='+it.b.toFixed(3)+'   |T|='+it.mag.toFixed(4), pad, yy);
+    yy+=16;
+  }
+  ctx.fillStyle='#9fb0cc'; ctx.font='12px system-ui'; ctx.textAlign='center';
+  ctx.fillText('Maximal operator: sup over 0<a<b<∞ of |∫_{a<|t|<b} ... dt|  (shown on dyadic grid)', W/2, H-28);
+}
+
+function drawAnnular(W,H,s){
+  const pad=50;
+  const ann=s.ann;
+  const n=ann.length;
+  const plotW=W-2*pad;
+  const plotH=H-2*pad-40;
+  const barW=plotW/(n+1);
+  const maxMag=Math.max(0.001, ...ann.map(a=>a.mag));
+  // axes
+  ctx.strokeStyle='rgba(159,176,204,0.35)'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(pad,H-pad-20); ctx.lineTo(W-pad,H-pad-20); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(pad,pad); ctx.lineTo(pad,H-pad-20); ctx.stroke();
+  ctx.fillStyle='#9fb0cc'; ctx.font='11px system-ui'; ctx.textAlign='center';
+  ctx.fillText('dyadic annulus 2^k<|t|<2^{k+1}', W/2, H-4);
+  ctx.save(); ctx.translate(16,H/2); ctx.rotate(-Math.PI/2); ctx.fillText('contribution |a_k|',0,0); ctx.restore();
+  ann.forEach((item,k)=>{
+    const x=pad+(k+0.5)*barW;
+    const h=(item.mag/maxMag)*plotH;
+    const y=H-pad-20-h;
+    ctx.fillStyle='rgba(94,234,212,0.75)';
+    ctx.fillRect(x-barW*0.35, y, barW*0.7, h);
+    ctx.strokeStyle='rgba(159,176,204,0.4)'; ctx.lineWidth=1;
+    ctx.strokeRect(x-barW*0.35, y, barW*0.7, h);
+    ctx.fillStyle='#9fb0cc'; ctx.font='9px system-ui'; ctx.textAlign='center';
+    ctx.fillText(item.a.toFixed(2), x, H-pad-6);
+  });
+  // cumulative partial sums as line? plot running sum magnitude
+  ctx.strokeStyle='#f59e0b'; ctx.lineWidth=2;
+  ctx.beginPath();
+  let cum={re:0,im:0};
+  let first=true;
+  ann.forEach((item,k)=>{
+    cum=cadd(cum,item.val);
+    const x=pad+(k+0.5)*barW;
+    const y=H-pad-20 - (cabs(cum)/Math.max(maxMag*ann.length,0.001))* (plotH/ (ann.length?1:1));
+    // scale cumulative separately
+    if(first){ctx.moveTo(x,y);first=false;} else ctx.lineTo(x,y);
+  });
+  ctx.stroke();
+  ctx.fillStyle='#f59e0b'; ctx.font='11px system-ui'; ctx.textAlign='left';
+  ctx.fillText('orange: cumulative partial sum (small→large scales)', pad, pad-10);
+  ctx.fillStyle='#5eead4'; ctx.font='11px system-ui';
+  ctx.fillText('teal: annular contribution |a_k|', pad+260, pad-10);
+  ctx.fillStyle='#e6edf7'; ctx.font='13px system-ui'; ctx.textAlign='center';
+  ctx.fillText('r-variation  (∑ |a_k|^r)^{1/r} = '+s.rVar.toFixed(4)+'   (r='+s.r.toFixed(2)+')', W/2, pad+14);
+  ctx.fillStyle='#9fb0cc'; ctx.font='12px system-ui'; ctx.textAlign='center';
+  ctx.fillText('Annular decomposition: contributions by dyadic scale; variation bound requires r>2', W/2, H-28);
+}
+
+function drawInv(W,H,s){
+  const x=40,y=50,dy=24;
+  const lines=[
+    'Result 082 — Maximal and variational bounds for the triangular Hilbert transform',
+    'Operator: T(F,G)(x,y) = p.v. ∫_{R} F(x+t,y) G(x,y+t) dt/t',
+    'Maximal: T^*(F,G)(x,y) = sup_{0<a<b<∞} |∫_{a<|t|<b} F(x+t,y)G(x,y+t) dt/t|',
+    'Bounds: L^3(R^2) × L^3(R^2) → L^{3/2}(R^2),  maximal and annular r-variation for r>2',
+    'Truncation: inner ε, outer R (hard truncation endpoints)',
+    'Base point = ('+s.zx.toFixed(3)+', '+s.zy.toFixed(3)+')',
+    'Inner ε = '+s.eps.toFixed(3)+'   Outer R = '+s.R.toFixed(3),
+    'Truncated integral |T(ε,R)| = '+cabs(s.T).toFixed(4),
+    'Max dyadic |T| = '+s.maxMag.toFixed(4),
+    'Annular r-variation = '+s.rVar.toFixed(4)+'  (r = '+s.r.toFixed(2)+')',
+    'Third input: pairing gives trilinear estimate at L^3×L^3×L^3',
+    'Conclusion: a.e. and norm convergence of the truncated triangular Hilbert transform.',
+  ];
+  ctx.fillStyle='#e6edf7'; ctx.font='14px system-ui'; ctx.textAlign='left';
+  lines.forEach((l,i)=>{
+    if(i===0){ ctx.fillStyle='#5eead4'; ctx.font='16px system-ui'; }
+    else { ctx.fillStyle='#e6edf7'; ctx.font='14px system-ui'; }
+    ctx.fillText(l, x, y+i*dy);
+  });
+  // annulus sketch
+  const cx=W-150, cy=H/2;
+  ctx.strokeStyle='#5eead4'; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.arc(cx,cy,70,0,Math.PI*2); ctx.stroke();
+  ctx.beginPath(); ctx.arc(cx,cy,28,0,Math.PI*2); ctx.stroke();
+  ctx.fillStyle='rgba(94,234,212,0.12)';
+  ctx.beginPath(); ctx.arc(cx,cy,70,0,Math.PI*2); ctx.arc(cx,cy,28,0,Math.PI*2,true); ctx.closePath(); ctx.fill();
+  ctx.fillStyle='#9fb0cc'; ctx.font='11px system-ui'; ctx.textAlign='center';
+  ctx.fillText('annulus ε<|t|<R', cx, cy+92);
+}
+
+function render(){
+  updateState();
+  updateStats();
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  if(state.view==='integrand') drawIntegrand(W,H,state);
+  else if(state.view==='maximal') drawMaximal(W,H,state);
+  else if(state.view==='annular') drawAnnular(W,H,state);
+  else drawInv(W,H,state);
+}
+
+epsSlider.addEventListener('input',render);
+RSlider.addEventListener('input',render);
+rSlider.addEventListener('input',render);
+viewSel.addEventListener('change',render);
+canvas.addEventListener('click',function(e){
+  const rect=canvas.getBoundingClientRect();
+  const px=e.clientX-rect.left, py=e.clientY-rect.top;
+  const W=canvas.width, H=canvas.height;
+  const pad=40; const scale=Math.min(W,H)/4/2? (Math.min(W,H)-2*pad)/4/2 : 1;
+  // inverse of worldToCanvas with scale=size/4
+  const size=Math.min(W,H)-2*pad;
+  const sc=size/4;
+  const cx=W/2, cy=H/2;
+  const wx=(px-cx)/sc;
+  const wy=(cy-py)/sc;
+  if(Math.abs(wx)<=3 && Math.abs(wy)<=3){
+    focal.x=Math.max(-3,Math.min(3,wx));
+    focal.y=Math.max(-3,Math.min(3,wy));
+    render();
+  }
+});
+render();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

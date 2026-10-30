@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Single-fold Diophantine representations (conceptual, result 242)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+select,button{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+input[type=range]{flex:1 1 160px}
+input[type=number]{width:6rem;padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text)}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:auto;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+.legend{display:flex;gap:1rem;align-items:center;font-size:.85rem;color:var(--muted);margin:.5rem 0;flex-wrap:wrap}
+.swatch{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:.3rem;vertical-align:middle}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{padding:.35rem .5rem;border-bottom:1px solid var(--border);text-align:center}
+th{color:var(--muted);font-weight:600}
+td.labelcell{text-align:left;font-family:ui-monospace,monospace}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Single-fold Diophantine representations (conceptual, result 242)</h1>
+  <p>For a recursively enumerable set, a Diophantine polynomial has either no auxiliary witness or exactly one; the demo counts witnesses for concrete equations.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Every recursively enumerable set of tuples of natural numbers has a Diophantine representation with exactly one auxiliary solution for each member and none for nonmembers. This proves the single-fold conjecture, hence the finite-fold conjecture: recursive enumerability is captured by polynomial equations over $\mathbb N$ with a unique witness. Diophantine solvability over the nonnegative integers remains undecidable even under an at-most-one-solution promise.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">This bridges computability and number theory: every r.e. condition becomes a polynomial equation, and the uniqueness of witnesses does not make the existence question decidable. The explorer below enumerates auxiliary variables in a bounded box, counts solutions for several concrete Diophantine equations, and shows when a representation is genuinely single-fold or has multiple witnesses.</p>
+  </section>
+  <div class="controls">
+    <label for="fam">Equation family</label>
+    <select id="fam">
+      <option value="even">x = 2y  (even numbers)</option>
+      <option value="square">x = y^2  (perfect squares)</option>
+      <option value="tri">2x = y(y+1)  (triangular numbers)</option>
+      <option value="sumsq">x = a^2 + b^2  (sum of two squares)</option>
+    </select>
+    <label for="B">aux bound (B)</label>
+    <input id="B" type="range" min="4" max="16" value="8" step="1">
+    <span class="val" id="bval">8</span>
+  </div>
+  <div class="controls">
+    <label for="xmax">x range</label>
+    <input id="xmax" type="range" min="10" max="80" value="40" step="1">
+    <span class="val" id="xmv">40</span>
+    <label for="xsel">selected x</label>
+    <input id="xsel" type="number" value="0">
+    <button id="recompute">Recompute</button>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Selected x</div><div class="value" id="sx">—</div></div>
+    <div class="stat"><div class="label">Witnesses for x</div><div class="value" id="sw">—</div></div>
+    <div class="stat"><div class="label">Single-fold status</div><div class="value" id="ss">—</div></div>
+    <div class="stat"><div class="label">Zeros in range</div><div class="value" id="sz">—</div></div>
+    <div class="stat"><div class="label">Single witnesses</div><div class="value" id="so">—</div></div>
+    <div class="stat"><div class="label">Multiple witnesses</div><div class="value" id="sm">—</div></div>
+    <div class="stat"><div class="label">Max witnesses</div><div class="value" id="smax">—</div></div>
+    <div class="stat"><div class="label">Bound (B)</div><div class="value" id="sb">—</div></div>
+  </div>
+  <canvas id="bars" width="760" height="260"></canvas>
+  <canvas id="scat" width="760" height="260"></canvas>
+  <div class="legend">
+    <span><span class="swatch" style="background:#9fb0cc"></span>0 witnesses</span>
+    <span><span class="swatch" style="background:#22c55e"></span>1 witness (single-fold)</span>
+    <span><span class="swatch" style="background:#ef4444"></span>&gt;1 witnesses (not single-fold)</span>
+    <span><span class="swatch" style="background:#5eead4"></span>selected x</span>
+  </div>
+  <table id="wtable">
+    <thead><tr><th>#</th><th>Witness tuple</th></tr></thead>
+    <tbody></tbody>
+  </table>
+  <p id="info" style="font-size:.9rem;color:var(--muted);margin-top:.5rem">Witnesses are auxiliary natural-number tuples making the polynomial zero. A family is single-fold only if every member has exactly one such tuple and nonmembers have none.</p>
+</div>
+<script>
+const FAMS = {
+  even: { arity:1, evalP:(x,ys)=> x - 2*ys[0] },
+  square: { arity:1, evalP:(x,ys)=> x - ys[0]*ys[0] },
+  tri: { arity:1, evalP:(x,ys)=> 2*x - ys[0]*(ys[0]+1) },
+  sumsq: { arity:2, evalP:(x,ys)=> x - (ys[0]*ys[0]+ys[1]*ys[1]) }
+};
+
+const famSel=document.getElementById('fam');
+const bSlider=document.getElementById('B');
+const bval=document.getElementById('bval');
+const xmSlider=document.getElementById('xmax');
+const xmval=document.getElementById('xmv');
+const xsel=document.getElementById('xsel');
+const recomputeBtn=document.getElementById('recompute');
+const sx=document.getElementById('sx');
+const sw=document.getElementById('sw');
+const ss=document.getElementById('ss');
+const sz=document.getElementById('sz');
+const so=document.getElementById('so');
+const sm=document.getElementById('sm');
+const smax=document.getElementById('smax');
+const sb=document.getElementById('sb');
+const bars=document.getElementById('bars');
+const bctx=bars.getContext('2d');
+const scat=document.getElementById('scat');
+const sctx=scat.getContext('2d');
+const wtable=document.getElementById('wtable');
+
+let counts=[];
+
+function witnesses(fam,x,B){
+  const out=[];
+  const ys=new Array(fam.arity).fill(0);
+  function rec(i){
+    if(i===fam.arity){
+      if(fam.evalP(x,ys)===0) out.push(ys.slice());
+      return;
+    }
+    for(let v=0; v<=B; v++){ ys[i]=v; rec(i+1); }
+  }
+  rec(0);
+  return out;
+}
+
+function recompute(){
+  const fam=FAMS[famSel.value];
+  const B=parseInt(bSlider.value,10);
+  const xmax=parseInt(xmSlider.value,10);
+  let x=parseInt(xsel.value,10);
+  if(isNaN(x)) x=0;
+  if(x<0) x=0;
+  if(x>xmax) x=xmax;
+  xsel.value=x;
+
+  counts=[];
+  let zeros=0, ones=0, many=0, maxw=0;
+  for(let xi=0; xi<=xmax; xi++){
+    const ws=witnesses(fam,xi,B);
+    const c=ws.length;
+    counts.push(c);
+    if(c===0) zeros++;
+    else if(c===1) ones++;
+    else many++;
+    if(c>maxw) maxw=c;
+  }
+  const ws=witnesses(fam,x,B);
+  sx.textContent=x;
+  sw.textContent=ws.length;
+  if(ws.length===0){ ss.textContent='nonmember (0)'; ss.style.color='var(--muted)'; }
+  else if(ws.length===1){ ss.textContent='member, single witness'; ss.style.color='var(--good)'; }
+  else { ss.textContent='member, multiple witnesses'; ss.style.color='var(--bad)'; }
+  sz.textContent=zeros;
+  so.textContent=ones;
+  sm.textContent=many;
+  smax.textContent=maxw;
+  sb.textContent=B;
+  bval.textContent=B;
+  xmval.textContent=xmax;
+
+  const tbody=wtable.querySelector('tbody');
+  tbody.innerHTML='';
+  const show=ws.slice(0,30);
+  for(let i=0;i<show.length;i++){
+    const tr=document.createElement('tr');
+    const td0=document.createElement('td'); td0.textContent=i+1; tr.appendChild(td0);
+    const td1=document.createElement('td'); td1.textContent='('+show[i].join(', ')+')'; td1.className='labelcell'; tr.appendChild(td1);
+    tbody.appendChild(tr);
+  }
+  if(ws.length>30){
+    const tr=document.createElement('tr');
+    const td=document.createElement('td'); td.colSpan=2; td.textContent='... '+(ws.length-30)+' more'; tr.appendChild(td); tbody.appendChild(tr);
+  }
+  if(ws.length===0){
+    const tr=document.createElement('tr');
+    const td=document.createElement('td'); td.colSpan=2; td.textContent='No witnesses in bound'; tr.appendChild(td); tbody.appendChild(tr);
+  }
+
+  drawBars(xmax,x);
+  drawScat(fam,x,B,ws);
+}
+
+function drawBars(xmax,xselv){
+  const W=bars.width, H=bars.height;
+  bctx.clearRect(0,0,W,H);
+  const pad=40;
+  const pw=W-2*pad, ph=H-2*pad;
+  const maxc=Math.max(1, ...counts);
+  const bw=pw/(xmax+1);
+  for(let xi=0; xi<=xmax; xi++){
+    const c=counts[xi];
+    const h=ph*(c/maxc);
+    const bx=pad+xi*bw;
+    const by=H-pad-h;
+    if(c===0) bctx.fillStyle='#9fb0cc';
+    else if(c===1) bctx.fillStyle='#22c55e';
+    else bctx.fillStyle='#ef4444';
+    bctx.fillRect(bx+1, by, Math.max(1,bw-2), h);
+    if(xi===xselv){
+      bctx.strokeStyle='#5eead4';
+      bctx.lineWidth=2;
+      bctx.strokeRect(bx, H-pad-ph, bw, ph);
+    }
+  }
+  bctx.strokeStyle='#9fb0cc';
+  bctx.lineWidth=1;
+  bctx.beginPath();
+  bctx.moveTo(pad,H-pad);
+  bctx.lineTo(W-pad,H-pad);
+  bctx.moveTo(pad,pad);
+  bctx.lineTo(pad,H-pad);
+  bctx.stroke();
+  bctx.fillStyle='#9fb0cc';
+  bctx.font='11px system-ui';
+  bctx.fillText('x', W-pad+6, H-pad+4);
+  bctx.fillText('witness count', 4, pad-6);
+  bctx.fillText('0', pad-14, H-pad+4);
+  bctx.fillText(maxc.toString(), pad-22, pad+4);
+}
+
+function drawScat(fam,x,B,ws){
+  const W=scat.width, H=scat.height;
+  sctx.clearRect(0,0,W,H);
+  const pad=40;
+  const pw=W-2*pad, ph=H-2*pad;
+  sctx.strokeStyle='#9fb0cc';
+  sctx.lineWidth=1;
+  sctx.beginPath();
+  sctx.moveTo(pad,H-pad);
+  sctx.lineTo(W-pad,H-pad);
+  sctx.moveTo(pad,pad);
+  sctx.lineTo(pad,H-pad);
+  sctx.stroke();
+  sctx.fillStyle='#9fb0cc';
+  sctx.font='11px system-ui';
+  if(fam.arity===1){
+    sctx.fillText('y', W/2, H-8);
+    const scale=pw/B;
+    sctx.fillStyle='#5eead4';
+    for(const w of ws){
+      const y=w[0];
+      const px=pad + y*scale;
+      const py=H-pad-6;
+      sctx.beginPath();
+      sctx.arc(px, py, 5, 0, Math.PI*2);
+      sctx.fill();
+    }
+    sctx.fillStyle='#9fb0cc';
+    sctx.fillText('x = '+x+'; solutions y shown on axis', pad, pad-6);
+    for(let v=0; v<=B; v++){
+      const px=pad+v*scale;
+      sctx.fillStyle='#9fb0cc';
+      sctx.fillText(v.toString(), px-3, H-pad+14);
+    }
+  } else {
+    sctx.fillText('a', W/2, H-8);
+    sctx.fillText('b', 4, pad-6);
+    const scale=pw/B;
+    // grid
+    sctx.strokeStyle='rgba(159,176,204,0.25)';
+    for(let v=0; v<=B; v++){
+      const px=pad+v*scale;
+      const py=H-pad-v*scale;
+      sctx.beginPath(); sctx.moveTo(px,pad); sctx.lineTo(px,H-pad); sctx.stroke();
+      sctx.beginPath(); sctx.moveTo(pad,py); sctx.lineTo(W-pad,py); sctx.stroke();
+    }
+    sctx.fillStyle='#5eead4';
+    for(const w of ws){
+      const a=w[0], b=w[1];
+      const px=pad + a*scale;
+      const py=H-pad - b*scale;
+      sctx.beginPath();
+      sctx.arc(px, py, 5, 0, Math.PI*2);
+      sctx.fill();
+    }
+    sctx.fillStyle='#9fb0cc';
+    sctx.fillText('x = '+x+'; pairs (a,b) with a^2+b^2=x', pad, pad-6);
+  }
+}
+
+bSlider.addEventListener('input', ()=>{ bval.textContent=bSlider.value; });
+xmSlider.addEventListener('input', ()=>{ xmval.textContent=xmSlider.value; });
+famSel.addEventListener('change', recompute);
+bSlider.addEventListener('change', recompute);
+xmSlider.addEventListener('change', recompute);
+xsel.addEventListener('change', recompute);
+recomputeBtn.addEventListener('click', recompute);
+
+recompute();
+</script>
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

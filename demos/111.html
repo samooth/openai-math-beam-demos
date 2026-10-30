@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>One-sample matroid prophet inequalities against an almighty adversary (conceptual, result 111)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range]{flex:1 1 180px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:460px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+select{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text)}
+.toggle{display:inline-flex;align-items:center;gap:.4rem}
+.legend{display:flex;gap:1rem;align-items:center;font-size:.85rem;color:var(--muted);margin:.5rem 0;flex-wrap:wrap}
+.swatch{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:.3rem;vertical-align:middle}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window&&window.parent.closeDemo){window.parent.closeDemo();return false;}">&larr; Back to catalog</a>
+  <h1>One-sample matroid prophet inequalities against an almighty adversary (conceptual, result 111)</h1>
+  <p>For every finite matroid known in advance, a distribution-independent online rule uses one independent sample per element and earns a universal constant fraction of the expected offline optimum. Values are independent and nonnegative, with finite expected optimum. The guarantee holds even when the arrival-order adversary sees all samples, values, and the rule's entire random seed.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">The formalization proves a one-sample matroid prophet inequality with expected reward at least $2^{-310}$ times the expected offline optimum. Each element has one independent sample paired with an identically distributed nonnegative online value, and all coordinates are independent. The rule and finite seed law depend only on the labeled matroid; choices are irrevocable and feasible after every prefix. The arrival order may depend measurably on all samples, values, and the seed, and only the offline optimum must be integrable. A supporting hidden-vector selection result for fixed nonnegative matroid weights gives expected worst-order reward at least $2^{-293}$ times the optimum.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">This shows that one sample per element suffices for matroid prophet inequalities against an almighty adversary, removing distributional and arrival-order assumptions. It applies to every finite matroid known in advance and yields a universal constant (though extremely small) lower bound. The hidden-vector variant handles worst-order arrivals for fixed nonnegative weights.</p>
+  </section>
+  <div class="controls">
+    <label for="n">Elements n</label>
+    <input id="n" type="range" min="5" max="60" value="20" step="1">
+    <span class="val" id="nval">20</span>
+    <label for="r">Rank r</label>
+    <input id="r" type="range" min="1" max="20" value="5" step="1">
+    <span class="val" id="rval">5</span>
+    <label for="dist">Distribution</label>
+    <select id="dist">
+      <option value="exp">Exponential(1)</option>
+      <option value="uni">Uniform[0,1]</option>
+    </select>
+    <label for="adv">Adversarial order</label>
+    <select id="adv">
+      <option value="sample">By sample descending</option>
+      <option value="value">By value descending</option>
+      <option value="random">Random</option>
+    </select>
+    <label for="trials">Trials</label>
+    <input id="trials" type="range" min="200" max="5000" value="1000" step="100">
+    <span class="val" id="trialval">1000</span>
+  </div>
+  <div class="controls">
+    <button id="run">Run simulation</button>
+    <span class="val" id="status">ready</span>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">n</div><div class="value" id="sn">—</div></div>
+    <div class="stat"><div class="label">rank r</div><div class="value" id="sr">—</div></div>
+    <div class="stat"><div class="label">avg online reward</div><div class="value" id="sonline">—</div></div>
+    <div class="stat"><div class="label">avg offline OPT</div><div class="value" id="sopt">—</div></div>
+    <div class="stat"><div class="label">avg ratio</div><div class="value" id="sratio">—</div></div>
+    <div class="stat"><div class="label">formalized constant</div><div class="value" id="sconst">2^-310</div></div>
+  </div>
+  <div class="legend">
+    <span><span class="swatch" style="background:#22c55e"></span>Accepted</span>
+    <span><span class="swatch" style="background:#ef4444"></span>Rejected</span>
+    <span><span class="swatch" style="background:#f59e0b"></span>Sample threshold</span>
+  </div>
+  <canvas id="c" width="900" height="460"></canvas>
+  <p style="font-size:.85rem;color:var(--muted);margin-top:.5rem">Conceptual model: uniform matroid of rank r. Each element has one sample and one value; the rule accepts if the value clears its sample and feasibility remains. The adversary may reorder arrivals. Ratios are Monte Carlo estimates, not the formal universal constant.</p>
+</div>
+<script>
+const nSlider=document.getElementById('n');
+const rSlider=document.getElementById('r');
+const distSel=document.getElementById('dist');
+const advSel=document.getElementById('adv');
+const trialSlider=document.getElementById('trials');
+const runBtn=document.getElementById('run');
+const status=document.getElementById('status');
+
+const nval=document.getElementById('nval');
+const rval=document.getElementById('rval');
+const trialval=document.getElementById('trialval');
+const sn=document.getElementById('sn');
+const sr=document.getElementById('sr');
+const sonline=document.getElementById('sonline');
+const sopt=document.getElementById('sopt');
+const sratio=document.getElementById('sratio');
+
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+
+function resizeCanvas(){ canvas.width=Math.max(300,canvas.clientWidth); canvas.height=460; }
+window.addEventListener('resize',function(){ resizeCanvas(); draw(); });
+resizeCanvas();
+
+function rnd(dist){
+  if(dist==='uni') return Math.random();
+  return -Math.log(Math.random()||1e-12);
+}
+
+let lastTrial=null;
+let agg={online:0,opt:0,n:0};
+
+function runSim(){
+  const n=+nSlider.value;
+  const r=Math.min(+rSlider.value,n);
+  const dist=distSel.value;
+  const adv=advSel.value;
+  const T=+trialSlider.value;
+  let sumOnline=0,sumOpt=0;
+  let last=null;
+  for(let t=0;t<T;t++){
+    const S=new Array(n), V=new Array(n);
+    for(let i=0;i<n;i++){ S[i]=rnd(dist); V[i]=rnd(dist); }
+    const idx=[...Array(n).keys()];
+    if(adv==='random') idx.sort(()=>Math.random()-0.5);
+    else if(adv==='sample') idx.sort((a,b)=>S[b]-S[a]);
+    else idx.sort((a,b)=>V[b]-V[a]);
+    // offline optimum
+    const vals=[...V].sort((a,b)=>b-a);
+    let opt=0; for(let i=0;i<r;i++) opt+=vals[i];
+    // online
+    let accepted=0, online=0;
+    const acceptedFlags=new Array(n).fill(false);
+    for(const i of idx){
+      if(V[i]>=S[i] && accepted<r){ accepted++; online+=V[i]; acceptedFlags[i]=true; }
+    }
+    sumOnline+=online; sumOpt+=opt;
+    if(t===T-1) last={S,V,acceptedFlags,order:idx,online,opt};
+  }
+  agg={online:sumOnline/T, opt:sumOpt/T, n:T};
+  lastTrial=last;
+  nval.textContent=n;
+  rval.textContent=r;
+  trialval.textContent=T;
+  sn.textContent=n;
+  sr.textContent=r;
+  sonline.textContent=(sumOnline/T).toFixed(3);
+  sopt.textContent=(sumOpt/T).toFixed(3);
+  sratio.textContent=(sumOpt/T>0? (sumOnline/sumOpt).toFixed(4):'—');
+  status.textContent='done';
+  draw();
+}
+
+function draw(){
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  if(!lastTrial){ return; }
+  const {S,V,acceptedFlags}=lastTrial;
+  const n=V.length;
+  const padL=48,padR=16,padT=30,padB=40;
+  const plotW=W-padL-padR;
+  const plotH=H-padT-padB;
+  const bw=plotW/n*0.7;
+  const gap=plotW/n*0.3;
+  const vmax=Math.max(...V,...S,1)*1.15;
+  function yOf(v){ return padT+plotH - (v/vmax)*plotH; }
+  // grid
+  ctx.strokeStyle='rgba(159,176,204,0.25)';
+  ctx.lineWidth=1;
+  for(let i=0;i<=5;i++){
+    const y=padT+i*plotH/5;
+    ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(padL+plotW,y); ctx.stroke();
+  }
+  // bars
+  for(let i=0;i<n;i++){
+    const x=padL+i*(bw+gap);
+    const y=yOf(V[i]);
+    ctx.fillStyle=acceptedFlags[i]?'#22c55e':'#ef4444';
+    ctx.fillRect(x,y,bw,padT+plotH-y);
+    // sample threshold marker
+    const ys=yOf(S[i]);
+    ctx.strokeStyle='#f59e0b';
+    ctx.lineWidth=2;
+    ctx.beginPath(); ctx.moveTo(x,ys); ctx.lineTo(x+bw,ys); ctx.stroke();
+  }
+  // labels
+  ctx.fillStyle='rgba(159,176,204,0.9)';
+  ctx.font='12px system-ui';
+  ctx.textAlign='center';
+  ctx.fillText('elements in arrival order', padL+plotW/2, H-8);
+  ctx.save();
+  ctx.translate(16, padT+plotH/2);
+  ctx.rotate(-Math.PI/2);
+  ctx.textAlign='center';
+  ctx.fillText('value / sample',0,0);
+  ctx.restore();
+  ctx.textAlign='left';
+  ctx.fillText('avg ratio '+ (agg.opt>0?(agg.online/agg.opt).toFixed(4):'—'), padL, 20);
+}
+
+nSlider.addEventListener('input',()=>{ nval.textContent=nSlider.value; rSlider.max=nSlider.value; if(+rSlider.value>+nSlider.value) rSlider.value=nSlider.value; rval.textContent=rSlider.value; });
+rSlider.addEventListener('input',()=>{ rval.textContent=rSlider.value; });
+trialSlider.addEventListener('input',()=>{ trialval.textContent=trialSlider.value; });
+runBtn.addEventListener('click',runSim);
+runSim();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Largest prime factors of consecutive integers — interactive demo</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range]{flex:1 1 260px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+.legend{display:flex;gap:1rem;align-items:center;font-size:.85rem;color:var(--muted);margin:.5rem 0;flex-wrap:wrap}
+.swatch{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:.3rem;vertical-align:middle}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Largest prime factors of consecutive integers</h1>
+  <p>For each n, let P+(n) be the largest prime factor of n. The plot shows log P+(n) versus log P+(n+1); the shaded triangle is where P+(n) &lt; P+(n+1).</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Resolves the Erdős–Pomerance joint Dickman conjecture: for 0&lt;a,b&lt;1, the natural density of integers n with P+(n) ≤ n^a and P+(n+1) ≤ n^b tends to ρ(1/a) ρ(1/b), where ρ is the Dickman function. Hence the logarithmic sizes of the largest prime factors of n and n+1 are asymptotically independent in ordinary natural density.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">In particular, the integers satisfying P+(n) &lt; P+(n+1) have density 1/2. The scatter below colors points by this inequality; as N grows the proportion in the shaded triangle approaches 1/2.</p>
+  </section>
+  <div class="controls">
+    <label for="n">Max n (N)</label>
+    <input id="n" type="range" min="100" max="200000" value="20000" step="100">
+    <span class="val" id="nval">20000</span>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Max n (N)</div><div class="value" id="nstat">—</div></div>
+    <div class="stat"><div class="label">Pairs plotted</div><div class="value" id="pairs">—</div></div>
+    <div class="stat"><div class="label">P+(n) &lt; P+(n+1)</div><div class="value" id="less">—</div></div>
+    <div class="stat"><div class="label">Density &lt;</div><div class="value" id="dens">—</div></div>
+    <div class="stat"><div class="label">P+(n) &gt; P+(n+1)</div><div class="value" id="greater">—</div></div>
+    <div class="stat"><div class="label">Equal</div><div class="value" id="equal">—</div></div>
+  </div>
+  <div class="legend">
+    <span><span class="swatch" style="background:#5eead4"></span>P+(n) &lt; P+(n+1)</span>
+    <span><span class="swatch" style="background:#f59e0b"></span>P+(n) ≥ P+(n+1)</span>
+    <span><span class="swatch" style="background:rgba(94,234,212,0.18)"></span>shaded: P+(n) &lt; P+(n+1)</span>
+  </div>
+  <canvas id="scatter" width="900" height="520"></canvas>
+  <canvas id="densCanvas" width="900" height="220" style="margin-top:.75rem"></canvas>
+</div>
+<script>
+const MAXN = 200000;
+const lpf = new Uint32Array(MAXN + 2);
+lpf[1] = 1;
+for (let i = 2; i <= MAXN + 1; i++) {
+  if (lpf[i] === 0) {
+    for (let j = i; j <= MAXN + 1; j += i) lpf[j] = i;
+  }
+}
+
+const nSlider = document.getElementById('n');
+const nval = document.getElementById('nval');
+const scatterCanvas = document.getElementById('scatter');
+const densCanvas = document.getElementById('densCanvas');
+const sctx = scatterCanvas.getContext('2d');
+const dctx = densCanvas.getContext('2d');
+const logMax = Math.log(MAXN + 1);
+
+function resize() {
+  scatterCanvas.width = Math.max(300, scatterCanvas.clientWidth);
+  scatterCanvas.height = 520;
+  densCanvas.width = Math.max(300, densCanvas.clientWidth);
+  densCanvas.height = 220;
+}
+
+function drawScatter(N) {
+  const W = scatterCanvas.width, H = scatterCanvas.height;
+  sctx.clearRect(0, 0, W, H);
+  const padL = 56, padR = 18, padT = 18, padB = 44;
+  const plotW = W - padL - padR;
+  const plotH = H - padT - padB;
+  sctx.strokeStyle = 'rgba(159,176,204,0.15)';
+  sctx.lineWidth = 1;
+  for (let i = 0; i <= 5; i++) {
+    const x = padL + plotW * i / 5;
+    const y = padT + plotH * i / 5;
+    sctx.beginPath(); sctx.moveTo(x, padT); sctx.lineTo(x, H - padB); sctx.stroke();
+    sctx.beginPath(); sctx.moveTo(padL, y); sctx.lineTo(W - padR, y); sctx.stroke();
+  }
+  sctx.fillStyle = 'rgba(94,234,212,0.10)';
+  sctx.beginPath();
+  sctx.moveTo(padL, H - padB);
+  sctx.lineTo(padL, padT);
+  sctx.lineTo(W - padR, padT);
+  sctx.closePath();
+  sctx.fill();
+  sctx.strokeStyle = '#475569';
+  sctx.lineWidth = 1.5;
+  sctx.beginPath(); sctx.moveTo(padL, H - padB); sctx.lineTo(W - padR, H - padB); sctx.stroke();
+  sctx.beginPath(); sctx.moveTo(padL, padT); sctx.lineTo(padL, H - padB); sctx.stroke();
+  sctx.strokeStyle = 'rgba(94,234,212,0.6)';
+  sctx.setLineDash([6, 6]);
+  sctx.beginPath(); sctx.moveTo(padL, H - padB); sctx.lineTo(W - padR, padT); sctx.stroke();
+  sctx.setLineDash([]);
+  sctx.fillStyle = '#9fb0cc';
+  sctx.font = '12px system-ui';
+  sctx.fillText('log P+(n)', W / 2 - 40, H - 10);
+  sctx.save(); sctx.translate(14, H / 2 + 40); sctx.rotate(-Math.PI / 2); sctx.fillText('log P+(n+1)', 0, 0); sctx.restore();
+  let less = 0, greater = 0, equal = 0;
+  for (let n = 1; n <= N; n++) {
+    const a = lpf[n];
+    const b = lpf[n + 1];
+    const x = padL + plotW * (Math.log(a) / logMax);
+    const y = padT + plotH * (1 - Math.log(b) / logMax);
+    if (a < b) { sctx.fillStyle = 'rgba(94,234,212,0.55)'; less++; }
+    else if (a > b) { sctx.fillStyle = 'rgba(245,158,11,0.55)'; greater++; }
+    else { sctx.fillStyle = 'rgba(248,113,113,0.8)'; equal++; }
+    sctx.fillRect(x, y, 2, 2);
+  }
+  document.getElementById('nstat').textContent = N.toLocaleString();
+  document.getElementById('pairs').textContent = N.toLocaleString();
+  document.getElementById('less').textContent = less.toLocaleString();
+  document.getElementById('dens').textContent = (less / N).toFixed(4);
+  document.getElementById('greater').textContent = greater.toLocaleString();
+  document.getElementById('equal').textContent = equal.toLocaleString();
+  return { less, greater, equal };
+}
+
+function drawDens(N) {
+  const W = densCanvas.width, H = densCanvas.height;
+  dctx.clearRect(0, 0, W, H);
+  const padL = 56, padR = 18, padT = 18, padB = 34;
+  const plotW = W - padL - padR;
+  const plotH = H - padT - padB;
+  dctx.strokeStyle = '#475569';
+  dctx.lineWidth = 1.5;
+  dctx.beginPath(); dctx.moveTo(padL, H - padB); dctx.lineTo(W - padR, H - padB); dctx.stroke();
+  dctx.beginPath(); dctx.moveTo(padL, padT); dctx.lineTo(padL, H - padB); dctx.stroke();
+  dctx.strokeStyle = 'rgba(159,176,204,0.15)';
+  dctx.lineWidth = 1;
+  for (let i = 0; i <= 4; i++) {
+    const y = padT + plotH * i / 4;
+    dctx.beginPath(); dctx.moveTo(padL, y); dctx.lineTo(W - padR, y); dctx.stroke();
+  }
+  dctx.strokeStyle = 'rgba(94,234,212,0.5)';
+  dctx.setLineDash([6, 6]);
+  dctx.beginPath();
+  dctx.moveTo(padL, padT + plotH * (1 - 0.5));
+  dctx.lineTo(W - padR, padT + plotH * (1 - 0.5));
+  dctx.stroke();
+  dctx.setLineDash([]);
+  dctx.fillStyle = '#9fb0cc';
+  dctx.font = '12px system-ui';
+  dctx.fillText('n', W / 2 - 6, H - 8);
+  dctx.save(); dctx.translate(14, H / 2 + 30); dctx.rotate(-Math.PI / 2); dctx.fillText('cumulative density P+(n)<P+(n+1)', 0, 0); dctx.restore();
+  let less = 0;
+  dctx.strokeStyle = '#5eead4';
+  dctx.lineWidth = 2;
+  dctx.beginPath();
+  const step = Math.max(1, Math.floor(N / 800));
+  for (let n = 1; n <= N; n++) {
+    if (lpf[n] < lpf[n + 1]) less++;
+    if (n % step === 0 || n === N) {
+      const x = padL + plotW * (n / N);
+      const y = padT + plotH * (1 - less / n);
+      if (n === step || n === 1) dctx.moveTo(x, y); else dctx.lineTo(x, y);
+    }
+  }
+  dctx.stroke();
+}
+
+function update() {
+  const N = +nSlider.value;
+  nval.textContent = N;
+  drawScatter(N);
+  drawDens(N);
+}
+
+window.addEventListener('resize', function () { resize(); update(); });
+resize();
+nSlider.addEventListener('input', update);
+update();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

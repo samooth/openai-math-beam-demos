@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Uniform sparsest cut: hardness and semidefinite gaps (conceptual, result 117)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range]{flex:1 1 200px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:460px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+.legend{display:flex;gap:1rem;align-items:center;font-size:.85rem;color:var(--muted);margin:.5rem 0;flex-wrap:wrap}
+.swatch{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:.3rem;vertical-align:middle}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Uniform sparsest cut: hardness and semidefinite gaps (conceptual, result 117)</h1>
+  <p>Approximating Uniform Sparsest Cut within any fixed constant factor is NP-hard, even with nonnegative rational capacities and unit demands. The Goemans--Linial semidefinite relaxation also has integrality gaps of order at least $\sqrt{\log n}/(\log\log n)^3$, approaching the square-root-logarithmic upper bound.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Proves that approximating Uniform Sparsest Cut within any fixed constant factor is NP-hard, even with nonnegative rational capacities and unit demands. The Goemans--Linial semidefinite relaxation also has integrality gaps of order at least $\sqrt{\log n}/(\log\log n)^3$, approaching the square-root-logarithmic upper bound.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">This rules out constant-factor polynomial-time approximations in the standard weighted model and shows the Goemans--Linial relaxation cannot be rounded to a constant factor in worst case. The near-square-root-logarithmic gap pins the relaxation's limitation close to the known upper bound, guiding the search for stronger relaxations or sharper hardness reductions.</p>
+  </section>
+  <div class="controls">
+    <label for="nlog">log10 n</label>
+    <input id="nlog" type="range" min="2" max="7" value="4" step="0.01">
+    <span class="val" id="nlogval">4.00</span>
+    <label for="c">Lower constant c</label>
+    <input id="c" type="range" min="0.05" max="3" value="1" step="0.01">
+    <span class="val" id="cval">1.00</span>
+    <label for="C">Upper constant C</label>
+    <input id="C" type="range" min="0.5" max="5" value="2" step="0.01">
+    <span class="val" id="Cval">2.00</span>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Vertices n</div><div class="value" id="sn">—</div></div>
+    <div class="stat"><div class="label">ln n</div><div class="value" id="sln">—</div></div>
+    <div class="stat"><div class="label">sqrt(ln n)</div><div class="value" id="ssqrt">—</div></div>
+    <div class="stat"><div class="label">Lower gap c*sqrt(ln n)/(ln ln n)^3</div><div class="value" id="slow">—</div></div>
+    <div class="stat"><div class="label">Upper gap C*sqrt(ln n)</div><div class="value" id="sup">—</div></div>
+    <div class="stat"><div class="label">SDP value (OPT=1)</div><div class="value" id="ssdp">—</div></div>
+    <div class="stat"><div class="label">OPT (normalized)</div><div class="value" id="sopt">1.00</div></div>
+    <div class="stat"><div class="label">Constant-factor approx</div><div class="value" id="shard">NP-hard</div></div>
+  </div>
+  <div class="legend">
+    <span><span class="swatch" style="background:#ef4444"></span>Constant 1 (no gap)</span>
+    <span><span class="swatch" style="background:#f59e0b"></span>Lower bound gap</span>
+    <span><span class="swatch" style="background:#5eead4"></span>Upper bound gap</span>
+  </div>
+  <canvas id="canvas" width="900" height="460"></canvas>
+  <p style="font-size:.85rem;color:var(--muted);margin-top:.5rem">Conceptual model: integrality gap of the Goemans--Linial SDP as a function of $n$, with the lower bound approaching the square-root-logarithmic upper bound up to a $(\log\log n)^3$ factor.</p>
+</div>
+<script>
+const nlogSlider=document.getElementById('nlog');
+const cSlider=document.getElementById('c');
+const CSlider=document.getElementById('C');
+
+const nlogval=document.getElementById('nlogval');
+const cval=document.getElementById('cval');
+const Cval=document.getElementById('Cval');
+
+const sn=document.getElementById('sn');
+const sln=document.getElementById('sln');
+const ssqrt=document.getElementById('ssqrt');
+const slow=document.getElementById('slow');
+const sup=document.getElementById('sup');
+const ssdp=document.getElementById('ssdp');
+
+const canvas=document.getElementById('canvas');
+const ctx=canvas.getContext('2d');
+
+function N(){ return Math.pow(10,+nlogSlider.value); }
+
+function lowerGap(n,c){
+  const L=Math.log(n);
+  const ll=Math.log(Math.max(Math.E, L));
+  return c*Math.sqrt(L)/Math.pow(ll,3);
+}
+
+function upperGap(n,C){
+  return C*Math.sqrt(Math.log(n));
+}
+
+function updateStats(){
+  const n=N();
+  const c=+cSlider.value;
+  const C=+CSlider.value;
+  nlogval.textContent=(+nlogSlider.value).toFixed(2);
+  cval.textContent=c.toFixed(2);
+  Cval.textContent=C.toFixed(2);
+  const L=Math.log(n);
+  const g=lowerGap(n,c);
+  sn.textContent=Math.round(n).toLocaleString();
+  sln.textContent=L.toFixed(3);
+  ssqrt.textContent=Math.sqrt(L).toFixed(3);
+  slow.textContent=g.toFixed(3);
+  sup.textContent=upperGap(n,C).toFixed(3);
+  ssdp.textContent=(1/g).toFixed(4);
+}
+
+function resizeCanvas(){ canvas.width=Math.max(300,canvas.clientWidth); canvas.height=460; }
+window.addEventListener('resize',function(){ resizeCanvas(); render(); });
+resizeCanvas();
+
+function render(){
+  updateStats();
+  const c=+cSlider.value;
+  const C=+CSlider.value;
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const padL=56,padR=20,padT=30,padB=46;
+  const plotW=W-padL-padR;
+  const plotH=H-padT-padB;
+  const xmin=2,xmax=7;
+  function xOf(lg){ return padL+(lg-xmin)/(xmax-xmin)*plotW; }
+  const ys=[];
+  for(let i=0;i<=200;i++){
+    const lg=xmin+(xmax-xmin)*i/200;
+    const n=Math.pow(10,lg);
+    ys.push(lowerGap(n,c));
+    ys.push(upperGap(n,C));
+  }
+  const ymax=Math.max(1, Math.max(...ys)*1.15);
+  function yOf(v){ return padT+plotH - (v/ymax)*plotH; }
+
+  ctx.strokeStyle='rgba(159,176,204,0.35)';
+  ctx.lineWidth=1;
+  for(let i=0;i<=5;i++){
+    const y=padT+i*plotH/5;
+    ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(padL+plotW,y); ctx.stroke();
+  }
+  for(let i=0;i<=5;i++){
+    const x=padL+i*plotW/5;
+    ctx.beginPath(); ctx.moveTo(x,padT); ctx.lineTo(x,padT+plotH); ctx.stroke();
+  }
+
+  ctx.fillStyle='rgba(159,176,204,0.9)';
+  ctx.font='12px system-ui';
+  ctx.textAlign='center';
+  for(let lg of [2,3,4,5,6,7]){
+    ctx.fillText('10^'+lg, xOf(lg), H-padB+18);
+  }
+  ctx.textAlign='right';
+  for(let i=0;i<=5;i++){
+    const v=ymax*(1-i/5);
+    ctx.fillText(v.toFixed(1), padL-8, padT+i*plotH/5+4);
+  }
+  ctx.save();
+  ctx.translate(16, padT+plotH/2);
+  ctx.rotate(-Math.PI/2);
+  ctx.textAlign='center';
+  ctx.fillText('integrality gap',0,0);
+  ctx.restore();
+  ctx.fillText('n', padL+plotW/2, H-8);
+
+  function drawCurve(fn,color,width){
+    ctx.strokeStyle=color;
+    ctx.lineWidth=width;
+    ctx.beginPath();
+    for(let i=0;i<=300;i++){
+      const lg=xmin+(xmax-xmin)*i/300;
+      const n=Math.pow(10,lg);
+      const x=xOf(lg);
+      const y=yOf(fn(n));
+      if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+  }
+  ctx.strokeStyle='#ef4444';
+  ctx.lineWidth=1.5;
+  ctx.beginPath();
+  ctx.moveTo(padL, yOf(1));
+  ctx.lineTo(padL+plotW, yOf(1));
+  ctx.stroke();
+
+  drawCurve(n=>lowerGap(n,c),'#f59e0b',2.5);
+  drawCurve(n=>upperGap(n,C),'#5eead4',2.5);
+
+  const lg=+nlogSlider.value;
+  const xk=xOf(lg);
+  ctx.strokeStyle='rgba(255,255,255,0.35)';
+  ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(xk,padT); ctx.lineTo(xk,padT+plotH); ctx.stroke();
+
+  function dot(lg,val,color){
+    ctx.fillStyle=color;
+    ctx.beginPath();
+    ctx.arc(xOf(lg), yOf(val), 5, 0, Math.PI*2);
+    ctx.fill();
+  }
+  dot(lg, lowerGap(N(),c), '#f59e0b');
+  dot(lg, upperGap(N(),C), '#5eead4');
+  dot(lg, 1, '#ef4444');
+}
+
+nlogSlider.addEventListener('input',render);
+cSlider.addEventListener('input',render);
+CSlider.addEventListener('input',render);
+render();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

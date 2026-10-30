@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Zariski cancellation and affine fibrations over C (conceptual, result 047)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range]{flex:1 1 220px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:420px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+select{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text)}
+table{width:100%;border-collapse:collapse;font-size:.85rem}
+th,td{padding:.35rem .45rem;border-bottom:1px solid var(--border);text-align:left}
+th{color:var(--muted);font-weight:600}
+td.num{font-family:ui-monospace,monospace}
+.badge{display:inline-block;padding:.15rem .5rem;border-radius:6px;font-size:.75rem;font-weight:700}
+.ok{color:var(--good)} .bad{color:var(--bad)} .warn{color:var(--warn)}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Zariski cancellation and affine fibrations over (\mathbb C) (conceptual, result 047)</h1>
+  <p>Cancellation asks whether (X\times \mathbb A^1\cong \mathbb A^{n+1}) forces (X\cong \mathbb A^n). Result 047 gives a fourfold counterexample and nontrivial affine three-space fibrations over (\mathbb A^1) and (\mathbb A^2).</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Constructs an integral complex affine fourfold (X\not\cong\mathbb A^4) with (X\times\mathbb A^1\cong\mathbb A^5), disproving affine-space cancellation over (\mathbb C) in dimension four. It also disproves the Dolgachev–Weisfeiler affine-fibration conjecture: smooth surjections (X\to\mathbb A^1) and (\mathbb A^5\to\mathbb A^2) have every residue-field fiber isomorphic to affine three-space but are not Zariski-locally trivial.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Shows that affine space is not cancellable in dimension four and that fiberwise (\mathbb A^3)-fibrations need not be Zariski-locally trivial. This affects classification of affine varieties, exotic affine spaces, and questions about algebraic vector bundles and triviality of fibrations.</p>
+  </section>
+  <div class="controls">
+    <label for="scene">Scene</label>
+    <select id="scene">
+      <option value="cancel" selected>Cancellation</option>
+      <option value="fib">Affine fibration</option>
+    </select>
+    <label for="n">dim (X) (cancellation)</label>
+    <input id="n" type="range" min="1" max="6" value="4" step="1">
+    <span class="val" id="nval">4</span>
+    <label for="d">base dim (fibration)</label>
+    <input id="d" type="range" min="1" max="2" value="1" step="1">
+    <span class="val" id="dval">1</span>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label" id="l1">Dimension of (X)</div><div class="value" id="v1">—</div></div>
+    <div class="stat"><div class="label" id="l2">Dimension of (X\times\mathbb A^1)</div><div class="value" id="v2">—</div></div>
+    <div class="stat"><div class="label" id="l3">Dimension of (\mathbb A^n)</div><div class="value" id="v3">—</div></div>
+    <div class="stat"><div class="label" id="l4">Status</div><div class="value" id="v4">—</div></div>
+  </div>
+  <canvas id="c" width="900" height="420"></canvas>
+  <section class="box">
+    <h3>Examples</h3>
+    <table>
+      <thead><tr><th>Setting</th><th>Parameters</th><th>Result 047 verdict</th></tr></thead>
+      <tbody>
+        <tr><td>Cancellation</td><td>(n=1,2)</td><td class="ok">Holds (classical)</td></tr>
+        <tr><td>Cancellation</td><td>(n=3)</td><td class="warn">Open</td></tr>
+        <tr><td>Cancellation</td><td>(n=4)</td><td class="bad">Counterexample: (X\not\cong\mathbb A^4)</td></tr>
+        <tr><td>Fibration (X\to\mathbb A^1)</td><td>fiber (\mathbb A^3)</td><td class="bad">Not Zariski-locally trivial</td></tr>
+        <tr><td>Fibration (\mathbb A^5\to\mathbb A^2)</td><td>fiber (\mathbb A^3)</td><td class="bad">Not Zariski-locally trivial</td></tr>
+      </tbody>
+    </table>
+  </section>
+</div>
+<script>
+const sceneSel=document.getElementById('scene');
+const nSlider=document.getElementById('n');
+const dSlider=document.getElementById('d');
+const nval=document.getElementById('nval');
+const dval=document.getElementById('dval');
+const l1=document.getElementById('l1'), v1=document.getElementById('v1');
+const l2=document.getElementById('l2'), v2=document.getElementById('v2');
+const l3=document.getElementById('l3'), v3=document.getElementById('v3');
+const l4=document.getElementById('l4'), v4=document.getElementById('v4');
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+
+function resizeCanvas(){ canvas.width=Math.max(300,canvas.clientWidth); canvas.height=420; }
+window.addEventListener('resize',function(){ resizeCanvas(); update(); });
+resizeCanvas();
+
+function verdictCancel(n){
+  if(n<=2) return {text:'Holds (classical)', cls:'ok'};
+  if(n===3) return {text:'Open', cls:'warn'};
+  if(n===4) return {text:'Fails (result 047)', cls:'bad'};
+  return {text:'Not addressed', cls:'warn'};
+}
+function verdictFib(d){
+  return {text:'Not locally trivial', cls:'bad'};
+}
+
+function update(){
+  const scene=sceneSel.value;
+  const n=+nSlider.value;
+  const d=+dSlider.value;
+  nval.textContent=n;
+  dval.textContent=d;
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  if(scene==='cancel'){
+    l1.textContent='Dimension of X';
+    v1.textContent=n;
+    v1.className='value';
+    l2.textContent='Dimension of X×A^1';
+    v2.textContent=n+1;
+    v2.className='value';
+    l3.textContent='Dimension of A^n';
+    v3.textContent=n;
+    v3.className='value';
+    const vr=verdictCancel(n);
+    l4.textContent='Cancellation status';
+    v4.textContent=vr.text;
+    v4.className='value '+vr.cls;
+    drawCancel(n,vr);
+  } else {
+    l1.textContent='Base dimension';
+    v1.textContent=d;
+    v1.className='value';
+    l2.textContent='Fiber dimension';
+    v2.textContent=3;
+    v2.className='value';
+    l3.textContent='Total dimension';
+    v3.textContent=d+3;
+    v3.className='value';
+    const vr=verdictFib(d);
+    l4.textContent='Zariski local triviality';
+    v4.textContent=vr.text;
+    v4.className='value '+vr.cls;
+    drawFib(d);
+  }
+}
+
+function drawCancel(n,vr){
+  const W=canvas.width,H=canvas.height;
+  const midY=H*0.38;
+  // product box
+  ctx.fillStyle='rgba(94,234,212,0.18)';
+  ctx.fillRect(60,midY-45,170,90);
+  ctx.strokeStyle='#5eead4'; ctx.lineWidth=2;
+  ctx.strokeRect(60,midY-45,170,90);
+  ctx.fillStyle='#e6edf7'; ctx.font='14px system-ui'; ctx.textAlign='center';
+  ctx.fillText('X_'+n+' × A^1',145,midY+4);
+  ctx.fillText('dim '+(n+1),145,midY+24);
+
+  // A^{n+1} box
+  ctx.fillStyle='rgba(34,197,94,0.18)';
+  ctx.fillRect(W-230,midY-45,170,90);
+  ctx.strokeStyle='#22c55e'; ctx.lineWidth=2;
+  ctx.strokeRect(W-230,midY-45,170,90);
+  ctx.fillStyle='#e6edf7'; ctx.font='14px system-ui'; ctx.textAlign='center';
+  ctx.fillText('A^'+(n+1),W-145,midY+4);
+  ctx.fillText('dim '+(n+1),W-145,midY+24);
+
+  ctx.strokeStyle='#9fb0cc'; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.moveTo(230,midY); ctx.lineTo(W-230,midY); ctx.stroke();
+  ctx.fillStyle='#9fb0cc'; ctx.font='18px system-ui'; ctx.textAlign='center';
+  ctx.fillText('≅', (230+W-230)/2, midY-8);
+
+  // cancellation candidate
+  const y2=H*0.78;
+  ctx.fillStyle='rgba(94,234,212,0.12)';
+  ctx.fillRect(60,y2-40,170,80);
+  ctx.strokeStyle='#5eead4'; ctx.lineWidth=2;
+  ctx.strokeRect(60,y2-40,170,80);
+  ctx.fillStyle='#e6edf7'; ctx.font='14px system-ui'; ctx.textAlign='center';
+  ctx.fillText('X_'+n,145,y2-2);
+  ctx.fillText('dim '+n,145,y2+18);
+
+  ctx.fillStyle='rgba(239,68,68,0.12)';
+  ctx.fillRect(W-230,y2-40,170,80);
+  ctx.strokeStyle='#ef4444'; ctx.lineWidth=2;
+  ctx.strokeRect(W-230,y2-40,170,80);
+  ctx.fillStyle='#e6edf7'; ctx.font='14px system-ui'; ctx.textAlign='center';
+  ctx.fillText('A^'+n,W-145,y2-2);
+  ctx.fillText('dim '+n,W-145,y2+18);
+
+  ctx.strokeStyle='#9fb0cc'; ctx.lineWidth=2; ctx.setLineDash([6,4]);
+  ctx.beginPath(); ctx.moveTo(230,y2); ctx.lineTo(W-230,y2); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle= n===4 ? '#ef4444' : (n<=2?'#22c55e':'#f59e0b');
+  ctx.font='18px system-ui'; ctx.textAlign='center';
+  ctx.fillText(n===4?'≇':(n<=2?'≅':'?'), (230+W-230)/2, y2-8);
+
+  ctx.fillStyle='#9fb0cc'; ctx.font='12px system-ui'; ctx.textAlign='left';
+  ctx.fillText('Cancel A^1 from X_'+n+' × A^1 ≅ A^'+(n+1), 60, 24);
+  ctx.fillText(vr.text, 60, 42);
+}
+
+function drawFib(d){
+  const W=canvas.width,H=canvas.height;
+  // base
+  const baseY=H-70;
+  ctx.strokeStyle='#5eead4'; ctx.lineWidth=3;
+  if(d===1){
+    ctx.beginPath(); ctx.moveTo(80,baseY); ctx.lineTo(W-80,baseY); ctx.stroke();
+    ctx.fillStyle='#9fb0cc'; ctx.font='13px system-ui'; ctx.textAlign='center';
+    ctx.fillText('Base A^1', W/2, baseY+24);
+    // fibers
+    for(let i=0;i<6;i++){
+      const x=100+i*(W-200)/5;
+      ctx.strokeStyle='rgba(234,179,8,0.7)'; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.moveTo(x,baseY); ctx.lineTo(x+12,baseY-120); ctx.stroke();
+      ctx.fillStyle='rgba(234,179,8,0.18)';
+      ctx.fillRect(x-6,baseY-128,24,16);
+      ctx.strokeStyle='#eab308'; ctx.lineWidth=1.5;
+      ctx.strokeRect(x-6,baseY-128,24,16);
+    }
+  } else {
+    // base plane grid
+    ctx.strokeStyle='rgba(94,234,212,0.5)'; ctx.lineWidth=1.5;
+    for(let i=0;i<=6;i++){
+      const x0=120+i*100; 
+      ctx.beginPath(); ctx.moveTo(x0,baseY); ctx.lineTo(x0-120,baseY-90); ctx.stroke();
+    }
+    for(let j=0;j<=4;j++){
+      const y0=baseY-j*22; 
+      ctx.beginPath(); ctx.moveTo(120-j*30?0:120, y0); ctx.lineTo(720-j*30, y0); ctx.stroke();
+    }
+    ctx.fillStyle='#9fb0cc'; ctx.font='13px system-ui'; ctx.textAlign='center';
+    ctx.fillText('Base A^2', W/2, baseY+24);
+    // fibers
+    for(let i=0;i<5;i++){
+      for(let j=0;j<3;j++){
+        const x=150+i*110 - j*18;
+        const y=baseY - j*22 - 10;
+        ctx.fillStyle='rgba(234,179,8,0.18)';
+        ctx.fillRect(x,y-40,18,18);
+        ctx.strokeStyle='#eab308'; ctx.lineWidth=1.2;
+        ctx.strokeRect(x,y-40,18,18);
+      }
+    }
+  }
+  // total space / nontriviality label
+  ctx.fillStyle='#e6edf7'; ctx.font='14px system-ui'; ctx.textAlign='center';
+  ctx.fillText('Total space (fibers ≅ A^3)', W/2, 30);
+  ctx.fillStyle='#ef4444'; ctx.font='15px system-ui'; ctx.textAlign='center';
+  ctx.fillText('Not Zariski-locally trivial (result 047)', W/2, 58);
+  ctx.fillStyle='#9fb0cc'; ctx.font='12px system-ui'; ctx.textAlign='left';
+  ctx.fillText('Fiberwise A^3-fibration over A^'+d, 60, H-20);
+}
+
+sceneSel.addEventListener('change',function(){ update(); });
+nSlider.addEventListener('input',function(){ update(); });
+dSlider.addEventListener('input',function(){ update(); });
+update();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

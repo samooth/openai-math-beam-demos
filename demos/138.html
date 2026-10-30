@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Subset Sum in (O(2^{0.49n})) time (conceptual, result 138)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range]{flex:1 1 180px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:460px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+.legend{display:flex;gap:1rem;align-items:center;font-size:.85rem;color:var(--muted);margin:.5rem 0;flex-wrap:wrap}
+.swatch{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:.3rem;vertical-align:middle}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Subset Sum in (O(2^{0.49n})) time (conceptual, result 138)</h1>
+  <p>Gives a uniform randomized classical algorithm for worst-case Subset Sum in ordinary (O(2^{0.49n})) word-RAM time on polynomial-bit inputs, where (n) counts the integers.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Subset Sum asks whether some submultiset of (n) positive integers sums to a target. Result 138 gives a uniform randomized classical decision algorithm whose worst-case running time is (O(2^{0.49n})) in the word-RAM model on polynomial-bit inputs. The time bound holds on every random execution, and the success probability is at least (2/3) on every input. Inputs may repeat positive integers, and machine words have (O(n+b)) bits for maximum input bit length (b). A companion low-space variant uses (\operatorname{poly}(n)2^{n/2}) time and only (O(2^{n/5})) writable words of (O(n+b)) bits, with one-sided error: it always rejects unsolvable instances and accepts each solvable instance with probability at least (2/3).</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">This improves the classical meet-in-the-middle bound (\Theta(2^{n/2})) time by an exponential factor (2^{0.01n}), and separates time from space: the low-space variant keeps the (2^{n/2})-scale time while reducing writable space from (2^{n/2}) words to (2^{n/5}) words. The interactive view compares brute force, meet-in-the-middle, the new (2^{0.49n}) bound, and the low-space variant as functions of (n), and reports the resulting time and space savings for the chosen parameters.</p>
+  </section>
+  <div class="controls">
+    <label for="n">n (integers)</label>
+    <input id="n" type="range" min="1" max="80" value="40" step="1">
+    <span class="val" id="nval">40</span>
+    <label for="b">Max bit length b</label>
+    <input id="b" type="range" min="1" max="64" value="16" step="1">
+    <span class="val" id="bval">16</span>
+  </div>
+  <div class="controls">
+    <label for="d">Low-space poly degree d</label>
+    <input id="d" type="range" min="1" max="4" value="2" step="1">
+    <span class="val" id="dval">2</span>
+    <label for="nmax">Plot max n</label>
+    <input id="nmax" type="range" min="20" max="100" value="80" step="5">
+    <span class="val" id="nmaxval">80</span>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">n</div><div class="value" id="sn">—</div></div>
+    <div class="stat"><div class="label">Word bits O(n+b)</div><div class="value" id="sword">—</div></div>
+    <div class="stat"><div class="label">Brute force (2^n)</div><div class="value" id="sbrute">—</div></div>
+    <div class="stat"><div class="label">Meet-in-middle (2^{n/2})</div><div class="value" id="smitm">—</div></div>
+    <div class="stat"><div class="label">New bound (2^{0.49n})</div><div class="value" id="snew">—</div></div>
+    <div class="stat"><div class="label">Low-space time (n^d2^{n/2})</div><div class="value" id="slowt">—</div></div>
+    <div class="stat"><div class="label">MITM space (2^{n/2}) words</div><div class="value" id="smitmspace">—</div></div>
+    <div class="stat"><div class="label">Low-space space (2^{n/5}) words</div><div class="value" id="slowspace">—</div></div>
+    <div class="stat"><div class="label">Speedup MITM/new</div><div class="value" id="sspeed">—</div></div>
+    <div class="stat"><div class="label">Space reduction factor</div><div class="value" id="sred">—</div></div>
+  </div>
+  <div class="legend">
+    <span><span class="swatch" style="background:#ef4444"></span>Brute force (2^n)</span>
+    <span><span class="swatch" style="background:#f59e0b"></span>Meet in the middle (2^{n/2})</span>
+    <span><span class="swatch" style="background:#5eead4"></span>New bound (2^{0.49n})</span>
+    <span><span class="swatch" style="background:#a78bfa"></span>Low-space (\operatorname{poly}(n)2^{n/2})</span>
+    <span><span class="swatch" style="background:#22c55e"></span>Selected (n)</span>
+  </div>
+  <canvas id="c" width="900" height="460"></canvas>
+  <p style="font-size:.85rem;color:var(--muted);margin-top:.5rem">Log-log plot of operation counts versus (n). The selected vertical line marks the chosen input size. Lower curves use fewer operations; space figures are in machine words.</p>
+</div>
+<script>
+const nSlider=document.getElementById('n');
+const bSlider=document.getElementById('b');
+const dSlider=document.getElementById('d');
+const nmaxSlider=document.getElementById('nmax');
+
+const nval=document.getElementById('nval');
+const bval=document.getElementById('bval');
+const dval=document.getElementById('dval');
+const nmaxval=document.getElementById('nmaxval');
+
+const sn=document.getElementById('sn');
+const sword=document.getElementById('sword');
+const sbrute=document.getElementById('sbrute');
+const smitm=document.getElementById('smitm');
+const snew=document.getElementById('snew');
+const slowt=document.getElementById('slowt');
+const smitmspace=document.getElementById('smitmspace');
+const slowspace=document.getElementById('slowspace');
+const sspeed=document.getElementById('sspeed');
+const sred=document.getElementById('sred');
+
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+
+function resizeCanvas(){ canvas.width=Math.max(300,canvas.clientWidth); canvas.height=460; }
+window.addEventListener('resize',function(){ resizeCanvas(); render(); });
+resizeCanvas();
+
+function fmt(x){
+  if(!isFinite(x)) return '∞';
+  if(x>=1e12) return x.toExponential(3);
+  if(x>=1000) return Math.round(x).toLocaleString();
+  return x.toFixed(4);
+}
+
+function bruteTime(n){ return Math.pow(2,n); }
+function mitmTime(n){ return Math.pow(2,n/2); }
+function newTime(n){ return Math.pow(2,0.49*n); }
+function lowTime(n,d){ return Math.pow(Math.max(1,n),d)*Math.pow(2,n/2); }
+function mitmSpace(n){ return Math.pow(2,n/2); }
+function lowSpace(n){ return Math.pow(2,n/5); }
+
+function getParams(){
+  const n=+nSlider.value;
+  const b=+bSlider.value;
+  const d=+dSlider.value;
+  const nmax=+nmaxSlider.value;
+  return {n,b,d,nmax};
+}
+
+function updateStats(){
+  const {n,b,d}=getParams();
+  nval.textContent=n;
+  bval.textContent=b;
+  dval.textContent=d;
+  nmaxval.textContent=(+nmaxSlider.value);
+  const bt=bruteTime(n);
+  const mt=mitmTime(n);
+  const nt=newTime(n);
+  const lt=lowTime(n,d);
+  const ms=mitmSpace(n);
+  const ls=lowSpace(n);
+  sn.textContent=n;
+  sword.textContent=(n+b);
+  sbrute.textContent=fmt(bt);
+  smitm.textContent=fmt(mt);
+  snew.textContent=fmt(nt);
+  slowt.textContent=fmt(lt);
+  smitmspace.textContent=fmt(ms);
+  slowspace.textContent=fmt(ls);
+  sspeed.textContent=(mt/nt).toFixed(3)+'x';
+  sred.textContent=(ms/ls).toFixed(3)+'x';
+}
+
+function render(){
+  updateStats();
+  const {n,d,nmax}=getParams();
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const padL=62,padR=20,padT=30,padB=46;
+  const plotW=W-padL-padR;
+  const plotH=H-padT-padB;
+  const nmin=1;
+  const nmaxv=Math.max(nmax,n*1.1);
+  function xOf(nn){ return padL+(nn-nmin)/(nmaxv-nmin)*plotW; }
+  const vals=[];
+  for(let i=0;i<=200;i++){
+    const nn=nmin+(nmaxv-nmin)*i/200;
+    vals.push(Math.log10(bruteTime(nn)));
+    vals.push(Math.log10(mitmTime(nn)));
+    vals.push(Math.log10(newTime(nn)));
+    vals.push(Math.log10(lowTime(nn,d)));
+  }
+  const ymin=Math.min(...vals);
+  const ymax=Math.max(...vals);
+  const ypad=(ymax-ymin)*0.08;
+  const ylo=ymin-ypad,yhi=ymax+ypad;
+  function yOfLog(v){ return padT+plotH - (v-ylo)/(yhi-ylo)*plotH; }
+
+  ctx.strokeStyle='rgba(159,176,204,0.35)';
+  ctx.lineWidth=1;
+  for(let i=0;i<=6;i++){
+    const x=padL+i*plotW/6;
+    ctx.beginPath(); ctx.moveTo(x,padT); ctx.lineTo(x,padT+plotH); ctx.stroke();
+  }
+  for(let i=0;i<=6;i++){
+    const y=padT+i*plotH/6;
+    ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(padL+plotW,y); ctx.stroke();
+  }
+
+  ctx.fillStyle='rgba(159,176,204,0.9)';
+  ctx.font='12px system-ui';
+  ctx.textAlign='center';
+  for(let i=0;i<=6;i++){
+    const v=nmin+(nmaxv-nmin)*i/6;
+    ctx.fillText(v.toFixed(0), xOf(v), H-padB+18);
+  }
+  ctx.textAlign='right';
+  for(let i=0;i<=6;i++){
+    const v=ylo+(yhi-ylo)*(1-i/6);
+    ctx.fillText('1e'+v.toFixed(1), padL-8, padT+i*plotH/6+4);
+  }
+  ctx.save();
+  ctx.translate(16, padT+plotH/2);
+  ctx.rotate(-Math.PI/2);
+  ctx.textAlign='center';
+  ctx.fillText('operations (log10)',0,0);
+  ctx.restore();
+  ctx.fillText('n', padL+plotW/2, H-8);
+
+  function drawCurve(fn,color,width){
+    ctx.strokeStyle=color;
+    ctx.lineWidth=width;
+    ctx.beginPath();
+    for(let i=0;i<=200;i++){
+      const nn=nmin+(nmaxv-nmin)*i/200;
+      const x=xOf(nn);
+      const y=yOfLog(Math.log10(Math.max(1e-12,fn(nn))));
+      if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+  }
+  drawCurve(nn=>bruteTime(nn), '#ef4444', 2);
+  drawCurve(nn=>mitmTime(nn), '#f59e0b', 2);
+  drawCurve(nn=>newTime(nn), '#5eead4', 2.5);
+  drawCurve(nn=>lowTime(nn,d), '#a78bfa', 2);
+
+  const xk=xOf(n);
+  ctx.strokeStyle='rgba(34,197,94,0.8)';
+  ctx.lineWidth=1.5;
+  ctx.beginPath(); ctx.moveTo(xk,padT); ctx.lineTo(xk,padT+plotH); ctx.stroke();
+}
+
+nSlider.addEventListener('input',render);
+bSlider.addEventListener('input',render);
+dSlider.addEventListener('input',render);
+nmaxSlider.addEventListener('input',render);
+render();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

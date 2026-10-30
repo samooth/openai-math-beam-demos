@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hindman's finite sums and products conjecture (conceptual, result 164)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+select,button,input[type=number]{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+input[type=range]{flex:1 1 180px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+.legend{display:flex;gap:1rem;align-items:center;font-size:.85rem;color:var(--muted);margin:.5rem 0;flex-wrap:wrap}
+.swatch{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:.3rem;vertical-align:middle}
+.grid{display:flex;flex-wrap:wrap;gap:.35rem;margin:1rem 0}
+.chip{display:inline-flex;align-items:center;justify-content:center;min-width:2.2rem;height:2.2rem;padding:0 .45rem;border-radius:8px;font-family:ui-monospace,monospace;font-size:.95rem;color:#fff;border:2px solid transparent}
+.chip.found{border-color:#fff;box-shadow:0 0 0 2px var(--accent)}
+.table{width:100%;border-collapse:collapse;font-size:.9rem}
+.table th,.table td{padding:.35rem .5rem;border-bottom:1px solid var(--border);text-align:left}
+.table th{color:var(--muted);font-weight:600}
+.mono{font-family:ui-monospace,monospace}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Hindman's finite sums and products conjecture (conceptual, result 164)</h1>
+  <p>For a finite set (A=\{a_1<\cdots<a_m\}\), write \(\mathrm{FS}(A)\) for its nonempty subset sums and \(\mathrm{FP}(A)\) for its nonempty subset products. The demo colors the positive integers with \(r\) colors and searches for \(A\) of size \(m\) such that \(\mathrm{FS}(A)\cup\mathrm{FP}(A)\) is monochromatic.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Hindman's finite sums and products conjecture asserts that every finite coloring of the positive integers contains, for any prescribed finite size (m), a set (A) of (m) distinct positive integers whose nonempty subset sums and nonempty subset products all receive one common color. Result 164 proves this: for every coloring (\chi:\mathbb N\to[r]) and every (m\ge1), there are (a_1<\cdots<a_m\) and a color \(c\) with \(\chi(\sum_{j\in J}a_j)=\chi(\prod_{j\in J}a_j)=c\) for all nonempty \(J\subseteq[m]\). The elements can be chosen with strong separation \(a_1>R\) and \(a_d>R(\sum_{k<d}a_k+\prod_{k<d}a_k)^D\), which also makes all \(2^m-1\) subset sums and \(2^m-1\) subset products distinct except for the shared singletons.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">This resolves the simultaneous additive--multiplicative Ramsey problem: unlike the separate sums or products theorems, a single color must survive both operations at once. It also shows that arbitrary finite colorings cannot avoid large monochromatic mixed arithmetic configurations, and the separation clause eliminates collisions between expressions, yielding (2(2^m-1)-m) distinct integers in one color. The result connects Ramsey theory, nilsequence prediction, and alignment of additive and multiplicative scales.</p>
+  </section>
+  <div class="controls">
+    <label for="r">Colors (r)</label>
+    <select id="r">
+      <option value="2">2</option>
+      <option value="3">3</option>
+      <option value="4">4</option>
+    </select>
+    <label for="m">Size (m)</label>
+    <select id="m">
+      <option value="2">2</option>
+      <option value="3" selected>3</option>
+      <option value="4">4</option>
+    </select>
+    <label for="N">Range (N)</label>
+    <input id="N" type="range" min="12" max="60" value="30" step="1">
+    <span class="val" id="Nval">30</span>
+  </div>
+  <div class="controls">
+    <label for="seed">Seed</label>
+    <input id="seed" type="number" value="1" min="1" max="999999" style="width:7rem">
+    <button id="find">Find set</button>
+    <button id="reseed">Reseed</button>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Range</div><div class="value" id="sN">—</div></div>
+    <div class="stat"><div class="label">Colors</div><div class="value" id="sr">—</div></div>
+    <div class="stat"><div class="label">Size</div><div class="value" id="sm">—</div></div>
+    <div class="stat"><div class="label">Found set (A)</div><div class="value" id="sA">—</div></div>
+    <div class="stat"><div class="label">Common color</div><div class="value" id="sc">—</div></div>
+    <div class="stat"><div class="label">Expressions</div><div class="value" id="se">—</div></div>
+    <div class="stat"><div class="label">Distinct union</div><div class="value" id="sd">—</div></div>
+    <div class="stat"><div class="label">Search time</div><div class="value" id="st">—</div></div>
+    <div class="stat"><div class="label">Status</div><div class="value" id="ss">—</div></div>
+  </div>
+  <div class="legend">
+    <span><span class="swatch" style="background:#ef4444"></span>Color 0</span>
+    <span><span class="swatch" style="background:#3b82f6"></span>Color 1</span>
+    <span><span class="swatch" style="background:#22c55e"></span>Color 2</span>
+    <span><span class="swatch" style="background:#f59e0b"></span>Color 3</span>
+    <span><span class="swatch" style="background:#ffffff;border:1px solid #999"></span>Found (a_i)</span>
+  </div>
+  <div class="grid" id="grid"></div>
+  <div id="exprWrap"></div>
+</div>
+<script>
+const palette=['#ef4444','#3b82f6','#22c55e','#f59e0b'];
+const rSel=document.getElementById('r');
+const mSel=document.getElementById('m');
+const NSlider=document.getElementById('N');
+const seedInput=document.getElementById('seed');
+const Nval=document.getElementById('Nval');
+const sN=document.getElementById('sN');
+const sr=document.getElementById('sr');
+const sm=document.getElementById('sm');
+const sA=document.getElementById('sA');
+const sc=document.getElementById('sc');
+const se=document.getElementById('se');
+const sd=document.getElementById('sd');
+const st=document.getElementById('st');
+const ss=document.getElementById('ss');
+const grid=document.getElementById('grid');
+const exprWrap=document.getElementById('exprWrap');
+
+let R=2, M=3, SEED=1, DISPLAY_LIMIT=30;
+let PLANT_A=[2,4,9];
+let PLANT_EXPR=new Set();
+let found=null;
+let searchTime=0;
+
+function rebuildPlant(){
+  const base=[2,4,9,20];
+  PLANT_A=base.slice(0,M);
+  PLANT_EXPR=new Set();
+  const L=PLANT_A.length;
+  for(let mask=1;mask<(1<<L);mask++){
+    let sum=0,prod=1;
+    for(let i=0;i<L;i++) if(mask&(1<<i)){sum+=PLANT_A[i];prod*=PLANT_A[i];}
+    PLANT_EXPR.add(sum); PLANT_EXPR.add(prod);
+  }
+}
+
+function hashColor(n){
+  let x=n+0x9e3779b9+SEED*12345;
+  x=Math.imul(x^(x>>>16),0x85ebca6b);
+  x=Math.imul(x^(x>>>13),0xc2b2ae35);
+  x^=x>>>16;
+  return (x>>>0)%R;
+}
+
+function colorOf(n){
+  if(PLANT_EXPR.has(n)) return 0;
+  return hashColor(n);
+}
+
+function findSet(m,limit){
+  const chosen=[];
+  let target=null;
+  let result=null;
+  function subsetsChosen(){
+    const res=[];
+    const k=chosen.length;
+    for(let mask=0;mask<(1<<k);mask++){
+      let sum=0,prod=1;
+      for(let i=0;i<k;i++) if(mask&(1<<i)){sum+=chosen[i];prod*=chosen[i];}
+      res.push({sum:sum,prod:prod});
+    }
+    return res;
+  }
+  function dfs(start){
+    if(chosen.length===m){result=chosen.slice();return true;}
+    for(let x=start;x<=limit;x++){
+      const c=chosen.length===0?colorOf(x):target;
+      if(colorOf(x)!==c) continue;
+      const subs=subsetsChosen();
+      let ok=true;
+      for(let i=0;i<subs.length;i++){
+        const sum=subs[i].sum+x;
+        const prod=subs[i].prod*x;
+        if(colorOf(sum)!==c||colorOf(prod)!==c){ok=false;break;}
+      }
+      if(!ok) continue;
+      if(chosen.length===0) target=c;
+      chosen.push(x);
+      if(dfs(x+1)) return true;
+      chosen.pop();
+      if(chosen.length===0) target=null;
+    }
+    return false;
+  }
+  const t0=performance.now();
+  const ok=dfs(1);
+  const t1=performance.now();
+  return {found:ok?result:null,time:t1-t0};
+}
+
+function expressions(A){
+  const res=[];
+  const L=A.length;
+  for(let mask=1;mask<(1<<L);mask++){
+    let sum=0,prod=1,elems=[];
+    for(let i=0;i<L;i++) if(mask&(1<<i)){sum+=A[i];prod*=A[i];elems.push(A[i]);}
+    res.push({mask:mask,elems:elems,sum:sum,prod:prod});
+  }
+  return res;
+}
+
+function runSearch(){
+  R=+rSel.value;
+  M=+mSel.value;
+  SEED=+seedInput.value||1;
+  rebuildPlant();
+  const userN=+NSlider.value;
+  Nval.textContent=userN;
+  const limit=Math.max(userN,40,Math.max(...PLANT_A));
+  let res=findSet(M,limit);
+  if(!res.found){
+    const res2=findSet(M,200);
+    if(res2.found) res=res2;
+  }
+  found=res.found;
+  searchTime=res.time;
+  const displayLimit=Math.max(userN,40,found?Math.max(...found):0);
+  DISPLAY_LIMIT=displayLimit;
+  render();
+}
+
+function render(){
+  sr.textContent=R;
+  sm.textContent=M;
+  sN.textContent=DISPLAY_LIMIT;
+  st.textContent=searchTime.toFixed(1)+' ms';
+  const aset=new Set(found||[]);
+  grid.innerHTML='';
+  for(let n=1;n<=DISPLAY_LIMIT;n++){
+    const chip=document.createElement('span');
+    chip.className='chip'+(aset.has(n)?' found':'');
+    chip.textContent=n;
+    chip.style.background=palette[colorOf(n)%palette.length];
+    grid.appendChild(chip);
+  }
+  if(!found){
+    sA.textContent='none';
+    sc.textContent='—';
+    se.textContent='—';
+    sd.textContent='—';
+    ss.textContent='No set found';
+    ss.className='value bad';
+    exprWrap.innerHTML='<p style="color:var(--muted)">Increase the range or change parameters.</p>';
+    return;
+  }
+  const A=found;
+  const c=colorOf(A[0]);
+  const subs=expressions(A);
+  const sums=new Set(subs.map(e=>e.sum));
+  const prods=new Set(subs.map(e=>e.prod));
+  const union=new Set([...sums,...prods]);
+  sA.textContent='{'+A.join(', ')+'}';
+  sc.textContent=c;
+  sc.className='value';
+  se.textContent=subs.length+' (sums+products)';
+  sd.textContent=union.size;
+  ss.textContent='Monochromatic set found';
+  ss.className='value ok';
+  let html='<table class="table"><thead><tr><th>Subset</th><th>Sum</th><th>Product</th><th>Sum color</th><th>Product color</th></tr></thead><tbody>';
+  for(let i=0;i<subs.length;i++){
+    const e=subs[i];
+    html+='<tr><td class="mono">{'+e.elems.join(', ')+'}</td><td class="mono">'+e.sum+'</td><td class="mono">'+e.prod+'</td><td class="mono">'+colorOf(e.sum)+'</td><td class="mono">'+colorOf(e.prod)+'</td></tr>';
+  }
+  html+='</tbody></table>';
+  exprWrap.innerHTML=html;
+}
+
+document.getElementById('find').addEventListener('click',runSearch);
+document.getElementById('reseed').addEventListener('click',function(){ seedInput.value=Math.floor(Math.random()*999999)+1; runSearch(); });
+rSel.addEventListener('change',runSearch);
+mSel.addEventListener('change',runSearch);
+NSlider.addEventListener('input',function(){ Nval.textContent=NSlider.value; });
+NSlider.addEventListener('change',runSearch);
+seedInput.addEventListener('change',runSearch);
+runSearch();
+</script>
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ultraflat Littlewood polynomials (conceptual, result 076)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range]{flex:1 1 220px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:440px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+select{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text)}
+.stat .value.ok{color:var(--good)} .stat .value.warn{color:var(--warn)} .stat .value.bad{color:var(--bad)}
+.toggle{display:inline-flex;align-items:center;gap:.4rem}
+.bits{font-family:ui-monospace,monospace;font-size:.85rem;color:var(--muted);word-break:break-all;background:var(--chip);border:1px solid var(--border);border-radius:8px;padding:.6rem;margin:.5rem 0;max-height:90px;overflow:auto}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Ultraflat Littlewood polynomials (conceptual, result 076)</h1>
+  <p>A real Littlewood polynomial is (P_N(z)=\sum_{k=0}^{N-1}\varepsilon_k z^k) with (\varepsilon_k\in\{-1,1\}). Ultraflatness means (|P_N(z)|=(1+o(1))\sqrt N) uniformly on the unit circle, including the real endpoints (z=\pm1). Explore sign patterns, flatness, and the resulting (unbounded) binary merit factors.</p>
+
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Proves that for every sufficiently large \(N\) there exist real Littlewood polynomials of degree \(N-1\) with coefficients in \(\{-1,1\}\) whose modulus satisfies \(\max_{|z|=1}|P_N(z)|\le (1+\eta)\sqrt N\) for any fixed \(\eta>0\). Hence real Littlewood polynomials are ultraflat on the entire unit circle, including \(z=\pm1\). A single family can be chosen for all lengths with \(L^p\)-flatness for every fixed \(p>0). The associated binary merit factors are unbounded, disproving Turyn's bounded-merit-factor conjecture. The statements are existential and give no effective rate or signing algorithm.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Ultraflat Littlewood polynomials settle the optimal uniform size of (\pm1)-coefficient polynomials on the unit circle and show that binary sequences can have arbitrarily large merit factors. This matters for aperiodic autocorrelation, radar/sonar pulse design, and communication sequences, where high merit factor means low sidelobe energy. It also closes a classical extremal problem (Littlewood's flatness question) and motivates constructive or algorithmic searches for near-optimal sign patterns.</p>
+  </section>
+
+  <div class="controls">
+    <label for="N">Length N</label>
+    <input id="N" type="range" min="16" max="256" value="64" step="8">
+    <span class="val" id="Nval">64</span>
+    <label for="mode">Pattern</label>
+    <select id="mode">
+      <option value="random" selected>Random signs</option>
+      <option value="alt">Alternating</option>
+      <option value="allpos">All +1</option>
+      <option value="rs">Rudin–Shapiro (N power of 2)</option>
+    </select>
+    <label for="samples">Samples</label>
+    <input id="samples" type="range" min="256" max="1024" value="512" step="256">
+    <span class="val" id="Sval">512</span>
+    <label for="seed">Seed</label>
+    <input id="seed" type="range" min="0" max="999" value="1" step="1">
+    <span class="val" id="Seedval">1</span>
+    <button id="regen">Regenerate</button>
+    <button id="mutate">Mutate (flip 5)</button>
+    <button id="localsearch">Local search (reduce max)</button>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="label">N</div><div class="value" id="stN">—</div></div>
+    <div class="stat"><div class="label">(\sqrt N)</div><div class="value" id="stSqrt">—</div></div>
+    <div class="stat"><div class="label">max (|P|/\sqrt N)</div><div class="value" id="stMax">—</div></div>
+    <div class="stat"><div class="label">min (|P|/\sqrt N)</div><div class="value" id="stMin">—</div></div>
+    <div class="stat"><div class="label">mean (|P|/\sqrt N)</div><div class="value" id="stMean">—</div></div>
+    <div class="stat"><div class="label">std ratio</div><div class="value" id="stStd">—</div></div>
+    <div class="stat"><div class="label">Merit factor F</div><div class="value" id="stMF">—</div></div>
+    <div class="stat"><div class="label">max (|C_k|/N)</div><div class="value" id="stAC">—</div></div>
+  </div>
+  <canvas id="c" width="900" height="440"></canvas>
+  <div class="bits" id="bits"></div>
+</div>
+
+<script>
+function mulberry32(a){ a|=0; return function(){ a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+
+const Nslider=document.getElementById('N');
+const modeSel=document.getElementById('mode');
+const samplesSlider=document.getElementById('samples');
+const seedSlider=document.getElementById('seed');
+const regenBtn=document.getElementById('regen');
+const mutateBtn=document.getElementById('mutate');
+const lsBtn=document.getElementById('localsearch');
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+
+const Nval=document.getElementById('Nval');
+const Sval=document.getElementById('Sval');
+const Seedval=document.getElementById('Seedval');
+const stN=document.getElementById('stN');
+const stSqrt=document.getElementById('stSqrt');
+const stMax=document.getElementById('stMax');
+const stMin=document.getElementById('stMin');
+const stMean=document.getElementById('stMean');
+const stStd=document.getElementById('stStd');
+const stMF=document.getElementById('stMF');
+const stAC=document.getElementById('stAC');
+const bitsEl=document.getElementById('bits');
+
+let coeffs=[];
+
+function isPow2(n){ return n>0 && (n&(n-1))===0; }
+
+function rudinShapiro(n){
+  // length n power of 2
+  let a=[1];
+  // iterate
+  let cur=[1];
+  while(cur.length < n){
+    const next=[];
+    for(let x of cur){ next.push(x); next.push(x); }
+    // Actually RS: r_{2m}=r_m, r_{2m+1}=(-1)^m r_m? Use standard via recurrence
+    cur=next;
+    if(cur.length>=n) break;
+  }
+  // fallback: generate using known recurrence more simply
+  const res=new Int8Array(n);
+  for(let i=0;i<n;i++){
+    // Rudin-Shapiro: count of (11) blocks in binary expansion of i mod 2? parity
+    let x=i, cnt=0;
+    while(x>0){ if((x&3)===3) cnt++; x>>=1; }
+    res[i]= (cnt%2===0)?1:-1;
+  }
+  return res;
+}
+
+function generate(){
+  const N=+Nslider.value;
+  const mode=modeSel.value;
+  const seed=+seedSlider.value;
+  const rng=mulberry32(seed*9973+1);
+  const c=new Int8Array(N);
+  if(mode==='random'){
+    for(let i=0;i<N;i++) c[i]= rng()<0.5 ? -1 : 1;
+  } else if(mode==='alt'){
+    for(let i=0;i<N;i++) c[i]= (i%2===0)?1:-1;
+  } else if(mode==='allpos'){
+    for(let i=0;i<N;i++) c[i]=1;
+  } else if(mode==='rs'){
+    const r=rudinShapiro(N);
+    for(let i=0;i<N;i++) c[i]=r[i];
+  }
+  coeffs=c;
+}
+
+function evaluate(M){
+  const N=coeffs.length;
+  const sqrtN=Math.sqrt(N);
+  const mag=new Float64Array(M);
+  let sum=0, sumsq=0;
+  for(let t=0;t<M;t++){
+    const th=2*Math.PI*t/M;
+    let re=0, im=0;
+    for(let k=0;k<N;k++){
+      const ang=k*th;
+      re += coeffs[k]*Math.cos(ang);
+      im += coeffs[k]*Math.sin(ang);
+    }
+    const m=Math.hypot(re,im)/sqrtN;
+    mag[t]=m;
+    sum+=m; sumsq+=m*m;
+  }
+  let mx=-Infinity, mn=Infinity;
+  for(let t=0;t<M;t++){ if(mag[t]>mx)mx=mag[t]; if(mag[t]<mn)mn=mag[t]; }
+  const mean=sum/M;
+  const variance=sumsq/M-mean*mean;
+  const std=Math.sqrt(Math.max(0,variance));
+  // autocorrelation
+  let acSumSq=0, acMax=0;
+  for(let k=1;k<N;k++){
+    let s=0;
+    for(let j=0;j<N-k;j++) s += coeffs[j]*coeffs[j+k];
+    acSumSq += s*s;
+    if(Math.abs(s)>acMax) acMax=Math.abs(s);
+  }
+  const MF = acSumSq>0 ? (N*N)/(2*acSumSq) : Infinity;
+  return {mag, M, mx, mn, mean, std, MF, acMax:acMax/N};
+}
+
+function maxRatioOnly(){
+  const N=coeffs.length;
+  const sqrtN=Math.sqrt(N);
+  const M=256;
+  let mx=0;
+  for(let t=0;t<M;t++){
+    const th=2*Math.PI*t/M;
+    let re=0, im=0;
+    for(let k=0;k<N;k++){ const ang=k*th; re+=coeffs[k]*Math.cos(ang); im+=coeffs[k]*Math.sin(ang);}
+    const m=Math.hypot(re,im)/sqrtN;
+    if(m>mx) mx=m;
+  }
+  return mx;
+}
+
+function draw(res){
+  const W=canvas.width, H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const M=res.M;
+  const mag=res.mag;
+  const pad=40;
+  const plotW=W-pad*2, plotH=H-pad*2;
+  // axes
+  ctx.strokeStyle='#9fb0cc'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(pad,H-pad); ctx.lineTo(W-pad,H-pad); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(pad,pad); ctx.lineTo(pad,H-pad); ctx.stroke();
+  // horizontal target y=1
+  const y1 = H-pad - (1/( (res.mx>1.5?res.mx*1.1:2) ))*plotH; // scale
+  // choose scale based on max
+  const ymax = Math.max(2, res.mx*1.15);
+  function yOf(v){ return H-pad - (v/ymax)*plotH; }
+  // target line
+  ctx.strokeStyle='rgba(34,197,94,0.6)'; ctx.setLineDash([6,4]);
+  ctx.beginPath(); ctx.moveTo(pad,yOf(1)); ctx.lineTo(W-pad,yOf(1)); ctx.stroke();
+  ctx.setLineDash([]);
+  // plot
+  ctx.strokeStyle='#5eead4'; ctx.lineWidth=2;
+  ctx.beginPath();
+  for(let t=0;t<M;t++){
+    const x=pad + (t/(M-1))*plotW;
+    const y=yOf(mag[t]);
+    if(t===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  }
+  ctx.stroke();
+  // labels
+  ctx.fillStyle='#9fb0cc'; ctx.font='12px system-ui'; ctx.textAlign='left';
+  ctx.fillText('θ', W/2, H-8);
+  ctx.save(); ctx.translate(12,H/2); ctx.rotate(-Math.PI/2); ctx.fillText('|P|/√N',0,0); ctx.restore();
+  ctx.textAlign='right';
+  ctx.fillText(ymax.toFixed(2), pad-4, pad+10);
+  ctx.fillText('0', pad-4, H-pad+4);
+  ctx.fillStyle='#22c55e'; ctx.textAlign='left';
+  ctx.fillText('target 1', pad+4, yOf(1)-4);
+}
+
+function updateStats(res){
+  const N=coeffs.length;
+  stN.textContent=N;
+  stSqrt.textContent=Math.sqrt(N).toFixed(3);
+  stMax.textContent=res.mx.toFixed(3);
+  stMin.textContent=res.mn.toFixed(3);
+  stMean.textContent=res.mean.toFixed(3);
+  stStd.textContent=res.std.toFixed(3);
+  stMF.textContent=Number.isFinite(res.MF)?res.MF.toFixed(2):'∞';
+  stAC.textContent=res.acMax.toFixed(3);
+  // color max
+  stMax.className='value '+(res.mx<=1.2?'ok':(res.mx<=1.5?'warn':'bad'));
+}
+
+function updateBits(){
+  const s=coeffs.length<=80? Array.from(coeffs).join(' ') : Array.from(coeffs).slice(0,80).join(' ')+' …';
+  bitsEl.textContent='coeffs (±1): '+s;
+}
+
+function render(){
+  const N=+Nslider.value;
+  if(coeffs.length!==N) generate();
+  const M=+samplesSlider.value;
+  const res=evaluate(M);
+  Nval.textContent=N;
+  Sval.textContent=M;
+  Seedval.textContent=seedSlider.value;
+  updateStats(res);
+  updateBits();
+  draw(res);
+}
+
+Nslider.addEventListener('input', ()=>{ coeffs=[]; generate(); render(); });
+modeSel.addEventListener('change', ()=>{ coeffs=[]; generate(); render(); });
+samplesSlider.addEventListener('input', render);
+seedSlider.addEventListener('input', ()=>{ coeffs=[]; generate(); render(); });
+regenBtn.addEventListener('click', ()=>{ seedSlider.value=(+seedSlider.value+1)%1000; coeffs=[]; generate(); render(); });
+mutateBtn.addEventListener('click', ()=>{
+  const rng=mulberry32(Math.random()*1e9);
+  for(let i=0;i<5;i++){ const idx=Math.floor(rng()*coeffs.length); coeffs[idx]*=-1; }
+  render();
+});
+lsBtn.addEventListener('click', ()=>{
+  const rng=mulberry32(42);
+  let cur=maxRatioOnly();
+  for(let it=0;it<200;it++){
+    const idx=Math.floor(rng()*coeffs.length);
+    coeffs[idx]*=-1;
+    const nr=maxRatioOnly();
+    if(nr < cur-1e-9){ cur=nr; } else { coeffs[idx]*=-1; }
+  }
+  render();
+});
+
+function resizeCanvas(){ canvas.width=Math.max(300,canvas.clientWidth); canvas.height=440; render(); }
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+generate();
+render();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Finite lattice representation and undecidability (conceptual, result 206)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+select,button{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+input[type=range]{flex:1 1 180px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:320px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block;margin:.5rem 0}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button:hover{filter:brightness(1.1)}
+table{width:100%;border-collapse:collapse;font-size:.9rem}
+th,td{padding:.4rem .5rem;border-bottom:1px solid var(--border);text-align:center}
+th{color:var(--muted);font-weight:600}
+td.labelcell{text-align:left;font-family:ui-monospace,monospace}
+.legend{display:flex;gap:1rem;align-items:center;font-size:.85rem;color:var(--muted);margin:.5rem 0;flex-wrap:wrap}
+.swatch{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:.3rem;vertical-align:middle}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Finite lattice representation and undecidability (conceptual, result 206)</h1>
+  <p>A finite lattice is representable as the congruence lattice of a finite algebra iff it admits a finite nonempty colored-graph witness. The demo searches small witnesses for selected lattices.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">The finite lattice representation problem asks which finite lattices occur as full congruence lattices of finite algebras. Result 206 proves the colored-graph criterion: a finite nonempty lattice is representable exactly when it has a finite nonempty graph witness whose edge colors are lattice elements. The colors satisfy symmetry, ( \bot ) iff equality, a triangle inequality ( \mathrm{color}(x,y)\le \mathrm{color}(x,z)\sqcup \mathrm{color}(z,y) ), separation of non-comparable bounds, and a connectivity condition for seeds. The formalization covers this equivalence; the paper's undecidability and subgroup-interval conclusions lie outside it.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">This reframes representability as the existence of a finite combinatorial witness, connecting universal algebra with graph coloring and lattice theory. It also implies undecidability: no algorithm decides whether an arbitrary finite lattice has such a representation, or whether it is a full subgroup interval of a finite group. The interactive search below enumerates colored graphs on a small vertex set and checks the witness axioms for selected lattices.</p>
+  </section>
+  <div class="controls">
+    <label for="lat">Lattice</label>
+    <select id="lat">
+      <option value="chain4">Chain C4</option>
+      <option value="b2">Boolean B2 (diamond)</option>
+      <option value="m3">Modular M3</option>
+      <option value="n5">Pentagon N5</option>
+    </select>
+    <label for="n">Vertices n</label>
+    <input id="n" type="range" min="2" max="4" value="3" step="1">
+    <span class="val" id="nval">3</span>
+    <button id="search">Search witnesses</button>
+    <button id="reset">Reset</button>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Lattice size</div><div class="value" id="slatsize">—</div></div>
+    <div class="stat"><div class="label">Vertices</div><div class="value" id="sverts">—</div></div>
+    <div class="stat"><div class="label">Search space</div><div class="value" id="sspace">—</div></div>
+    <div class="stat"><div class="label">Structural witnesses</div><div class="value" id="sstruct">—</div></div>
+    <div class="stat"><div class="label">Full witnesses</div><div class="value" id="sfull">—</div></div>
+    <div class="stat"><div class="label">Verdict</div><div class="value" id="sverdict">—</div></div>
+    <div class="stat"><div class="label">Status</div><div class="value" id="sstatus">ready</div></div>
+  </div>
+  <canvas id="gc" width="420" height="320"></canvas>
+  <canvas id="lc" width="420" height="320"></canvas>
+  <table id="wtable">
+    <thead><tr><th></th><th>V0</th><th>V1</th><th>V2</th><th>V3</th></tr></thead>
+    <tbody></tbody>
+  </table>
+  <p id="info" style="font-size:.9rem;color:var(--muted);margin-top:.5rem">Structural witnesses satisfy symmetry, bottom-iff-equality, triangle inequality, and separation. Full witnesses also satisfy the connectivity axiom. A found full witness implies representability of the selected lattice by the criterion.</p>
+</div>
+<script>
+const LATTICES = {
+  chain4: { name:'Chain C4', elems:['⊥','a','b','⊤'], pos:[[0.5,0.9],[0.5,0.63],[0.5,0.37],[0.5,0.1]], join:[[0,1,2,3],[1,1,2,3],[2,2,2,3],[3,3,3,3]] },
+  b2: { name:'Boolean B2', elems:['⊥','a','b','⊤'], pos:[[0.5,0.9],[0.2,0.5],[0.8,0.5],[0.5,0.1]], join:[[0,1,2,3],[1,1,3,3],[2,3,2,3],[3,3,3,3]] },
+  m3: { name:'Modular M3', elems:['⊥','a','b','c','⊤'], pos:[[0.5,0.9],[0.2,0.5],[0.5,0.5],[0.8,0.5],[0.5,0.1]], join:[[0,1,2,3,4],[1,1,4,4,4],[2,4,2,4,4],[3,4,4,3,4],[4,4,4,4,4]] },
+  n5: { name:'Pentagon N5', elems:['⊥','a','b','c','⊤'], pos:[[0.5,0.9],[0.3,0.62],[0.3,0.34],[0.78,0.58],[0.5,0.1]], join:[[0,1,2,3,4],[1,1,2,4,4],[2,2,2,4,4],[3,4,4,3,4],[4,4,4,4,4]] }
+};
+
+const PALETTE=['#9fb0cc','#5eead4','#f59e0b','#ef4444','#a78bfa','#f472b6'];
+
+const latSel=document.getElementById('lat');
+const nSlider=document.getElementById('n');
+const nval=document.getElementById('nval');
+const searchBtn=document.getElementById('search');
+const resetBtn=document.getElementById('reset');
+const slatsize=document.getElementById('slatsize');
+const sverts=document.getElementById('sverts');
+const sspace=document.getElementById('sspace');
+const sstruct=document.getElementById('sstruct');
+const sfull=document.getElementById('sfull');
+const sverdict=document.getElementById('sverdict');
+const sstatus=document.getElementById('sstatus');
+const gc=document.getElementById('gc');
+const gctx=gc.getContext('2d');
+const lc=document.getElementById('lc');
+const lctx=lc.getContext('2d');
+const wtable=document.getElementById('wtable');
+
+function leq(L,a,b){ return L.join[a][b]===b; }
+function lt(L,a,b){ return leq(L,a,b) && a!==b; }
+function joinIdx(L,a,b){ return L.join[a][b]; }
+
+function cloneMat(C){ return C.map(r=>r.slice()); }
+
+function searchWitnesses(L,n){
+  const m=L.elems.length;
+  const choices=[];
+  for(let c=1;c<m;c++) choices.push(c);
+  const pairs=[];
+  for(let i=0;i<n;i++) for(let j=i+1;j<n;j++) pairs.push([i,j]);
+  const C=Array.from({length:n},()=>Array(n).fill(0));
+  let structural=0, full=0;
+  let firstStruct=null, firstFull=null;
+  const total=Math.pow(choices.length, pairs.length);
+
+  function triangle(){
+    for(let i=0;i<n;i++) for(let j=0;j<n;j++) for(let k=0;k<n;k++){
+      const lhs=C[i][j];
+      const rhs=joinIdx(L, C[i][k], C[k][j]);
+      if(!leq(L,lhs,rhs)) return false;
+    }
+    return true;
+  }
+
+  function separation(){
+    for(let a=0;a<m;a++) for(let b=0;b<m;b++){
+      if(leq(L,a,b)) continue;
+      let ok=false;
+      for(let i=0;i<n && !ok;i++) for(let j=0;j<n;j++){
+        const col=C[i][j];
+        if(leq(L,col,a) && !leq(L,col,b)){ ok=true; break; }
+      }
+      if(!ok) return false;
+    }
+    return true;
+  }
+
+  function connectivity(){
+    const edges=[];
+    for(let i=0;i<n;i++) for(let j=i+1;j<n;j++) edges.push([i,j]);
+    const ec=edges.length;
+    for(let mask=1;mask<(1<<ec);mask++){
+      const seeds=[];
+      let sup=0;
+      for(let e=0;e<ec;e++){
+        if(mask & (1<<e)){
+          const u=edges[e][0], v=edges[e][1];
+          seeds.push([u,v]); seeds.push([v,u]);
+          sup=joinIdx(L,sup,C[u][v]);
+        }
+      }
+      const R=Array.from({length:n},()=>Array(n).fill(false));
+      function enumP(pos,p){
+        if(pos===n){
+          let adm=true;
+          for(let a=0;a<n && adm;a++) for(let b=0;b<n;b++){
+            if(!leq(L,C[p[a]][p[b]],C[a][b])){ adm=false; break; }
+          }
+          if(!adm) return;
+          for(const [u,v] of seeds) R[p[u]][p[v]]=true;
+          return;
+        }
+        for(let v=0;v<n;v++){ p[pos]=v; enumP(pos+1,p); }
+      }
+      enumP(0,[]);
+      const parent=Array.from({length:n},(_,i)=>i);
+      function find(x){ while(parent[x]!==x){ parent[x]=parent[parent[x]]; x=parent[x]; } return x; }
+      function union(x,y){ const rx=find(x), ry=find(y); if(rx!==ry) parent[rx]=ry; }
+      for(let x=0;x<n;x++) for(let y=0;y<n;y++) if(R[x][y] || R[y][x]) union(x,y);
+      for(let a=0;a<n;a++) for(let b=0;b<n;b++){
+        if(leq(L,C[a][b],sup)){
+          if(find(a)!==find(b)) return false;
+        }
+      }
+    }
+    return true;
+  }
+
+  function rec(idx){
+    if(idx===pairs.length){
+      if(!triangle()) return;
+      if(!separation()) return;
+      structural++;
+      if(!firstStruct) firstStruct=cloneMat(C);
+      if(connectivity()){
+        full++;
+        if(!firstFull) firstFull=cloneMat(C);
+      }
+      return;
+    }
+    const [i,j]=pairs[idx];
+    for(const col of choices){
+      C[i][j]=col; C[j][i]=col;
+      rec(idx+1);
+    }
+    C[i][j]=0; C[j][i]=0;
+  }
+  rec(0);
+  return {total,structural,full,firstStruct,firstFull};
+}
+
+function renderStats(res,L,n){
+  slatsize.textContent=L.elems.length;
+  sverts.textContent=n;
+  sspace.textContent=res.total.toLocaleString();
+  sstruct.textContent=res.structural.toLocaleString();
+  sfull.textContent=res.full.toLocaleString();
+  if(res.full>0){
+    sverdict.textContent='Representable (witness found)';
+    sverdict.style.color='var(--good)';
+  } else if(res.structural>0){
+    sverdict.textContent='Structural only (no full witness up to n)';
+    sverdict.style.color='var(--warn)';
+  } else {
+    sverdict.textContent='No witness up to n vertices';
+    sverdict.style.color='var(--bad)';
+  }
+}
+
+function renderWitness(C,L,n){
+  const thead=wtable.querySelector('thead');
+  thead.innerHTML='';
+  const hr=document.createElement('tr');
+  const th0=document.createElement('th'); th0.textContent=''; hr.appendChild(th0);
+  for(let j=0;j<n;j++){ const th=document.createElement('th'); th.textContent='V'+j; hr.appendChild(th); }
+  for(let j=n;j<4;j++){ const th=document.createElement('th'); th.textContent=''; hr.appendChild(th); }
+  thead.appendChild(hr);
+  const tbody=wtable.querySelector('tbody');
+  tbody.innerHTML='';
+  if(!C){
+    const tr=document.createElement('tr');
+    const td=document.createElement('td'); td.colSpan=5; td.textContent='No witness found'; tr.appendChild(td); tbody.appendChild(tr);
+    return;
+  }
+  for(let i=0;i<n;i++){
+    const tr=document.createElement('tr');
+    const td0=document.createElement('td'); td0.className='labelcell'; td0.textContent='V'+i; tr.appendChild(td0);
+    for(let j=0;j<n;j++){
+      const td=document.createElement('td');
+      if(i===j){ td.textContent='⊥'; }
+      else { td.textContent=L.elems[C[i][j]]; td.style.color=PALETTE[C[i][j]%PALETTE.length]; }
+      tr.appendChild(td);
+    }
+    for(let j=n;j<4;j++){ const td=document.createElement('td'); td.textContent=''; tr.appendChild(td); }
+    tbody.appendChild(tr);
+  }
+}
+
+function renderGraph(C,L,n){
+  gctx.clearRect(0,0,gc.width,gc.height);
+  gctx.fillStyle='#1f2a44';
+  gctx.fillRect(0,0,gc.width,gc.height);
+  if(!C){
+    gctx.fillStyle='#9fb0cc';
+    gctx.font='14px system-ui';
+    gctx.textAlign='center';
+    gctx.fillText('No witness to draw', gc.width/2, gc.height/2);
+    return;
+  }
+  const cx=gc.width/2, cy=gc.height/2, r=Math.min(cx,cy)-40;
+  const pos=[];
+  for(let i=0;i<n;i++){
+    const ang=-Math.PI/2 + (2*Math.PI*i)/n;
+    pos.push({x:cx+r*Math.cos(ang), y:cy+r*Math.sin(ang)});
+  }
+  gctx.textAlign='center';
+  gctx.font='12px system-ui';
+  for(let i=0;i<n;i++) for(let j=i+1;j<n;j++){
+    gctx.strokeStyle=PALETTE[C[i][j]%PALETTE.length];
+    gctx.lineWidth=3;
+    gctx.beginPath();
+    gctx.moveTo(pos[i].x,pos[i].y);
+    gctx.lineTo(pos[j].x,pos[j].y);
+    gctx.stroke();
+    const mx=(pos[i].x+pos[j].x)/2;
+    const my=(pos[i].y+pos[j].y)/2;
+    gctx.fillStyle='#e6edf7';
+    gctx.fillText(L.elems[C[i][j]], mx, my);
+  }
+  for(let i=0;i<n;i++){
+    gctx.fillStyle='#1f2a44';
+    gctx.beginPath();
+    gctx.arc(pos[i].x,pos[i].y,16,0,2*Math.PI);
+    gctx.fill();
+    gctx.strokeStyle='#5eead4';
+    gctx.lineWidth=2;
+    gctx.stroke();
+    gctx.fillStyle='#e6edf7';
+    gctx.font='bold 12px system-ui';
+    gctx.fillText('V'+i, pos[i].x, pos[i].y+4);
+  }
+}
+
+function renderLattice(L){
+  lctx.clearRect(0,0,lc.width,lc.height);
+  lctx.fillStyle='#1f2a44';
+  lctx.fillRect(0,0,lc.width,lc.height);
+  const m=L.elems.length;
+  const pts=L.pos.map(p=>({x:p[0]*lc.width, y:p[1]*lc.height}));
+  function lt2(a,b){ return leq(L,a,b) && a!==b; }
+  function between(c,a,b){ return lt2(a,c) && lt2(c,b); }
+  function cover(a,b){
+    if(!lt2(a,b)) return false;
+    for(let c=0;c<m;c++){
+      if(c===a || c===b) continue;
+      if(between(c,a,b)) return false;
+    }
+    return true;
+  }
+  lctx.strokeStyle='#9fb0cc';
+  lctx.lineWidth=2;
+  for(let a=0;a<m;a++) for(let b=0;b<m;b++){
+    if(cover(a,b)){
+      lctx.beginPath();
+      lctx.moveTo(pts[a].x,pts[a].y);
+      lctx.lineTo(pts[b].x,pts[b].y);
+      lctx.stroke();
+    }
+  }
+  for(let i=0;i<m;i++){
+    lctx.fillStyle='#1f2a44';
+    lctx.beginPath();
+    lctx.arc(pts[i].x,pts[i].y,16,0,2*Math.PI);
+    lctx.fill();
+    lctx.strokeStyle='#5eead4';
+    lctx.lineWidth=2;
+    lctx.stroke();
+    lctx.fillStyle='#e6edf7';
+    lctx.font='bold 12px system-ui';
+    lctx.textAlign='center';
+    lctx.fillText(L.elems[i], pts[i].x, pts[i].y+4);
+  }
+}
+
+function doSearch(){
+  const L=LATTICES[latSel.value];
+  const n=+nSlider.value;
+  sstatus.textContent='Searching...';
+  setTimeout(()=>{
+    const res=searchWitnesses(L,n);
+    window._lastRes=res;
+    renderStats(res,L,n);
+    const C=res.firstFull || res.firstStruct;
+    renderWitness(C,L,n);
+    renderGraph(C,L,n);
+    renderLattice(L);
+    sstatus.textContent='done';
+  },10);
+}
+
+function reset(){
+  latSel.value='chain4';
+  nSlider.value=3;
+  nval.textContent=3;
+  slatsize.textContent='—';
+  sverts.textContent='—';
+  sspace.textContent='—';
+  sstruct.textContent='—';
+  sfull.textContent='—';
+  sverdict.textContent='—';
+  sstatus.textContent='ready';
+  wtable.querySelector('tbody').innerHTML='';
+  gctx.clearRect(0,0,gc.width,gc.height);
+  lctx.clearRect(0,0,lc.width,lc.height);
+}
+
+nSlider.addEventListener('input',()=>{ nval.textContent=nSlider.value; });
+searchBtn.addEventListener('click',doSearch);
+resetBtn.addEventListener('click',reset);
+latSel.addEventListener('change',()=>{ renderLattice(LATTICES[latSel.value]); });
+
+renderLattice(LATTICES[latSel.value]);
+</script>
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

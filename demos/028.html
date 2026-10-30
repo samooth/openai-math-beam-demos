@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Gaussian moat conjecture — interactive demo</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#34d399; --bad:#f87171; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#059669; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range]{flex:1 1 220px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:520px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+table{width:100%;border-collapse:collapse;font-size:.85rem}
+th,td{padding:.35rem .45rem;border-bottom:1px solid var(--border);text-align:left}
+th{color:var(--muted);font-weight:600}
+td.num{font-family:ui-monospace,monospace}
+.status{color:var(--muted);font-size:.9rem}
+.legend{display:flex;gap:1rem;align-items:center;font-size:.85rem;color:var(--muted);margin:.5rem 0;flex-wrap:wrap}
+.swatch{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:.3rem;vertical-align:middle}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>The Gaussian moat conjecture</h1>
+  <p>Gaussian primes in the complex plane; edges connect primes at distance at most D. Each color is a connected component of this bounded-step graph.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Proves the Gaussian moat conjecture: no infinite walk through distinct Gaussian primes can have uniformly bounded steps. More strongly, for every distance bound D, the graph joining Gaussian primes at distance at most D has uniformly bounded finite component sizes, depending only on D, including primes on the coordinate axes.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Gives a uniform finite-component bound for bounded-step walks on Gaussian primes, a quantitative form of the moat conjecture with consequences for prime distribution in the Gaussian integers.</p>
+  </section>
+  <div class="controls">
+    <label for="R">Radius R</label>
+    <input id="R" type="range" min="8" max="30" value="16" step="1">
+    <span class="val" id="Rval">16</span>
+    <label for="D">Step bound D</label>
+    <input id="D" type="range" min="1" max="8" value="2" step="0.1">
+    <span class="val" id="Dval">2.0</span>
+    <label><input type="checkbox" id="edges" checked> show edges</label>
+    <button id="resetSel">clear selection</button>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Gaussian primes</div><div class="value" id="stN">—</div></div>
+    <div class="stat"><div class="label">Components</div><div class="value" id="stC">—</div></div>
+    <div class="stat"><div class="label">Largest component</div><div class="value" id="stL">—</div></div>
+    <div class="stat"><div class="label">Isolated primes</div><div class="value" id="stI">—</div></div>
+    <div class="stat"><div class="label">Edges drawn</div><div class="value" id="stE">—</div></div>
+    <div class="stat"><div class="label">Selected size</div><div class="value" id="stS">—</div></div>
+  </div>
+  <div style="position:relative">
+    <canvas id="c" width="900" height="520"></canvas>
+  </div>
+  <section class="box">
+    <h3>Largest components</h3>
+    <div id="tablewrap" style="overflow:auto;max-height:260px"></div>
+  </section>
+</div>
+<script>
+const MAXR=40;
+const LIMIT=2*MAXR*MAXR+10;
+const sieve=new Array(LIMIT+1).fill(true);
+sieve[0]=sieve[1]=false;
+for(let i=2;i*i<=LIMIT;i++) if(sieve[i]) for(let j=i*i;j<=LIMIT;j+=i) sieve[j]=false;
+function isRationalPrime(n){
+  if(n<2) return false;
+  if(n<=LIMIT) return sieve[n];
+  for(let d=2;d*d<=n;d++) if(n%d===0) return false;
+  return true;
+}
+function isGaussPrime(a,b){
+  if(a===0 && b===0) return false;
+  if(a===0){
+    const p=Math.abs(b);
+    return isRationalPrime(p) && (p%4===3);
+  }
+  if(b===0){
+    const p=Math.abs(a);
+    return isRationalPrime(p) && (p%4===3);
+  }
+  return isRationalPrime(a*a+b*b);
+}
+
+const RSlider=document.getElementById('R');
+const DSlider=document.getElementById('D');
+const Rval=document.getElementById('Rval');
+const Dval=document.getElementById('Dval');
+const edgesBox=document.getElementById('edges');
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+function resizeCanvas(){ canvas.width=Math.max(300,canvas.clientWidth); canvas.height=520; }
+window.addEventListener('resize',function(){ resizeCanvas(); draw(); });
+resizeCanvas();
+
+let state={pts:[], comp:[], comps:[], edges:[]};
+let selectedRank=null;
+
+function genPrimes(R){
+  const pts=[];
+  const R2=R*R;
+  for(let a=-R;a<=R;a++){
+    for(let b=-R;b<=R;b++){
+      if(a*a+b*b>R2) continue;
+      if(isGaussPrime(a,b)) pts.push({x:a,y:b});
+    }
+  }
+  return pts;
+}
+
+function unionFind(n){
+  const parent=Array.from({length:n},(_,i)=>i);
+  const rank=new Array(n).fill(0);
+  function find(x){ while(parent[x]!==x){parent[x]=parent[parent[x]]; x=parent[x];} return x; }
+  function union(a,b){
+    const ra=find(a), rb=find(b);
+    if(ra===rb) return;
+    if(rank[ra]<rank[rb]) parent[ra]=rb;
+    else if(rank[ra]>rank[rb]) parent[rb]=ra;
+    else { parent[rb]=ra; rank[ra]++; }
+  }
+  return {parent,find,union};
+}
+
+function rebuild(){
+  const R=+RSlider.value;
+  const D=+DSlider.value;
+  Rval.textContent=R;
+  Dval.textContent=D.toFixed(1);
+  const pts=genPrimes(R);
+  const n=pts.length;
+  const uf=unionFind(n);
+  const edges=[];
+  const D2=D*D+1e-9;
+  const showEdges=edgesBox.checked;
+  for(let i=0;i<n;i++){
+    for(let j=i+1;j<n;j++){
+      const dx=pts[i].x-pts[j].x;
+      const dy=pts[i].y-pts[j].y;
+      const d2=dx*dx+dy*dy;
+      if(d2<=D2){
+        uf.union(i,j);
+        if(showEdges) edges.push([i,j]);
+      }
+    }
+  }
+  // group by root
+  const groups=new Map();
+  for(let i=0;i<n;i++){
+    const r=uf.find(i);
+    if(!groups.has(r)) groups.set(r,[]);
+    groups.get(r).push(i);
+  }
+  const comps=[...groups.values()].map(members=>({members, size:members.length, rep:pts[members[0]]}));
+  comps.sort((a,b)=>b.size-a.size);
+  const compOf=new Array(n);
+  comps.forEach((c,rank)=>{ c.members.forEach(i=>compOf[i]=rank); c.color=`hsl(${(rank*137.5+210)%360},68%,55%)`; });
+  state={R,D,pts,comp:compOf,comps,edges};
+  if(selectedRank!==null && selectedRank>=comps.length) selectedRank=null;
+  document.getElementById('stN').textContent=n.toLocaleString();
+  document.getElementById('stC').textContent=comps.length.toLocaleString();
+  document.getElementById('stL').textContent=comps.length?comps[0].size.toLocaleString():'0';
+  document.getElementById('stI').textContent=comps.filter(c=>c.size===1).length.toLocaleString();
+  document.getElementById('stE').textContent=edges.length.toLocaleString();
+  document.getElementById('stS').textContent=selectedRank===null?'—':state.comps[selectedRank].size.toLocaleString();
+  updateTable();
+  draw();
+}
+
+function updateTable(){
+  const wrap=document.getElementById('tablewrap');
+  const comps=state.comps;
+  if(!comps.length){ wrap.innerHTML=''; return; }
+  const top=comps.slice(0,12);
+  let html='<table><thead><tr><th>#</th><th>size</th><th>representative</th><th></th></tr></thead><tbody>';
+  top.forEach((c,rank)=>{
+    const p=c.rep;
+    const label=p.x+(p.y>=0?'+':'')+p.y+'i';
+    const sel=selectedRank===rank?' style="background:var(--chip)"':'';
+    html+=`<tr data-rank="${rank}"${sel}><td class="num">${rank+1}</td><td class="num">${c.size}</td><td class="num">${label}</td><td><span class="swatch" style="background:${c.color}"></span></td></tr>`;
+  });
+  html+='</tbody></table>';
+  wrap.innerHTML=html;
+  wrap.querySelectorAll('tr[data-rank]').forEach(tr=>{
+    tr.style.cursor='pointer';
+    tr.addEventListener('click',()=>{
+      selectedRank=+tr.getAttribute('data-rank');
+      document.getElementById('stS').textContent=state.comps[selectedRank].size.toLocaleString();
+      updateTable();
+      draw();
+    });
+  });
+}
+
+function draw(){
+  if(!state.pts.length) return;
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const R=state.R;
+  const scale=Math.min((W-90)/(2*R+2),(H-90)/(2*R+2));
+  const cx=W/2, cy=H/2;
+  const sx=p=>cx+p.x*scale;
+  const sy=p=>cy-p.y*scale;
+  const muted=getComputedStyle(document.documentElement).getPropertyValue('--muted').trim()||'#9fb0cc';
+  const text=getComputedStyle(document.documentElement).getPropertyValue('--text').trim()||'#e6edf7';
+  // axes
+  ctx.strokeStyle='rgba(159,176,204,0.25)'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(0,cy); ctx.lineTo(W,cy); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx,0); ctx.lineTo(cx,H); ctx.stroke();
+  ctx.fillStyle=muted; ctx.font='12px system-ui';
+  ctx.fillText('Re', W-30, cy-8); ctx.fillText('Im', cx+8, 16);
+  // edges
+  if(state.edges.length){
+    // non-selected
+    ctx.lineWidth=1;
+    ctx.strokeStyle='rgba(159,176,204,0.18)';
+    ctx.beginPath();
+    for(const [i,j] of state.edges){
+      const ri=state.comp[i], rj=state.comp[j];
+      if(selectedRank!==null && (ri!==selectedRank || rj!==selectedRank)) {
+        // draw light
+      } else if(selectedRank!==null) {
+        continue;
+      }
+      ctx.moveTo(sx(state.pts[i]),sy(state.pts[i]));
+      ctx.lineTo(sx(state.pts[j]),sy(state.pts[j]));
+    }
+    ctx.stroke();
+    // selected edges highlight
+    if(selectedRank!==null){
+      ctx.lineWidth=1.6;
+      ctx.strokeStyle=state.comps[selectedRank].color;
+      ctx.beginPath();
+      for(const [i,j] of state.edges){
+        if(state.comp[i]===selectedRank && state.comp[j]===selectedRank){
+          ctx.moveTo(sx(state.pts[i]),sy(state.pts[i]));
+          ctx.lineTo(sx(state.pts[j]),sy(state.pts[j]));
+        }
+      }
+      ctx.stroke();
+    }
+  }
+  // nodes
+  state.pts.forEach((p,i)=>{
+    const rank=state.comp[i];
+    const color=state.comps[rank].color;
+    if(selectedRank!==null && rank!==selectedRank) ctx.globalAlpha=0.22;
+    else ctx.globalAlpha=1;
+    ctx.fillStyle=color;
+    ctx.beginPath();
+    ctx.arc(sx(p),sy(p), selectedRank===rank?4.5:3.2, 0, Math.PI*2);
+    ctx.fill();
+  });
+  ctx.globalAlpha=1;
+  // label selected component representative maybe
+  if(selectedRank!==null){
+    const c=state.comps[selectedRank];
+    ctx.fillStyle=text;
+    ctx.font='13px system-ui';
+    ctx.fillText(`selected component: ${c.size} primes`, 12, 20);
+  }
+}
+
+RSlider.addEventListener('input', rebuild);
+DSlider.addEventListener('input', rebuild);
+edgesBox.addEventListener('change', rebuild);
+document.getElementById('resetSel').addEventListener('click',()=>{
+  selectedRank=null;
+  document.getElementById('stS').textContent='—';
+  updateTable();
+  draw();
+});
+// canvas click selection
+canvas.addEventListener('click', function(ev){
+  if(!state.pts.length) return;
+  const rect=canvas.getBoundingClientRect();
+  const mx=ev.clientX-rect.left, my=ev.clientY-rect.top;
+  const W=canvas.width,H=canvas.height;
+  const R=state.R;
+  const scale=Math.min((W-90)/(2*R+2),(H-90)/(2*R+2));
+  const cx=W/2, cy=H/2;
+  let best=-1, bestd=1e9;
+  state.pts.forEach((p,i)=>{
+    const x=cx+p.x*scale, y=cy-p.y*scale;
+    const d=(x-mx)*(x-mx)+(y-my)*(y-my);
+    if(d<bestd){ bestd=d; best=i; }
+  });
+  if(best>=0 && bestd < (12*12)){
+    selectedRank=state.comp[best];
+    document.getElementById('stS').textContent=state.comps[selectedRank].size.toLocaleString();
+    updateTable();
+    draw();
+  }
+});
+rebuild();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

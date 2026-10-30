@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Goldfeld's conjecture — interactive demo</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range]{flex:1 1 260px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Goldfeld's conjecture</h1>
+  <p>For quadratic twists of an elliptic curve over $\mathbb Q$, half have analytic rank $0$ and half rank $1$; higher ranks have density $0$ and the mean rank tends to $1/2$.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Goldfeld's conjecture concerns the distribution of analytic ranks among the family of quadratic twists $E_d$ of a fixed elliptic curve $E/\mathbb Q$, ordered by $|d|$. It predicts that ranks $0$ and $1$ each occur with natural density $1/2$, that ranks $\ge 2$ have density $0$, and consequently the mean analytic rank tends to $1/2$. This result proves it for every elliptic curve over $\mathbb Q$.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Together with the low-Selmer-corank BSD formula (result 002), this gives the full Birch–Swinnerton-Dyer formula for a density-one set of quadratic twists of every elliptic curve over $\mathbb Q$. It also settles the mean rank and the density of ranks $0,1$.</p>
+  </section>
+  <div class="controls">
+    <label for="n">Twists N</label>
+    <input id="n" type="range" min="200" max="20000" value="2000" step="100">
+    <span class="val" id="nval">2000</span>
+    <label for="p">Higher-rank rate</label>
+    <input id="p" type="range" min="0" max="20" value="3" step="1">
+    <span class="val" id="pval">0.03</span>
+    <button id="resample">Resample</button>
+    <button id="play">Play</button>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Rank 0 count</div><div class="value" id="c0">—</div></div>
+    <div class="stat"><div class="label">Rank 1 count</div><div class="value" id="c1">—</div></div>
+    <div class="stat"><div class="label">Density rank 0</div><div class="value" id="d0">—</div></div>
+    <div class="stat"><div class="label">Density rank 1</div><div class="value" id="d1">—</div></div>
+    <div class="stat"><div class="label">Mean analytic rank</div><div class="value" id="mean">—</div></div>
+    <div class="stat"><div class="label">Higher ranks (≥2)</div><div class="value" id="ch">—</div></div>
+  </div>
+  <canvas id="dens" width="900" height="420"></canvas>
+  <canvas id="hist" width="900" height="260" style="margin-top:.75rem"></canvas>
+</div>
+<script>
+// deterministic PRNG (mulberry32)
+function mulberry32(a){ a|=0; return function(){ a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+
+let seed = 12345;
+let ranks = [];
+const maxN = 20000;
+
+function genRanks(N, pHigh){
+  const rng = mulberry32(seed);
+  const out = new Array(N);
+  for(let i=0;i<N;i++){
+    const eps = rng() < 0.5 ? 1 : -1; // root number sign (parity)
+    if(eps === 1){
+      // even: rank 0 generically, rarely higher even rank
+      out[i] = rng() < pHigh ? 2 : 0;
+    } else {
+      out[i] = rng() < pHigh ? 3 : 1;
+    }
+  }
+  return out;
+}
+
+const nSlider = document.getElementById('n');
+const nval = document.getElementById('nval');
+const pSlider = document.getElementById('p');
+const pval = document.getElementById('pval');
+const densCanvas = document.getElementById('dens');
+const histCanvas = document.getElementById('hist');
+const dctx = densCanvas.getContext('2d');
+const hctx = histCanvas.getContext('2d');
+
+function resize(){ densCanvas.width = Math.max(300, densCanvas.clientWidth); densCanvas.height = 420; histCanvas.width = Math.max(300, histCanvas.clientWidth); histCanvas.height = 260; }
+window.addEventListener('resize', function(){ resize(); update(); });
+resize();
+
+function countsUpTo(N){
+  let c0=0,c1=0,ch=0,sum=0;
+  const dens0=[], dens1=[], mean=[];
+  // downsample cumulative
+  const step = Math.max(1, Math.floor(N/400));
+  for(let i=0;i<N;i++){
+    const r=ranks[i];
+    if(r===0)c0++; else if(r===1)c1++; else ch++;
+    sum+=r;
+    if((i+1)%step===0 || i===N-1){
+      dens0.push({x:i+1, y:c0/(i+1)});
+      dens1.push({x:i+1, y:c1/(i+1)});
+      mean.push({x:i+1, y:sum/(i+1)});
+    }
+  }
+  return {c0,c1,ch,sum, dens0,dens1,mean};
+}
+
+function drawDens(N, data){
+  const W=densCanvas.width, H=densCanvas.height;
+  dctx.clearRect(0,0,W,H);
+  const padL=56, padR=16, padT=18, padB=40;
+  const plotW=W-padL-padR, plotH=H-padT-padB;
+  // grid
+  dctx.strokeStyle='rgba(159,176,204,0.15)'; dctx.lineWidth=1;
+  for(let i=0;i<=4;i++){
+    const y=padT+plotH*i/4;
+    dctx.beginPath(); dctx.moveTo(padL,y); dctx.lineTo(W-padR,y); dctx.stroke();
+  }
+  // axes
+  dctx.strokeStyle='#475569'; dctx.lineWidth=1.5;
+  dctx.beginPath(); dctx.moveTo(padL,H-padB); dctx.lineTo(W-padR,H-padB); dctx.stroke();
+  dctx.beginPath(); dctx.moveTo(padL,padT); dctx.lineTo(padL,H-padB); dctx.stroke();
+  dctx.fillStyle='#9fb0cc'; dctx.font='12px system-ui';
+  dctx.fillText('twists (ordered by |d|)', W/2-70, H-8);
+  dctx.save(); dctx.translate(14,H/2+40); dctx.rotate(-Math.PI/2); dctx.fillText('density',0,0); dctx.restore();
+
+  const X = v => padL + plotW*(v/N);
+  const Y = v => padT + plotH*(1 - v); // 0..1
+
+  // target 0.5
+  dctx.strokeStyle='rgba(94,234,212,0.5)'; dctx.setLineDash([6,6]); dctx.lineWidth=1.5;
+  dctx.beginPath(); dctx.moveTo(padL, Y(0.5)); dctx.lineTo(W-padR, Y(0.5)); dctx.stroke();
+  dctx.setLineDash([]);
+  dctx.fillStyle='#5eead4'; dctx.font='11px system-ui'; dctx.fillText('1/2', W-padR+2, Y(0.5)+4);
+
+  // lines
+  function line(pts, color){
+    dctx.strokeStyle=color; dctx.lineWidth=2.2;
+    dctx.beginPath();
+    pts.forEach((t,i)=>{ const x=X(t.x), y=Y(t.y); if(i===0) dctx.moveTo(x,y); else dctx.lineTo(x,y); });
+    dctx.stroke();
+  }
+  line(data.dens0, '#5eead4');
+  line(data.dens1, '#f59e0b');
+  line(data.mean, '#a78bfa');
+
+  // legend
+  dctx.font='12px system-ui';
+  dctx.fillStyle='#5eead4'; dctx.fillText('rank 0 density', padL+6, padT+14);
+  dctx.fillStyle='#f59e0b'; dctx.fillText('rank 1 density', padL+6, padT+30);
+  dctx.fillStyle='#a78bfa'; dctx.fillText('mean rank', padL+6, padT+46);
+}
+
+function drawHist(N, data){
+  const W=histCanvas.width, H=histCanvas.height;
+  hctx.clearRect(0,0,W,H);
+  const padL=56, padR=16, padT=18, padB=36;
+  const plotW=W-padL-padR, plotH=H-padT-padB;
+  // counts by rank bucket
+  const buckets = {0:0,1:0,2:0,3:0}; // 3 = >=2? we'll do 0,1,2,3+
+  for(let i=0;i<N;i++){
+    const r=ranks[i];
+    if(r===0) buckets[0]++;
+    else if(r===1) buckets[1]++;
+    else if(r===2) buckets[2]++;
+    else buckets[3]++;
+  }
+  const labels=['rank 0','rank 1','rank 2','rank ≥3'];
+  const vals=[buckets[0],buckets[1],buckets[2],buckets[3]];
+  const maxv=Math.max(...vals,1);
+  const barW=plotW/vals.length*0.6;
+  const gap=plotW/vals.length;
+  hctx.strokeStyle='#475569'; hctx.lineWidth=1.5;
+  hctx.beginPath(); hctx.moveTo(padL,H-padB); hctx.lineTo(W-padR,H-padB); hctx.stroke();
+  hctx.beginPath(); hctx.moveTo(padL,padT); hctx.lineTo(padL,H-padB); hctx.stroke();
+  hctx.fillStyle='#9fb0cc'; hctx.font='12px system-ui';
+  hctx.fillText('rank', W/2-10, H-8);
+  const colors=['#5eead4','#f59e0b','#a78bfa','#f87171'];
+  vals.forEach((v,i)=>{
+    const x=padL + gap*i + (gap-barW)/2;
+    const h=plotH*(v/maxv);
+    const y=H-padB-h;
+    hctx.fillStyle=colors[i];
+    hctx.fillRect(x,y,barW,h);
+    hctx.fillStyle='#9fb0cc'; hctx.font='11px system-ui';
+    hctx.fillText(labels[i], x-2, H-padB+14);
+    hctx.fillStyle=colors[i]; hctx.font='11px system-ui';
+    hctx.fillText(v.toString(), x+barW/2-8, y-4);
+  });
+  hctx.fillStyle='#9fb0cc'; hctx.font='12px system-ui';
+  hctx.fillText('count', 8, padT+10);
+}
+
+function update(){
+  const N=+nSlider.value;
+  const p=+pSlider.value/100;
+  nval.textContent=N;
+  pval.textContent=p.toFixed(2);
+  // regenerate if needed
+  if(ranks.length < N){
+    ranks = genRanks(Math.max(N, maxN), p);
+  }
+  // if p changed, regenerate
+  // We'll regenerate on resample/p change via handlers; here assume ranks valid
+  const data = countsUpTo(N);
+  document.getElementById('c0').textContent = data.c0.toLocaleString();
+  document.getElementById('c1').textContent = data.c1.toLocaleString();
+  document.getElementById('d0').textContent = (data.c0/N).toFixed(4);
+  document.getElementById('d1').textContent = (data.c1/N).toFixed(4);
+  document.getElementById('mean').textContent = (data.sum/N).toFixed(4);
+  document.getElementById('ch').textContent = data.ch.toLocaleString();
+  drawDens(N,data);
+  drawHist(N,data);
+}
+
+// regenerate ranks when p changes or resample
+function regenerate(){
+  const p=+pSlider.value/100;
+  const N=+nSlider.value;
+  ranks = genRanks(Math.max(N, maxN), p);
+  update();
+}
+
+nSlider.addEventListener('input', update);
+pSlider.addEventListener('input', regenerate);
+document.getElementById('resample').addEventListener('click', function(){ seed=Math.floor(Math.random()*1e9); regenerate(); });
+
+// play
+let playing=false, playTimer=null;
+const playBtn=document.getElementById('play');
+playBtn.addEventListener('click', function(){
+  playing=!playing;
+  this.textContent = playing ? 'Pause' : 'Play';
+  if(playing) animate(); else clearTimeout(playTimer);
+});
+function animate(){
+  if(!playing) return;
+  let v=+nSlider.value;
+  if(v>=+nSlider.max){ playing=false; playBtn.textContent='Play'; return; }
+  nSlider.value = Math.min(+nSlider.max, v+500);
+  update();
+  playTimer=setTimeout(animate, 200);
+}
+
+// initial
+regenerate();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

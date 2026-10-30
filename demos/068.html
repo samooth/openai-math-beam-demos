@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Anticanonical nonvanishing under smooth semipositivity (conceptual, result 068)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range]{flex:1 1 200px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:440px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+select{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text)}
+table{width:100%;border-collapse:collapse;font-size:.85rem}
+th,td{padding:.35rem .45rem;border-bottom:1px solid var(--border);text-align:left}
+th{color:var(--muted);font-weight:600}
+td.num{font-family:ui-monospace,monospace}
+.ok{color:var(--good)} .bad{color:var(--bad)} .warn{color:var(--warn)}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Anticanonical nonvanishing under smooth semipositivity (conceptual, result 068)</h1>
+  <p>If \(X\) is a smooth connected complex projective variety and \(-K_X\) admits a smooth Hermitian metric with nonnegative curvature, then \(H^0(X,-mK_X)\ne0\) for some \(m>0). Tune the curvature of a Hermitian metric on (-K_X) to see when smooth semipositivity forces a nonzero anticanonical section.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Proves anticanonical nonvanishing from smooth semipositivity in every dimension: if \(X\) is a smooth connected complex projective variety and \(-K_X\) admits a smooth Hermitian metric with nonnegative curvature, then \(H^0(X,-mK_X)\ne0\) for some \(m>0). The proof converts invariant cohomology into twisted differential forms and descends them before conversion; a companion removes a fixed pseudoeffective error from an unbounded sequence of effective twists. Thus smooth semipositivity forces a nonzero section of a positive tensor power of the anticanonical bundle in every dimension.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Turns a differential hypothesis on (-K_X) into an algebraic conclusion: a variety whose anticanonical bundle carries a smooth Hermitian metric of nonnegative curvature cannot have all anticanonical powers vanish. This constrains the geometry and moduli of semipositive varieties, supports abundance-type statements in the semipositive regime, and separates smooth (Hermitian) positivity from mere algebraic (nef) positivity by producing a concrete nonzero section.</p>
+  </section>
+  <div class="controls">
+    <label for="n">Complex dimension (n)</label>
+    <input id="n" type="range" min="1" max="6" value="3" step="1">
+    <span class="val" id="nval">3</span>
+    <label for="kappa">Minimum curvature (\kappa_{\min})</label>
+    <input id="kappa" type="range" min="-0.5" max="1" value="0.25" step="0.05">
+    <span class="val" id="kappaval">0.25</span>
+    <label for="spread">Curvature anisotropy</label>
+    <input id="spread" type="range" min="0" max="1" value="0.4" step="0.05">
+    <span class="val" id="spreadval">0.40</span>
+    <label for="smooth">Metric</label>
+    <select id="smooth">
+      <option value="smooth" selected>Smooth Hermitian</option>
+      <option value="singular">Singular (not smooth)</option>
+      <option value="none">No metric</option>
+    </select>
+    <label for="vclass">Variety class</label>
+    <select id="vclass">
+      <option value="fano" selected>Fano (−K ample)</option>
+      <option value="cy">Calabi–Yau (−K trivial)</option>
+      <option value="semipos">Semipositive (nef, not ample)</option>
+      <option value="negative">Negative curvature type</option>
+    </select>
+    <label for="m">Exponent (m)</label>
+    <input id="m" type="range" min="1" max="12" value="2" step="1">
+    <span class="val" id="mval">2</span>
+    <label for="view">View</label>
+    <select id="view">
+      <option value="eig" selected>Curvature eigenvalues</option>
+      <option value="growth">Section growth</option>
+      <option value="inv">Invariants</option>
+    </select>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Dimension (n)</div><div class="value" id="nstat">—</div></div>
+    <div class="stat"><div class="label">Minimum curvature</div><div class="value" id="kstat">—</div></div>
+    <div class="stat"><div class="label">Smooth metric?</div><div class="value" id="smstat">—</div></div>
+    <div class="stat"><div class="label">Semipositive?</div><div class="value" id="semistat">—</div></div>
+    <div class="stat"><div class="label">Theorem applies?</div><div class="value" id="thmstat">—</div></div>
+    <div class="stat"><div class="label">First nonzero (m)</div><div class="value" id="firststat">—</div></div>
+    <div class="stat"><div class="label">(H^0(X,-mK_X))</div><div class="value" id="h0stat">—</div></div>
+  </div>
+  <canvas id="c" width="900" height="440"></canvas>
+  <section class="box">
+    <h3>Examples</h3>
+    <table>
+      <thead><tr><th>Class</th><th>Curvature of (-K_X)</th><th>Anticanonical sections</th></tr></thead>
+      <tbody>
+        <tr><td>Fano variety</td><td class="num">\(\kappa_{\min}>0) (ample)</td><td class="ok">Nonzero for (m=1)</td></tr>
+        <tr><td>Calabi–Yau</td><td class="num">(\kappa_{\min}=0) (flat)</td><td class="ok">Nonzero for (m=1)</td></tr>
+        <tr><td>Semipositive (nef)</td><td class="num">(\kappa_{\min}\ge 0)</td><td class="ok">Nonzero for some \(m>0)</td></tr>
+        <tr><td>Negative type</td><td class="num">(\kappa_{\min}<0\)</td><td class="bad">No guarantee</td></tr>
+      </tbody>
+    </table>
+  </section>
+</div>
+<script>
+const nSlider=document.getElementById('n');
+const kappaSlider=document.getElementById('kappa');
+const spreadSlider=document.getElementById('spread');
+const smoothSel=document.getElementById('smooth');
+const vclassSel=document.getElementById('vclass');
+const mSlider=document.getElementById('m');
+const viewSel=document.getElementById('view');
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+
+const nval=document.getElementById('nval');
+const kappaval=document.getElementById('kappaval');
+const spreadval=document.getElementById('spreadval');
+const mval=document.getElementById('mval');
+const nstat=document.getElementById('nstat');
+const kstat=document.getElementById('kstat');
+const smstat=document.getElementById('smstat');
+const semistat=document.getElementById('semistat');
+const thmstat=document.getElementById('thmstat');
+const firststat=document.getElementById('firststat');
+const h0stat=document.getElementById('h0stat');
+
+function resizeCanvas(){ canvas.width=Math.max(300,canvas.clientWidth); canvas.height=440; }
+window.addEventListener('resize',function(){ resizeCanvas(); update(); });
+resizeCanvas();
+
+function eigenvalues(n,kappa,spread){
+  const vals=[];
+  for(let i=0;i<n;i++){
+    const t = n>1 ? i/(n-1) : 0;
+    let lam = kappa + t*spread*(1-kappa);
+    if(lam<kappa) lam=kappa;
+    vals.push(lam);
+  }
+  if(n===1) vals[0]=kappa;
+  return vals;
+}
+
+function firstNonzero(semipos,vclass,kappa){
+  if(!semipos) return Infinity;
+  if(vclass==='fano' || vclass==='cy') return 1;
+  if(kappa>0.3) return 1;
+  if(kappa>0.05) return 2;
+  return 3;
+}
+
+function update(){
+  const n=+nSlider.value;
+  const kappa=+kappaSlider.value;
+  const spread=+spreadSlider.value;
+  const smooth=smoothSel.value;
+  const vclass=vclassSel.value;
+  const m=+mSlider.value;
+  const smoothMetric = smooth==='smooth';
+  const semipos = smoothMetric && kappa>=-1e-9 && vclass!=='negative';
+  const fm = firstNonzero(semipos,vclass,kappa);
+  const guaranteed = semipos && m>=fm;
+
+  nval.textContent=n;
+  kappaval.textContent=kappa.toFixed(2);
+  spreadval.textContent=spread.toFixed(2);
+  mval.textContent=m;
+
+  nstat.textContent=n;
+  kstat.textContent=kappa.toFixed(2);
+  kstat.className='value '+(kappa>=0?'ok':'bad');
+  smstat.textContent = smooth==='smooth'?'Yes':(smooth==='singular'?'No (singular)':'None');
+  smstat.className='value '+(smooth==='smooth'?'ok':'bad');
+  semistat.textContent = semipos?'Yes':'No';
+  semistat.className='value '+(semipos?'ok':'bad');
+  thmstat.textContent = semipos?'Yes':'No';
+  thmstat.className='value '+(semipos?'ok':'bad');
+  firststat.textContent = semipos ? ('m = '+fm) : 'none';
+  firststat.className='value '+(semipos?'ok':'bad');
+  h0stat.textContent = guaranteed ? 'Nonzero (guaranteed)' : (semipos?'Not yet guaranteed':'Not guaranteed');
+  h0stat.className='value '+(guaranteed?'ok':'warn');
+
+  draw(n,kappa,spread,semipos,fm,m,viewSel.value);
+}
+
+function draw(n,kappa,spread,semipos,fm,m,view){
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const vals=eigenvalues(n,kappa,spread);
+  if(view==='eig'){
+    const left=50,right=W-50,top=40,bottom=H-60;
+    const ymin=-0.6,ymax=1.1;
+    function yOf(val){ return bottom - (val-ymin)/(ymax-ymin)*(bottom-top); }
+    const zeroY=yOf(0);
+    ctx.strokeStyle='#9fb0cc'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(left,zeroY); ctx.lineTo(right,zeroY); ctx.stroke();
+    ctx.fillStyle='#9fb0cc'; ctx.font='11px system-ui'; ctx.textAlign='left';
+    ctx.fillText('0 (semipositivity threshold)', left+4, zeroY-6);
+
+    const barW=Math.max(18,(right-left)/ (n+1));
+    const gap=(right-left)/(n+1);
+    vals.forEach((lam,i)=>{
+      const x=left + (i+0.5)*gap;
+      const y=yOf(lam);
+      const y0=yOf(0);
+      const topY=Math.min(y,y0);
+      const h=Math.abs(y-y0);
+      ctx.fillStyle = lam>=0?'rgba(34,197,94,0.55)':'rgba(239,68,68,0.55)';
+      ctx.fillRect(x-barW/2,topY,barW,h);
+      ctx.strokeStyle = lam>=0?'#22c55e':'#ef4444';
+      ctx.lineWidth=1.5; ctx.strokeRect(x-barW/2,topY,barW,h);
+      ctx.fillStyle='#e6edf7'; ctx.font='11px system-ui'; ctx.textAlign='center';
+      ctx.fillText('λ'+(i+1), x, bottom+16);
+      ctx.fillText(lam.toFixed(2), x, (lam>=0? topY-6 : topY+h+14));
+    });
+
+    const minlam=Math.min(...vals);
+    const minx=left+(vals.indexOf(minlam)+0.5)*((right-left)/(n+1));
+    ctx.fillStyle='#f59e0b'; ctx.font='12px system-ui'; ctx.textAlign='center';
+    ctx.fillText('min = '+minlam.toFixed(2), (left+right)/2, top-8);
+
+    const cx=(left+right)/2, cy=top+ (bottom-top)*0.55;
+    ctx.strokeStyle='#9fb0cc'; ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.arc(cx,cy,55,0,Math.PI*2); ctx.stroke();
+    ctx.fillStyle = semipos?'rgba(34,197,94,0.25)':'rgba(239,68,68,0.25)';
+    ctx.beginPath(); ctx.arc(cx,cy,Math.max(6,55*Math.min(1,Math.abs(kappa)+0.25)),0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#9fb0cc'; ctx.font='11px system-ui'; ctx.textAlign='center';
+    ctx.fillText('positivity cone', cx, cy+72);
+    ctx.fillStyle = semipos?'#22c55e':'#ef4444';
+    ctx.fillText(semipos?'inside (semipositive)':'outside / not smooth', cx, cy+88);
+  } else if(view==='growth'){
+    const left=50,right=W-50,top=40,bottom=H-60;
+    const maxM=12;
+    const hvals=[];
+    for(let mm=1;mm<=maxM;mm++){
+      if(!semipos || mm<fm){ hvals.push(0); }
+      else { hvals.push(Math.pow(mm-fm+1, Math.min(n,4))); }
+    }
+    const maxH=Math.max(...hvals,1);
+    const gap=(right-left)/maxM;
+    const barW=Math.max(12,gap*0.6);
+    // axes
+    ctx.strokeStyle='#9fb0cc'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(left,bottom); ctx.lineTo(right,bottom); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(left,top); ctx.lineTo(left,bottom); ctx.stroke();
+    ctx.fillStyle='#9fb0cc'; ctx.font='11px system-ui'; ctx.textAlign='center';
+    ctx.fillText('exponent m', (left+right)/2, H-12);
+    ctx.save(); ctx.translate(14,(top+bottom)/2); ctx.rotate(-Math.PI/2);
+    ctx.fillText('H^0(-mK_X) (conceptual)',0,0); ctx.restore();
+
+    hvals.forEach((hv,idx)=>{
+      const mm=idx+1;
+      const x=left+(idx+0.5)*gap;
+      const barH=(hv/maxH)*(bottom-top)*0.85;
+      ctx.fillStyle = hv>0?'rgba(94,234,212,0.55)':'rgba(159,176,204,0.25)';
+      ctx.fillRect(x-barW/2,bottom-barH,barW,barH);
+      ctx.strokeStyle = hv>0?'#5eead4':'#9fb0cc';
+      ctx.lineWidth=1.2; ctx.strokeRect(x-barW/2,bottom-barH,barW,barH);
+      ctx.fillStyle='#9fb0cc'; ctx.font='10px system-ui'; ctx.textAlign='center';
+      ctx.fillText(mm, x, bottom+14);
+    });
+
+    if(semipos){
+      const fx=left+(fm-0.5)*gap;
+      ctx.strokeStyle='#f59e0b'; ctx.lineWidth=1.5; ctx.setLineDash([4,4]);
+      ctx.beginPath(); ctx.moveTo(fx,top); ctx.lineTo(fx,bottom); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle='#f59e0b'; ctx.font='11px system-ui'; ctx.textAlign='center';
+      ctx.fillText('first nonzero at m='+fm, fx, top-8);
+    } else {
+      ctx.fillStyle='#ef4444'; ctx.font='13px system-ui'; ctx.textAlign='center';
+      ctx.fillText('No nonzero anticanonical section guaranteed', (left+right)/2, (top+bottom)/2);
+    }
+    // current m marker
+    const mx=left+(m-0.5)*gap;
+    ctx.fillStyle='#f59e0b';
+    ctx.beginPath(); ctx.arc(mx,bottom+24,5,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#f59e0b'; ctx.font='10px system-ui'; ctx.textAlign='center';
+    ctx.fillText('m='+m, mx, bottom+40);
+  } else {
+    const x=40,y=60,dy=28;
+    const vals2=eigenvalues(n,kappa,spread);
+    const minlam=Math.min(...vals2);
+    const lines=[
+      'Result 068: anticanonical nonvanishing',
+      'Complex dimension n = '+n,
+      'Variety class = '+vclassSel.value,
+      'Metric = '+smooth,
+      'κ_min = '+kappa.toFixed(2)+', anisotropy = '+spread.toFixed(2),
+      'Eigenvalues: '+vals2.map(v=>v.toFixed(2)).join(', '),
+      'Semipositive (smooth, κ_min≥0): '+(semipos?'yes':'no'),
+      'Theorem applies: '+(semipos?'yes':'no'),
+      'First guaranteed nonzero: '+(semipos?('m = '+fm):'none'),
+      'Selected exponent m = '+m,
+      'H^0(X,-mK_X): '+(guaranteed?'nonzero (guaranteed)':'not guaranteed'),
+      'Conclusion: '+(semipos?'a positive anticanonical power has a nonzero section':'no section forced by this theorem'),
+    ];
+    ctx.fillStyle='#e6edf7'; ctx.font='15px system-ui'; ctx.textAlign='left';
+    lines.forEach((l,i)=>{
+      if(i===0){ ctx.fillStyle='#5eead4'; ctx.font='16px system-ui'; }
+      else if(/Semipositive|Theorem applies|H^0/.test(l)){ ctx.fillStyle = /yes|nonzero/.test(l)?'#22c55e':'#ef4444'; ctx.font='15px system-ui'; }
+      else { ctx.fillStyle='#e6edf7'; ctx.font='15px system-ui'; }
+      ctx.fillText(l, x, y+i*dy);
+    });
+    const cx0=W-180, cy0=H/2;
+    ctx.strokeStyle='#5eead4'; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.arc(cx0,cy0,65,0,Math.PI*2); ctx.stroke();
+    ctx.beginPath(); ctx.arc(cx0,cy0,30,0,Math.PI*2); ctx.stroke();
+    ctx.fillStyle='rgba(94,234,212,0.20)';
+    ctx.beginPath(); ctx.arc(cx0,cy0,65,0,Math.PI*2); ctx.arc(cx0,cy0,30,0,Math.PI*2,true); ctx.closePath(); ctx.fill();
+    ctx.fillStyle='#9fb0cc'; ctx.font='11px system-ui'; ctx.textAlign='center';
+    ctx.fillText('−K_X metric', cx0, cy0+90);
+  }
+}
+
+nSlider.addEventListener('input',update);
+kappaSlider.addEventListener('input',update);
+spreadSlider.addEventListener('input',update);
+smoothSel.addEventListener('change',update);
+vclassSel.addEventListener('change',update);
+mSlider.addEventListener('input',update);
+viewSel.addEventListener('change',update);
+update();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

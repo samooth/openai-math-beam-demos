@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Threefold log abundance in numerical dimension one (conceptual, result 035)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range]{flex:1 1 220px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:420px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+select{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text)}
+table{width:100%;border-collapse:collapse;font-size:.85rem}
+th,td{padding:.35rem .45rem;border-bottom:1px solid var(--border);text-align:left}
+th{color:var(--muted);font-weight:600}
+td.num{font-family:ui-monospace,monospace}
+.badge{display:inline-block;padding:.15rem .5rem;border-radius:6px;font-size:.75rem;font-weight:700}
+.good{color:var(--good)} .warn{color:var(--warn)} .bad{color:var(--bad)}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Threefold log abundance in numerical dimension one (conceptual, result 035)</h1>
+  <p>For a projective log canonical threefold pair \((X,B)\) in characteristic \(p>3) with rational boundary, if the adjoint (L=K_X+B) is nef of numerical dimension one, then (L) is semiample: it gives a morphism to a curve and its sections grow linearly. Tune the invariants to test the hypotheses.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Proves log abundance for projective log canonical threefold pairs over algebraically closed fields of characteristic \(p>3) when the effective boundary is rational and the (\mathbb Q)-Cartier adjoint is nef of numerical dimension one. The adjoint is semiample, without requiring the original variety to be terminal or (\mathbb Q)-factorial.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Extends log abundance to positive-characteristic threefolds in the decisive numerical-dimension-one case, dropping terminality and \(\mathbb Q\)-factoriality assumptions; supports the minimal model program, Iitaka fibrations, and classification of threefolds in characteristic \(p>3).</p>
+  </section>
+  <div class="controls">
+    <label for="nu">Numerical dimension (\nu(L))</label>
+    <input id="nu" type="range" min="0" max="3" value="1" step="1">
+    <span class="val" id="nuval">1</span>
+    <label for="p">Characteristic (p)</label>
+    <select id="p">
+      <option value="0">0 (char zero)</option>
+      <option value="2">2</option>
+      <option value="3">3</option>
+      <option value="5" selected>5</option>
+      <option value="7">7</option>
+      <option value="11">11</option>
+    </select>
+    <label for="sing">Singularity class</label>
+    <select id="sing">
+      <option value="lc" selected>log canonical (lc)</option>
+      <option value="klt">klt</option>
+      <option value="terminal">terminal</option>
+      <option value="notlc">not lc</option>
+    </select>
+    <label for="bnd">Boundary coefficients</label>
+    <select id="bnd">
+      <option value="rational" selected>rational</option>
+      <option value="irrational">irrational</option>
+    </select>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Dimension of (X)</div><div class="value">3</div></div>
+    <div class="stat"><div class="label">(\nu(L))</div><div class="value" id="nustat">—</div></div>
+    <div class="stat"><div class="label">Characteristic</div><div class="value" id="pstat">—</div></div>
+    <div class="stat"><div class="label">Status</div><div class="value" id="status">—</div></div>
+    <div class="stat"><div class="label">Section growth</div><div class="value" id="growth">—</div></div>
+    <div class="stat"><div class="label">Base locus of (L)</div><div class="value" id="base">—</div></div>
+  </div>
+  <div class="legend">
+    <span><span class="swatch" style="background:#5eead4"></span>guaranteed semiample</span>
+    <span><span class="swatch" style="background:#f59e0b"></span>not covered by this result</span>
+    <span><span class="swatch" style="background:#94a3b8"></span>fibers / base curve</span>
+    <span><span class="swatch" style="background:#f87171"></span>base locus (if any)</span>
+  </div>
+  <canvas id="c" width="900" height="420"></canvas>
+  <section class="box">
+    <h3>Hypothesis check</h3>
+    <div id="tablewrap" style="overflow:auto;max-height:320px"></div>
+  </section>
+</div>
+<script>
+const nuSlider=document.getElementById('nu');
+const nuval=document.getElementById('nuval');
+const pSel=document.getElementById('p');
+const singSel=document.getElementById('sing');
+const bndSel=document.getElementById('bnd');
+const nustat=document.getElementById('nustat');
+const pstat=document.getElementById('pstat');
+const status=document.getElementById('status');
+const growth=document.getElementById('growth');
+const base=document.getElementById('base');
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+const tablewrap=document.getElementById('tablewrap');
+
+function resizeCanvas(){ canvas.width=Math.max(300,canvas.clientWidth); canvas.height=420; }
+window.addEventListener('resize',function(){ resizeCanvas(); update(); });
+resizeCanvas();
+
+function pNum(){ return +pSel.value; }
+function guaranteed(nu,p,sing,bnd){
+  return nu===1 && p>3 && sing!=='notlc' && bnd==='rational';
+}
+function reason(nu,p,sing,bnd){
+  if (nu!==1) return 'numerical dimension is not one';
+  if (!(p>3)) return 'characteristic is not >3';
+  if (sing==='notlc') return 'pair is not log canonical';
+  if (bnd!=='rational') return 'boundary coefficients are not rational';
+  return 'all hypotheses satisfied';
+}
+
+function sections(m,nu){
+  // conceptual growth ~ m^nu (with nu=0 constant)
+  if (nu===0) return 1;
+  return Math.max(1, Math.round(1.5*Math.pow(m,nu)));
+}
+
+function updateTable(nu,p,sing,bnd){
+  const rows=[
+    ['dim X = 3','3','3',true],
+    ['log canonical pair','yes', sing==='notlc'?'no':'yes', sing!=='notlc'],
+    ['char p > 3','p>3', p===0?'0':String(p), p>3],
+    ['rational boundary','yes', bnd, bnd==='rational'],
+    ['\u03bd(L)=1','1', String(nu), nu===1],
+  ];
+  let html='<table><thead><tr><th>Hypothesis</th><th>Required</th><th>Actual</th><th>OK?</th></tr></thead><tbody>';
+  for (const r of rows){
+    html += '<tr><td>'+r[0]+'</td><td class="num">'+r[1]+'</td><td class="num">'+r[2]+'</td><td class="'+(r[3]?'good':'bad')+'">'+(r[3]?'yes':'no')+'</td></tr>';
+  }
+  html+='</tbody></table>';
+  tablewrap.innerHTML=html;
+}
+
+function drawFibration(W,H,nu,ok){
+  const padL=30, padR=20, padT=30, padB=40;
+  const leftW=W*0.52;
+  const plotW=leftW-padL-padR;
+  const plotH=H-padT-padB;
+  // base curve
+  const baseY=padT+plotH-20;
+  ctx.strokeStyle='#94a3b8'; ctx.lineWidth=2;
+  ctx.beginPath();
+  for (let i=0;i<=60;i++){
+    const t=i/60;
+    const x=padL+plotW*t;
+    const y=baseY + 6*Math.sin(3*t*Math.PI);
+    if (i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  }
+  ctx.stroke();
+  // fibers
+  ctx.strokeStyle='rgba(148,163,184,0.45)'; ctx.lineWidth=1.2;
+  for (let i=0;i<=8;i++){
+    const t=i/8;
+    const x=padL+plotW*t;
+    const yb=baseY + 6*Math.sin(3*t*Math.PI);
+    ctx.beginPath();
+    ctx.moveTo(x,yb);
+    ctx.lineTo(x, padT+8);
+    ctx.stroke();
+    // fiber top cap
+    ctx.beginPath(); ctx.ellipse(x, padT+10, 12, 5, 0, 0, Math.PI*2); ctx.stroke();
+  }
+  // sections (curves) when semiample: horizontal-ish lines
+  const nSec = ok ? 3 : 1;
+  for (let s=0;s<nSec;s++){
+    ctx.strokeStyle = ok ? 'rgba(94,234,212,0.9)' : 'rgba(248,113,113,0.7)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    for (let i=0;i<=60;i++){
+      const t=i/60;
+      const x=padL+plotW*t;
+      const y = padT+20 + s*26 + 10*Math.sin(2*t*Math.PI+ s);
+      if (i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+  }
+  if (!ok){
+    // base locus marker
+    ctx.fillStyle='rgba(248,113,113,0.9)';
+    ctx.beginPath(); ctx.arc(padL+plotW*0.45, baseY-40, 6, 0, Math.PI*2); ctx.fill();
+    ctx.fillStyle='#9fb0cc'; ctx.font='10px system-ui';
+    ctx.fillText('base locus', padL+plotW*0.45+8, baseY-36);
+  }
+  ctx.fillStyle='#9fb0cc'; ctx.font='11px system-ui'; ctx.textAlign='center';
+  ctx.fillText('X (threefold) \u2192 C (curve)', padL+plotW/2, H-8);
+  ctx.textAlign='left';
+}
+
+function drawGrowth(W,H,nu,ok){
+  const padL=W*0.52+40, padR=20, padT=30, padB=40;
+  const plotW=W-padL-padR;
+  const plotH=H-padT-padB;
+  // axes
+  ctx.strokeStyle='rgba(159,176,204,0.35)'; ctx.lineWidth=1;
+  ctx.beginPath();
+  ctx.moveTo(padL,padT); ctx.lineTo(padL,padT+plotH); ctx.lineTo(padL+plotW,padT+plotH); ctx.stroke();
+  const MMAX=8;
+  const YMAX=Math.max(4, sections(MMAX,nu)+2);
+  // grid
+  ctx.strokeStyle='rgba(159,176,204,0.12)';
+  for (let j=0;j<=MMAX;j++){
+    const x=padL+plotW*j/MMAX;
+    ctx.beginPath(); ctx.moveTo(x,padT); ctx.lineTo(x,padT+plotH); ctx.stroke();
+  }
+  // curve
+  ctx.strokeStyle = ok ? '#5eead4' : '#f59e0b';
+  ctx.lineWidth=2.5;
+  ctx.beginPath();
+  for (let i=0;i<=MMAX;i++){
+    const m=i;
+    const y=padT+plotH - (sections(m,nu)/YMAX)*plotH;
+    const x=padL+plotW*m/MMAX;
+    if (i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  }
+  ctx.stroke();
+  // points
+  for (let i=0;i<=MMAX;i++){
+    const m=i;
+    const y=padT+plotH - (sections(m,nu)/YMAX)*plotH;
+    const x=padL+plotW*m/MMAX;
+    ctx.fillStyle = ok ? '#5eead4' : '#f59e0b';
+    ctx.beginPath(); ctx.arc(x,y,4,0,Math.PI*2); ctx.fill();
+  }
+  // labels
+  ctx.fillStyle='#9fb0cc'; ctx.font='10px system-ui'; ctx.textAlign='center';
+  for (let i=0;i<=MMAX;i++){ ctx.fillText(String(i), padL+plotW*i/MMAX, padT+plotH+14); }
+  ctx.textAlign='right';
+  for (let j=0;j<=4;j++){
+    const v=Math.round(YMAX*j/4);
+    const y=padT+plotH - (v/YMAX)*plotH;
+    ctx.fillText(String(v), padL-6, y+4);
+  }
+  ctx.textAlign='center';
+  ctx.fillText('multiplier m', padL+plotW/2, H-8);
+  ctx.save(); ctx.translate(padL-30, padT+plotH/2); ctx.rotate(-Math.PI/2); ctx.fillText('h\u2070(mL)',0,0); ctx.restore();
+  ctx.textAlign='left';
+  ctx.fillStyle='#9fb0cc'; ctx.font='11px system-ui';
+  ctx.fillText(ok ? 'linear growth (semiample)' : 'growth not guaranteed', padL, padT-6);
+}
+
+function update(){
+  const nu=+nuSlider.value;
+  const p=pNum();
+  const sing=singSel.value;
+  const bnd=bndSel.value;
+  nuval.textContent=nu;
+  nustat.textContent=nu;
+  pstat.textContent = p===0?'0':String(p);
+  const ok=guaranteed(nu,p,sing,bnd);
+  status.textContent = ok ? 'SEMIAMPLE' : 'NOT GUARANTEED';
+  status.className = 'value ' + (ok ? 'good' : 'bad');
+  growth.textContent = ok ? '\u2248 C\u00b7m (linear)' : '\u03bd='+nu+' \u2192 m^'+nu;
+  base.textContent = ok ? 'empty' : 'possible';
+  updateTable(nu,p,sing,bnd);
+
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  drawFibration(W,H,nu,ok);
+  drawGrowth(W,H,nu,ok);
+}
+
+nuSlider.addEventListener('input', update);
+pSel.addEventListener('change', update);
+singSel.addEventListener('change', update);
+bndSel.addEventListener('change', update);
+update();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

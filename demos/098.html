@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Compact counterexamples to bi-Lipschitz dimension reduction (conceptual, result 098)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range]{flex:1 1 200px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:420px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+select{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text)}
+.toggle{display:inline-flex;align-items:center;gap:.4rem}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Compact counterexamples to bi-Lipschitz dimension reduction (conceptual, result 098)</h1>
+  <p>Every infinite-dimensional real Banach space contains a compact doubling set admitting no bi-Lipschitz embedding into any finite-dimensional normed space. The doubling constant is universal, answering the Lang--Plaut problem negatively even for compact subsets of Hilbert space.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Every infinite-dimensional real Banach space contains a compact doubling subset that admits no bi-Lipschitz embedding into any finite-dimensional real normed space. The doubling constant has a universal bound, independent of the ambient Banach space. This answers the Lang--Plaut problem negatively, even for compact subsets of Hilbert space. In the Hilbert case there is a doubling subset of real $\ell_2$ with doubling constant at most $76800$ and no finite-dimensional Euclidean embedding at any finite distortion.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">This obstructs universal finite-dimensional bi-Lipschitz dimension reduction for compact doubling metric spaces: no fixed target dimension can approximate all such sets with bounded distortion. It informs metric geometry, Banach space theory, and the limits of sketching and embedding methods for high- and infinite-dimensional data.</p>
+  </section>
+  <div class="controls">
+    <label for="depth">Depth levels</label>
+    <input id="depth" type="range" min="2" max="9" value="6" step="1">
+    <span class="val" id="depthval">6</span>
+    <label for="dim">Target dimension $d$</label>
+    <input id="dim" type="range" min="1" max="20" value="3" step="1">
+    <span class="val" id="dimval">3</span>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Leaves (points)</div><div class="value" id="leaves">—</div></div>
+    <div class="stat"><div class="label">Total nodes</div><div class="value" id="nodes">—</div></div>
+    <div class="stat"><div class="label">Doubling constant</div><div class="value" id="doubling">≤ 76800</div></div>
+    <div class="stat"><div class="label">Target dimension</div><div class="value" id="dimstat">—</div></div>
+    <div class="stat"><div class="label">Estimated min distortion</div><div class="value" id="dist">—</div></div>
+    <div class="stat"><div class="label">Finite-dim embeddable?</div><div class="value" id="embed">No (limit)</div></div>
+  </div>
+  <canvas id="tree" width="900" height="420"></canvas>
+  <canvas id="plot" width="900" height="260" style="height:260px;margin-top:.75rem"></canvas>
+  <p style="font-size:.85rem;color:var(--muted);margin-top:.5rem">Left: a finite truncation of the hierarchical doubling set (branching at every level). Right plot: conceptual lower bound on distortion into $\mathbb{R}^d$ grows with depth; as depth $\to\infty$ it diverges for fixed $d$.</p>
+</div>
+<script>
+const depthSlider=document.getElementById('depth');
+const dimSlider=document.getElementById('dim');
+const treeCanvas=document.getElementById('tree');
+const plotCanvas=document.getElementById('plot');
+const tctx=treeCanvas.getContext('2d');
+const pctx=plotCanvas.getContext('2d');
+
+const depthval=document.getElementById('depthval');
+const dimval=document.getElementById('dimval');
+const leavesEl=document.getElementById('leaves');
+const nodesEl=document.getElementById('nodes');
+const dimstat=document.getElementById('dimstat');
+const distEl=document.getElementById('dist');
+
+function resize(){
+  for(const c of [treeCanvas,plotCanvas]){
+    c.width=Math.max(300,c.clientWidth);
+  }
+  treeCanvas.height=420;
+  plotCanvas.height=260;
+}
+window.addEventListener('resize',function(){ resize(); render(); });
+resize();
+
+function drawTree(L){
+  const W=treeCanvas.width,H=treeCanvas.height;
+  tctx.clearRect(0,0,W,H);
+  const padX=40,padY=30;
+  const maxDepth=L;
+  // positions
+  function pos(level,index){
+    const count=Math.pow(2,level);
+    const x=padX + (index+0.5)*(W-2*padX)/count;
+    const y=padY + level*(H-2*padY)/maxDepth;
+    return [x,y];
+  }
+  // edges
+  for(let level=0;level<maxDepth;level++){
+    const count=Math.pow(2,level);
+    for(let i=0;i<count;i++){
+      const [x1,y1]=pos(level,i);
+      for(let k=0;k<2;k++){
+        const [x2,y2]=pos(level+1,i*2+k);
+        tctx.strokeStyle='rgba(94,234,212,0.5)';
+        tctx.lineWidth=1.5;
+        tctx.beginPath(); tctx.moveTo(x1,y1); tctx.lineTo(x2,y2); tctx.stroke();
+      }
+    }
+  }
+  // nodes
+  for(let level=0;level<=maxDepth;level++){
+    const count=Math.pow(2,level);
+    const r=Math.max(2,8-level);
+    for(let i=0;i<count;i++){
+      const [x,y]=pos(level,i);
+      tctx.fillStyle=level===maxDepth?'#5eead4':'#1f2a44';
+      tctx.strokeStyle='#5eead4';
+      tctx.lineWidth=1.5;
+      tctx.beginPath(); tctx.arc(x,y,r,0,Math.PI*2); tctx.fill(); tctx.stroke();
+    }
+  }
+  // labels
+  tctx.fillStyle='#9fb0cc'; tctx.font='11px system-ui'; tctx.textAlign='left';
+  tctx.fillText('level 0 (root)', padX, padY-8);
+  tctx.fillText('level '+maxDepth+' (leaves)', padX, H-6);
+}
+
+function drawPlot(L,d){
+  const W=plotCanvas.width,H=plotCanvas.height;
+  pctx.clearRect(0,0,W,H);
+  const padL=50,padR=20,padT=20,padB=40;
+  const maxD=12;
+  const maxVal=Math.sqrt(maxD/1)+0.5;
+  function X(x){ return padL + (x/maxD)*(W-padL-padR); }
+  function Y(y){ return H-padB - (y/maxVal)*(H-padT-padB); }
+  // axes
+  pctx.strokeStyle='#9fb0cc'; pctx.lineWidth=1;
+  pctx.beginPath(); pctx.moveTo(padL,H-padB); pctx.lineTo(W-padR,H-padB); pctx.stroke();
+  pctx.beginPath(); pctx.moveTo(padL,padT); pctx.lineTo(padL,H-padB); pctx.stroke();
+  pctx.fillStyle='#9fb0cc'; pctx.font='11px system-ui'; pctx.textAlign='center';
+  pctx.fillText('depth L', (padL+W-padR)/2, H-8);
+  pctx.save(); pctx.translate(14,(padT+H-padB)/2); pctx.rotate(-Math.PI/2); pctx.textAlign='center'; pctx.fillText('est. min distortion',0,0); pctx.restore();
+  // curve
+  pctx.strokeStyle='#5eead4'; pctx.lineWidth=2.5;
+  pctx.beginPath();
+  for(let x=1;x<=maxD;x+=0.1){
+    const y=Math.sqrt(x/d);
+    if(x===1) pctx.moveTo(X(x),Y(y)); else pctx.lineTo(X(x),Y(y));
+  }
+  pctx.stroke();
+  // chosen point
+  const y0=Math.sqrt(L/d);
+  pctx.fillStyle='#f59e0b';
+  pctx.beginPath(); pctx.arc(X(L),Y(y0),6,0,Math.PI*2); pctx.fill();
+  pctx.fillStyle='#9fb0cc'; pctx.font='11px system-ui'; pctx.textAlign='left';
+  pctx.fillText('L='+L+', d='+d, X(L)+8, Y(y0)-8);
+  // ticks
+  pctx.fillStyle='#9fb0cc'; pctx.font='10px system-ui'; pctx.textAlign='center';
+  for(let x=0;x<=maxD;x+=2){ pctx.fillText(x, X(x), H-padB+14); }
+}
+
+function updateStats(){
+  const L=+depthSlider.value;
+  const d=+dimSlider.value;
+  depthval.textContent=L;
+  dimval.textContent=d;
+  const leaves=Math.pow(2,L);
+  const nodes=Math.pow(2,L+1)-1;
+  leavesEl.textContent=leaves.toLocaleString();
+  nodesEl.textContent=nodes.toLocaleString();
+  dimstat.textContent=d;
+  const dist=Math.sqrt(L/d);
+  distEl.textContent=dist.toFixed(3);
+}
+
+function render(){
+  updateStats();
+  const L=+depthSlider.value;
+  const d=+dimSlider.value;
+  drawTree(L);
+  drawPlot(L,d);
+}
+
+depthSlider.addEventListener('input',render);
+dimSlider.addEventListener('input',render);
+render();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

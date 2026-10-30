@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Perceptron free energies and microscopic jamming (conceptual, result 222)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range]{flex:1 1 160px}
+input[type=number]{width:6rem;padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text)}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:auto;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+.legend{display:flex;gap:1rem;align-items:center;font-size:.85rem;color:var(--muted);margin:.5rem 0;flex-wrap:wrap}
+.swatch{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:.3rem;vertical-align:middle}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Perceptron free energies and microscopic jamming (conceptual, result 222)</h1>
+  <p>Conceptual view of the spherical perceptron at margin $-1$: Gardner storage capacity, jamming exponents for gaps and forces, and a 2D analogue of random linear constraints on a sphere.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Determines finite-temperature variational free energies for Gaussian Ising perceptrons with bounded Borel log-potentials and Gaussian spherical perceptrons with bounded continuous potentials, at every positive pattern density. A spherical extension treats bi-orthogonally invariant disorder with compact limiting singular-value distributions and no outliers. At margin $-1$, the quadratic-penalty spherical model has a sharp feasibility threshold and limiting gap and force laws, with system size, zero temperature, and critical density taken in that order.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Connects loss of feasibility in random high-dimensional constraints to universal jamming exponents for gaps and forces, supporting replica-symmetry-breaking predictions and marginal stability in sphere packings and neural-network storage models.</p>
+  </section>
+  <div class="controls">
+    <label for="kappa">margin $\kappa$</label>
+    <input id="kappa" type="range" min="-2" max="2" value="-1" step="0.01">
+    <span class="val" id="kval">-1.00</span>
+    <label for="alpha">density $\alpha$</label>
+    <input id="alpha" type="range" min="0" max="6" value="4.2" step="0.01">
+    <span class="val" id="aval">2.60</span>
+  </div>
+  <div class="controls">
+    <label for="M">2D constraints $M$</label>
+    <input id="M" type="range" min="1" max="60" value="12" step="1">
+    <span class="val" id="mval">12</span>
+    <label for="seed">seed</label>
+    <input id="seed" type="number" value="42">
+    <button id="resample">Resample</button>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Gardner capacity $\alpha_c(\kappa)$</div><div class="value" id="capstat">—</div></div>
+    <div class="stat"><div class="label">Regime</div><div class="value" id="regime">—</div></div>
+    <div class="stat"><div class="label">2D feasible arc length</div><div class="value" id="arcstat">—</div></div>
+    <div class="stat"><div class="label">Largest infeasible gap</div><div class="value" id="gapstat">—</div></div>
+  </div>
+  <canvas id="phase" width="560" height="360"></canvas>
+  <canvas id="dist" width="560" height="300"></canvas>
+  <canvas id="circle" width="360" height="360"></canvas>
+  <div class="legend">
+    <span><span class="swatch" style="background:#22c55e"></span>SAT / feasible</span>
+    <span><span class="swatch" style="background:#ef4444"></span>UNSAT / infeasible</span>
+    <span><span class="swatch" style="background:#5eead4"></span>capacity curve</span>
+  </div>
+</div>
+<script>
+const gamma = 0.4126932;
+const theta = 0.4231075;
+function phi(x){ return Math.exp(-x*x/2)/Math.sqrt(2*Math.PI); }
+function capacity(margin){
+  const lo = -margin;
+  const hi = lo + 12;
+  const N = 2400;
+  const h = (hi - lo)/N;
+  let num = 0, den = 0;
+  for(let i=0;i<=N;i++){
+    const x = lo + i*h;
+    const w = (i===0||i===N) ? 1 : (i%2 ? 4 : 2);
+    const p = phi(x);
+    const gm = x - lo;
+    num += w*p*gm*gm;
+    den += w*p;
+  }
+  num *= h/3; den *= h/3;
+  if(num <= 0) return Infinity;
+  return 2*den/num;
+}
+function mulberry32(a){ a|=0; return function(){ a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+function randn(rng){ let u=0,v=0; while(u===0) u=rng(); while(v===0) v=rng(); return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v); }
+
+let constraints = [];
+let pts = [];
+let rng = mulberry32(42);
+
+function resample(){
+  const seed = parseInt(document.getElementById('seed').value,10) || 42;
+  rng = mulberry32(seed);
+  const M = parseInt(document.getElementById('M').value,10);
+  constraints = [];
+  for(let i=0;i<M;i++) constraints.push({x:randn(rng), y:randn(rng)});
+  updateCircle();
+}
+
+function updateCircle(){
+  const P = 1800;
+  pts = new Array(P);
+  let feasibleCount = 0;
+  for(let i=0;i<P;i++){
+    const ang = 2*Math.PI*i/P;
+    const cx = Math.cos(ang), cy = Math.sin(ang);
+    let ok = true;
+    for(const c of constraints){
+      if(c.x*cx + c.y*cy < -1){ ok = false; break; }
+    }
+    pts[i] = ok;
+    if(ok) feasibleCount++;
+  }
+  const arcLen = 2*Math.PI*feasibleCount/P;
+  let maxRun = 0, run = 0;
+  const doubled = pts.concat(pts);
+  for(let i=0;i<doubled.length;i++){
+    if(!doubled[i]){ run++; if(run>maxRun) maxRun=run; }
+    else run = 0;
+    if(run >= P) break;
+  }
+  const largestGap = 2*Math.PI*Math.min(maxRun,P)/P;
+  document.getElementById('arcstat').textContent = arcLen.toFixed(3);
+  document.getElementById('gapstat').textContent = largestGap.toFixed(3);
+  drawCircle();
+}
+
+function updateStats(){
+  const kappa = parseFloat(document.getElementById('kappa').value);
+  const alpha = parseFloat(document.getElementById('alpha').value);
+  const cap = capacity(kappa);
+  document.getElementById('kval').textContent = kappa.toFixed(2);
+  document.getElementById('aval').textContent = alpha.toFixed(2);
+  document.getElementById('mval').textContent = document.getElementById('M').value;
+  document.getElementById('capstat').textContent = isFinite(cap) ? cap.toFixed(3) : '∞';
+  document.getElementById('regime').textContent = (alpha < cap) ? 'SAT (feasible)' : 'UNSAT (jammed)';
+  drawPhase();
+  drawDist();
+}
+
+function drawPhase(){
+  const cv = document.getElementById('phase');
+  const ctx = cv.getContext('2d');
+  const W = cv.width, H = cv.height;
+  ctx.clearRect(0,0,W,H);
+  const pad = 40;
+  const xmin=-2, xmax=2, ymin=0, ymax=6;
+  function X(v){ return pad + (v-xmin)/(xmax-xmin)*(W-2*pad); }
+  function Y(v){ return H-pad - (v-ymin)/(ymax-ymin)*(H-2*pad); }
+  // axes
+  ctx.strokeStyle = '#9fb0cc'; ctx.lineWidth=1;
+  ctx.beginPath();
+  ctx.moveTo(pad, H-pad); ctx.lineTo(W-pad, H-pad);
+  ctx.moveTo(pad, pad); ctx.lineTo(pad, H-pad);
+  ctx.stroke();
+  ctx.fillStyle='#9fb0cc'; ctx.font='12px system-ui';
+  ctx.fillText('κ', W-pad+4, H-pad+4);
+  ctx.fillText('α', pad-24, pad-8);
+  // ticks
+  for(let k=-2;k<=2;k++){
+    ctx.beginPath(); ctx.moveTo(X(k),H-pad); ctx.lineTo(X(k),H-pad+4); ctx.stroke();
+    ctx.fillText(k.toString(), X(k)-4, H-pad+16);
+  }
+  for(let a=0;a<=6;a+=1){
+    ctx.beginPath(); ctx.moveTo(pad-4,Y(a)); ctx.lineTo(pad,Y(a)); ctx.stroke();
+    ctx.fillText(a.toString(), pad-24, Y(a)+4);
+  }
+  // curve
+  ctx.strokeStyle = '#5eead4'; ctx.lineWidth=2;
+  ctx.beginPath();
+  let started=false;
+  for(let i=0;i<=400;i++){
+    const k = -2 + 4*i/400;
+    const a = capacity(k);
+    if(!isFinite(a) || a<0 || a>ymax){ started=false; continue; }
+    if(!started){ ctx.moveTo(X(k),Y(a)); started=true; }
+    else ctx.lineTo(X(k),Y(a));
+  }
+  ctx.stroke();
+  // shade SAT below curve
+  // current point
+  const kappa = parseFloat(document.getElementById('kappa').value);
+  const alpha = parseFloat(document.getElementById('alpha').value);
+  const cap = capacity(kappa);
+  ctx.fillStyle = (alpha < cap) ? '#22c55e' : '#ef4444';
+  ctx.beginPath(); ctx.arc(X(kappa),Y(alpha),6,0,2*Math.PI); ctx.fill();
+  ctx.strokeStyle='#e6edf7'; ctx.lineWidth=1.5; ctx.stroke();
+}
+
+function drawDist(){
+  const cv = document.getElementById('dist');
+  const ctx = cv.getContext('2d');
+  const W = cv.width, H = cv.height;
+  ctx.clearRect(0,0,W,H);
+  const pad=44;
+  // log-log axes
+  const xmin=Math.log10(1e-4), xmax=Math.log10(1);
+  const ymin=Math.log10(1e-4), ymax=Math.log10(1);
+  function X(v){ return pad + (Math.log10(v)-xmin)/(xmax-xmin)*(W-2*pad); }
+  function Y(v){ return H-pad - (Math.log10(v)-ymin)/(ymax-ymin)*(H-2*pad); }
+  ctx.strokeStyle='#9fb0cc'; ctx.lineWidth=1;
+  ctx.beginPath();
+  ctx.moveTo(pad,H-pad); ctx.lineTo(W-pad,H-pad);
+  ctx.moveTo(pad,pad); ctx.lineTo(pad,H-pad);
+  ctx.stroke();
+  ctx.fillStyle='#9fb0cc'; ctx.font='12px system-ui';
+  ctx.fillText('u, s', W-pad-20, H-pad+16);
+  ctx.fillText('CDF', pad-34, pad-8);
+  // grid
+  for(const t of [1e-4,1e-3,1e-2,1e-1,1]){
+    ctx.beginPath(); ctx.moveTo(X(t),H-pad); ctx.lineTo(X(t),H-pad+3); ctx.stroke();
+    ctx.fillText(t.toExponential(0), X(t)-10, H-pad+14);
+    ctx.beginPath(); ctx.moveTo(pad,Y(t)); ctx.lineTo(pad-3,Y(t)); ctx.stroke();
+  }
+  // gap CDF
+  ctx.strokeStyle='#22c55e'; ctx.lineWidth=2;
+  ctx.beginPath();
+  let started=false;
+  for(let i=0;i<=500;i++){
+    const u = 1e-4*Math.pow(1e4, i/500);
+    const g = Math.pow(u, 1-gamma);
+    if(!started){ ctx.moveTo(X(u),Y(g)); started=true; } else ctx.lineTo(X(u),Y(g));
+  }
+  ctx.stroke();
+  // force CDF
+  ctx.strokeStyle='#5eead4'; ctx.lineWidth=2;
+  ctx.beginPath();
+  started=false;
+  for(let i=0;i<=500;i++){
+    const s = 1e-4*Math.pow(1e4, i/500);
+    const f = Math.pow(s, 1+theta);
+    if(!started){ ctx.moveTo(X(s),Y(f)); started=true; } else ctx.lineTo(X(s),Y(f));
+  }
+  ctx.stroke();
+  // legend
+  ctx.fillStyle='#22c55e'; ctx.fillRect(pad+6, pad+6, 12, 3);
+  ctx.fillStyle='#9fb0cc'; ctx.fillText('G_J(u)~u^(1-γ)', pad+22, pad+12);
+  ctx.fillStyle='#5eead4'; ctx.fillRect(pad+6, pad+22, 12, 3);
+  ctx.fillStyle='#9fb0cc'; ctx.fillText('F_J(s)~s^(1+θ)', pad+22, pad+28);
+}
+
+function drawCircle(){
+  const cv = document.getElementById('circle');
+  const ctx = cv.getContext('2d');
+  const W = cv.width, H = cv.height;
+  ctx.clearRect(0,0,W,H);
+  const cx = W/2, cy = H/2, R = 130;
+  ctx.strokeStyle='#9fb0cc'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.arc(cx,cy,R,0,2*Math.PI); ctx.stroke();
+  const P = pts.length || 1800;
+  for(let i=0;i<P;i++){
+    const ang = 2*Math.PI*i/P;
+    const x = cx + R*Math.cos(ang);
+    const y = cy + R*Math.sin(ang);
+    ctx.fillStyle = pts[i] ? '#22c55e' : '#ef4444';
+    ctx.fillRect(x-1.5, y-1.5, 3, 3);
+  }
+  // draw constraint normals (scaled)
+  ctx.strokeStyle='rgba(94,234,212,0.35)';
+  for(const c of constraints){
+    const nrm = Math.hypot(c.x,c.y);
+    if(nrm===0) continue;
+    const ux = c.x/nrm, uy = c.y/nrm;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx + 40*ux, cy + 40*uy);
+    ctx.stroke();
+  }
+}
+
+const kappaSlider = document.getElementById('kappa');
+const alphaSlider = document.getElementById('alpha');
+const MSlider = document.getElementById('M');
+const seedInput = document.getElementById('seed');
+kappaSlider.addEventListener('input', updateStats);
+alphaSlider.addEventListener('input', updateStats);
+MSlider.addEventListener('input', ()=>{ document.getElementById('mval').textContent = MSlider.value; resample(); });
+seedInput.addEventListener('change', resample);
+document.getElementById('resample').addEventListener('click', ()=>{ seedInput.value = Math.floor(Math.random()*1e6); resample(); });
+
+resample();
+updateStats();
+</script>
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

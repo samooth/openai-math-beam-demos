@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quasipolynomial algorithms for mean-payoff, stochastic and parity games (conceptual, result 104)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range]{flex:1 1 160px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:460px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+select{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text)}
+.toggle{display:inline-flex;align-items:center;gap:.4rem}
+.legend{display:flex;gap:1rem;align-items:center;font-size:.85rem;color:var(--muted);margin:.5rem 0;flex-wrap:wrap}
+.swatch{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:.3rem;vertical-align:middle}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Quasipolynomial algorithms for mean-payoff, stochastic and parity games (conceptual, result 104)</h1>
+  <p>Deterministic algorithms use $2^{O((\log(L+2))^2)}$ bit operations for complete binary input length $L$. They compute exact values and optimal positional strategies in ordinary mean-payoff games, the nonnegative expectation-of-liminf value set in turn-based stochastic games, and the winning set for nonnegative liminf mean payoff conjoined with parity. Slide the parameters to generate a small game, iterate the Shapley operator, and watch the quasipolynomial bound grow with input length.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Gives deterministic algorithms using $2^{O((\log(L+2))^2)}$ bit operations, for complete binary input length $L$, for ordinary mean-payoff games and two separate extensions. They compute exact values and optimal positional strategies in ordinary games, the nonnegative expectation-of-liminf value set in turn-based stochastic games, and the winning set for nonnegative liminf mean payoff conjoined with parity. Signed rewards, rational chance probabilities, and parity priorities are unrestricted and binary-encoded. The Lean formalization checks a finite counterexample to a proposed optimization step in Truffet's elimination procedure and a randomized quasipolynomial mean-payoff algorithm succeeding with probability at least $7/8$.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Provides deterministic quasipolynomial-time algorithms for mean-payoff games and their stochastic and parity extensions, closing the gap between polynomial heuristics and exponential worst-case solvers. Exact rational values and optimal positional strategies are obtained within $2^{O((\log(L+2))^2)}$ bit operations, with unrestricted signed rewards and binary-encoded inputs. A randomized variant is always correct after independent repetition with the same expected quasipolynomial bound.</p>
+  </section>
+  <div class="controls">
+    <label for="mode">Mode</label>
+    <select id="mode">
+      <option value="mp">Mean-payoff</option>
+      <option value="stoch">Stochastic</option>
+      <option value="parity">Parity</option>
+    </select>
+    <label for="n">Vertices</label>
+    <input id="n" type="range" min="4" max="9" value="6" step="1">
+    <span class="val" id="nval">6</span>
+    <label for="deg">Max outdegree</label>
+    <input id="deg" type="range" min="1" max="3" value="2" step="1">
+    <span class="val" id="degval">2</span>
+    <label for="W">Weight range</label>
+    <input id="W" type="range" min="1" max="6" value="4" step="1">
+    <span class="val" id="Wval">4</span>
+    <label for="iters">Iterations</label>
+    <input id="iters" type="range" min="100" max="2000" value="600" step="100">
+    <span class="val" id="itersval">600</span>
+    <label for="chance">Chance nodes</label>
+    <input id="chance" type="range" min="0" max="4" value="2" step="1">
+    <span class="val" id="chanceval">2</span>
+    <button id="regen">Regenerate</button>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Vertices</div><div class="value" id="vstat">—</div></div>
+    <div class="stat"><div class="label">Edges</div><div class="value" id="estat">—</div></div>
+    <div class="stat"><div class="label">Input length L</div><div class="value" id="lstat">—</div></div>
+    <div class="stat"><div class="label">Bound exponent ln</div><div class="value" id="bexp">—</div></div>
+    <div class="stat"><div class="label">log10 bound</div><div class="value" id="blog">—</div></div>
+    <div class="stat"><div class="label">Winning vertices</div><div class="value" id="wstat">—</div></div>
+    <div class="stat"><div class="label">Min estimate</div><div class="value" id="minstat">—</div></div>
+    <div class="stat"><div class="label">Max estimate</div><div class="value" id="maxstat">—</div></div>
+    <div class="stat"><div class="label">Iterations</div><div class="value" id="istat">—</div></div>
+  </div>
+  <div class="legend">
+    <span><span class="swatch" style="background:#5eead4"></span>Maximizer vertex</span>
+    <span><span class="swatch" style="background:#f59e0b"></span>Minimizer vertex</span>
+    <span><span class="swatch" style="background:#a78bfa"></span>Chance vertex</span>
+    <span><span class="swatch" style="background:#22c55e"></span>Nonnegative winning ring</span>
+    <span><span class="swatch" style="background:#ef4444"></span>Negative edge weight</span>
+  </div>
+  <canvas id="c" width="900" height="460"></canvas>
+  <p style="font-size:.85rem;color:var(--muted);margin-top:.5rem">Left: generated game graph with Shapley value-iteration estimates on vertices. Right: quasipolynomial bound $2^{(\ln(L+2))^2}$ versus input length. Green ring marks vertices whose estimated liminf mean-payoff value is nonnegative for the maximizing player.</p>
+</div>
+<script>
+const modeSel=document.getElementById('mode');
+const nSlider=document.getElementById('n');
+const degSlider=document.getElementById('deg');
+const WSlider=document.getElementById('W');
+const itersSlider=document.getElementById('iters');
+const chanceSlider=document.getElementById('chance');
+const regenBtn=document.getElementById('regen');
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+
+const nval=document.getElementById('nval');
+const degval=document.getElementById('degval');
+const Wval=document.getElementById('Wval');
+const itersval=document.getElementById('itersval');
+const chanceval=document.getElementById('chanceval');
+
+const vstat=document.getElementById('vstat');
+const estat=document.getElementById('estat');
+const lstat=document.getElementById('lstat');
+const bexp=document.getElementById('bexp');
+const blog=document.getElementById('blog');
+const wstat=document.getElementById('wstat');
+const minstat=document.getElementById('minstat');
+const maxstat=document.getElementById('maxstat');
+const istat=document.getElementById('istat');
+
+let seed=987654321;
+function rnd(){ seed=(seed*1664525+1013904223)>>>0; return seed/4294967296; }
+
+let n=6, deg=2, W=4, iters=600, chanceN=2;
+let mode='mp';
+let nodes=[], edges=[];
+let est=[];
+
+function generate(){
+  n=+nSlider.value; deg=+degSlider.value; W=+WSlider.value; iters=+itersSlider.value; chanceN=+chanceSlider.value; mode=modeSel.value;
+  seed=Math.floor(Math.random()*1e9)+1;
+  nodes=[]; edges=[];
+  for(let i=0;i<n;i++){
+    let player;
+    if(mode==='stoch' && i<chanceN) player=2;
+    else player=(i%2);
+    nodes.push({player, priority: Math.floor(rnd()*(n+1))});
+  }
+  for(let i=0;i<n;i++){
+    edges[i]=[];
+    let d=1+Math.floor(rnd()*deg);
+    let used=new Set();
+    for(let k=0;k<d;k++){
+      let to=Math.floor(rnd()*n);
+      let w=Math.floor(rnd()*(2*W+1))-W;
+      edges[i].push({to, w, prob:1/d});
+    }
+  }
+  runIteration();
+  updateStats();
+  render();
+}
+
+function applyT(V){
+  const nV=new Array(n);
+  for(let i=0;i<n;i++){
+    const outs=edges[i];
+    if(nodes[i].player===0){
+      let best=-Infinity;
+      for(const e of outs) best=Math.max(best, e.w+V[e.to]);
+      nV[i]=best;
+    } else if(nodes[i].player===1){
+      let best=Infinity;
+      for(const e of outs) best=Math.min(best, e.w+V[e.to]);
+      nV[i]=best;
+    } else {
+      let sum=0;
+      for(const e of outs) sum += e.prob*(e.w+V[e.to]);
+      nV[i]=sum;
+    }
+  }
+  return nV;
+}
+
+function runIteration(){
+  let V=new Array(n).fill(0);
+  let prev=V.slice();
+  for(let k=0;k<iters;k++){
+    prev=V.slice();
+    V=applyT(V);
+  }
+  est=new Array(n);
+  for(let i=0;i<n;i++) est[i]=V[i]-prev[i];
+}
+
+function inputLength(){
+  let m=0; for(let i=0;i<n;i++) m+=edges[i].length;
+  const wbits=Math.ceil(Math.log2(Math.max(2,2*W+1)))+1;
+  const nbits=Math.ceil(Math.log2(Math.max(2,n+1)));
+  let L=n*4 + m*(wbits+nbits+8) + n*3;
+  return Math.max(10,L);
+}
+
+function boundLog10(L){
+  const ln=Math.log(L+2);
+  return (ln*ln)*Math.LOG10E;
+}
+
+function fmt(x){
+  if(!isFinite(x)) return '—';
+  if(Math.abs(x)>=1e6 || (Math.abs(x)>0 && Math.abs(x)<1e-3)) return x.toExponential(3);
+  return x.toFixed(4);
+}
+
+function updateStats(){
+  nval.textContent=n;
+  degval.textContent=deg;
+  Wval.textContent=W;
+  itersval.textContent=iters;
+  chanceval.textContent=chanceN;
+  const L=inputLength();
+  const m=edges.reduce((a,e)=>a+e.length,0);
+  vstat.textContent=n;
+  estat.textContent=m;
+  lstat.textContent=L;
+  let be=Math.log(L+2); be=be*be;
+  bexp.textContent=be.toFixed(3);
+  blog.textContent=boundLog10(L).toFixed(3);
+  let win=0, mn=Infinity, mx=-Infinity;
+  for(let i=0;i<n;i++){ if(est[i]>=-1e-9) win++; mn=Math.min(mn,est[i]); mx=Math.max(mx,est[i]); }
+  wstat.textContent=win+'/'+n;
+  minstat.textContent=fmt(mn);
+  maxstat.textContent=fmt(mx);
+  istat.textContent=iters;
+}
+
+function resizeCanvas(){ canvas.width=Math.max(300,canvas.clientWidth); canvas.height=460; }
+window.addEventListener('resize',function(){ resizeCanvas(); render(); });
+resizeCanvas();
+
+function render(){
+  const Wc=canvas.width, H=canvas.height;
+  ctx.clearRect(0,0,Wc,H);
+  const leftW=Wc*0.46;
+  const rightX=leftW+24;
+  const rightW=Wc-rightX-20;
+
+  const cx=leftW/2, cy=H/2;
+  const radius=Math.min(leftW,H)*0.34;
+  const pos=[];
+  for(let i=0;i<n;i++){
+    const a=-Math.PI/2 + 2*Math.PI*i/n;
+    pos.push([cx+Math.cos(a)*radius, cy+Math.sin(a)*radius]);
+  }
+
+  // edges
+  for(let i=0;i<n;i++){
+    for(const e of edges[i]){
+      const [x1,y1]=pos[i];
+      const [x2,y2]=pos[e.to];
+      ctx.strokeStyle = e.w>=0 ? 'rgba(34,197,94,0.7)' : 'rgba(239,68,68,0.7)';
+      ctx.lineWidth=1.6;
+      ctx.beginPath();
+      ctx.moveTo(x1,y1);
+      ctx.lineTo(x2,y2);
+      ctx.stroke();
+      // arrowhead
+      const ang=Math.atan2(y2-y1,x2-x1);
+      const hx=x2-Math.cos(ang)*18;
+      const hy=y2-Math.sin(ang)*18;
+      ctx.fillStyle=e.w>=0?'rgba(34,197,94,0.9)':'rgba(239,68,68,0.9)';
+      ctx.beginPath();
+      ctx.moveTo(hx,hy);
+      ctx.lineTo(hx-Math.cos(ang-0.4)*8, hy-Math.sin(ang-0.4)*8);
+      ctx.lineTo(hx-Math.cos(ang+0.4)*8, hy-Math.sin(ang+0.4)*8);
+      ctx.closePath();
+      ctx.fill();
+      // weight label
+      const mx=(x1+x2)/2, my=(y1+y2)/2;
+      ctx.fillStyle='#e6edf7';
+      ctx.font='11px system-ui';
+      ctx.textAlign='center';
+      ctx.fillText(e.w, mx, my-4);
+    }
+  }
+
+  // nodes
+  for(let i=0;i<n;i++){
+    const [x,y]=pos[i];
+    let fill='#5eead4';
+    if(nodes[i].player===1) fill='#f59e0b';
+    if(nodes[i].player===2) fill='#a78bfa';
+    if(est[i]>=-1e-9){
+      ctx.strokeStyle='#22c55e';
+      ctx.lineWidth=4;
+      ctx.beginPath();
+      ctx.arc(x,y,20,0,Math.PI*2);
+      ctx.stroke();
+    }
+    ctx.fillStyle=fill;
+    ctx.beginPath();
+    ctx.arc(x,y,16,0,Math.PI*2);
+    ctx.fill();
+    ctx.strokeStyle='#0b1220';
+    ctx.lineWidth=2;
+    ctx.stroke();
+    ctx.fillStyle='#0b1220';
+    ctx.font='bold 12px system-ui';
+    ctx.textAlign='center';
+    ctx.textBaseline='middle';
+    ctx.fillText(i, x, y);
+    ctx.textBaseline='alphabetic';
+    ctx.fillStyle='#e6edf7';
+    ctx.font='11px ui-monospace,monospace';
+    ctx.fillText(fmt(est[i]), x, y+30);
+    if(mode==='parity'){
+      ctx.fillStyle='#9fb0cc';
+      ctx.font='10px system-ui';
+      ctx.fillText('p'+nodes[i].priority, x, y-22);
+    }
+  }
+
+  // right plot: bound vs L
+  const gx=rightX, gy=40, gw=rightW, gh=H-90;
+  ctx.strokeStyle='rgba(159,176,204,0.6)';
+  ctx.lineWidth=1;
+  ctx.strokeRect(gx,gy,gw,gh);
+  const xmin=10, xmax=300;
+  const ymin=0;
+  const ymax=Math.max(5, boundLog10(xmax)+2);
+  function xOf(L){ return gx + (L-xmin)/(xmax-xmin)*gw; }
+  function yOf(v){ return gy+gh - (v-ymin)/(ymax-ymin)*gh; }
+
+  // grid
+  ctx.strokeStyle='rgba(159,176,204,0.18)';
+  ctx.lineWidth=1;
+  for(let i=0;i<=5;i++){
+    const L=xmin+(xmax-xmin)*i/5;
+    const x=xOf(L);
+    ctx.beginPath(); ctx.moveTo(x,gy); ctx.lineTo(x,gy+gh); ctx.stroke();
+    ctx.fillStyle='#9fb0cc';
+    ctx.font='10px system-ui';
+    ctx.textAlign='center';
+    ctx.fillText(Math.round(L), x, gy+gh+14);
+  }
+  for(let i=0;i<=5;i++){
+    const v=ymin+(ymax-ymin)*i/5;
+    const y=yOf(v);
+    ctx.beginPath(); ctx.moveTo(gx,y); ctx.lineTo(gx+gw,y); ctx.stroke();
+    ctx.fillStyle='#9fb0cc';
+    ctx.textAlign='right';
+    ctx.fillText(v.toFixed(1), gx-4, y+4);
+  }
+  ctx.fillStyle='#9fb0cc';
+  ctx.font='12px system-ui';
+  ctx.textAlign='center';
+  ctx.fillText('input length L', gx+gw/2, gy+gh+30);
+  ctx.save();
+  ctx.translate(gx-34, gy+gh/2);
+  ctx.rotate(-Math.PI/2);
+  ctx.fillText('log10 bound', 0,0);
+  ctx.restore();
+
+  // curve
+  ctx.strokeStyle='#5eead4';
+  ctx.lineWidth=2.5;
+  ctx.beginPath();
+  for(let i=0;i<=200;i++){
+    const L=xmin+(xmax-xmin)*i/200;
+    const v=boundLog10(L);
+    const x=xOf(L);
+    const y=yOf(v);
+    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  }
+  ctx.stroke();
+
+  // current marker
+  const L=inputLength();
+  const v=boundLog10(L);
+  const x=xOf(Math.min(xmax,Math.max(xmin,L)));
+  const y=yOf(v);
+  ctx.fillStyle='#f59e0b';
+  ctx.beginPath();
+  ctx.arc(x,y,6,0,Math.PI*2);
+  ctx.fill();
+  ctx.fillStyle='#e6edf7';
+  ctx.font='11px system-ui';
+  ctx.textAlign='left';
+  ctx.fillText('current', x+8, y-8);
+}
+
+modeSel.addEventListener('change',generate);
+nSlider.addEventListener('input',generate);
+degSlider.addEventListener('input',generate);
+WSlider.addEventListener('input',generate);
+itersSlider.addEventListener('input',generate);
+chanceSlider.addEventListener('input',generate);
+regenBtn.addEventListener('click',generate);
+generate();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

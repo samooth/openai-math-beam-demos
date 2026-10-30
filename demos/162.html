@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Counterexamples to Ryser’s covering conjecture (conceptual, result 162)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+select{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+input[type=range]{flex:1 1 180px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:520px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+.legend{display:flex;gap:1rem;align-items:center;font-size:.85rem;color:var(--muted);margin:.5rem 0;flex-wrap:wrap}
+.swatch{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:.3rem;vertical-align:middle}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Counterexamples to Ryser’s covering conjecture (conceptual, result 162)</h1>
+  <p>Compares the Ryser bound ( \tau(H)\le (r-1)\nu(H) ) with an intersecting (r)-partite (r)-uniform hypergraph whose covering number is ( \tau(H)=r ), and explores the truncated projective-plane equality case versus the counterexample case.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Ryser’s covering conjecture asserts that every (r)-partite (r)-uniform hypergraph satisfies (\tau(H)\le (r-1)\nu(H)), where (\tau) is the covering number and (\nu) is the matching number. In the intersecting case (\nu=1), this predicts a cover of size at most (r-1). Result 162 disproves this: for every sufficiently large prime (s\equiv 2\pmod 3) and every sufficiently large odd (n), with (q=s^n), there is an intersecting ((q+1))-partite ((q+1))-uniform hypergraph with covering number (q+1). Thus at rank (r=q+1) the covering number is (r), one more than the conjectured bound.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">This settles the intersecting case of Ryser’s conjecture in the negative and produces infinitely many ranks (r=p^n+1) at which the covering inequality fails. It also refutes related covering formulations, including Gyárfás’s monochromatic tree-cover conjecture, by converting a hypergraph cover into a cover of a complete graph by connected monochromatic subgraphs. The construction shows that finite-plane equality examples can be modified by exceptional edges to raise the covering number beyond the classical bound.</p>
+  </section>
+  <div class="controls">
+    <label for="q">Field order q (prime)</label>
+    <select id="q">
+      <option value="3">3</option>
+      <option value="5">5</option>
+      <option value="7">7</option>
+    </select>
+    <label for="mode">Construction</label>
+    <select id="mode">
+      <option value="plane">Truncated plane (equality)</option>
+      <option value="counter">Counterexample (conceptual)</option>
+    </select>
+    <label for="edge">Highlighted edge</label>
+    <input id="edge" type="range" min="0" max="8" value="0" step="1">
+    <span class="val" id="edgeval">0</span>
+  </div>
+  <div class="controls">
+    <label for="coverpart">Highlighted cover part</label>
+    <select id="coverpart">
+      <option value="0">Part 0</option>
+    </select>
+    <label for="seed">Seed</label>
+    <input id="seed" type="range" min="1" max="99" value="7" step="1">
+    <span class="val" id="seedval">7</span>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Rank r = q+1</div><div class="value" id="sr">—</div></div>
+    <div class="stat"><div class="label">Parts</div><div class="value" id="sparts">—</div></div>
+    <div class="stat"><div class="label">Vertices per part</div><div class="value" id="ssize">—</div></div>
+    <div class="stat"><div class="label">ν (matching)</div><div class="value" id="snu">1</div></div>
+    <div class="stat"><div class="label">Ryser bound (r-1)</div><div class="value" id="sbound">—</div></div>
+    <div class="stat"><div class="label">Covering number τ</div><div class="value" id="stau">—</div></div>
+    <div class="stat"><div class="label">Highlighted edge</div><div class="value" id="sedge">—</div></div>
+    <div class="stat"><div class="label">Status</div><div class="value" id="sstatus">—</div></div>
+  </div>
+  <div class="legend">
+    <span><span class="swatch" style="background:#5eead4"></span>Cover vertices</span>
+    <span><span class="swatch" style="background:#f59e0b"></span>Highlighted edge</span>
+    <span><span class="swatch" style="background:#ef4444"></span>Missed edge (conceptual)</span>
+  </div>
+  <canvas id="c" width="900" height="520"></canvas>
+  <p style="font-size:.85rem;color:var(--muted);margin-top:.5rem">Conceptual model: the truncated projective plane gives equality (\tau=q=r-1), with one whole part forming a cover. The counterexample mode conceptually adds exceptional edges, so that no (r-1) vertices cover all edges and (\tau=r). Edge highlighting shows one hyperedge meeting every part in one vertex.</p>
+</div>
+<script>
+const qSel=document.getElementById('q');
+const modeSel=document.getElementById('mode');
+const edgeSlider=document.getElementById('edge');
+const coverSel=document.getElementById('coverpart');
+const seedSlider=document.getElementById('seed');
+
+const edgeval=document.getElementById('edgeval');
+const seedval=document.getElementById('seedval');
+const sr=document.getElementById('sr');
+const sparts=document.getElementById('sparts');
+const ssize=document.getElementById('ssize');
+const sbound=document.getElementById('sbound');
+const stau=document.getElementById('stau');
+const sedge=document.getElementById('sedge');
+const sstatus=document.getElementById('sstatus');
+
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+
+let state={q:3,mode:'plane',edge:0,cover:0,seed:7};
+
+function modpow(a,e,q){let r=1%q; a=((a%q)+q)%q; while(e){if(e&1)r=r*a%q; a=a*a%q; e>>=1;} return r;}
+function modinv(a,q){return modpow(((a%q)+q)%q,q-2,q);}
+
+function buildPlane(q){
+  // parts 0..q-1 slopes, part q infinity
+  // edges indexed by (a,b) in F_q^2: q*q edges
+  const edges=[];
+  for(let a=0;a<q;a++){
+    for(let b=0;b<q;b++){
+      const rows=[];
+      for(let t=0;t<q;t++){
+        // z = -(a + b*t) mod q, x=1
+        rows[t]=((-(a+b*t))%q+q)%q;
+      }
+      // infinity part q: z = -b mod q
+      rows[q]=((-b)%q+q)%q;
+      edges.push(rows);
+    }
+  }
+  return edges;
+}
+
+function resizeCanvas(){ canvas.width=Math.max(300,canvas.clientWidth); canvas.height=520; }
+window.addEventListener('resize',function(){ resizeCanvas(); render(); });
+resizeCanvas();
+
+function readControls(){
+  state.q=parseInt(qSel.value,10);
+  state.mode=modeSel.value;
+  state.edge=parseInt(edgeSlider.value,10);
+  state.cover=parseInt(coverSel.value,10);
+  state.seed=parseInt(seedSlider.value,10);
+  edgeval.textContent=state.edge;
+  seedval.textContent=state.seed;
+}
+
+function rng(seed){ // simple deterministic
+  let x=seed||1;
+  return function(){ x=(x*9301+49297)%233280; return x/233280; };
+}
+
+function updateCoverOptions(q){
+  const r=q+1;
+  coverSel.innerHTML='';
+  for(let i=0;i<r;i++){
+    const opt=document.createElement('option');
+    opt.value=i;
+    opt.textContent='Part '+i;
+    coverSel.appendChild(opt);
+  }
+  coverSel.value=String(state.cover<r?state.cover:0);
+}
+
+function render(){
+  readControls();
+  const q=state.q;
+  const r=q+1;
+  const planeRows=q;
+  const counterRows=r;
+  const rows = state.mode==='plane' ? planeRows : counterRows;
+  const tau = state.mode==='plane' ? q : r;
+  const size = state.mode==='plane' ? q : r;
+
+  // update stats
+  sr.textContent=r;
+  sparts.textContent=r;
+  ssize.textContent=size;
+  sbound.textContent=q; // r-1
+  stau.textContent=tau;
+  const maxEdge = state.mode==='plane' ? q*q-1 : r*r-1;
+  if(state.edge>maxEdge){ state.edge=0; edgeSlider.value=0; edgeval.textContent=0; }
+  edgeSlider.max=maxEdge;
+  sedge.textContent=state.edge;
+  if(state.mode==='plane'){
+    sstatus.textContent = tau===q ? 'Meets Ryser (τ=r-1)' : '—';
+  } else {
+    sstatus.textContent = 'Violates Ryser (τ=r)';
+  }
+
+  // canvas
+  const W=canvas.width, H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const padL=40, padR=20, padT=30, padB=30;
+  const usableW=W-padL-padR;
+  const usableH=H-padT-padB;
+  const cols=r;
+  function colX(c){ return padL + (cols<=1?usableW/2 : c*usableW/(cols-1)); }
+  function rowY(row){ return padT + (rows<=1?usableH/2 : row*usableH/(rows-1)); }
+
+  // draw grid points
+  const rngf=rng(state.seed);
+  // determine edge rows
+  let edgeRows=null;
+  if(state.mode==='plane'){
+    const edges=buildPlane(q);
+    const idx=Math.max(0,Math.min(edges.length-1,state.edge));
+    edgeRows=edges[idx];
+  } else {
+    // conceptual: r rows, deterministic pseudo edge
+    edgeRows=[];
+    for(let c=0;c<r;c++){ edgeRows[c]=Math.floor(rngf()*rows); }
+  }
+
+  // draw all plane edges faintly
+  if(state.mode==='plane'){
+    const edges=buildPlane(q);
+    ctx.strokeStyle='rgba(159,176,204,0.12)';
+    ctx.lineWidth=1;
+    for(let e of edges){
+      ctx.beginPath();
+      for(let c=0;c<cols;c++){
+        const x=colX(c), y=rowY(e[c]);
+        if(c===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+      }
+      ctx.stroke();
+    }
+  }
+
+  // cover highlight
+  const coverPart=state.cover<r?state.cover:0;
+  // in plane mode, cover vertices are all vertices of coverPart -> highlight column
+  // in counter mode, highlight column too (conceptual cover would need r, but show attempted r-1? We highlight r-1? We'll highlight first r-1 rows of coverPart)
+  for(let row=0;row<rows;row++){
+    const x=colX(coverPart), y=rowY(row);
+    let isCover=false;
+    if(state.mode==='plane'){
+      isCover=true; // whole part is cover
+    } else {
+      isCover = row < (rows-1); // r-1 vertices attempted
+    }
+    ctx.beginPath();
+    ctx.arc(x,y,6,0,Math.PI*2);
+    ctx.fillStyle = isCover ? '#22c55e' : 'rgba(159,176,204,0.35)';
+    ctx.fill();
+  }
+
+  // draw all points
+  for(let c=0;c<cols;c++){
+    for(let row=0;row<rows;row++){
+      if(c===coverPart) continue; // already drawn
+      const x=colX(c), y=rowY(row);
+      ctx.beginPath();
+      ctx.arc(x,y,4,0,Math.PI*2);
+      ctx.fillStyle='rgba(159,176,204,0.5)';
+      ctx.fill();
+    }
+  }
+
+  // highlighted edge
+  ctx.strokeStyle='#f59e0b';
+  ctx.lineWidth=3;
+  ctx.beginPath();
+  for(let c=0;c<cols;c++){
+    const x=colX(c), y=rowY(edgeRows[c]);
+    if(c===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  }
+  ctx.stroke();
+  for(let c=0;c<cols;c++){
+    const x=colX(c), y=rowY(edgeRows[c]);
+    ctx.beginPath();
+    ctx.arc(x,y,6,0,Math.PI*2);
+    ctx.fillStyle='#f59e0b';
+    ctx.fill();
+  }
+
+  // counterexample missed edge indicator: if highlighted edge avoids the r-th vertex? Draw a red dashed edge shifted
+  if(state.mode==='counter'){
+    ctx.setLineDash([6,4]);
+    ctx.strokeStyle='rgba(239,68,68,0.8)';
+    ctx.lineWidth=2;
+    ctx.beginPath();
+    for(let c=0;c<cols;c++){
+      const row=(edgeRows[c]+1)%rows;
+      const x=colX(c), y=rowY(row);
+      if(c===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  // labels
+  ctx.fillStyle='rgba(159,176,204,0.9)';
+  ctx.font='12px system-ui';
+  ctx.textAlign='center';
+  for(let c=0;c<cols;c++){
+    ctx.fillText('V'+c, colX(c), H-8);
+  }
+}
+
+qSel.addEventListener('change',function(){ updateCoverOptions(parseInt(qSel.value,10)); render(); });
+modeSel.addEventListener('change',render);
+edgeSlider.addEventListener('input',render);
+coverSel.addEventListener('change',render);
+seedSlider.addEventListener('input',render);
+
+updateCoverOptions(parseInt(qSel.value,10));
+render();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

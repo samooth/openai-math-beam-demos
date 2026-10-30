@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BSD formula — interactive demo (result 002)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range]{flex:1 1 260px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:420px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>BSD formula: elliptic curve invariants (result 002)</h1>
+  <p>Interactive short Weierstrass curve E: y² = x³ + a x + b. Sliders change a, b; the demo computes invariants and an L(1) approximation.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Proves the full Birch–Swinnerton-Dyer leading-term formula for every elliptic curve over ℚ whose full q-power Selmer group has corank 0 or 1 for some prime q, including finiteness of the Tate–Shafarevich group. The BSD conjecture links analytic data (L-value / derivative at s=1) to arithmetic data (rank, regulator, torsion, Tamagawa numbers, |Sha|).</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">With result 006, this gives full BSD for a density-one set of quadratic twists of every elliptic curve over ℚ. This demo visualizes the curve and its basic invariants (discriminant, j-invariant) and approximates L(E,1) via the Euler product.</p>
+  </section>
+  <div class="controls">
+    <label for="a">a</label>
+    <input id="a" type="range" min="-10" max="10" value="-1" step="1">
+    <span class="val" id="aval">-1</span>
+    <label for="b">b</label>
+    <input id="b" type="range" min="-10" max="10" value="0" step="1">
+    <span class="val" id="bval">0</span>
+    <label for="P">primes up to</label>
+    <input id="P" type="range" min="100" max="3000" value="1000" step="100">
+    <span class="val" id="Pval">1000</span>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Discriminant Δ</div><div class="value" id="disc">—</div></div>
+    <div class="stat"><div class="label">j-invariant</div><div class="value" id="jin">—</div></div>
+    <div class="stat"><div class="label">Status</div><div class="value" id="status">—</div></div>
+    <div class="stat"><div class="label">L(E,1) approx</div><div class="value" id="Lval">—</div></div>
+    <div class="stat"><div class="label">Euler factors used</div><div class="value" id="nf">—</div></div>
+    <div class="stat"><div class="label">Real roots (approx)</div><div class="value" id="roots">—</div></div>
+  </div>
+  <canvas id="c" width="900" height="420"></canvas>
+</div>
+<script>
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+function resizeCanvas(){ canvas.width = Math.max(300, canvas.clientWidth); canvas.height = 420; }
+window.addEventListener('resize', function(){ resizeCanvas(); update(); });
+resizeCanvas();
+
+function disc(a,b){ return -16*(4*a*a*a + 27*b*b); }
+function jinv(a,b){ const den = 4*a*a*a + 27*b*b; if (den === 0) return Infinity; return 6912*a*a*a/den; }
+
+function sievePrimes(n){
+  const isComp = new Uint8Array(n+1);
+  const primes=[];
+  for(let i=2;i<=n;i++){
+    if(!isComp[i]){ primes.push(i); for(let j=i*i;j<=n;j+=i) isComp[j]=1; }
+  }
+  return primes;
+}
+
+function legendre(x,p){
+  x = ((x%p)+p)%p;
+  if(x===0) return 0;
+  let r = 1, base=x, exp=(p-1)/2;
+  while(exp>0){ if(exp&1) r = r*base % p; base = base*base % p; exp >>= 1; }
+  if(r === p-1) return -1;
+  return 1;
+}
+
+// a_p = p+1 - N_p = -sum chi
+function ap(a,b,p){ let s=0; for(let x=0;x<p;x++){ const fx=(x*x*x+a*x+b)%p; s+=legendre(fx,p);} return -s; }
+
+function lValue(a,b,P){
+  const primes = sievePrimes(P);
+  const D = disc(a,b);
+  let L=1, used=0;
+  for(const p of primes){
+    if(p===2 || p===3) continue;
+    if(D % p === 0) continue; // skip bad primes
+    const a_p = ap(a,b,p);
+    const denom = 1 - a_p/p + 1/p;
+    if(denom === 0) continue;
+    L *= 1/denom;
+    used++;
+  }
+  return {L, used};
+}
+
+function cubicRoots(a,b){
+  // find real roots of x^3+a x+b via discriminant
+  const discr = -4*a*a*a - 27*b*b; // cubic discriminant = -4a^3-27b^2? for x^3+px+q: Δ=-4p^3-27q^2
+  if(discr > 0){
+    // three real roots
+    const m = 2*Math.sqrt(-a/3);
+    const theta = Math.acos( (3*b)/(2*a) * Math.sqrt(-3/a) ) /3; // may be nan guard
+    // fallback numeric
+    return 3;
+  }
+  if(discr === 0) return 2;
+  return 1;
+}
+
+function draw(a,b){
+  const W=canvas.width, H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const padL=50,padR=20,padT=20,padB=40;
+  const plotW=W-padL-padR, plotH=H-padT-padB;
+  // axes
+  ctx.strokeStyle='#475569'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(padL,H/2); ctx.lineTo(W-padR,H/2); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(padL/2? padL:padL, padT); ctx.lineTo(padL,H-padB); ctx.stroke();
+  // x range
+  const xmin=-4, xmax=4;
+  const ymin=-8, ymax=8;
+  const X = v => padL + plotW*(v-xmin)/(xmax-xmin);
+  const Y = v => padT + plotH*(1 - (v-ymin)/(ymax-ymin));
+  // grid
+  ctx.strokeStyle='rgba(159,176,204,0.12)';
+  for(let i=-4;i<=4;i++){ const x=X(i); ctx.beginPath(); ctx.moveTo(x,padT); ctx.lineTo(x,H-padB); ctx.stroke(); }
+  // curve y^2=f(x): plot upper/lower where f>=0
+  ctx.strokeStyle='#f59e0b'; ctx.lineWidth=2.5;
+  let started=false;
+  // upper
+  ctx.beginPath();
+  for(let i=0;i<=400;i++){
+    const x = xmin + (xmax-xmin)*i/400;
+    const f = x*x*x + a*x + b;
+    if(f<0){ started=false; continue; }
+    const y = Math.sqrt(f);
+    const px=X(x), py=Y(y);
+    if(!started){ ctx.moveTo(px,py); started=true;} else ctx.lineTo(px,py);
+  }
+  ctx.stroke();
+  // lower
+  ctx.beginPath(); started=false;
+  for(let i=0;i<=400;i++){
+    const x = xmin + (xmax-xmin)*i/400;
+    const f = x*x*x + a*x + b;
+    if(f<0){ started=false; continue; }
+    const y = -Math.sqrt(f);
+    const px=X(x), py=Y(y);
+    if(!started){ ctx.moveTo(px,py); started=true;} else ctx.lineTo(px,py);
+  }
+  ctx.stroke();
+  // cubic f(x) dashed
+  ctx.strokeStyle='rgba(94,234,212,0.5)'; ctx.setLineDash([4,4]); ctx.lineWidth=1.5;
+  ctx.beginPath();
+  for(let i=0;i<=400;i++){
+    const x = xmin + (xmax-xmin)*i/400;
+    const f = x*x*x + a*x + b;
+    const px=X(x), py=Y(f);
+    if(i===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+  }
+  ctx.stroke(); ctx.setLineDash([]);
+  ctx.fillStyle='#9fb0cc'; ctx.font='12px system-ui';
+  ctx.fillText('y² = x³ + a x + b', padL+4, padT+14);
+}
+
+const aSlider=document.getElementById('a');
+const bSlider=document.getElementById('b');
+const PSlider=document.getElementById('P');
+function update(){
+  const a=+aSlider.value, b=+bSlider.value, P=+PSlider.value;
+  document.getElementById('aval').textContent=a;
+  document.getElementById('bval').textContent=b;
+  document.getElementById('Pval').textContent=P;
+  const D=disc(a,b);
+  document.getElementById('disc').textContent = D.toLocaleString();
+  const j=jinv(a,b);
+  document.getElementById('jin').textContent = (Math.abs(j)>1e9? j.toExponential(3): j.toFixed(4));
+  const singular = (D===0);
+  document.getElementById('status').textContent = singular ? 'singular (not elliptic)' : 'non-singular elliptic';
+  document.getElementById('roots').textContent = cubicRoots(a,b);
+  if(singular){ document.getElementById('Lval').textContent='n/a (singular)'; document.getElementById('nf').textContent='0'; draw(a,b); return; }
+  const {L, used} = lValue(a,b,P);
+  document.getElementById('Lval').textContent = L.toFixed(6);
+  document.getElementById('nf').textContent = used;
+  draw(a,b);
+}
+aSlider.addEventListener('input', update);
+bSlider.addEventListener('input', update);
+PSlider.addEventListener('input', update);
+update();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

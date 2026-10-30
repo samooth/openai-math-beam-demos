@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Donovan's conjecture over fields and complete mixed-characteristic DVRs (conceptual, result 203)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+select,button{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+input[type=range]{flex:1 1 180px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:420px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button:hover{filter:brightness(1.1)}
+.legend{display:flex;gap:1rem;align-items:center;font-size:.85rem;color:var(--muted);margin:.5rem 0;flex-wrap:wrap}
+.swatch{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:.3rem;vertical-align:middle}
+table{width:100%;border-collapse:collapse;font-size:.85rem}
+th,td{padding:.35rem .45rem;border-bottom:1px solid var(--border);text-align:left}
+th{color:var(--muted);font-weight:600}
+td.num{font-family:ui-monospace,monospace}
+.badge{display:inline-block;padding:.15rem .5rem;border-radius:6px;font-size:.75rem;font-weight:700}
+.ok{color:var(--good)} .bad{color:var(--bad)} .warn{color:var(--warn)}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Donovan's conjecture over fields and complete mixed-characteristic DVRs (conceptual, result 203)</h1>
+  <p>Donovan's conjecture: for a fixed algebraically closed field $K$ of characteristic $p$ and a bound $M$ on defect-group order, there are only finitely many $K$-linear Morita equivalence classes of blocks of finite groups. The integral form holds over complete mixed-characteristic DVRs.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Proves Donovan's conjecture over every algebraically closed field $K$ of characteristic $p>0$: for fixed $K$ and a bound on defect-group order, blocks of finite groups represent only finitely many $K$-linear Morita equivalence classes, including non-abelian defect groups and $p=2$. Also proves integral finiteness over $W(\overline{\mathbb F}_p)$ and over each fixed complete discrete valuation ring of characteristic zero with algebraically closed residue field of characteristic $p$, including ramified rings.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Gives a uniform finiteness statement for blocks under bounded defect, supporting classification of blocks, derived and Morita equivalences, and the broader modular representation theory of finite groups. The mixed-characteristic integral form connects field-theoretic and lift-theoretic invariants.</p>
+  </section>
+  <div class="controls">
+    <label for="prime">Prime p</label>
+    <select id="prime">
+      <option value="2">2</option>
+      <option value="3">3</option>
+      <option value="5">5</option>
+    </select>
+    <label for="setting">Setting</label>
+    <select id="setting">
+      <option value="field">Algebraically closed field K</option>
+      <option value="dvr">Complete mixed-char DVR</option>
+    </select>
+    <label for="regime">Regime</label>
+    <select id="regime">
+      <option value="bounded">Bounded defect (Donovan)</option>
+      <option value="unbounded">Unbounded defect (no finiteness)</option>
+    </select>
+  </div>
+  <div class="controls">
+    <label for="bound">Bound M</label>
+    <select id="bound"></select>
+    <label for="stage">Stage (unbounded)</label>
+    <input id="stage" type="range" min="1" max="10" value="4" step="1">
+    <span class="val" id="stageval">4</span>
+    <button id="animate">Animate growth</button>
+    <button id="reset">Reset</button>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Prime p</div><div class="value" id="sp">—</div></div>
+    <div class="stat"><div class="label">Setting</div><div class="value" id="sset">—</div></div>
+    <div class="stat"><div class="label">Bound M</div><div class="value" id="sm">—</div></div>
+    <div class="stat"><div class="label">Morita classes</div><div class="value" id="sclasses">—</div></div>
+    <div class="stat"><div class="label">Defect types shown</div><div class="value" id="stypes">—</div></div>
+    <div class="stat"><div class="label">Verdict</div><div class="value" id="sverdict">—</div></div>
+  </div>
+  <canvas id="cv" width="900" height="420"></canvas>
+  <p id="info" style="font-size:.9rem;color:var(--muted);margin-top:.5rem">Conceptual model: bounded defect gives finitely many Morita classes; unbounded defect need not be finite.</p>
+  <table>
+    <thead><tr><th>Morita class</th><th>Representative defect group</th><th>Order</th><th>Status</th></tr></thead>
+    <tbody id="tbody"></tbody>
+  </table>
+</div>
+<script>
+const GROUPS = {
+  2: [
+    {name:"1", order:1, minM:1},
+    {name:"C_2", order:2, minM:2},
+    {name:"C_4", order:4, minM:4},
+    {name:"V_4", order:4, minM:4},
+    {name:"C_8", order:8, minM:8},
+    {name:"D_8", order:8, minM:8},
+    {name:"Q_8", order:8, minM:8},
+    {name:"C_16", order:16, minM:16},
+    {name:"D_16", order:16, minM:16},
+    {name:"Q_16", order:16, minM:16},
+    {name:"V_4 x C_4", order:16, minM:16},
+    {name:"C_32", order:32, minM:32},
+    {name:"D_32", order:32, minM:32}
+  ],
+  3: [
+    {name:"1", order:1, minM:1},
+    {name:"C_3", order:3, minM:3},
+    {name:"C_9", order:9, minM:9},
+    {name:"C_3 x C_3", order:9, minM:9},
+    {name:"C_27", order:27, minM:27},
+    {name:"C_9 x C_3", order:27, minM:27},
+    {name:"Heis(3)", order:27, minM:27}
+  ],
+  5: [
+    {name:"1", order:1, minM:1},
+    {name:"C_5", order:5, minM:5},
+    {name:"C_25", order:25, minM:25},
+    {name:"C_5 x C_5", order:25, minM:25},
+    {name:"C_125", order:125, minM:125}
+  ]
+};
+
+const BOUNDS = {
+  2: [1,2,4,8,16,32],
+  3: [1,3,9,27],
+  5: [1,5,25,125]
+};
+
+function classesFor(p, M) {
+  return GROUPS[p].filter(g => g.order <= M);
+}
+
+function unboundedCount(stage) {
+  // cumulative growth without bound
+  let s = 0;
+  for (let i = 1; i <= stage; i++) s += i + 1;
+  return s;
+}
+
+const primeSel = document.getElementById('prime');
+const settingSel = document.getElementById('setting');
+const regimeSel = document.getElementById('regime');
+const boundSel = document.getElementById('bound');
+const stageSlider = document.getElementById('stage');
+const stageval = document.getElementById('stageval');
+const sp = document.getElementById('sp');
+const sset = document.getElementById('sset');
+const sm = document.getElementById('sm');
+const sclasses = document.getElementById('sclasses');
+const stypes = document.getElementById('stypes');
+const sverdict = document.getElementById('sverdict');
+const cv = document.getElementById('cv');
+const ctx = cv.getContext('2d');
+const tbody = document.getElementById('tbody');
+
+function populateBounds() {
+  const p = +primeSel.value;
+  const bs = BOUNDS[p];
+  boundSel.innerHTML = '';
+  bs.forEach(m => {
+    const o = document.createElement('option');
+    o.value = m; o.textContent = m;
+    boundSel.appendChild(o);
+  });
+  if (!bs.includes(+boundSel.value)) boundSel.value = bs[0];
+}
+
+function renderTable(classes) {
+  tbody.innerHTML = '';
+  classes.forEach((g, i) => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = '<td>Class ' + (i + 1) + '</td><td>' + g.name + '</td><td class="num">' + g.order + '</td><td class="ok">finite set</td>';
+    tbody.appendChild(tr);
+  });
+}
+
+function unboundedTable(stage) {
+  tbody.innerHTML = '';
+  const n = unboundedCount(stage);
+  for (let i = 1; i <= Math.min(n, 12); i++) {
+    const tr = document.createElement('tr');
+    tr.innerHTML = '<td>Class ' + i + '</td><td>stage-' + (1 + (i % stage)) + '</td><td class="num">' + (1 + (i % 9)) + '</td><td class="warn">growing</td>';
+    tbody.appendChild(tr);
+  }
+}
+
+function drawNodes(n, color, label) {
+  const W = cv.width, H = cv.height;
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--muted') || '#9fb0cc';
+  ctx.font = '14px system-ui';
+  ctx.textAlign = 'center';
+  ctx.fillText(label, W / 2, 22);
+  const cols = Math.ceil(Math.sqrt(n));
+  const rows = Math.ceil(n / cols);
+  const pad = 40;
+  const cellW = (W - 2 * pad) / cols;
+  const cellH = (H - 60) / rows;
+  for (let i = 0; i < n; i++) {
+    const c = i % cols;
+    const r = Math.floor(i / cols);
+    const x = pad + cellW * (c + 0.5);
+    const y = 40 + cellH * (r + 0.5);
+    ctx.beginPath();
+    ctx.arc(x, y, 12, 0, Math.PI * 2);
+    ctx.fillStyle = color;
+    ctx.fill();
+    ctx.fillStyle = '#0b1220';
+    ctx.font = '9px monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText(String(i + 1), x, y + 3);
+  }
+}
+
+function update() {
+  const p = +primeSel.value;
+  const setting = settingSel.value;
+  const regime = regimeSel.value;
+  const stage = +stageSlider.value;
+  stageval.textContent = stage;
+  sp.textContent = p;
+  sset.textContent = setting === 'field' ? 'Field K' : 'DVR';
+  if (regime === 'bounded') {
+    const M = +boundSel.value;
+    const classes = classesFor(p, M);
+    sm.textContent = M;
+    sclasses.textContent = classes.length;
+    stypes.textContent = classes.length;
+    sverdict.textContent = 'Finite (Donovan)';
+    sverdict.style.color = 'var(--good)';
+    drawNodes(classes.length, '#5eead4', 'Morita classes for bounded defect (M=' + M + ')');
+    renderTable(classes);
+  } else {
+    const n = unboundedCount(stage);
+    sm.textContent = 'none';
+    sclasses.textContent = n;
+    stypes.textContent = n;
+    sverdict.textContent = 'Not finite in model';
+    sverdict.style.color = 'var(--bad)';
+    drawNodes(Math.min(n, 80), '#f59e0b', 'Growing Morita classes (unbounded defect)');
+    unboundedTable(stage);
+  }
+}
+
+primeSel.addEventListener('change', () => { populateBounds(); update(); });
+settingSel.addEventListener('change', update);
+regimeSel.addEventListener('change', update);
+boundSel.addEventListener('change', update);
+stageSlider.addEventListener('input', update);
+document.getElementById('animate').addEventListener('click', () => {
+  if (regimeSel.value === 'bounded') {
+    const opts = Array.from(boundSel.options).map(o => +o.value);
+    let idx = opts.indexOf(+boundSel.value);
+    const timer = setInterval(() => {
+      idx++;
+      if (idx >= opts.length) { clearInterval(timer); return; }
+      boundSel.value = opts[idx];
+      update();
+    }, 700);
+  } else {
+    let k = +stageSlider.value;
+    const timer = setInterval(() => {
+      k++;
+      if (k > 10) { clearInterval(timer); return; }
+      stageSlider.value = k;
+      update();
+    }, 700);
+  }
+});
+document.getElementById('reset').addEventListener('click', () => {
+  primeSel.value = '2';
+  settingSel.value = 'field';
+  regimeSel.value = 'bounded';
+  populateBounds();
+  stageSlider.value = 4;
+  update();
+});
+
+populateBounds();
+update();
+window.addEventListener('resize', () => { /* canvas fixed */ });
+</script>
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

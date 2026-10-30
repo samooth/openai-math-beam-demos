@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Restricted geometric Langlands — interactive demo</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --warn:#f59e0b; --bad:#f87171; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --warn:#b45309; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+select,input[type=range]{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+input[type=range]{flex:1 1 180px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:4ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+svg{width:100%;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+.legend{display:flex;gap:1rem;align-items:center;font-size:.85rem;color:var(--muted);margin:.5rem 0;flex-wrap:wrap}
+.swatch{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:.3rem;vertical-align:middle}
+.note{font-size:.9rem;color:var(--muted)}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Restricted geometric Langlands and Arthur parameters</h1>
+  <p>Conceptual diagram of the Langlands correspondence: Galois/Weil-side parameters on the left, automorphic parameters on the right, with the correspondence in the middle. Adjust the Lie-theoretic and characteristic parameters to see when the restricted equivalence and Ramanujan/Arthur conclusions are asserted.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Proves the restricted geometric Langlands equivalence for connected reductive groups on smooth projective connected curves over \(\overline{\mathbb F}_q\) under four Lie-theoretic characteristic hypotheses; over arbitrary algebraically closed fields of characteristic \(p>0) it also holds when (p) is very good for the group and (p\nmid |W_G|). Over global function fields, proves Ramanujan at every place for globally generic cuspidal representations of split adjoint absolutely simple exceptional groups, and at every unramified place for split adjoint absolutely simple groups with a generic unramified component. Assuming the finite-level Ramanujan–Arthur decomposition, constructs global Arthur enhancements of occurring cuspidal excursion parameters for split connected semisimple groups at full finite level, recovering the given parameters by diagonal specialization on the entire Weil group, including inertia.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">This ties together the geometric Langlands equivalence, temperedness/Ramanujan bounds, and Arthur parameters (including inertia) in positive characteristic and over global function fields.</p>
+  </section>
+  <div class="controls">
+    <label for="group">Group (G)</label>
+    <select id="group">
+      <option value="SL2">SL₂</option>
+      <option value="GL2">GL₂</option>
+      <option value="G2">G₂</option>
+      <option value="E8">E₈</option>
+      <option value="RED">general reductive</option>
+    </select>
+    <label for="p">char (p)</label>
+    <input id="p" type="range" min="2" max="13" value="5" step="1">
+    <span class="val" id="pval">5</span>
+    <label for="field">Base</label>
+    <select id="field">
+      <option value="fq">(\overline{\mathbb F}_q) curve</option>
+      <option value="gff">global function field</option>
+    </select>
+  </div>
+  <div class="controls">
+    <label for="inertia">Inertia depth</label>
+    <input id="inertia" type="range" min="0" max="6" value="2" step="1">
+    <span class="val" id="ival">2</span>
+    <label><input type="checkbox" id="generic" checked> globally generic cuspidal</label>
+    <label><input type="checkbox" id="unram" checked> generic unramified component</label>
+    <label><input type="checkbox" id="finite" checked> finite-level R–A decomposition</label>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Very good for (G)?</div><div class="value" id="vg">—</div></div>
+    <div class="stat"><div class="label">(p \nmid |W_G|)?</div><div class="value" id="pnw">—</div></div>
+    <div class="stat"><div class="label">Restricted Langlands</div><div class="value" id="rl">—</div></div>
+    <div class="stat"><div class="label">Ramanujan</div><div class="value" id="ram">—</div></div>
+    <div class="stat"><div class="label">Arthur enhancement</div><div class="value" id="art">—</div></div>
+    <div class="stat"><div class="label">Inertia action</div><div class="value" id="inact">—</div></div>
+  </div>
+  <svg id="diagram" viewBox="0 0 900 520" preserveAspectRatio="xMidYMid meet"></svg>
+  <p class="note">Click a node in the diagram to focus its description below.</p>
+  <section class="box">
+    <h3>Selected node</h3>
+    <p id="nodeinfo" style="margin:0;font-size:1.05rem;line-height:1.6">Click a node.</p>
+  </section>
+</div>
+<script>
+const groupSel = document.getElementById('group');
+const pSlider = document.getElementById('p');
+const pval = document.getElementById('pval');
+const fieldSel = document.getElementById('field');
+const inSlider = document.getElementById('inertia');
+const ival = document.getElementById('ival');
+const genericCb = document.getElementById('generic');
+const unramCb = document.getElementById('unram');
+const finiteCb = document.getElementById('finite');
+
+const vgEl = document.getElementById('vg');
+const pnwEl = document.getElementById('pnw');
+const rlEl = document.getElementById('rl');
+const ramEl = document.getElementById('ram');
+const artEl = document.getElementById('art');
+const inactEl = document.getElementById('inact');
+const nodeinfo = document.getElementById('nodeinfo');
+const svg = document.getElementById('diagram');
+
+const Worder = { SL2:2, GL2:2, G2:12, E8:696729600, RED:0 };
+const badPrimes = {
+  SL2: [2],
+  GL2: [2],
+  G2: [2,3],
+  E8: [2,3,5],
+  RED: [2,3,5,7]
+};
+
+function veryGood(g, p) {
+  if (g === 'RED') return !badPrimes.RED.includes(p);
+  return !badPrimes[g].includes(p);
+}
+function pNotDividesW(g, p) {
+  if (g === 'RED') return p > 7;
+  const w = Worder[g];
+  return w % p !== 0;
+}
+
+const nodes = [
+  {id:'weil', x:90, y:80, w:150, h:58, title:'Weil group W_X', info:'Galois/Weil side: local/global Weil group of the curve or function field.'},
+  {id:'inertia', x:90, y:190, w:150, h:58, title:'Inertia I_x', info:'Inertia subgroup; Arthur parameters recover inertia by diagonal specialization.'},
+  {id:'frob', x:90, y:300, w:150, h:58, title:'Frobenius Fr_x', info:'Frobenius element; unramified L-parameters are determined by its image.'},
+  {id:'lparam', x:90, y:410, w:150, h:58, title:'L-parameter σ', info:'σ : W_X → G^∨(ℂ) (or ℚ̄_ℓ). Restricted equivalence gives Hecke eigensheaves.'},
+  {id:'gauge', x:375, y:230, w:150, h:70, title:'Correspondence', info:'Langlands correspondence: L-parameters ↔ automorphic data (restricted in positive char).'},
+  {id:'bun', x:660, y:80, w:160, h:58, title:'Bun_G', info:'Moduli stack of G-bundles on the curve.'},
+  {id:'hecke', x:660, y:190, w:160, h:58, title:'Hecke stack', info:'Hecke modifications; eigensheaves under Hecke correspondents.'},
+  {id:'shtuka', x:660, y:300, w:160, h:58, title:'Shtukas', info:'Moduli of shtukas; geometric Langlands via shtuka spaces.'},
+  {id:'auto', x:660, y:410, w:160, h:58, title:'Cuspidal π', info:'Automorphic side: cuspidal representation / Hecke eigensheaf.'},
+  {id:'arthur', x:375, y:410, w:150, h:58, title:'Arthur ψ', info:'Arthur parameter enhancement; recovers σ by diagonal specialization on W, including inertia.'}
+];
+
+function draw() {
+  svg.innerHTML = '';
+  const ns = 'http://www.w3.org/2000/svg';
+  // edges
+  const edges = [
+    ['weil','gauge'], ['inertia','gauge'], ['frob','gauge'], ['lparam','gauge'],
+    ['gauge','bun'], ['gauge','hecke'], ['gauge','shtuka'], ['gauge','auto'],
+    ['lparam','arthur'], ['arthur','auto']
+  ];
+  edges.forEach(([a,b]) => {
+    const na = nodes.find(n=>n.id===a), nb = nodes.find(n=>n.id===b);
+    const x1 = na.x + na.w/2, y1 = na.y + na.h/2;
+    const x2 = nb.x + nb.w/2, y2 = nb.y + nb.h/2;
+    const line = document.createElementNS(ns,'line');
+    line.setAttribute('x1',x1); line.setAttribute('y1',y1);
+    line.setAttribute('x2',x2); line.setAttribute('y2',y2);
+    line.setAttribute('stroke','rgba(94,234,212,0.35)');
+    line.setAttribute('stroke-width','2');
+    svg.appendChild(line);
+  });
+  // inertia depth indicator on inertia node border
+  nodes.forEach(n => {
+    const g = document.createElementNS(ns,'g');
+    g.setAttribute('data-id', n.id);
+    g.style.cursor = 'pointer';
+    const rect = document.createElementNS(ns,'rect');
+    rect.setAttribute('x',n.x); rect.setAttribute('y',n.y);
+    rect.setAttribute('width',n.w); rect.setAttribute('height',n.h);
+    rect.setAttribute('rx',10);
+    rect.setAttribute('fill','var(--chip)');
+    rect.setAttribute('stroke','var(--accent)');
+    rect.setAttribute('stroke-width','2');
+    g.appendChild(rect);
+    const text = document.createElementNS(ns,'text');
+    text.setAttribute('x', n.x + n.w/2);
+    text.setAttribute('y', n.y + n.h/2 + 5);
+    text.setAttribute('text-anchor','middle');
+    text.setAttribute('fill','var(--text)');
+    text.setAttribute('font-size','13');
+    text.setAttribute('font-family','system-ui,sans-serif');
+    text.textContent = n.title;
+    g.appendChild(text);
+    g.addEventListener('click', () => { nodeinfo.textContent = n.info; });
+    svg.appendChild(g);
+  });
+  // labels for sides
+  const leftLabel = document.createElementNS(ns,'text');
+  leftLabel.setAttribute('x',165); leftLabel.setAttribute('y',40);
+  leftLabel.setAttribute('text-anchor','middle'); leftLabel.setAttribute('fill','var(--muted)');
+  leftLabel.setAttribute('font-size','12'); leftLabel.textContent = 'Galois / Weil side';
+  svg.appendChild(leftLabel);
+  const rightLabel = document.createElementNS(ns,'text');
+  rightLabel.setAttribute('x',740); rightLabel.setAttribute('y',40);
+  rightLabel.setAttribute('text-anchor','middle'); rightLabel.setAttribute('fill','var(--muted)');
+  rightLabel.setAttribute('font-size','12'); rightLabel.textContent = 'Automorphic side';
+  svg.appendChild(rightLabel);
+}
+
+function update() {
+  const g = groupSel.value;
+  const p = +pSlider.value;
+  pval.textContent = p;
+  const d = +inSlider.value;
+  ival.textContent = d;
+  const vg = veryGood(g, p);
+  const pnw = pNotDividesW(g, p);
+  vgEl.textContent = vg ? 'yes' : 'no';
+  pnwEl.textContent = pnw ? 'yes' : 'no';
+
+  let rl = 'not asserted';
+  if (fieldSel.value === 'fq') {
+    // four Lie-theoretic characteristic hypotheses assumed; over Fbar_q holds under them
+    rl = 'holds (under 4 hypotheses)';
+  } else {
+    rl = (vg && pnw) ? 'holds (very good, p∤|W|)' : 'not guaranteed';
+  }
+  rlEl.textContent = rl;
+
+  const exceptional = (g === 'G2' || g === 'E8');
+  let ram = 'not asserted';
+  if (genericCb.checked && exceptional) ram = 'every place';
+  else if (unramCb.checked && (g !== 'RED')) ram = 'unramified places';
+  else if (genericCb.checked) ram = 'exceptional groups only';
+  ramEl.textContent = ram;
+
+  const art = finiteCb.checked ? 'constructed (full finite level)' : 'requires R–A decomposition';
+  artEl.textContent = art;
+
+  inactEl.textContent = 'depth ' + d + ' (inertia included)';
+  draw();
+}
+
+groupSel.addEventListener('change', update);
+pSlider.addEventListener('input', update);
+fieldSel.addEventListener('change', update);
+inSlider.addEventListener('input', update);
+genericCb.addEventListener('change', update);
+unramCb.addEventListener('change', update);
+finiteCb.addEventListener('change', update);
+
+draw();
+update();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

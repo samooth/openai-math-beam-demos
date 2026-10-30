@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tensor saturation for even spin groups (conceptual, result 204)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+select,button,input[type=text]{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text)}
+input[type=text]{min-width:160px;font-family:ui-monospace,monospace}
+input[type=range]{flex:1 1 180px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:420px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button:hover{filter:brightness(1.1)}
+.legend{display:flex;gap:1rem;align-items:center;font-size:.85rem;color:var(--muted);margin:.5rem 0;flex-wrap:wrap}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Tensor saturation for even spin groups (conceptual, result 204)</h1>
+  <p>For $\operatorname{Spin}(2n)$, $n\ge 2$: if three dominant integral weights with sum in the root lattice admit an invariant at some common dilation $k\ge1$, then they already admit one at $k=1$. This is saturation factor one for type $D$.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Proves saturation factor one for $\operatorname{Spin}(2n)$, $n\ge2$: for three dominant integral weights whose sum lies in the root lattice, an invariant at any common positive integral dilation already gives an invariant at the original weights. This resolves the type-$D$ part of the simply-laced saturation conjecture.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Completes the simply-laced saturation picture for even spin groups: no dilation factor is needed in type $D$, so tensor-product invariants, Littlewood–Richardson-type multiplicities, and hive/inequality descriptions can be read at the original weights. This supports representation-theoretic computations, quantum cohomology, and geometric invariant theory for $\operatorname{Spin}(2n)$.</p>
+  </section>
+  <div class="controls">
+    <label for="rank">Rank n</label>
+    <select id="rank">
+      <option value="3">3 (Spin(6) ≅ SL_4)</option>
+      <option value="4">4 (Spin(8))</option>
+      <option value="5">5 (Spin(10))</option>
+    </select>
+    <label for="k">Dilation k</label>
+    <input id="k" type="range" min="1" max="6" value="2" step="1">
+    <span class="val" id="kval">2</span>
+  </div>
+  <div class="controls">
+    <label for="w1">λ (Dynkin labels)</label>
+    <input id="w1" type="text" value="1 0 0">
+    <label for="w2">μ</label>
+    <input id="w2" type="text" value="1 0 0">
+    <label for="w3">ν</label>
+    <input id="w3" type="text" value="1 1 0">
+  </div>
+  <div class="controls">
+    <label><input type="checkbox" id="assume"> Assume invariant exists at scale k</label>
+    <button id="reset">Reset</button>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Rank n</div><div class="value" id="sn">—</div></div>
+    <div class="stat"><div class="label">Dominant</div><div class="value" id="sdom">—</div></div>
+    <div class="stat"><div class="label">Sum in root lattice</div><div class="value" id="sroot">—</div></div>
+    <div class="stat"><div class="label">Scaled sum in root lattice</div><div class="value" id="sscaled">—</div></div>
+    <div class="stat"><div class="label">Saturation factor</div><div class="value" id="sfactor">1</div></div>
+    <div class="stat"><div class="label">Verdict</div><div class="value" id="sverdict">—</div></div>
+  </div>
+  <canvas id="cv" width="900" height="420"></canvas>
+  <table>
+    <thead><tr><th>Weight</th><th>Labels</th><th>Scaled by k</th><th>Level (sum labels)</th></tr></thead>
+    <tbody id="tbody"></tbody>
+  </table>
+  <p id="info" style="font-size:.9rem;color:var(--muted);margin-top:.5rem">Conceptual model: dominance and the root-lattice condition are necessary; saturation factor one says the dilation can be removed.</p>
+</div>
+<script>
+function parseWeights(str, n) {
+  const parts = str.trim().split(/\s+/).filter(Boolean);
+  if (parts.length !== n) return null;
+  const nums = parts.map(x => Number(x));
+  if (nums.some(x => !Number.isInteger(x) || x < 0)) return null;
+  return nums;
+}
+
+function coords2(labels) {
+  const n = labels.length;
+  const a = labels;
+  const x2 = new Array(n).fill(0);
+  for (let j = 0; j <= n - 2; j++) {
+    let s = 0;
+    for (let t = j + 1; t <= n - 2; t++) s += a[t - 1];
+    x2[j] = 2 * s + (a[n - 2] + a[n - 1]);
+  }
+  x2[n - 1] = -a[n - 2] + a[n - 1];
+  return x2;
+}
+
+function sumLabels(w) { return w.reduce((a,b)=>a+b,0); }
+
+function rootCondition(ws) {
+  // ws: array of 3 label arrays
+  const n = ws[0].length;
+  let S2 = new Array(n).fill(0);
+  for (const w of ws) {
+    const c = coords2(w);
+    for (let i = 0; i < n; i++) S2[i] += c[i];
+  }
+  // each S2[i] even, and sum S2[i] divisible by 4
+  if (S2.some(v => v % 2 !== 0)) return false;
+  const total = S2.reduce((a,b)=>a+b,0);
+  if (total % 4 !== 0) return false;
+  return true;
+}
+
+let state = { n:3, k:2, w1:[1,0,0], w2:[1,0,0], w3:[1,1,0], assume:false };
+
+function readInputs() {
+  const n = +document.getElementById('rank').value;
+  const k = +document.getElementById('k').value;
+  const w1 = parseWeights(document.getElementById('w1').value, n);
+  const w2 = parseWeights(document.getElementById('w2').value, n);
+  const w3 = parseWeights(document.getElementById('w3').value, n);
+  const assume = document.getElementById('assume').checked;
+  if (!w1 || !w2 || !w3) return null;
+  return { n, k, w1, w2, w3, assume };
+}
+
+function update() {
+  const r = readInputs();
+  if (!r) {
+    document.getElementById('sdom').textContent = 'invalid input';
+    document.getElementById('sroot').textContent = '—';
+    document.getElementById('sscaled').textContent = '—';
+    document.getElementById('sverdict').textContent = 'fix labels';
+    draw(null);
+    return;
+  }
+  state = r;
+  const ws = [r.w1, r.w2, r.w3];
+  const dom = ws.every(w => w.every(x => x >= 0));
+  const rc = rootCondition(ws);
+  const scaled = ws.map(w => w.map(x => x * r.k));
+  const rcs = rootCondition(scaled);
+  document.getElementById('sn').textContent = r.n;
+  document.getElementById('sdom').textContent = dom ? 'yes' : 'no';
+  document.getElementById('sroot').textContent = rc ? 'yes' : 'no';
+  document.getElementById('sscaled').textContent = rcs ? 'yes' : 'no';
+  document.getElementById('kval').textContent = r.k;
+
+  let verdict = '—';
+  if (!dom) verdict = 'not dominant';
+  else if (!rc) verdict = 'sum not in root lattice';
+  else if (r.assume) verdict = 'invariant at scale 1 (factor 1)';
+  else verdict = 'necessary conditions pass';
+  document.getElementById('sverdict').textContent = verdict;
+
+  // table
+  const tb = document.getElementById('tbody');
+  tb.innerHTML = '';
+  const names = ['λ','μ','ν'];
+  ws.forEach((w,i) => {
+    const tr = document.createElement('tr');
+    const td1 = document.createElement('td'); td1.textContent = names[i];
+    const td2 = document.createElement('td'); td2.textContent = w.join(' ');
+    const td3 = document.createElement('td'); td3.textContent = w.map(x=>x*r.k).join(' ');
+    const td4 = document.createElement('td'); td4.textContent = sumLabels(w);
+    tr.appendChild(td1); tr.appendChild(td2); tr.appendChild(td3); tr.appendChild(td4);
+    tb.appendChild(tr);
+  });
+
+  draw(r);
+}
+
+function draw(r) {
+  const cv = document.getElementById('cv');
+  const ctx = cv.getContext('2d');
+  const W = cv.width, H = cv.height;
+  ctx.clearRect(0,0,W,H);
+  const text = getComputedStyle(document.documentElement).getPropertyValue('--text').trim() || '#e6edf7';
+  const muted = getComputedStyle(document.documentElement).getPropertyValue('--muted').trim() || '#9fb0cc';
+  const accent = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#5eead4';
+  ctx.fillStyle = text;
+  ctx.font = '16px system-ui';
+  ctx.textAlign = 'left';
+  ctx.fillText('Weights and dilation', 20, 26);
+
+  if (!r) return;
+  const ws = [r.w1, r.w2, r.w3];
+  const names = ['λ','μ','ν'];
+  const colors = ['#5eead4','#f59e0b','#a78bfa'];
+  // original bars
+  ctx.fillStyle = muted;
+  ctx.fillText('Original', 20, 52);
+  ws.forEach((w,i) => {
+    const y = 64 + i*34;
+    ctx.fillStyle = text;
+    ctx.fillText(names[i], 20, y+14);
+    let x = 70;
+    w.forEach((v,j) => {
+      const seg = Math.max(0, v) * 18;
+      ctx.fillStyle = colors[i];
+      ctx.fillRect(x, y, seg, 18);
+      ctx.strokeStyle = 'rgba(0,0,0,.3)';
+      ctx.strokeRect(x, y, seg, 18);
+      x += seg;
+    });
+    ctx.fillStyle = muted;
+    ctx.font = '12px monospace';
+    ctx.fillText('sum=' + sumLabels(w), x+6, y+14);
+    ctx.font = '16px system-ui';
+  });
+  // scaled bars
+  ctx.fillStyle = muted;
+  ctx.fillText('Scaled by k=' + r.k, 20, 180);
+  ws.forEach((w,i) => {
+    const y = 192 + i*34;
+    ctx.fillStyle = text;
+    ctx.fillText(names[i], 20, y+14);
+    let x = 70;
+    w.forEach((v,j) => {
+      const seg = Math.max(0, v) * r.k * 18;
+      ctx.fillStyle = colors[i];
+      ctx.fillRect(x, y, seg, 18);
+      ctx.strokeStyle = 'rgba(0,0,0,.3)';
+      ctx.strokeRect(x, y, seg, 18);
+      x += seg;
+    });
+    ctx.fillStyle = muted;
+    ctx.font = '12px monospace';
+    ctx.fillText('sum=' + (sumLabels(w)*r.k), x+6, y+14);
+    ctx.font = '16px system-ui';
+  });
+
+  // saturation arrow + verdict
+  ctx.strokeStyle = accent;
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(W/2, 170);
+  ctx.lineTo(W/2, 200);
+  ctx.stroke();
+  ctx.fillStyle = accent;
+  ctx.font = '14px system-ui';
+  ctx.textAlign = 'center';
+  ctx.fillText('saturation factor 1: k can be removed', W/2, 300);
+  ctx.textAlign = 'left';
+
+  // root lattice badge
+  const rc = rootCondition(ws);
+  ctx.fillStyle = rc ? '#22c55e' : '#ef4444';
+  ctx.font = 'bold 14px system-ui';
+  ctx.textAlign = 'center';
+  ctx.fillText(rc ? 'sum in root lattice: YES' : 'sum in root lattice: NO', W/2, 330);
+  ctx.textAlign = 'left';
+
+  if (r.assume && rc) {
+    ctx.fillStyle = accent;
+    ctx.font = 'bold 14px system-ui';
+    ctx.textAlign = 'center';
+    ctx.fillText('Assumed invariant at scale k ⇒ invariant at scale 1', W/2, 360);
+    ctx.textAlign = 'left';
+  }
+}
+
+document.getElementById('rank').addEventListener('change', update);
+document.getElementById('k').addEventListener('input', () => {
+  document.getElementById('kval').textContent = document.getElementById('k').value;
+  update();
+});
+document.getElementById('w1').addEventListener('input', update);
+document.getElementById('w2').addEventListener('input', update);
+document.getElementById('w3').addEventListener('input', update);
+document.getElementById('assume').addEventListener('change', update);
+document.getElementById('reset').addEventListener('click', () => {
+  document.getElementById('rank').value = '3';
+  document.getElementById('k').value = '2';
+  document.getElementById('kval').textContent = '2';
+  document.getElementById('w1').value = '1 0 0';
+  document.getElementById('w2').value = '1 0 0';
+  document.getElementById('w3').value = '1 1 0';
+  document.getElementById('assume').checked = false;
+  update();
+});
+
+update();
+</script>
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Counterexamples to Sidorenko’s conjecture and the forcing conjecture (conceptual, result 161)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+select{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+input[type=range]{flex:1 1 180px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:420px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+.legend{display:flex;gap:1rem;align-items:center;font-size:.85rem;color:var(--muted);margin:.5rem 0;flex-wrap:wrap}
+.swatch{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:.3rem;vertical-align:middle}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Counterexamples to Sidorenko’s conjecture and the forcing conjecture (conceptual, result 161)</h1>
+  <p>Studies a connected bipartite pattern (H) on (35) vertices and (66) edges, comparing its homomorphism density (t(H,G)) with the Sidorenko bound (t(K_2,G)^{66}) and testing whether matching these densities forces quasirandomness.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Sidorenko’s conjecture predicts that every bipartite graph (H) has homomorphism density at least the host graph’s edge density raised to (|E(H)|): (t(H,G)\ge t(K_2,G)^{|E(H)|}). Result 161 disproves this with a connected bipartite pattern on (35) vertices and (66) edges that occurs less frequently than in a random graph of the same edge density, so (t(H,G)<t(K_2,G)^{66}\) for some host \(G\). The same pattern disproves the forcing conjecture of Skokan and Thoma: matching its density and the edge density of a constant graphon need not force quasirandomness.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">This shows that bipartite subgraph density can be genuinely extremal and non-random: homomorphism counts need not be minimized by the random graph of the same edge density. It also separates density equalities from quasirandomness, clarifying which graph patterns genuinely force uniform edge distribution and which do not. The result reshapes extremal graph theory, graphon theory, and the study of quasirandomness.</p>
+  </section>
+  <div class="controls">
+    <label for="host">Host graphon</label>
+    <select id="host">
+      <option value="quasi">Quasirandom (random)</option>
+      <option value="twoblock">Two-block structured</option>
+      <option value="sidorenko">Sidorenko counterexample</option>
+      <option value="forcing">Forcing counterexample</option>
+    </select>
+    <label for="p">Edge density p</label>
+    <input id="p" type="range" min="0.05" max="0.95" value="0.35" step="0.01">
+    <span class="val" id="pval">0.35</span>
+  </div>
+  <div class="controls">
+    <label for="delta">Non-quasirandom deviation (\delta)</label>
+    <input id="delta" type="range" min="0" max="0.5" value="0.2" step="0.01">
+    <span class="val" id="dval">0.20</span>
+    <label for="mode">Test</label>
+    <select id="mode">
+      <option value="sid">Sidorenko inequality</option>
+      <option value="force">Forcing equality</option>
+    </select>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Host</div><div class="value" id="shost">—</div></div>
+    <div class="stat"><div class="label">Pattern H</div><div class="value" id="spat">35 vertices, 66 edges</div></div>
+    <div class="stat"><div class="label">Edge density p</div><div class="value" id="sp">—</div></div>
+    <div class="stat"><div class="label">Sidorenko bound (p^{66})</div><div class="value" id="sbound">—</div></div>
+    <div class="stat"><div class="label">Model (t(H,G))</div><div class="value" id="st">—</div></div>
+    <div class="stat"><div class="label">Ratio (R=t/p^{66})</div><div class="value" id="sr">—</div></div>
+    <div class="stat"><div class="label">Sidorenko holds?</div><div class="value" id="ssid">—</div></div>
+    <div class="stat"><div class="label">Quasirandom?</div><div class="value" id="squasi">—</div></div>
+    <div class="stat"><div class="label">Forcing holds?</div><div class="value" id="sforce">—</div></div>
+    <div class="stat"><div class="label">Verdict</div><div class="value" id="sverd">—</div></div>
+  </div>
+  <div class="legend">
+    <span><span class="swatch" style="background:#5eead4"></span>Model ratio (R(\delta))</span>
+    <span><span class="swatch" style="background:#f59e0b"></span>Sidorenko threshold (R=1)</span>
+    <span><span class="swatch" style="background:#ef4444"></span>Violation region (R<1\)</span>
+  </div>
+  <canvas id="c" width="900" height="420"></canvas>
+  <p style="font-size:.85rem;color:var(--muted);margin-top:.5rem">Conceptual model: the curve shows how the ratio (R=t(H,G)/p^{66}) varies with non-quasirandom deviation. For a quasirandom host (R=1). Sidorenko’s conjecture would require (R\ge 1) for every host; the counterexample host dips below (1). The forcing conjecture would require (R=1) to imply zero deviation; the forcing host keeps (R=1) while deviation is positive.</p>
+</div>
+<script>
+const hostSel=document.getElementById('host');
+const pSlider=document.getElementById('p');
+const dSlider=document.getElementById('delta');
+const modeSel=document.getElementById('mode');
+
+const pval=document.getElementById('pval');
+const dval=document.getElementById('dval');
+
+const shost=document.getElementById('shost');
+const sp=document.getElementById('sp');
+const sbound=document.getElementById('sbound');
+const st=document.getElementById('st');
+const sr=document.getElementById('sr');
+const ssid=document.getElementById('ssid');
+const squasi=document.getElementById('squasi');
+const sforce=document.getElementById('sforce');
+const sverd=document.getElementById('sverd');
+
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+
+const E=66;
+
+function resizeCanvas(){ canvas.width=Math.max(300,canvas.clientWidth); canvas.height=420; }
+window.addEventListener('resize',function(){ resizeCanvas(); render(); });
+resizeCanvas();
+
+function fmt(x){ return (Math.abs(x)>=1e4 || (Math.abs(x)>0 && Math.abs(x)<1e-4)) ? x.toExponential(2) : x.toFixed(4); }
+
+function ratioModel(host,delta){
+  const d=delta;
+  if(host==='quasi') return 1;
+  if(host==='twoblock') return 1 - 0.75*d*d;
+  if(host==='sidorenko') return 1 - 1.6*d;
+  if(host==='forcing') return 1;
+  return 1;
+}
+
+function updateStats(){
+  const host=hostSel.value;
+  const p=+pSlider.value;
+  const delta=+dSlider.value;
+  pval.textContent=p.toFixed(2);
+  dval.textContent=delta.toFixed(2);
+  if(host==='quasi') dSlider.value=0;
+  const dd=host==='quasi'?0:delta;
+  dval.textContent=dd.toFixed(2);
+
+  const R=ratioModel(host,dd);
+  const bound=Math.pow(p,E);
+  const t=R*bound;
+
+  const hostName={quasi:'Quasirandom',twoblock:'Two-block',sidorenko:'Sidorenko counterexample',forcing:'Forcing counterexample'}[host];
+  shost.textContent=hostName;
+  sp.textContent=p.toFixed(3);
+  sbound.textContent=fmt(bound);
+  st.textContent=fmt(t);
+  sr.textContent=R.toFixed(4);
+
+  const sidHolds = R >= 1 - 1e-9;
+  ssid.textContent = sidHolds ? 'Yes' : 'No';
+  ssid.className='value '+(sidHolds?'ok':'bad');
+
+  const quasi = dd < 0.01;
+  squasi.textContent = quasi ? 'Yes' : 'No';
+  squasi.className='value '+(quasi?'ok':'warn');
+
+  // Forcing: equality R=1 with nonzero deviation violates forcing
+  let forceHolds;
+  if(quasi){ forceHolds=true; }
+  else { forceHolds = (Math.abs(R-1) > 1e-9); } // if R != 1, equality not matched, so no forcing test
+  // In forcing mode, specifically test R=1 while non-quasi
+  if(host==='forcing' && !quasi){ forceHolds=false; }
+  sforce.textContent = forceHolds ? 'Yes' : 'No';
+  sforce.className='value '+(forceHolds?'ok':'bad');
+
+  let verd;
+  if(host==='sidorenko' && !sidHolds){ verd='Sidorenko violated'; }
+  else if(host==='forcing' && !quasi && Math.abs(R-1)<1e-9){ verd='Forcing violated'; }
+  else if(quasi){ verd='Quasirandom host'; }
+  else { verd='No violation shown'; }
+  sverd.textContent=verd;
+  sverd.className='value '+(verd.includes('violated')?'bad':'ok');
+}
+
+function render(){
+  updateStats();
+  const host=hostSel.value;
+  const p=+pSlider.value;
+  const delta=host==='quasi'?0:+dSlider.value;
+
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const padL=56,padR=20,padT=30,padB=44;
+  const plotW=W-padL-padR;
+  const plotH=H-padT-padB;
+  const DMAX=0.5;
+  function xOf(d){ return padL + (d/DMAX)*plotW; }
+  const YMIN=0.5, YMAX=1.5;
+  function yOf(r){ return padT + (YMAX-r)/(YMAX-YMIN)*plotH; }
+
+  // grid
+  ctx.strokeStyle='rgba(159,176,204,0.3)';
+  ctx.lineWidth=1;
+  for(let i=0;i<=5;i++){
+    const x=xOf(i*0.1);
+    ctx.beginPath(); ctx.moveTo(x,padT); ctx.lineTo(x,H-padB); ctx.stroke();
+  }
+  for(let j=0;j<=4;j++){
+    const r=YMIN + j*(YMAX-YMIN)/4;
+    const y=yOf(r);
+    ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(W-padR,y); ctx.stroke();
+  }
+  ctx.fillStyle='rgba(159,176,204,0.9)';
+  ctx.font='12px system-ui'; ctx.textAlign='center';
+  for(let i=0;i<=5;i++) ctx.fillText((i*0.1).toFixed(1), xOf(i*0.1), H-18);
+  ctx.textAlign='right';
+  for(let j=0;j<=4;j++){
+    const r=YMIN + j*(YMAX-YMIN)/4;
+    ctx.fillText(r.toFixed(2), padL-6, yOf(r)+4);
+  }
+  ctx.fillStyle='#e6edf7'; ctx.font='12px system-ui'; ctx.textAlign='center';
+  ctx.fillText('deviation \u03b4', padL+plotW/2, H-4);
+  ctx.save(); ctx.translate(14,padT+plotH/2); ctx.rotate(-Math.PI/2); ctx.fillText('ratio R',0,0); ctx.restore();
+
+  // violation region R<1
+  ctx.fillStyle='rgba(239,68,68,0.12)';
+  ctx.fillRect(padL, yOf(1), plotW, yOf(YMIN)-yOf(1));
+
+  // threshold line
+  ctx.strokeStyle='#f59e0b'; ctx.lineWidth=2; ctx.setLineDash([6,4]);
+  ctx.beginPath(); ctx.moveTo(padL,yOf(1)); ctx.lineTo(W-padR,yOf(1)); ctx.stroke(); ctx.setLineDash([]);
+
+  // curve
+  ctx.strokeStyle='#5eead4'; ctx.lineWidth=2.5;
+  ctx.beginPath();
+  const N=100;
+  for(let i=0;i<=N;i++){
+    const d=(i/N)*DMAX;
+    const r=ratioModel(host,d);
+    const x=xOf(d), y=yOf(r);
+    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  }
+  ctx.stroke();
+
+  // current point
+  const R=ratioModel(host,delta);
+  const x=xOf(delta), y=yOf(R);
+  ctx.fillStyle='#5eead4';
+  ctx.beginPath(); ctx.arc(x,y,7,0,Math.PI*2); ctx.fill();
+  ctx.strokeStyle='#e6edf7'; ctx.lineWidth=1.5; ctx.stroke();
+
+  // vertical guide
+  ctx.strokeStyle='rgba(94,234,212,0.4)'; ctx.lineWidth=1; ctx.setLineDash([4,3]);
+  ctx.beginPath(); ctx.moveTo(x,padT); ctx.lineTo(x,H-padB); ctx.stroke(); ctx.setLineDash([]);
+
+  ctx.fillStyle='rgba(159,176,204,0.9)'; ctx.font='12px system-ui'; ctx.textAlign='left';
+  ctx.fillText(host==='forcing'?'Forcing host: R stays 1 while \u03b4>0':'', padL+8, padT+14);
+}
+
+hostSel.addEventListener('change',render);
+pSlider.addEventListener('input',render);
+dSlider.addEventListener('input',render);
+modeSel.addEventListener('change',render);
+render();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

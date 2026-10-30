@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A counterexample to the Gopalan--Servedio conjecture (conceptual, result 192)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+select{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+input[type=range]{flex:1 1 180px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:360px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+.legend{display:flex;gap:1rem;align-items:center;font-size:.85rem;color:var(--muted);margin:.5rem 0;flex-wrap:wrap}
+.swatch{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:.3rem;vertical-align:middle}
+.tt{display:grid;gap:.35rem;margin:1rem 0}
+.tt-cell{background:var(--chip);border:1px solid var(--border);border-radius:6px;padding:.35rem .45rem;font-family:ui-monospace,monospace;cursor:pointer;text-align:center;font-size:.85rem}
+.tt-cell.plus{color:var(--good)} .tt-cell.minus{color:var(--bad)}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>A counterexample to the Gopalan--Servedio conjecture (conceptual, result 192)</h1>
+  <p>For a Boolean function $f:\{-1,1\}^n\to\{-1,1\}$, let $\widehat f(\{i\})=\mathbb E[f(X)X_i]$ and $\deg(f)$ the real multilinear degree. The demo computes these from a truth table and shows that $\sum_i \widehat f(\{i\})$ can exceed $C\sqrt{\deg(f)}$ by an arbitrary factor for suitable (large, constructed) functions.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Disproves the proposed square-root bound relating a Boolean function's linear Fourier coefficients to its polynomial degree. For every $C>0$, there is a sign-valued Boolean function $f$ with $\sum_i \widehat f(\{i\})>C\sqrt{\deg(f)}$. Thus its total signed correlation with individual input bits can exceed the proposed bound by an arbitrary factor.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Separates the conjectured square-root scale from the surviving linear bound: a linear degree bound always holds, but no constant multiple of the square-root bound does.</p>
+  </section>
+  <div class="controls">
+    <label for="nSel">n</label>
+    <select id="nSel">
+      <option value="2">2</option>
+      <option value="3" selected>3</option>
+      <option value="4">4</option>
+      <option value="5">5</option>
+    </select>
+    <label for="preset">Preset</label>
+    <select id="preset">
+      <option value="majority">Majority</option>
+      <option value="parity">Parity</option>
+      <option value="dictator">Dictator (x_1)</option>
+      <option value="random" selected>Random</option>
+    </select>
+    <label for="C">C</label>
+    <input id="C" type="range" min="0.1" max="5" value="1" step="0.1">
+    <span class="val" id="Cval">1.0</span>
+    <button id="randBtn">Randomize</button>
+    <button id="searchBtn">Search max ratio</button>
+    <button id="applyBtn">Apply best</button>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">n</div><div class="value" id="sn">—</div></div>
+    <div class="stat"><div class="label">deg(f)</div><div class="value" id="sdeg">—</div></div>
+    <div class="stat"><div class="label">Σ \hat f({i})</div><div class="value" id="sL">—</div></div>
+    <div class="stat"><div class="label">ratio L/√deg</div><div class="value" id="sratio">—</div></div>
+    <div class="stat"><div class="label">C√deg</div><div class="value" id="sCdeg">—</div></div>
+    <div class="stat"><div class="label">Violation?</div><div class="value" id="sviol">—</div></div>
+    <div class="stat"><div class="label">Best ratio found</div><div class="value" id="sbest">—</div></div>
+  </div>
+  <canvas id="c" width="900" height="360"></canvas>
+  <section class="box">
+    <h3>Linear Fourier coefficients $\widehat f(\{i\})$</h3>
+    <p id="linlist" style="margin:0;font-size:1rem;line-height:1.6;font-family:ui-monospace,monospace;word-break:break-word">—</p>
+  </section>
+  <section class="box">
+    <h3>Truth table $f(x)\in\{-1,1\}$ (click to flip)</h3>
+    <div class="tt" id="tt"></div>
+  </section>
+  <section class="box">
+    <h3>Search result</h3>
+    <p id="searchres" style="margin:0;font-size:1rem;line-height:1.6;font-family:ui-monospace,monospace;word-break:break-word">—</p>
+  </section>
+</div>
+<script>
+const nSel=document.getElementById('nSel');
+const presetSel=document.getElementById('preset');
+const CSlider=document.getElementById('C');
+const Cval=document.getElementById('Cval');
+const randBtn=document.getElementById('randBtn');
+const searchBtn=document.getElementById('searchBtn');
+const applyBtn=document.getElementById('applyBtn');
+const sn=document.getElementById('sn');
+const sdeg=document.getElementById('sdeg');
+const sL=document.getElementById('sL');
+const sratio=document.getElementById('sratio');
+const sCdeg=document.getElementById('sCdeg');
+const sviol=document.getElementById('sviol');
+const sbest=document.getElementById('sbest');
+const linlist=document.getElementById('linlist');
+const tt=document.getElementById('tt');
+const searchres=document.getElementById('searchres');
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+
+let n=3;
+let f=[];
+let C=1;
+let bestFunc=null;
+let bestRatio=-Infinity;
+let bestDeg=0;
+
+function initF(preset){
+  const N=1<<n;
+  f=new Array(N).fill(1);
+  if(preset==='dictator'){
+    for(let m=0;m<N;m++) f[m]= ((m&1)===0)?1:-1; // x_1
+  } else if(preset==='parity'){
+    for(let m=0;m<N;m++){ let p=0; for(let i=0;i<n;i++) p^=(m>>i)&1; f[m]= p? -1:1; }
+  } else if(preset==='majority'){
+    for(let m=0;m<N;m++){
+      let s=0; for(let i=0;i<n;i++) s += ((m>>i)&1)? -1:1;
+      f[m]= s>=0 ? 1 : -1;
+    }
+  } else {
+    for(let m=0;m<N;m++) f[m]= Math.random()<0.5 ? -1 : 1;
+  }
+}
+
+function fwt(a){
+  const N=a.length;
+  for(let len=1;len<N;len<<=1){
+    for(let i=0;i<N;i+=len<<1){
+      for(let j=0;j<len;j++){
+        const u=a[i+j], v=a[i+j+len];
+        a[i+j]=u+v;
+        a[i+j+len]=u-v;
+      }
+    }
+  }
+}
+
+function compute(f,n){
+  const N=1<<n;
+  const a=f.slice();
+  fwt(a);
+  const coeff=new Array(N);
+  for(let s=0;s<N;s++) coeff[s]=a[s]/N;
+  let L=0;
+  for(let i=0;i<n;i++) L+=coeff[1<<i];
+  let deg=0;
+  for(let s=0;s<N;s++){
+    if(Math.abs(coeff[s])>1e-9){ const pc=popcount(s); if(pc>deg) deg=pc; }
+  }
+  const ratio = deg>0 ? L/Math.sqrt(deg) : 0;
+  return {coeff,L,deg,ratio};
+}
+
+function popcount(x){ let c=0; while(x){x&=x-1;c++;} return c; }
+
+function updateStats(){
+  const {L,deg,ratio}=compute(f,n);
+  sn.textContent=n;
+  sdeg.textContent=deg;
+  sL.textContent=L.toFixed(4);
+  sratio.textContent=ratio.toFixed(4);
+  sCdeg.textContent=(C*Math.sqrt(deg)).toFixed(4);
+  sviol.textContent= (L > C*Math.sqrt(deg)+1e-12) ? 'YES' : 'no';
+  sviol.style.color = (L > C*Math.sqrt(deg)+1e-12) ? 'var(--bad)' : 'var(--good)';
+  const {coeff}=compute(f,n);
+  const parts=[];
+  for(let i=0;i<n;i++) parts.push('x_'+(i+1)+': '+coeff[1<<i].toFixed(4));
+  linlist.textContent=parts.join('   ');
+  sbest.textContent= isFinite(bestRatio)? bestRatio.toFixed(4)+' (deg '+bestDeg+')' : '—';
+  draw(ratio, L, deg);
+  renderTT();
+}
+
+function draw(ratio,L,deg){
+  resizeCanvas();
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const {coeff}=compute(f,n);
+  const vals=[];
+  for(let i=0;i<n;i++) vals.push(coeff[1<<i]);
+  const maxv=Math.max(0.001,...vals.map(v=>Math.abs(v)));
+  const pad=40, barW=(W-2*pad)/n;
+  for(let i=0;i<n;i++){
+    const x=pad+i*barW+barW*0.15;
+    const w=barW*0.7;
+    const h=Math.abs(vals[i])/maxv*(H-2*pad);
+    const y = vals[i]>=0 ? H/2-h : H/2;
+    ctx.fillStyle = vals[i]>=0 ? '#5eead4' : '#ef4444';
+    ctx.fillRect(x,y,w,h);
+    ctx.fillStyle='#9fb0cc'; ctx.font='12px system-ui'; ctx.textAlign='center';
+    ctx.fillText('x'+(i+1), x+w/2, H-12);
+    ctx.fillText(vals[i].toFixed(3), x+w/2, vals[i]>=0 ? y-6 : y+h+14);
+  }
+  ctx.strokeStyle='#243252'; ctx.beginPath(); ctx.moveTo(pad,H/2); ctx.lineTo(W-pad,H/2); ctx.stroke();
+  ctx.fillStyle='#9fb0cc'; ctx.font='12px system-ui'; ctx.textAlign='left';
+  ctx.fillText('ratio='+ratio.toFixed(3)+'   L='+L.toFixed(3)+'   deg='+deg, pad, 20);
+}
+
+function resizeCanvas(){ canvas.width=Math.max(300, canvas.clientWidth); canvas.height=360; }
+
+function renderTT(){
+  const N=1<<n;
+  tt.style.gridTemplateColumns='repeat('+Math.min(N,8)+',1fr)';
+  tt.innerHTML='';
+  for(let m=0;m<N;m++){
+    const d=document.createElement('div');
+    d.className='tt-cell '+(f[m]>0?'plus':'minus');
+    d.textContent=f[m]>0?'+1':'-1';
+    d.title='index '+m;
+    d.addEventListener('click',()=>{ f[m]=-f[m]; updateStats(); });
+    tt.appendChild(d);
+  }
+}
+
+function searchMax(){
+  const N=1<<n;
+  if(n<=4){
+    const total=1<<N;
+    let best=-Infinity, bestIdx=0, bestDeg=0;
+    const a=new Array(N);
+    for(let idx=0;idx<total;idx++){
+      for(let m=0;m<N;m++) a[m]= ((idx>>m)&1)?1:-1;
+      // fwt copy
+      const b=a.slice();
+      fwt(b);
+      let L=0;
+      for(let i=0;i<n;i++) L+=b[1<<i]/N;
+      let deg=0;
+      for(let s=0;s<N;s++){ if(Math.abs(b[s]/N)>1e-9){const pc=popcount(s); if(pc>deg)deg=pc;} }
+      const ratio= deg>0? L/Math.sqrt(deg):0;
+      if(ratio>best){ best=ratio; bestIdx=idx; bestDeg=deg; }
+    }
+    bestRatio=best; bestDeg=bestDeg; bestFunc=bestIdx;
+    searchres.textContent='Brute force n='+n+': best ratio='+best.toFixed(4)+', deg='+bestDeg+', function bits (mask 0..'+(N-1)+')='+(bestIdx).toString(2).padStart(N,'0');
+  } else {
+    // random search
+    let best=-Infinity, bestBits=null, bestDeg=0;
+    const T=4000;
+    const a=new Array(N);
+    for(let t=0;t<T;t++){
+      for(let m=0;m<N;m++) a[m]= Math.random()<0.5?-1:1;
+      const b=a.slice();
+      fwt(b);
+      let L=0;
+      for(let i=0;i<n;i++) L+=b[1<<i]/N;
+      let deg=0;
+      for(let s=0;s<N;s++){ if(Math.abs(b[s]/N)>1e-9){const pc=popcount(s); if(pc>deg)deg=pc;} }
+      const ratio= deg>0? L/Math.sqrt(deg):0;
+      if(ratio>best){ best=ratio; bestBits=a.slice(); bestDeg=deg; }
+    }
+    bestRatio=best; bestDeg=bestDeg; bestFunc=bestBits;
+    searchres.textContent='Random search n='+n+' ('+T+' samples): best ratio='+best.toFixed(4)+', deg='+bestDeg;
+  }
+  sbest.textContent= isFinite(bestRatio)? bestRatio.toFixed(4)+' (deg '+bestDeg+')' : '—';
+  updateStats();
+}
+
+applyBtn.addEventListener('click',()=>{
+  if(bestFunc===null) return;
+  if(Array.isArray(bestFunc)){
+    f=bestFunc.slice(); updateStats();
+  } else {
+    const N=1<<n;
+    const idx=bestFunc;
+    f=new Array(N);
+    for(let m=0;m<N;m++) f[m]= ((idx>>m)&1)?1:-1;
+    updateStats();
+  }
+});
+
+nSel.addEventListener('change',()=>{ n=+nSel.value; initF(presetSel.value); bestFunc=null; bestRatio=-Infinity; updateStats(); });
+presetSel.addEventListener('change',()=>{ initF(presetSel.value); updateStats(); });
+CSlider.addEventListener('input',()=>{ C=+CSlider.value; Cval.textContent=C.toFixed(1); updateStats(); });
+randBtn.addEventListener('click',()=>{ initF('random'); presetSel.value='random'; updateStats(); });
+searchBtn.addEventListener('click',searchMax);
+window.addEventListener('resize',()=>{ draw(compute(f,n).ratio, compute(f,n).L, compute(f,n).deg); });
+
+initF('random');
+updateStats();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

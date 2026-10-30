@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quantum geometric Langlands at irrational level (conceptual, result 069)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range]{flex:1 1 220px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:440px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+select{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text)}
+.toggle{display:inline-flex;align-items:center;gap:.4rem}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Quantum geometric Langlands at irrational level (conceptual, result 069)</h1>
+  <p>For a connected simple complex group (G) and its Langlands dual (G^\vee), an irrational shifted level (c\in\mathbb C\setminus\mathbb Q) determines a dual level (-1/(r c)) (with lacing number (r)). The theorem identifies the full derived categories of twisted (D)-modules on (\operatorname{Bun}_G(X)) and (\operatorname{Bun}_{G^\vee}(X)) for every smooth projective curve (X), retaining all global forms and connected components. Explore the group, level, and duality.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Proves the unramified de Rham quantum geometric Langlands equivalence for every connected simple complex algebraic group on every smooth projective connected complex curve, at every shifted level (c\in\mathbb C\setminus\mathbb Q). It identifies the full derived categories of twisted (D)-modules on (\operatorname{Bun}_G(X)) and (\operatorname{Bun}_{G^\vee}(X)) at the dual shifted levels (c) and (-1/(rc)), where (r) is the lacing number. The equivalence uses the given global forms and includes all connected components, including non-real levels.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Establishes a uniform, group-independent Langlands duality at generic (irrational) levels: the moduli stacks of principal bundles for (G) and (G^\vee) have equivalent twisted (D)-module categories, so Hecke eigensheaves and automorphic categories match without case-by-case constructions. Retaining global forms and components makes the statement complete for all isogeny types, not just simply connected or adjoint groups, and the explicit dual level (-1/(rc)) pins down the central-charge transformation. This underpins geometric representation theory, the study of opers and conformal blocks, and any application relying on a universal quantum Langlands correspondence.</p>
+  </section>
+  <div class="controls">
+    <label for="group">Group family</label>
+    <select id="group">
+      <option value="A" selected>A (SL, simply laced)</option>
+      <option value="B">B (SO odd)</option>
+      <option value="C">C (Sp)</option>
+      <option value="D">D (SO even)</option>
+      <option value="E6">E6</option>
+      <option value="E7">E7</option>
+      <option value="E8">E8</option>
+      <option value="F4">F4</option>
+      <option value="G2">G2</option>
+    </select>
+    <label for="n">Rank parameter n</label>
+    <input id="n" type="range" min="2" max="8" value="3" step="1">
+    <span class="val" id="nval">3</span>
+    <label for="g">Curve genus g</label>
+    <input id="g" type="range" min="0" max="6" value="2" step="1">
+    <span class="val" id="gval">2</span>
+    <label for="a">Level Re(c)</label>
+    <input id="a" type="range" min="-20" max="20" value="7" step="1">
+    <span class="val" id="aval">0.70</span>
+    <label for="b">Level Im(c)</label>
+    <input id="b" type="range" min="-20" max="20" value="11" step="1">
+    <span class="val" id="bval">1.10</span>
+    <label for="form">Global form</label>
+    <select id="form">
+      <option value="all" selected>All forms</option>
+      <option value="sc">Simply connected</option>
+      <option value="ad">Adjoint</option>
+    </select>
+    <label for="view">View</label>
+    <select id="view">
+      <option value="dual" selected>Duality</option>
+      <option value="level">Level plane</option>
+      <option value="inv">Invariants</option>
+    </select>
+    <label class="toggle"><input id="rational" type="checkbox"> Treat c as rational (excluded)</label>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Group (G)</div><div class="value" id="gstat">—</div></div>
+    <div class="stat"><div class="label">Dual (G^\vee)</div><div class="value" id="dualstat">—</div></div>
+    <div class="stat"><div class="label">Lacing (r)</div><div class="value" id="rstat">—</div></div>
+    <div class="stat"><div class="label">Level (c)</div><div class="value" id="cstat">—</div></div>
+    <div class="stat"><div class="label">Dual level (-1/(rc))</div><div class="value" id="duallevelstat">—</div></div>
+    <div class="stat"><div class="label">Components / forms</div><div class="value" id="compstat">—</div></div>
+    <div class="stat"><div class="label">Theorem applies?</div><div class="value" id="thmstat">—</div></div>
+    <div class="stat"><div class="label">Equivalence?</div><div class="value" id="eqstat">—</div></div>
+  </div>
+  <canvas id="c" width="900" height="440"></canvas>
+</div>
+<script>
+const groupSel=document.getElementById('group');
+const nSlider=document.getElementById('n');
+const gSlider=document.getElementById('g');
+const aSlider=document.getElementById('a');
+const bSlider=document.getElementById('b');
+const formSel=document.getElementById('form');
+const viewSel=document.getElementById('view');
+const rationalBox=document.getElementById('rational');
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+
+const nval=document.getElementById('nval');
+const gval=document.getElementById('gval');
+const aval=document.getElementById('aval');
+const bval=document.getElementById('bval');
+const gstat=document.getElementById('gstat');
+const dualstat=document.getElementById('dualstat');
+const rstat=document.getElementById('rstat');
+const cstat=document.getElementById('cstat');
+const duallevelstat=document.getElementById('duallevelstat');
+const compstat=document.getElementById('compstat');
+const thmstat=document.getElementById('thmstat');
+const eqstat=document.getElementById('eqstat');
+
+const GROUP_INFO={
+  A:{name:n=>'A_'+n+' (SL_{'+(n+1)+'})', dual:'A', r:1, center:n=>n+1, dim:n=>n*n+2*n, dualName:n=>'A_'+n},
+  B:{name:n=>'B_'+n+' (SO_{'+(2*n+1)+'})', dual:'C', r:2, center:n=>2, dim:n=>n*(2*n+1), dualName:n=>'C_'+n},
+  C:{name:n=>'C_'+n+' (Sp_{'+(2*n)+'})', dual:'B', r:2, center:n=>2, dim:n=>n*(2*n+1), dualName:n=>'B_'+n},
+  D:{name:n=>'D_'+n+' (SO_{'+(2*n)+'})', dual:'D', r:1, center:n=>4, dim:n=>n*(2*n-1), dualName:n=>'D_'+n},
+  E6:{name:n=>'E_6', dual:'E6', r:1, center:n=>3, dim:n=>78, dualName:n=>'E_6'},
+  E7:{name:n=>'E_7', dual:'E7', r:1, center:n=>2, dim:n=>133, dualName:n=>'E_7'},
+  E8:{name:n=>'E_8', dual:'E8', r:1, center:n=>1, dim:n=>248, dualName:n=>'E_8'},
+  F4:{name:n=>'F_4', dual:'F4', r:2, center:n=>1, dim:n=>52, dualName:n=>'F_4'},
+  G2:{name:n=>'G_2', dual:'G2', r:3, center:n=>1, dim:n=>14, dualName:n=>'G_2'},
+};
+
+function centerSize(fam,n){
+  const info=GROUP_INFO[fam];
+  if(fam==='A'||fam==='B'||fam==='C'||fam==='D') return info.center(n);
+  return info.center(0);
+}
+function dimG(fam,n){
+  const info=GROUP_INFO[fam];
+  if(fam==='A'||fam==='B'||fam==='C'||fam==='D') return info.dim(n);
+  return info.dim(0);
+}
+function dualFamily(fam){ return GROUP_INFO[fam].dual; }
+function lacing(fam){ return GROUP_INFO[fam].r; }
+
+function resizeCanvas(){ canvas.width=Math.max(300,canvas.clientWidth); canvas.height=440; }
+window.addEventListener('resize',function(){ resizeCanvas(); render(); });
+resizeCanvas();
+
+let state={};
+let phase=0;
+
+function updateState(){
+  const fam=groupSel.value;
+  const n=+nSlider.value;
+  const g=+gSlider.value;
+  const a=+aSlider.value/10;
+  const b=+bSlider.value/10;
+  const form=formSel.value;
+  const rational=rationalBox.checked;
+  const view=viewSel.value;
+  const r=lacing(fam);
+  const df=dualFamily(fam);
+  const cs=centerSize(fam,n);
+  const dcs=centerSize(df,n);
+  const denom=a*a+b*b;
+  const dualLevel = denom>0 ? {re:-a/(r*denom), im:b/(r*denom)} : null;
+  const compCount = (form==='sc')?1:cs;
+  const dualComp = (form==='sc')?1:dcs;
+  const cNonzero = denom>0;
+  const irrational = !rational;
+  const applies = irrational && cNonzero;
+  const eq = applies;
+  nval.textContent=n;
+  gval.textContent=g;
+  aval.textContent=a.toFixed(2);
+  bval.textContent=b.toFixed(2);
+  state={fam,n,g,a,b,form,view,rational,r,df,cs,dcs,compCount,dualComp,dualLevel,applies,eq,irrational,cNonzero};
+}
+
+function fmtComplex(re,im){
+  const r=re.toFixed(2), i=Math.abs(im).toFixed(2);
+  if(Math.abs(im)<1e-9) return r;
+  const sign = im>=0?'+':'-';
+  return r+' '+sign+' '+i+'i';
+}
+
+function updateStats(){
+  const s=state;
+  const info=GROUP_INFO[s.fam];
+  const dinf=GROUP_INFO[s.df];
+  const gname = (s.fam==='A'||s.fam==='B'||s.fam==='C'||s.fam==='D')?info.name(s.n):info.name(0);
+  const dname = (s.df==='A'||s.df==='B'||s.df==='C'||s.df==='D')?dinf.name(s.n):dinf.name(0);
+  gstat.textContent=gname;
+  dualstat.textContent=dname;
+  rstat.textContent=s.r;
+  cstat.textContent=fmtComplex(s.a,s.b);
+  duallevelstat.textContent = s.dualLevel? fmtComplex(s.dualLevel.re,s.dualLevel.im) : '∞';
+  compstat.textContent = s.compCount+' / '+ (s.form==='all'?'all forms':s.form);
+  thmstat.textContent = s.applies?'Yes':'No';
+  thmstat.className='value '+(s.applies?'ok':'bad');
+  eqstat.textContent = s.eq?'Yes (Φ_c)':'No';
+  eqstat.className='value '+(s.eq?'ok':'bad');
+}
+
+function roundRect(x,y,w,h,r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y);
+  ctx.lineTo(x+w-r,y);
+  ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+  ctx.lineTo(x+w,y+h-r);
+  ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+  ctx.lineTo(x+r,y+h);
+  ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+  ctx.lineTo(x,y+r);
+  ctx.quadraticCurveTo(x,y,x+r,y);
+  ctx.closePath();
+}
+
+function drawDuality(W,H,s){
+  const mid=W/2;
+  // left stack
+  const lx=50, ly=70, lw=250, lh=260;
+  const rx=W-300, ry=70, rw=250, rh=260;
+  ctx.fillStyle='rgba(94,234,212,0.06)';
+  roundRect(lx,ly,lw,lh,14); ctx.fill();
+  ctx.strokeStyle='#5eead4'; ctx.lineWidth=1.5; roundRect(lx,ly,lw,lh,14); ctx.stroke();
+  ctx.fillStyle='rgba(94,234,212,0.06)';
+  roundRect(rx,ry,rw,rh,14); ctx.fill();
+  ctx.strokeStyle='#5eead4'; ctx.lineWidth=1.5; roundRect(rx,ry,rw,rh,14); ctx.stroke();
+
+  ctx.fillStyle='#9fb0cc'; ctx.font='12px system-ui'; ctx.textAlign='center';
+  ctx.fillText('Bun_G(X)  (D-modules)', lx+lw/2, ly-12);
+  ctx.fillText('Bun_{G^∨}(X)  (D-modules)', rx+rw/2, ry-12);
+
+  // component dots
+  const nDots=Math.min(s.compCount,10);
+  for(let i=0;i<nDots;i++){
+    const yy=ly+30+i*24;
+    ctx.fillStyle='#3b82f6';
+    ctx.beginPath(); ctx.arc(lx+24,yy,7,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#e6edf7'; ctx.font='10px system-ui'; ctx.textAlign='left';
+    ctx.fillText('component '+ (i+1), lx+40, yy+4);
+  }
+  const nDots2=Math.min(s.dualComp,10);
+  for(let i=0;i<nDots2;i++){
+    const yy=ry+30+i*24;
+    ctx.fillStyle='#a855f7';
+    ctx.beginPath(); ctx.arc(rx+24,yy,7,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#e6edf7'; ctx.font='10px system-ui'; ctx.textAlign='left';
+    ctx.fillText('component '+ (i+1), rx+40, yy+4);
+  }
+
+  // Hecke eigensheaf markers
+  for(let i=0;i<4;i++){
+    const yy=ly+lh-60+i*12;
+    ctx.fillStyle='rgba(245,158,11,0.8)';
+    ctx.fillRect(lx+lw-70, yy, 50, 8);
+  }
+  for(let i=0;i<4;i++){
+    const yy=ry+rh-60+i*12;
+    ctx.fillStyle='rgba(245,158,11,0.8)';
+    ctx.fillRect(rx+rw-70, yy, 50, 8);
+  }
+  ctx.fillStyle='#9fb0cc'; ctx.font='10px system-ui'; ctx.textAlign='center';
+  ctx.fillText('Hecke eigensheaves', lx+lw-45, ly+lh-72);
+  ctx.fillText('Hecke eigensheaves', rx+rw-45, ry+rh-72);
+
+  // central equivalence
+  const ax1=lx+lw+10, ax2=rx-10, ay=H/2;
+  ctx.strokeStyle=s.eq?'#5eead4':'#ef4444';
+  ctx.lineWidth=2.5;
+  ctx.beginPath(); ctx.moveTo(ax1,ay-12); ctx.lineTo(ax2,ay-12); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(ax2,ay+12); ctx.lineTo(ax1,ay+12); ctx.stroke();
+  // arrowheads
+  ctx.fillStyle=s.eq?'#5eead4':'#ef4444';
+  ctx.beginPath(); ctx.moveTo(ax2,ay-12); ctx.lineTo(ax2-10,ay-17); ctx.lineTo(ax2-10,ay-7); ctx.closePath(); ctx.fill();
+  ctx.beginPath(); ctx.moveTo(ax1,ay+12); ctx.lineTo(ax1+10,ay+7); ctx.lineTo(ax1+10,ay+17); ctx.closePath(); ctx.fill();
+
+  ctx.fillStyle='#e6edf7'; ctx.font='13px system-ui'; ctx.textAlign='center';
+  ctx.fillText('Φ_c', mid, ay-26);
+  ctx.fillStyle='#9fb0cc'; ctx.font='11px system-ui'; ctx.textAlign='center';
+  ctx.fillText('level c ↦ -1/(r c)', mid, ay+34);
+
+  // animated particles
+  if(s.eq){
+    for(let i=0;i<6;i++){
+      const tt=(phase*0.001 + i/6)%1;
+      const x = ax1 + (ax2-ax1)*tt;
+      const y = ay -12 + Math.sin(tt*Math.PI)*(-30);
+      ctx.fillStyle='rgba(94,234,212,0.9)';
+      ctx.beginPath(); ctx.arc(x,y,4,0,Math.PI*2); ctx.fill();
+    }
+    for(let i=0;i<6;i++){
+      const tt=(phase*0.001 + i/6)%1;
+      const x = ax2 - (ax2-ax1)*tt;
+      const y = ay +12 + Math.sin(tt*Math.PI)*30;
+      ctx.fillStyle='rgba(168,85,247,0.9)';
+      ctx.beginPath(); ctx.arc(x,y,4,0,Math.PI*2); ctx.fill();
+    }
+  }
+
+  // bottom labels
+  ctx.fillStyle='#9fb0cc'; ctx.font='11px system-ui'; ctx.textAlign='center';
+  ctx.fillText('genus g = '+s.g+'   dim Bun ≈ '+(s.g>=2?( (s.g-1)*dimG(s.fam,s.n)):'(special for g<2)')+'', mid, H-24);
+  ctx.fillText('forms: '+(s.form==='all'?'all isogeny classes':s.form), mid, H-8);
+}
+
+function drawLevel(W,H,s){
+  const cx=W/2, cy=H/2;
+  const scale=70;
+  // axes
+  ctx.strokeStyle='rgba(159,176,204,0.35)'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(40,cy); ctx.lineTo(W-40,cy); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx,20); ctx.lineTo(cx,H-20); ctx.stroke();
+  ctx.fillStyle='#9fb0cc'; ctx.font='11px system-ui'; ctx.textAlign='left';
+  ctx.fillText('Re', W-36, cy-6);
+  ctx.fillText('Im', cx+6, 16);
+
+  // grid
+  ctx.strokeStyle='rgba(159,176,204,0.12)'; ctx.lineWidth=1;
+  for(let k=-4;k<=4;k++){
+    if(k===0) continue;
+    ctx.beginPath(); ctx.moveTo(cx+k*scale,20); ctx.lineTo(cx+k*scale,H-20); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(40,cy+k*scale); ctx.lineTo(W-40,cy+k*scale); ctx.stroke();
+  }
+
+  // plot c
+  const px=cx+s.a*scale, py=cy-s.b*scale;
+  ctx.fillStyle='#3b82f6';
+  ctx.beginPath(); ctx.arc(px,py,8,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle='#e6edf7'; ctx.font='12px system-ui'; ctx.textAlign='left';
+  ctx.fillText('c', px+12, py-6);
+
+  // plot dual
+  if(s.dualLevel){
+    const qx=cx+s.dualLevel.re*scale, qy=cy-s.dualLevel.im*scale;
+    ctx.strokeStyle='#5eead4'; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.moveTo(px,py); ctx.lineTo(qx,qy); ctx.stroke();
+    ctx.fillStyle='#5eead4';
+    ctx.beginPath(); ctx.arc(qx,qy,8,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#e6edf7'; ctx.font='12px system-ui'; ctx.textAlign='left';
+    ctx.fillText('-1/(r c)', qx+12, qy-6);
+  }
+
+  // rational warning
+  ctx.fillStyle=s.irrational?'#22c55e':'#f59e0b';
+  ctx.font='13px system-ui'; ctx.textAlign='center';
+  ctx.fillText(s.irrational?'Generic/irrational level (theorem applies if c≠0)':'Rational level (excluded from this theorem)', cx, H-14);
+}
+
+function drawInv(W,H,s){
+  const x=40,y=50,dy=26;
+  const info=GROUP_INFO[s.fam];
+  const dinf=GROUP_INFO[s.df];
+  const gname = (s.fam==='A'||s.fam==='B'||s.fam==='C'||s.fam==='D')?info.name(s.n):info.name(0);
+  const dname = (s.df==='A'||s.df==='B'||s.df==='C'||s.df==='D')?dinf.name(s.n):dinf.name(0);
+  const lines=[
+    'Result 069 — quantum geometric Langlands at irrational level',
+    'Group G: '+gname+'     (dim '+dimG(s.fam,s.n)+')',
+    'Langlands dual G^∨: '+dname+'     (dim '+dimG(s.df,s.n)+')',
+    'Lacing number r = '+s.r,
+    'Curve X: smooth projective connected, genus g = '+s.g,
+    'Level c = '+fmtComplex(s.a,s.b)+'   ('+(s.irrational?'irrational/generic':'rational (excluded)')+')',
+    'Dual level = '+ (s.dualLevel?fmtComplex(s.dualLevel.re,s.dualLevel.im):'undefined (c=0)'),
+    'Global form: '+(s.form==='all'?'all isogeny classes':s.form),
+    'Connected components of Bun (shown): G side '+s.compCount+', dual side '+s.dualComp,
+    'Center sizes |π_1|: G = '+s.cs+', dual = '+s.dcs,
+    'Unramified de Rham equivalence: D^b(D-mod_{c}(Bun_G)) ≅ D^b(D-mod_{-1/(rc)}(Bun_{G^∨}))',
+    'Applies to all connected components and global forms.',
+    'Theorem applies: '+(s.applies?'YES':'NO')+'    Equivalence: '+(s.eq?'YES (Φ_c)':'NO'),
+  ];
+  ctx.fillStyle='#e6edf7'; ctx.font='14px system-ui'; ctx.textAlign='left';
+  lines.forEach((l,i)=>{
+    if(i===0){ ctx.fillStyle='#5eead4'; ctx.font='16px system-ui'; }
+    else { ctx.fillStyle='#e6edf7'; ctx.font='14px system-ui'; }
+    ctx.fillText(l, x, y+i*dy);
+  });
+  // small sketch
+  const cx0=W-180, cy0=H/2;
+  ctx.strokeStyle='#5eead4'; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.arc(cx0,cy0,60,0,Math.PI*2); ctx.stroke();
+  ctx.beginPath(); ctx.arc(cx0,cy0,28,0,Math.PI*2); ctx.stroke();
+  ctx.fillStyle='rgba(94,234,212,0.18)';
+  ctx.beginPath(); ctx.arc(cx0,cy0,60,0,Math.PI*2); ctx.arc(cx0,cy0,28,0,Math.PI*2,true); ctx.closePath(); ctx.fill();
+  ctx.fillStyle='#9fb0cc'; ctx.font='11px system-ui'; ctx.textAlign='center';
+  ctx.fillText('level transform', cx0, cy0+85);
+}
+
+function render(){
+  updateState();
+  updateStats();
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  if(state.view==='dual') drawDuality(W,H,state);
+  else if(state.view==='level') drawLevel(W,H,state);
+  else drawInv(W,H,state);
+}
+
+groupSel.addEventListener('change',render);
+nSlider.addEventListener('input',render);
+gSlider.addEventListener('input',render);
+aSlider.addEventListener('input',render);
+bSlider.addEventListener('input',render);
+formSel.addEventListener('change',render);
+viewSel.addEventListener('change',render);
+rationalBox.addEventListener('change',render);
+render();
+
+function tick(){ phase+=16; render(); requestAnimationFrame(tick); }
+requestAnimationFrame(tick);
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Kollár–Pardon universal-cover conjecture (conceptual, result 058)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range]{flex:1 1 220px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:420px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+select{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text)}
+table{width:100%;border-collapse:collapse;font-size:.85rem}
+th,td{padding:.35rem .45rem;border-bottom:1px solid var(--border);text-align:left}
+th{color:var(--muted);font-weight:600}
+td.num{font-family:ui-monospace,monospace}
+.badge{display:inline-block;padding:.15rem .5rem;border-radius:6px;font-size:.75rem;font-weight:700}
+.ok{color:var(--good)} .bad{color:var(--bad)} .warn{color:var(--warn)}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>The Kollár–Pardon universal-cover conjecture (conceptual, result 058)</h1>
+  <p>For a connected normal projective variety (X), its universal cover (\widetilde X) admits a semialgebraic projective-open presentation iff it is biholomorphic to (D\times\mathbb C^m\times F), with (D) a bounded symmetric domain and (F) simply connected, normal, and projective. Tune the three factors to see the classification and its geometric consequences.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Proves the Kollár–Pardon conjecture: the semialgebraic universal covers of connected normal projective complex varieties are exactly products (D\times\mathbb C^m\times F), where (D) is a bounded symmetric domain, (m\ge 0), and (F) is simply connected, normal, and projective. The compact factor may be singular; retaining normal singularities is essential. The proof combines a bounded-domain/semialgebraic quotient construction with Campana's core and the virtual abelianity of fundamental groups of smooth compact special Kähler manifolds.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Classifies universal covers that admit a finite real-algebraic description, separating hyperbolic (\(D\)), flat/affine (\(\mathbb C^m\)), and simply connected compact (\(F\)) geometry. It yields a Remmert reduction \(\widetilde X\to D\times\mathbb C^m\), Steinness iff \(F\) is a point, and quasi-projectivity of the universal cover iff the bounded symmetric factor is absent. In the smooth case, a variety covered by \(\mathbb C^n\) has a finite étale cover by an abelian variety, and Singer-type \(L^2\)-Betti vanishing follows when \(m>0).</p>
+  </section>
+  <div class="controls">
+    <label for="d">Bounded symmetric factor dim (d)</label>
+    <input id="d" type="range" min="0" max="4" value="1" step="1">
+    <span class="val" id="dval">1</span>
+    <label for="m">Affine factor dim (m)</label>
+    <input id="m" type="range" min="0" max="4" value="0" step="1">
+    <span class="val" id="mval">0</span>
+    <label for="f">Compact factor dim (f)</label>
+    <input id="f" type="range" min="0" max="4" value="0" step="1">
+    <span class="val" id="fval">0</span>
+  </div>
+  <div class="controls">
+    <label for="dtype">Bounded domain type</label>
+    <select id="dtype">
+      <option value="point" selected>point (dimension 0)</option>
+      <option value="disk">unit disk / ball</option>
+      <option value="polydisk">polydisk / product of disks</option>
+      <option value="bsd">general bounded symmetric domain</option>
+    </select>
+    <label for="ftype">Compact factor type</label>
+    <select id="ftype">
+      <option value="point" selected>point</option>
+      <option value="cp">projective space (\mathbb CP^f)</option>
+      <option value="cy">simply connected CY / K3-type</option>
+      <option value="proj">general simply connected projective</option>
+    </select>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Total dim (\dim_{\mathbb C}\widetilde X)</div><div class="value" id="nst">1</div></div>
+    <div class="stat"><div class="label">Semialgebraic presentation?</div><div class="value" id="semist">Yes</div></div>
+    <div class="stat"><div class="label">Quasi-projective cover?</div><div class="value" id="qpst">No</div></div>
+    <div class="stat"><div class="label">Stein universal cover?</div><div class="value" id="steinst">Yes</div></div>
+    <div class="stat"><div class="label">Aspherical (F point)?</div><div class="value" id="aspst">Yes</div></div>
+    <div class="stat"><div class="label">(L^2)-Betti (smooth case)</div><div class="value" id="l2st">middle only</div></div>
+  </div>
+  <canvas id="c" width="900" height="420"></canvas>
+  <section class="box">
+    <h3>Examples</h3>
+    <table>
+      <thead><tr><th>Universal cover type</th><th>(D)</th><th>(\mathbb C^m)</th><th>(F)</th><th>Quasi-projective?</th><th>Stein?</th></tr></thead>
+      <tbody>
+        <tr><td>Abelian-type cover</td><td class="num">point</td><td class="num">(\mathbb C^n)</td><td class="num">point</td><td class="ok">Yes</td><td class="ok">Yes</td></tr>
+        <tr><td>Compact hyperbolic</td><td class="num">(D^n)</td><td class="num">0</td><td class="num">point</td><td class="bad">No</td><td class="ok">Yes</td></tr>
+        <tr><td>Hyperbolic (\times) affine</td><td class="num">(D^a)</td><td class="num">(\mathbb C^b)</td><td class="num">point</td><td class="bad">No</td><td class="ok">Yes</td></tr>
+        <tr><td>Simply connected projective</td><td class="num">point</td><td class="num">0</td><td class="num">(F)</td><td class="ok">Yes</td><td class="bad">No</td></tr>
+        <tr><td>General product</td><td class="num">(D^d)</td><td class="num">(\mathbb C^m)</td><td class="num">(F^f)</td><td class="warn">iff (d=0)</td><td class="warn">iff (f=0)</td></tr>
+      </tbody>
+    </table>
+  </section>
+</div>
+<script>
+const dSlider=document.getElementById('d');
+const mSlider=document.getElementById('m');
+const fSlider=document.getElementById('f');
+const dval=document.getElementById('dval');
+const mval=document.getElementById('mval');
+const fval=document.getElementById('fval');
+const dtypeSel=document.getElementById('dtype');
+const ftypeSel=document.getElementById('ftype');
+const nst=document.getElementById('nst');
+const semist=document.getElementById('semist');
+const qpst=document.getElementById('qpst');
+const steinst=document.getElementById('steinst');
+const aspst=document.getElementById('aspst');
+const l2st=document.getElementById('l2st');
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+
+function totalDim(d,m,f){ return d+m+f; }
+
+function resizeCanvas(){ canvas.width=Math.max(300,canvas.clientWidth); canvas.height=420; }
+window.addEventListener('resize',function(){ resizeCanvas(); update(); });
+resizeCanvas();
+
+function drawFactor(x,y,w,h,dim,label,color,kind){
+  // panel
+  ctx.strokeStyle='rgba(159,176,204,0.35)'; ctx.lineWidth=1;
+  ctx.strokeRect(x,y,w,h);
+  ctx.fillStyle='rgba(22,32,58,0.35)'; ctx.fillRect(x,y,w,h);
+  ctx.fillStyle='#9fb0cc'; ctx.font='12px system-ui'; ctx.textAlign='center';
+  ctx.fillText(label, x+w/2, y+16);
+  if(dim<=0){
+    ctx.fillStyle=color; ctx.beginPath(); ctx.arc(x+w/2, y+h/2, 6,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#9fb0cc'; ctx.font='11px system-ui'; ctx.fillText('point', x+w/2, y+h/2+24);
+    return;
+  }
+  const cx=x+w/2, cy=y+h/2+8;
+  const R=Math.min(w,h)*0.34;
+  if(kind==='D'){
+    // Poincare disk
+    ctx.beginPath(); ctx.arc(cx,cy,R,0,Math.PI*2);
+    ctx.strokeStyle=color; ctx.lineWidth=2; ctx.stroke();
+    ctx.fillStyle='rgba(94,234,212,0.06)'; ctx.fill();
+    for(let i=1;i<=3;i++){
+      ctx.beginPath(); ctx.arc(cx,cy,R*i/4,0,Math.PI*2);
+      ctx.strokeStyle='rgba(159,176,204,0.25)'; ctx.lineWidth=1; ctx.stroke();
+    }
+    for(let a=0;a<6;a++){
+      const ang=a*Math.PI/3;
+      ctx.beginPath();
+      ctx.moveTo(cx,cy);
+      ctx.lineTo(cx+R*Math.cos(ang), cy+R*Math.sin(ang));
+      ctx.strokeStyle='rgba(159,176,204,0.25)'; ctx.lineWidth=1; ctx.stroke();
+    }
+    ctx.fillStyle=color; ctx.font='11px system-ui'; ctx.textAlign='center';
+    ctx.fillText('bounded symmetric', cx, y+h-10);
+  } else if(kind==='A'){
+    const step=22;
+    ctx.strokeStyle='rgba(159,176,204,0.28)'; ctx.lineWidth=1;
+    for(let xx=x+12; xx<=x+w-12; xx+=step){
+      ctx.beginPath(); ctx.moveTo(xx,y+22); ctx.lineTo(xx,y+h-12); ctx.stroke();
+    }
+    for(let yy=y+22; yy<=y+h-12; yy+=step){
+      ctx.beginPath(); ctx.moveTo(x+12,yy); ctx.lineTo(x+w-12,yy); ctx.stroke();
+    }
+    ctx.strokeStyle=color; ctx.lineWidth=2;
+    ctx.beginPath();
+    ctx.moveTo(x+16, cy);
+    ctx.lineTo(x+w-16, cy);
+    ctx.stroke();
+    ctx.fillStyle=color; ctx.font='11px system-ui'; ctx.textAlign='center';
+    ctx.fillText('affine space', cx, y+h-10);
+  } else {
+    // compact projective factor as sphere
+    ctx.beginPath(); ctx.arc(cx,cy,R,0,Math.PI*2);
+    ctx.strokeStyle=color; ctx.lineWidth=2; ctx.stroke();
+    ctx.fillStyle='rgba(94,234,212,0.05)'; ctx.fill();
+    ctx.beginPath();
+    ctx.ellipse(cx,cy,R,R*0.35,0,0,Math.PI*2);
+    ctx.strokeStyle='rgba(159,176,204,0.45)'; ctx.lineWidth=1; ctx.stroke();
+    ctx.beginPath();
+    ctx.ellipse(cx,cy,R*0.35,R,Math.PI/2,0,Math.PI*2);
+    ctx.strokeStyle='rgba(159,176,204,0.45)'; ctx.lineWidth=1; ctx.stroke();
+    ctx.fillStyle=color; ctx.font='11px system-ui'; ctx.textAlign='center';
+    ctx.fillText('compact projective', cx, y+h-10);
+  }
+}
+
+function draw(){
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const d=+dSlider.value, m=+mSlider.value, f=+fSlider.value;
+  const factors=[];
+  if(true){ factors.push({dim:d,label:'D (dim '+d+')',color:'#5eead4',kind:'D'}); }
+  factors.push({dim:m,label:'C^m (dim '+m+')',color:'#f59e0b',kind:'A'});
+  factors.push({dim:f,label:'F (dim '+f+')',color:'#a78bfa',kind:'F'});
+  // Actually always show all three factors
+  const n=factors.length;
+  const pad=12, top=34, h=H-top-18;
+  const w=(W-pad*(n+1))/n;
+  ctx.fillStyle='#9fb0cc'; ctx.font='13px system-ui'; ctx.textAlign='center';
+  ctx.fillText('Universal cover  X\u0303 \u2245 D \u00d7 C^m \u00d7 F', W/2, 20);
+  let x=pad;
+  factors.forEach(function(Fc){
+    drawFactor(x,top,w,h,Fc.dim,Fc.label,Fc.color,Fc.kind);
+    x+=w+pad;
+  });
+  // product symbol
+  ctx.fillStyle='#9fb0cc'; ctx.font='18px system-ui'; ctx.textAlign='center';
+  // place between panels
+}
+
+function update(){
+  const d=+dSlider.value;
+  const m=+mSlider.value;
+  const f=+fSlider.value;
+  dval.textContent=d;
+  mval.textContent=m;
+  fval.textContent=f;
+  nst.textContent=d+m+f;
+  // semialgebraic: product form always yes
+  semist.textContent='Yes';
+  semist.className='value ok';
+  // quasi-projective iff d===0
+  const qp = (d===0);
+  qpst.textContent=qp?'Yes':'No';
+  qpst.className='value '+(qp?'ok':'bad');
+  // Stein iff f===0
+  const stein = (f===0);
+  steinst.textContent=stein?'Yes':'No';
+  steinst.className='value '+(stein?'ok':'bad');
+  // aspherical iff f===0 (F point)
+  const asp = (f===0);
+  aspst.textContent=asp?'Yes':'No';
+  aspst.className='value '+(asp?'ok':'warn');
+  // L2 Betti
+  if(f>0){
+    l2st.textContent='not aspherical';
+    l2st.className='value warn';
+  } else if(m>0){
+    l2st.textContent='all vanish';
+    l2st.className='value ok';
+  } else {
+    l2st.textContent='middle only';
+    l2st.className='value warn';
+  }
+  draw();
+}
+
+dSlider.addEventListener('input',update);
+mSlider.addEventListener('input',update);
+fSlider.addEventListener('input',update);
+dtypeSel.addEventListener('change',update);
+ftypeSel.addEventListener('change',update);
+update();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The generalized Mukai conjecture (conceptual, result 063)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range]{flex:1 1 220px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:440px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+select{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text)}
+table{width:100%;border-collapse:collapse;font-size:.85rem}
+th,td{padding:.35rem .45rem;border-bottom:1px solid var(--border);text-align:left}
+th{color:var(--muted);font-weight:600}
+td.num{font-family:ui-monospace,monospace}
+.badge{display:inline-block;padding:.15rem .5rem;border-radius:6px;font-size:.75rem;font-weight:700}
+.ok{color:var(--good)} .warn{color:var(--warn)} .bad{color:var(--bad)}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>The generalized Mukai conjecture (conceptual, result 063)</h1>
+  <p>For a smooth complex projective Fano manifold of dimension (n), Picard number (\rho) and pseudoindex (\iota) (least anticanonical degree of a rational curve), the conjecture requires (\rho(\iota-1)\le n), with equality exactly for ((\mathbb P^{\iota-1})^\rho). Tune (n,\rho,\iota) to test the inequality and see the allowed region.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Proves the generalized Mukai conjecture: every positive-dimensional smooth complex projective Fano manifold of dimension (n), Picard number (\rho) and pseudoindex (\iota) satisfies (\rho(\iota-1)\le n), with equality exactly for ((\mathbb P^{\iota-1})^\rho). Here the pseudoindex is the least anticanonical degree of a rational curve.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Bounds the Picard number of a Fano manifold in terms of its dimension and pseudoindex, and characterizes the extremal case as a product of projective spaces. This is a central structural result in Fano geometry, guiding classification and the study of rational curves, and it interacts with boundedness and rigidity questions for Fano varieties.</p>
+  </section>
+  <div class="controls">
+    <label for="n">Dimension (n)</label>
+    <input id="n" type="range" min="1" max="12" value="4" step="1">
+    <span class="val" id="nval">4</span>
+    <label for="rho">Picard number (\rho)</label>
+    <input id="rho" type="range" min="1" max="12" value="2" step="1">
+    <span class="val" id="rhoval">2</span>
+    <label for="iota">Pseudoindex (\iota)</label>
+    <input id="iota" type="range" min="2" max="13" value="3" step="1">
+    <span class="val" id="iotaval">3</span>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Dimension (n)</div><div class="value" id="nstat">—</div></div>
+    <div class="stat"><div class="label">Picard number (\rho)</div><div class="value" id="rhostat">—</div></div>
+    <div class="stat"><div class="label">Pseudoindex (\iota)</div><div class="value" id="iotastat">—</div></div>
+    <div class="stat"><div class="label">Required (\rho(\iota-1))</div><div class="value" id="reqstat">—</div></div>
+    <div class="stat"><div class="label">Slack (n-\rho(\iota-1))</div><div class="value" id="slackstat">—</div></div>
+    <div class="stat"><div class="label">Status</div><div class="value" id="statusstat">—</div></div>
+  </div>
+  <canvas id="c" width="900" height="440"></canvas>
+  <section class="box">
+    <h3>Examples</h3>
+    <table>
+      <thead><tr><th>Fano manifold</th><th>(n)</th><th>(\rho)</th><th>(\iota)</th><th>(\rho(\iota-1))</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td>(\mathbb P^n)</td><td class="num">n</td><td class="num">1</td><td class="num">n+1</td><td class="num">n</td><td class="ok">equality</td></tr>
+        <tr><td>((\mathbb P^k)^r)</td><td class="num">rk</td><td class="num">r</td><td class="num">k+1</td><td class="num">rk</td><td class="ok">equality</td></tr>
+        <tr><td>Quadric (Q^n)</td><td class="num">n</td><td class="num">1</td><td class="num">n</td><td class="num">n-1</td><td class="warn">strict</td></tr>
+        <tr><td>Grassmannian (\mathrm{Gr}(2,4))</td><td class="num">6</td><td class="num">1</td><td class="num">4</td><td class="num">3</td><td class="warn">strict</td></tr>
+        <tr><td>Violating pair ((\rho=3,\iota=3)) in dim 4</td><td class="num">4</td><td class="num">3</td><td class="num">3</td><td class="num">6</td><td class="bad">forbidden</td></tr>
+      </tbody>
+    </table>
+  </section>
+</div>
+<script>
+const nSlider=document.getElementById('n');
+const rhoSlider=document.getElementById('rho');
+const iotaSlider=document.getElementById('iota');
+const nval=document.getElementById('nval');
+const rhoval=document.getElementById('rhoval');
+const iotaval=document.getElementById('iotaval');
+const nstat=document.getElementById('nstat');
+const rhostat=document.getElementById('rhostat');
+const iotastat=document.getElementById('iotastat');
+const reqstat=document.getElementById('reqstat');
+const slackstat=document.getElementById('slackstat');
+const statusstat=document.getElementById('statusstat');
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+
+function resizeCanvas(){ canvas.width=Math.max(300,canvas.clientWidth); canvas.height=440; }
+window.addEventListener('resize',function(){ resizeCanvas(); update(); });
+resizeCanvas();
+
+function clamp(v,lo,hi){ return Math.max(lo,Math.min(hi,v)); }
+
+function update(){
+  const n=+nSlider.value;
+  rhoSlider.max=n;
+  iotaSlider.max=n+1;
+  const rho=clamp(+rhoSlider.value,1,n);
+  const iota=clamp(+iotaSlider.value,2,n+1);
+  if(+rhoSlider.value!==rho) rhoSlider.value=rho;
+  if(+iotaSlider.value!==iota) iotaSlider.value=iota;
+
+  nval.textContent=n; rhoval.textContent=rho; iotaval.textContent=iota;
+  nstat.textContent=n; rhostat.textContent=rho; iotastat.textContent=iota;
+
+  const req=rho*(iota-1);
+  const slack=n-req;
+  reqstat.textContent=req;
+  slackstat.textContent=slack;
+
+  let status, cls;
+  if(req>n){ status='Violates (forbidden)'; cls='bad'; }
+  else if(req===n){ status='Equality (product)'; cls='ok'; }
+  else { status='Holds (strict)'; cls='warn'; }
+  statusstat.textContent=status;
+  statusstat.className='value '+cls;
+
+  draw(n,rho,iota);
+}
+
+function draw(n,rho,iota){
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const padL=60,padR=20,padT=30,padB=40;
+  const plotW=W-padL-padR, plotH=H-padT-padB;
+  const maxRho=n, maxIota=n+1;
+  const cellW=plotW/maxRho, cellH=plotH/(maxIota-1); // iota 2..n+1
+  // cells
+  for(let r=1;r<=maxRho;r++){
+    for(let t=2;t<=maxIota;t++){
+      const req=r*(t-1);
+      const ok = req<=n;
+      const eq = req===n;
+      if(eq){
+        ctx.fillStyle='rgba(94,234,212,0.55)';
+      } else if(ok){
+        ctx.fillStyle='rgba(34,197,94,0.28)';
+      } else {
+        ctx.fillStyle='rgba(239,68,68,0.28)';
+      }
+      const x=padL+(r-1)*cellW;
+      const y=padT+(maxIota-t)*cellH; // iota increasing upward
+      ctx.fillRect(x,y,cellW,cellH);
+      ctx.strokeStyle='rgba(159,176,204,0.15)'; ctx.lineWidth=1;
+      ctx.strokeRect(x,y,cellW,cellH);
+    }
+  }
+  // current point
+  const cx=padL+(rho-1)*cellW+cellW/2;
+  const cy=padT+(maxIota-iota)*cellH+cellH/2;
+  ctx.beginPath(); ctx.arc(cx,cy,Math.min(cellW,cellH)*0.35,0,Math.PI*2);
+  ctx.fillStyle='#f59e0b'; ctx.fill();
+  ctx.strokeStyle='#0b1220'; ctx.lineWidth=2; ctx.stroke();
+
+  // axes
+  ctx.fillStyle='#9fb0cc'; ctx.font='11px ui-monospace,monospace'; ctx.textAlign='center';
+  for(let r=1;r<=maxRho;r++){
+    ctx.fillText(String(r), padL+(r-1)*cellW+cellW/2, padT+plotH+14);
+  }
+  ctx.textAlign='right'; ctx.textBaseline='middle';
+  for(let t=2;t<=maxIota;t++){
+    ctx.fillText(String(t), padL-6, padT+(maxIota-t)*cellH+cellH/2);
+  }
+  ctx.fillStyle='#9fb0cc'; ctx.font='12px system-ui'; ctx.textAlign='center';
+  ctx.fillText('Picard number ρ', padL+plotW/2, H-10);
+  ctx.save(); ctx.translate(16, padT+plotH/2); ctx.rotate(-Math.PI/2); ctx.fillText('Pseudoindex ι',0,0); ctx.restore();
+
+  // legend
+  ctx.font='11px system-ui'; ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+  const lx=padL, ly=padT-18;
+  ctx.fillStyle='rgba(34,197,94,0.28)'; ctx.fillRect(lx,ly-10,12,10);
+  ctx.fillStyle='#9fb0cc'; ctx.fillText('strict', lx+16, ly);
+  ctx.fillStyle='rgba(94,234,212,0.55)'; ctx.fillRect(lx+70,ly-10,12,10);
+  ctx.fillStyle='#9fb0cc'; ctx.fillText('equality', lx+86, ly);
+  ctx.fillStyle='rgba(239,68,68,0.28)'; ctx.fillRect(lx+150,ly-10,12,10);
+  ctx.fillStyle='#9fb0cc'; ctx.fillText('forbidden', lx+166, ly);
+
+  // budget bar
+  const barX=padL, barY=H-26, barW=plotW, barH=10;
+  ctx.fillStyle='rgba(159,176,204,0.2)'; ctx.fillRect(barX,barY,barW,barH);
+  const req=Math.min(n, rho*(iota-1));
+  const frac=req/n;
+  ctx.fillStyle = (rho*(iota-1)<=n)? (rho*(iota-1)===n?'#5eead4':'#22c55e') : '#ef4444';
+  ctx.fillRect(barX,barY,barW*frac,barH);
+  ctx.fillStyle='#9fb0cc'; ctx.font='10px system-ui'; ctx.textAlign='center';
+  ctx.fillText('dimension budget: required '+rho*(iota-1)+' / n='+n, barX+barW/2, barY-4);
+}
+
+nSlider.addEventListener('input', update);
+rhoSlider.addEventListener('input', update);
+iotaSlider.addEventListener('input', update);
+update();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

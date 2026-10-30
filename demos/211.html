@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Geometry, diffusion, and spectra of random planar maps (conceptual, result 211)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+select,button{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+input[type=range]{flex:1 1 180px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:440px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button:hover{filter:brightness(1.1)}
+.legend{display:flex;gap:1rem;align-items:center;font-size:.85rem;color:var(--muted);margin:.5rem 0;flex-wrap:wrap}
+.swatch{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:.3rem;vertical-align:middle}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Geometry, diffusion, and spectra of random planar maps (conceptual, result 211)</h1>
+  <p>Critical Fortuin–Kasteleyn planar maps converge to Liouville quantum gravity spheres for $0<q\le4$ and to the Brownian continuum random tree for $q>4$, with random-walk and spectral convergence in the FK–Ising case.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Critical Fortuin–Kasteleyn planar maps converge to Liouville quantum gravity spheres for $0<q\le 4$ and to the Brownian continuum random tree for $q>4$, establishing the surface-to-tree geometric transition. For FK–Ising and spanning-tree-weighted maps, stationary random walks converge to Liouville Brownian motion on the limiting sphere. The FK–Ising spectral result also gives convergence of eigenvalues and heat traces, using the stated Brownian/LQG inputs.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Places discrete random maps in the LQG and Brownian continuum random tree universality classes, links combinatorial geometry to diffusion and spectra, and clarifies the phase transition in random geometry with implications for statistical mechanics and quantum gravity.</p>
+  </section>
+  <div class="controls">
+    <label for="mode">Mode</label>
+    <select id="mode">
+      <option value="geometry">Geometry / phase</option>
+      <option value="diffusion">Diffusion</option>
+      <option value="spectrum">Spectrum</option>
+    </select>
+    <label for="q">q</label>
+    <input id="q" type="range" min="0.5" max="6.0" value="2.5" step="0.1">
+    <span class="val" id="qval">2.5</span>
+    <label for="n">Size n</label>
+    <input id="n" type="range" min="8" max="40" value="20" step="1">
+    <span class="val" id="nval">20</span>
+  </div>
+  <div class="controls" id="diffControls" style="display:none">
+    <label for="steps">Walk steps</label>
+    <input id="steps" type="range" min="50" max="400" value="150" step="10">
+    <span class="val" id="stepsval">150</span>
+    <button id="anim">Animate walk</button>
+    <button id="reset">Reset</button>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Regime</div><div class="value" id="regime">—</div></div>
+    <div class="stat"><div class="label">q</div><div class="value" id="sq">—</div></div>
+    <div class="stat"><div class="label">Vertices N</div><div class="value" id="sN">—</div></div>
+    <div class="stat"><div class="label">Edges</div><div class="value" id="sE">—</div></div>
+    <div class="stat"><div class="label">Spectral gap λ₂</div><div class="value" id="sgap">—</div></div>
+    <div class="stat"><div class="label">Mode</div><div class="value" id="smode">—</div></div>
+  </div>
+  <canvas id="cv" width="900" height="440"></canvas>
+  <p id="info" style="font-size:.9rem;color:var(--muted);margin-top:.5rem"></p>
+</div>
+<script>
+const modeSel = document.getElementById('mode');
+const qSlider = document.getElementById('q');
+const qval = document.getElementById('qval');
+const nSlider = document.getElementById('n');
+const nval = document.getElementById('nval');
+const stepsSlider = document.getElementById('steps');
+const stepsval = document.getElementById('stepsval');
+const diffControls = document.getElementById('diffControls');
+const regimeEl = document.getElementById('regime');
+const sqEl = document.getElementById('sq');
+const sNEl = document.getElementById('sN');
+const sEEl = document.getElementById('sE');
+const sgapEl = document.getElementById('sgap');
+const smodeEl = document.getElementById('smode');
+const infoEl = document.getElementById('info');
+const cv = document.getElementById('cv');
+const ctx = cv.getContext('2d');
+
+let mode = modeSel.value;
+let q = +qSlider.value;
+let N = +nSlider.value;
+let steps = +stepsSlider.value;
+let graph = null;
+let eigen = null;
+let walk = [];
+let walkIndex = 0;
+let animating = false;
+
+function mulberry32(seed) {
+  let t = seed >>> 0;
+  return function() {
+    t += 0x6D2B79F5;
+    let r = Math.imul(t ^ (t >>> 15), 1 | t);
+    r ^= r + Math.imul(r ^ (r >>> 7), 61 | r);
+    return ((r ^ (r >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+function makeGraph(n, qv) {
+  const rng = mulberry32(Math.round(qv*1000) + n*97 + 1);
+  const adj = Array.from({length:n}, () => []);
+  function addEdge(a,b){ adj[a].push(b); adj[b].push(a); }
+  if (qv <= 4) {
+    for (let i=0;i<n;i++) addEdge(i, (i+1)%n);
+    const extra = Math.max(0, Math.floor(n*0.15));
+    for (let k=0;k<extra;k++) {
+      const a = Math.floor(rng()*n);
+      const b = (a + 2 + Math.floor(rng()*(n-3))) % n;
+      if (b !== a && !adj[a].includes(b)) addEdge(a,b);
+    }
+  } else {
+    for (let i=1;i<n;i++) {
+      const p = Math.floor(rng()*i);
+      addEdge(p, i);
+    }
+  }
+  return { n, adj, q: qv };
+}
+
+function jacobiEigenvalues(A) {
+  const n = A.length;
+  const M = A.map(r => r.slice());
+  for (let sweep=0; sweep<60; sweep++) {
+    let off = 0;
+    for (let i=0;i<n;i++) for (let j=i+1;j<n;j++) off += M[i][j]*M[i][j];
+    if (Math.sqrt(off) < 1e-10) break;
+    for (let p=0;p<n-1;p++) {
+      for (let q=p+1;q<n;q++) {
+        if (Math.abs(M[p][q]) < 1e-12) continue;
+        const theta = (M[q][q]-M[p][p])/(2*M[p][q]);
+        const t = Math.abs(theta) > 1e12 ? 1/(2*theta) : (theta >= 0 ? 1/(theta + Math.hypot(theta,1)) : 1/(theta - Math.hypot(theta,1)));
+        const c = 1/Math.sqrt(1+t*t);
+        const s = t*c;
+        for (let k=0;k<n;k++) {
+          const a = M[k][p], b = M[k][q];
+          M[k][p] = c*a - s*b;
+          M[k][q] = s*a + c*b;
+        }
+        for (let k=0;k<n;k++) {
+          const a = M[p][k], b = M[q][k];
+          M[p][k] = c*a - s*b;
+          M[q][k] = s*a + c*b;
+        }
+        const app = M[p][p], aqq = M[q][q], apq = M[p][q];
+        M[p][p] = c*c*app - 2*s*c*apq + s*s*aqq;
+        M[q][q] = s*s*app + 2*s*c*apq + c*c*aqq;
+        M[p][q] = 0; M[q][p] = 0;
+      }
+    }
+  }
+  return M.map((r,i) => r[i]).sort((a,b) => a-b);
+}
+
+function computeEigen(g) {
+  const n = g.n;
+  const A = Array.from({length:n}, (_,i) => Array(n).fill(0));
+  for (let i=0;i<n;i++) {
+    A[i][i] = g.adj[i].length;
+    for (const j of g.adj[i]) A[i][j] = -1;
+  }
+  return jacobiEigenvalues(A);
+}
+
+function rebuild() {
+  graph = makeGraph(N, q);
+  eigen = computeEigen(graph);
+  walk = [0];
+  walkIndex = 0;
+  // generate full walk path
+  const rng = mulberry32(7 + N*13 + Math.round(q*10));
+  let cur = 0;
+  for (let i=0;i<steps;i++) {
+    const nbrs = graph.adj[cur];
+    cur = nbrs[Math.floor(rng()*nbrs.length)];
+    walk.push(cur);
+  }
+  updateStats();
+  draw();
+}
+
+function updateStats() {
+  const regime = q <= 4 ? 'LQG sphere (q≤4)' : 'Brownian CRT (q>4)';
+  regimeEl.textContent = regime;
+  sqEl.textContent = q.toFixed(1);
+  sNEl.textContent = graph.n;
+  const E = graph.adj.reduce((s,a)=>s+a.length,0)/2;
+  sEEl.textContent = E;
+  sgapEl.textContent = (eigen.length > 1 ? eigen[1].toFixed(3) : '—');
+  smodeEl.textContent = mode;
+  qval.textContent = q.toFixed(1);
+  nval.textContent = N;
+  stepsval.textContent = steps;
+  const msg = q <= 4
+    ? 'Surface regime: map behaves like a 2D Liouville quantum gravity sphere; random walk explores surface; spectrum follows Weyl-type growth.'
+    : 'Tree regime: map collapses to a Brownian continuum random tree; diffusion and spectrum reflect one-dimensional tree geometry.';
+  infoEl.textContent = msg + ' Mode: ' + mode + '.';
+}
+
+function positionsOnCircle(n) {
+  const cx = cv.width/2, cy = cv.height/2;
+  const r = Math.min(cv.width, cv.height)*0.38;
+  const pts = [];
+  for (let i=0;i<n;i++) {
+    const a = (i/n)*Math.PI*2 - Math.PI/2;
+    pts.push({x: cx + r*Math.cos(a), y: cy + r*Math.sin(a)});
+  }
+  return pts;
+}
+
+function drawGeometry() {
+  const W = cv.width, H = cv.height;
+  ctx.clearRect(0,0,W,H);
+  const left = 70, right = W-40, top = 50, bottom = H-70;
+  const q4x = left + (4/(7))*(right-left);
+  // shade
+  ctx.fillStyle = 'rgba(94,234,212,0.12)';
+  ctx.fillRect(left, top, q4x-left, bottom-top);
+  ctx.fillStyle = 'rgba(245,158,11,0.12)';
+  ctx.fillRect(q4x, top, right-q4x, bottom-top);
+  // axes
+  ctx.strokeStyle = '#9fb0cc';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(left, bottom); ctx.lineTo(right, bottom);
+  ctx.moveTo(left, top); ctx.lineTo(left, bottom);
+  ctx.stroke();
+  ctx.fillStyle = '#9fb0cc';
+  ctx.font = '12px system-ui';
+  ctx.textAlign = 'center';
+  for (let qq=0; qq<=7; qq++) {
+    const x = left + (qq/7)*(right-left);
+    ctx.fillText(qq.toString(), x, bottom+16);
+  }
+  ctx.textAlign = 'right';
+  ctx.fillText('q', right+30, bottom+5);
+  // boundary label
+  ctx.textAlign = 'center';
+  ctx.fillStyle = '#5eead4';
+  ctx.fillText('LQG sphere', (left+q4x)/2, top-18);
+  ctx.fillStyle = '#f59e0b';
+  ctx.fillText('Brownian CRT', (q4x+right)/2, top-18);
+  // marker
+  const qx = left + (Math.min(Math.max(q,0),7)/7)*(right-left);
+  ctx.strokeStyle = q <= 4 ? '#5eead4' : '#f59e0b';
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(qx, top); ctx.lineTo(qx, bottom);
+  ctx.stroke();
+  // icon
+  const iconX = W*0.5, iconY = H*0.52;
+  if (q <= 4) {
+    // sphere
+    ctx.strokeStyle = '#5eead4';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(iconX, iconY, 60, 0, Math.PI*2);
+    ctx.stroke();
+    const rng = mulberry32(42);
+    for (let i=0;i<18;i++) {
+      const a = rng()*Math.PI*2;
+      const rr = 60*Math.sqrt(rng());
+      ctx.fillStyle = 'rgba(94,234,212,0.7)';
+      ctx.beginPath();
+      ctx.arc(iconX + rr*Math.cos(a), iconY + rr*Math.sin(a), 2.5, 0, Math.PI*2);
+      ctx.fill();
+    }
+    // mesh chords
+    ctx.strokeStyle = 'rgba(94,234,212,0.25)';
+    ctx.lineWidth = 1;
+    for (let i=0;i<8;i++) {
+      const a1 = (i/8)*Math.PI*2;
+      const a2 = ((i+3)/8)*Math.PI*2;
+      ctx.beginPath();
+      ctx.moveTo(iconX+60*Math.cos(a1), iconY+60*Math.sin(a1));
+      ctx.lineTo(iconX+60*Math.cos(a2), iconY+60*Math.sin(a2));
+      ctx.stroke();
+    }
+  } else {
+    // tree
+    ctx.strokeStyle = '#f59e0b';
+    ctx.lineWidth = 2;
+    function branch(x,y,angle,len,depth) {
+      if (depth <= 0 || len < 4) return;
+      const x2 = x + len*Math.cos(angle);
+      const y2 = y + len*Math.sin(angle);
+      ctx.beginPath();
+      ctx.moveTo(x,y); ctx.lineTo(x2,y2); ctx.stroke();
+      branch(x2,y2, angle-0.5, len*0.7, depth-1);
+      branch(x2,y2, angle+0.45, len*0.65, depth-1);
+    }
+    branch(iconX, iconY+70, -Math.PI/2, 60, 6);
+  }
+  ctx.fillStyle = '#e6edf7';
+  ctx.font = '13px system-ui';
+  ctx.textAlign = 'center';
+  ctx.fillText('q = ' + q.toFixed(1) + '  →  ' + (q<=4 ? 'surface (LQG sphere)' : 'tree (Brownian CRT)'), W/2, H-20);
+}
+
+function drawDiffusion() {
+  const W = cv.width, H = cv.height;
+  ctx.clearRect(0,0,W,H);
+  const pts = positionsOnCircle(graph.n);
+  // edges
+  ctx.strokeStyle = 'rgba(159,176,204,0.35)';
+  ctx.lineWidth = 1;
+  for (let i=0;i<graph.n;i++) {
+    for (const j of graph.adj[i]) {
+      if (j > i) {
+        ctx.beginPath();
+        ctx.moveTo(pts[i].x, pts[i].y);
+        ctx.lineTo(pts[j].x, pts[j].y);
+        ctx.stroke();
+      }
+    }
+  }
+  // visited counts
+  const counts = Array(graph.n).fill(0);
+  for (let i=0;i<=walkIndex && i<walk.length;i++) counts[walk[i]]++;
+  const maxc = Math.max(1, ...counts);
+  for (let i=0;i<graph.n;i++) {
+    const t = counts[i]/maxc;
+    const col = q <= 4 ? 'rgba(94,234,212,' + (0.25+0.75*t) + ')' : 'rgba(245,158,11,' + (0.25+0.75*t) + ')';
+    ctx.fillStyle = col;
+    ctx.beginPath();
+    ctx.arc(pts[i].x, pts[i].y, 7, 0, Math.PI*2);
+    ctx.fill();
+    ctx.strokeStyle = '#0b1220';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  }
+  // path so far
+  ctx.strokeStyle = '#e6edf7';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  const start = Math.max(0, walkIndex-60);
+  for (let i=start;i<walkIndex;i++) {
+    if (i===start) ctx.moveTo(pts[walk[i]].x, pts[walk[i]].y);
+    else ctx.lineTo(pts[walk[i]].x, pts[walk[i]].y);
+  }
+  ctx.stroke();
+  // current
+  const cur = walk[walkIndex];
+  ctx.fillStyle = '#ef4444';
+  ctx.beginPath();
+  ctx.arc(pts[cur].x, pts[cur].y, 10, 0, Math.PI*2);
+  ctx.fill();
+  ctx.fillStyle = '#e6edf7';
+  ctx.font = '13px system-ui';
+  ctx.textAlign = 'center';
+  ctx.fillText('step ' + walkIndex + ' / ' + (walk.length-1) + '   current vertex ' + cur, W/2, H-12);
+}
+
+function drawSpectrum() {
+  const W = cv.width, H = cv.height;
+  ctx.clearRect(0,0,W,H);
+  const ev = eigen;
+  // left: eigenvalues bars
+  const left = 60, mid = W/2 - 20, top = 40, bottom = H-60;
+  ctx.strokeStyle = '#9fb0cc';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(left, bottom); ctx.lineTo(mid, bottom);
+  ctx.moveTo(left, top); ctx.lineTo(left, bottom);
+  ctx.stroke();
+  const m = Math.min(ev.length, 24);
+  const maxv = Math.max(1e-9, ev[m-1] || 1);
+  const bw = (mid-left)/m;
+  for (let i=0;i<m;i++) {
+    const h = (ev[i]/maxv)*(bottom-top);
+    ctx.fillStyle = q <= 4 ? '#5eead4' : '#f59e0b';
+    ctx.fillRect(left + i*bw + 2, bottom - h, bw - 4, h);
+  }
+  ctx.fillStyle = '#9fb0cc';
+  ctx.font = '12px system-ui';
+  ctx.textAlign = 'center';
+  ctx.fillText('Laplacian eigenvalues (first ' + m + ')', (left+mid)/2, top-12);
+  // right: heat trace
+  const rleft = W/2 + 20, rright = W-40;
+  ctx.strokeStyle = '#9fb0cc';
+  ctx.beginPath();
+  ctx.moveTo(rleft, bottom); ctx.lineTo(rright, bottom);
+  ctx.moveTo(rleft, top); ctx.lineTo(rleft, bottom);
+  ctx.stroke();
+  // curve H(t)
+  ctx.strokeStyle = q <= 4 ? '#5eead4' : '#f59e0b';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  const tmax = 2.0;
+  for (let s=0;s<=200;s++) {
+    const t = (s/200)*tmax;
+    let Ht = 0;
+    for (let i=0;i<ev.length;i++) Ht += Math.exp(-ev[i]*t);
+    const x = rleft + (t/tmax)*(rright-rleft);
+    const y = bottom - (Ht/ev.length)*(bottom-top);
+    if (s===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  }
+  ctx.stroke();
+  ctx.fillStyle = '#9fb0cc';
+  ctx.font = '12px system-ui';
+  ctx.textAlign = 'center';
+  ctx.fillText('Heat trace H(t) = Σ e^{-λᵢ t}', (rleft+rright)/2, top-12);
+  ctx.textAlign = 'left';
+  ctx.fillText('t', rright-10, bottom+16);
+}
+
+function draw() {
+  if (mode === 'geometry') drawGeometry();
+  else if (mode === 'diffusion') drawDiffusion();
+  else drawSpectrum();
+}
+
+function setMode(m) {
+  mode = m;
+  modeSel.value = m;
+  diffControls.style.display = (m === 'diffusion') ? 'flex' : 'none';
+  updateStats();
+  draw();
+}
+
+modeSel.addEventListener('change', () => setMode(modeSel.value));
+qSlider.addEventListener('input', () => { q = +qSlider.value; rebuild(); });
+nSlider.addEventListener('input', () => { N = +nSlider.value; rebuild(); });
+stepsSlider.addEventListener('input', () => { steps = +stepsSlider.value; rebuild(); });
+document.getElementById('anim').addEventListener('click', () => {
+  if (animating) return;
+  animating = true;
+  walkIndex = 0;
+  const total = walk.length - 1;
+  let t0 = performance.now();
+  function step(now) {
+    const e = (now - t0) / 20;
+    walkIndex = Math.min(total, Math.floor(e));
+    draw();
+    if (walkIndex < total) requestAnimationFrame(step);
+    else animating = false;
+  }
+  requestAnimationFrame(step);
+});
+document.getElementById('reset').addEventListener('click', () => {
+  walkIndex = 0;
+  animating = false;
+  draw();
+});
+
+rebuild();
+setMode(mode);
+</script>
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

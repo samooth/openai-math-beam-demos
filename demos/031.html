@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Uchida's conjecture for open Galois homomorphisms — interactive demo (result 031)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+select,input[type=range]{background:var(--chip);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:.35rem .5rem;font-size:1rem}
+input[type=range]{flex:1 1 220px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+button.active{background:var(--accent);color:#00130f;border-color:var(--accent);font-weight:600}
+#diagWrap{position:relative;background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+svg{display:block;width:100%;height:420px}
+.node rect{fill:var(--chip);stroke:var(--border);stroke-width:1.5;transition:all .25s}
+.node text{fill:var(--text);font-family:system-ui,sans-serif}
+.node .ntitle{font-size:15px;font-weight:700;fill:var(--accent)}
+.node .nsub{font-size:12px;fill:var(--muted)}
+.node.active rect{stroke:var(--accent);stroke-width:2.5;filter:drop-shadow(0 0 6px rgba(94,234,212,.35))}
+.node.warn rect{stroke:var(--bad);stroke-width:2.5}
+.edge{stroke:var(--muted);stroke-width:2;fill:none;stroke-dasharray:6 6;animation:flow 1.4s linear infinite;opacity:.7}
+.edge.active{stroke:var(--accent);opacity:1}
+.edge.warn{stroke:var(--bad);opacity:1}
+@keyframes flow{from{stroke-dashoffset:0}to{stroke-dashoffset:-12}}
+table{width:100%;border-collapse:collapse;font-size:.9rem}
+th,td{padding:.4rem .5rem;border-bottom:1px solid var(--border);text-align:left}
+th{color:var(--muted);font-weight:600}
+td.num{font-family:ui-monospace,monospace}
+.status-good{color:var(--good);font-weight:700}
+.status-bad{color:var(--bad);font-weight:700}
+.interp{font-size:1.05rem;line-height:1.6;color:var(--text)}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Uchida's conjecture for open Galois homomorphisms (result 031)</h1>
+  <p>Every continuous open homomorphism (\alpha:G_1\to G_2) between Galois groups of solvably closed extensions is induced by a unique field embedding (E_2\hookrightarrow E_1). Toggle openness and the auxiliary prime (\ell) to see how partial prime correspondences force the embedding.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Proves Uchida's conjecture: every continuous open homomorphism between Galois groups of possibly infinite solvably closed Galois extensions of number fields comes from a unique equivariant field embedding in the opposite direction. No restriction on the kernel or separate cyclotomic-compatibility assumption is needed.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Strengthens anabelian reconstruction: open maps between Galois groups of solvably closed extensions are realized by field embeddings, so arithmetic structure is recovered without assuming cyclotomic compatibility. It connects Neukirch–Uchida reconstruction, Uchida's partial prime correspondences, and Hoshi's cyclotomic criterion.</p>
+  </section>
+
+  <div class="controls">
+    <label for="F1">Source field (F_1)</label>
+    <select id="F1">
+      <option value="Q">Q</option>
+      <option value="quad" selected>quadratic</option>
+      <option value="cubic">cubic</option>
+    </select>
+    <label for="F2">Target field (F_2)</label>
+    <select id="F2">
+      <option value="Q">Q</option>
+      <option value="quad" selected>quadratic</option>
+      <option value="cubic">cubic</option>
+    </select>
+    <label for="ell">Auxiliary (\ell)</label>
+    <select id="ell">
+      <option value="3">3</option>
+      <option value="5" selected>5</option>
+      <option value="7">7</option>
+      <option value="11">11</option>
+    </select>
+    <label for="N">Primes shown</label>
+    <input id="N" type="range" min="8" max="16" value="12" step="1">
+    <span class="val" id="Nval">12</span>
+  </div>
+  <div class="controls">
+    <button id="openBtn" class="active">Open image: yes</button>
+    <button id="toggleFlow">Pause flow</button>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="label">Source field</div><div class="value" id="stF1">—</div></div>
+    <div class="stat"><div class="label">Target field</div><div class="value" id="stF2">—</div></div>
+    <div class="stat"><div class="label">Auxiliary (\ell)</div><div class="value" id="stEll">—</div></div>
+    <div class="stat"><div class="label">Target primes considered</div><div class="value" id="stN">—</div></div>
+    <div class="stat"><div class="label">Corresponded (this (\ell))</div><div class="value" id="stCorr">—</div></div>
+    <div class="stat"><div class="label">Exceptional (this (\ell))</div><div class="value" id="stExc">—</div></div>
+    <div class="stat"><div class="label">Stable across (\ell)</div><div class="value" id="stStable">—</div></div>
+    <div class="stat"><div class="label">Status</div><div class="value" id="stStatus">—</div></div>
+  </div>
+
+  <div id="diagWrap">
+    <svg id="diag" viewBox="0 0 980 420" preserveAspectRatio="xMidYMid meet">
+      <line class="edge e1" x1="170" y1="210" x2="300" y2="120" />
+      <line class="edge e2" x1="170" y1="210" x2="300" y2="210" />
+      <line class="edge e3" x1="170" y1="210" x2="300" y2="300" />
+      <line class="edge e4" x1="500" y1="120" x2="600" y2="210" />
+      <line class="edge e5" x1="500" y1="210" x2="600" y2="210" />
+      <line class="edge e6" x1="500" y1="300" x2="600" y2="210" />
+      <line class="edge e7" x1="700" y1="210" x2="760" y2="210" />
+
+      <g class="node" id="node-G1">
+        <rect x="20" y="150" width="150" height="120" rx="12" />
+        <text x="95" y="185" text-anchor="middle" class="ntitle">G_1</text>
+        <text x="95" y="208" text-anchor="middle" class="nsub">Gal(E_1/F_1)</text>
+        <text x="95" y="228" text-anchor="middle" class="nsub" id="g1Sub">solvably closed</text>
+      </g>
+      <g class="node" id="node-alpha">
+        <rect x="300" y="175" width="200" height="70" rx="12" />
+        <text x="400" y="203" text-anchor="middle" class="ntitle">(\alpha)</text>
+        <text x="400" y="223" text-anchor="middle" class="nsub" id="alphaSub">open homomorphism</text>
+      </g>
+      <g class="node" id="node-G2">
+        <rect x="600" y="150" width="150" height="120" rx="12" />
+        <text x="675" y="185" text-anchor="middle" class="ntitle">G_2</text>
+        <text x="675" y="208" text-anchor="middle" class="nsub">Gal(E_2/F_2)</text>
+        <text x="675" y="228" text-anchor="middle" class="nsub" id="g2Sub">solvably closed</text>
+      </g>
+      <g class="node" id="node-primes">
+        <rect x="300" y="290" width="200" height="80" rx="12" />
+        <text x="400" y="318" text-anchor="middle" class="ntitle">Primes</text>
+        <text x="400" y="338" text-anchor="middle" class="nsub" id="primesSub">correspondence mod (\ell)</text>
+        <text x="400" y="356" text-anchor="middle" class="nsub" id="primesSub2">—</text>
+      </g>
+      <g class="node" id="node-embed">
+        <rect x="760" y="160" width="180" height="100" rx="12" />
+        <text x="850" y="190" text-anchor="middle" class="ntitle">(j:E_2\hookrightarrow E_1)</text>
+        <text x="850" y="212" text-anchor="middle" class="nsub" id="embedSub">field embedding</text>
+        <text x="850" y="232" text-anchor="middle" class="nsub" id="embedSub2">—</text>
+      </g>
+    </svg>
+  </div>
+
+  <section class="box">
+    <h3>Prime correspondence</h3>
+    <div style="overflow:auto;max-height:320px">
+      <table>
+        <thead><tr><th>Target prime (p)</th><th>This (\ell)</th><th>Stable across (\ell)</th></tr></thead>
+        <tbody id="tbl"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="box">
+    <h3>Interpretation</h3>
+    <p id="interp" class="interp">—</p>
+  </section>
+</div>
+
+<script>
+const F1Sel = document.getElementById('F1');
+const F2Sel = document.getElementById('F2');
+const ellSel = document.getElementById('ell');
+const NSlider = document.getElementById('N');
+const Nval = document.getElementById('Nval');
+const openBtn = document.getElementById('openBtn');
+const toggleFlow = document.getElementById('toggleFlow');
+const diag = document.getElementById('diag');
+
+const primesAll = [5,7,11,13,17,19,23,29,31,37,41,43,47,53,59,61];
+let openMode = true;
+let flowOn = true;
+
+function ell(){ return +ellSel.value; }
+function N(){ return +NSlider.value; }
+function primes(){ return primesAll.slice(0, N()); }
+
+function fieldLabel(v){ return v==='Q' ? 'Q' : (v==='quad' ? 'quadratic' : 'cubic'); }
+
+function corresponded(p, l, open){
+  if(open){
+    if(p === l) return false;
+    if(p % l === 1) return false;
+    return true;
+  }
+  // non-open: irregular partial correspondence
+  return ((p * l + 7) % 5) !== 0;
+}
+
+function stableAcross(p){
+  if(!openMode) return false;
+  const ls = [3,5,7,11];
+  return ls.every(l => corresponded(p, l, true));
+}
+
+function counts(){
+  const ps = primes();
+  const l = ell();
+  let corr = 0, exc = 0, stable = 0;
+  for(const p of ps){
+    if(corresponded(p, l, openMode)) corr++; else exc++;
+    if(stableAcross(p)) stable++;
+  }
+  return {corr, exc, stable};
+}
+
+function updateStats(){
+  document.getElementById('stF1').textContent = fieldLabel(F1Sel.value);
+  document.getElementById('stF2').textContent = fieldLabel(F2Sel.value);
+  document.getElementById('stEll').textContent = ell();
+  const c = counts();
+  document.getElementById('stN').textContent = primes().length;
+  document.getElementById('stCorr').textContent = c.corr;
+  document.getElementById('stExc').textContent = c.exc;
+  document.getElementById('stStable').textContent = c.stable;
+  const statusEl = document.getElementById('stStatus');
+  if(openMode){
+    statusEl.textContent = 'induces embedding';
+    statusEl.className = 'value status-good';
+  } else {
+    statusEl.textContent = 'not guaranteed';
+    statusEl.className = 'value status-bad';
+  }
+}
+
+function updateDiagram(){
+  const ok = openMode;
+  document.querySelectorAll('#diag .node').forEach(n=>{ n.classList.remove('active','warn'); });
+  ['node-G1','node-alpha','node-G2','node-primes','node-embed'].forEach(id=>{
+    const el = document.getElementById(id);
+    if(ok) el.classList.add('active'); else el.classList.add('warn');
+  });
+  document.querySelectorAll('#diag .edge').forEach(e=>{
+    e.classList.remove('active','warn');
+    if(ok) e.classList.add('active'); else e.classList.add('warn');
+  });
+  document.getElementById('alphaSub').textContent = openMode ? 'open homomorphism' : 'not open';
+  const c = counts();
+  document.getElementById('primesSub2').textContent = c.corr + ' / ' + primes().length + ' corresponded';
+  document.getElementById('embedSub2').textContent = openMode ? 'unique j exists' : 'not forced';
+  document.getElementById('g1Sub').textContent = fieldLabel(F1Sel.value);
+  document.getElementById('g2Sub').textContent = fieldLabel(F2Sel.value);
+}
+
+function updateTable(){
+  const tbody = document.getElementById('tbl');
+  tbody.innerHTML = '';
+  const l = ell();
+  for(const p of primes()){
+    const corr = corresponded(p, l, openMode);
+    const st = stableAcross(p);
+    const tr = document.createElement('tr');
+    tr.innerHTML = '<td class="num">' + p + '</td>' +
+      '<td style="color:' + (corr ? 'var(--good)' : 'var(--bad)') + '">' + (corr ? 'corresponded' : 'exceptional') + '</td>' +
+      '<td style="color:' + (st ? 'var(--good)' : 'var(--muted)') + '">' + (st ? 'yes' : 'no') + '</td>';
+    tbody.appendChild(tr);
+  }
+}
+
+function updateInterp(){
+  const c = counts();
+  const el = document.getElementById('interp');
+  if(openMode){
+    el.innerHTML = 'Openness makes the partial correspondences cofinite for each auxiliary \(\ell\), and the exceptional sets can be forced to share residue characteristics. Hence enough primes are stably corresponded to identify \(\alpha\) with restriction, yielding the unique field embedding \(j:E_2\hookrightarrow E_1\). For the shown primes, ' + c.corr + ' of ' + primes().length + ' are corresponded for \(\ell=' + ell() + '\), and ' + c.stable + ' are stable across all \(\ell\).';
+  } else {
+    el.innerHTML = 'Without openness, the partial correspondences need not be compatible across \(\ell\), and no field embedding is forced. The displayed correspondences are irregular: ' + c.corr + ' of ' + primes().length + ' for \(\ell=' + ell() + '\).';
+  }
+}
+
+function update(){
+  Nval.textContent = N();
+  document.getElementById('stF1').textContent = fieldLabel(F1Sel.value);
+  document.getElementById('stF2').textContent = fieldLabel(F2Sel.value);
+  updateStats();
+  updateDiagram();
+  updateTable();
+  updateInterp();
+}
+
+F1Sel.addEventListener('change', update);
+F2Sel.addEventListener('change', update);
+ellSel.addEventListener('change', update);
+NSlider.addEventListener('input', ()=>{ Nval.textContent = NSlider.value; update(); });
+
+openBtn.addEventListener('click', function(){
+  openMode = !openMode;
+  openBtn.textContent = openMode ? 'Open image: yes' : 'Open image: no';
+  openBtn.classList.toggle('active', openMode);
+  update();
+});
+
+toggleFlow.addEventListener('click', function(){
+  flowOn = !flowOn;
+  diag.querySelectorAll('.edge').forEach(e=>{ e.style.animationPlayState = flowOn ? 'running' : 'paused'; });
+  this.textContent = flowOn ? 'Pause flow' : 'Resume flow';
+});
+
+update();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Arithmetic classification of Bernoulli convolutions (conceptual, result 153)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range]{flex:1 1 180px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:7ch}
+select{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:500px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+.legend{display:flex;gap:1rem;align-items:center;font-size:.85rem;color:var(--muted);margin:.5rem 0;flex-wrap:wrap}
+.swatch{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:.3rem;vertical-align:middle}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Arithmetic classification of Bernoulli convolutions (conceptual, result 153)</h1>
+  <p>An unbiased Bernoulli convolution (\mu_\lambda) is the distribution of (\sum_{n\ge0}\varepsilon_n\lambda^n), (\varepsilon_n=\pm1). Vary (\lambda\in(0,1)): the histogram estimates (\mu_\lambda), while the arithmetic score of (\alpha=1/\lambda) indicates Pisot-like singular cases. The similarity dimension is (d=\min(1,\log 2/\log(1/\lambda))).</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Classifies singular and absolutely continuous unbiased Bernoulli convolutions for every (\lambda\in(0,1)) by an infinite, one-sided approximation condition using explicit finite sets of algebraic units. It also proves singularity at reciprocals of every quartic Salem number in ((1,2)), giving examples beyond reciprocal Pisot parameters.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Extends Bernoulli-convolution theory beyond the classical Pisot-parameter singularity cases, supplying an arithmetic criterion for absolute continuity and new singular examples (quartic Salem reciprocals). This sharpens the overlap regime for self-similar measures on the line and informs multifractal and spectral questions for Bernoulli convolutions.</p>
+  </section>
+  <div class="controls">
+    <label for="lam">λ</label>
+    <input id="lam" type="range" min="0.05" max="0.99" value="0.618" step="0.001">
+    <span class="val" id="lamv">0.618</span>
+    <label for="samples">Samples</label>
+    <input id="samples" type="range" min="1000" max="20000" value="8000" step="1000">
+    <span class="val" id="sampv">8000</span>
+    <label for="depth">Approximation depth N</label>
+    <input id="depth" type="range" min="5" max="50" value="25" step="1">
+    <span class="val" id="depthv">25</span>
+  </div>
+  <div class="controls">
+    <label for="preset">Preset</label>
+    <select id="preset">
+      <option value="custom">Current λ</option>
+      <option value="0.5">Uniform λ=1/2</option>
+      <option value="0.61803398875">Golden ratio reciprocal (Pisot)</option>
+      <option value="0.754877666">Plastic constant reciprocal (Pisot)</option>
+      <option value="0.7">Generic λ=0.7</option>
+      <option value="0.3">λ=0.3 (dimension<1)</option>
+    </select>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">λ</div><div class="value" id="slam">—</div></div>
+    <div class="stat"><div class="label">α=1/λ</div><div class="value" id="salp">—</div></div>
+    <div class="stat"><div class="label">Similarity dimension d</div><div class="value" id="sdim">—</div></div>
+    <div class="stat"><div class="label">Pisot score min ||α^n||</div><div class="value" id="sscore">—</div></div>
+    <div class="stat"><div class="label">Classification (heuristic)</div><div class="value" id="sclass">—</div></div>
+    <div class="stat"><div class="label">Support half-width 1/(1-λ)</div><div class="value" id="ssup">—</div></div>
+  </div>
+  <div class="legend">
+    <span><span class="swatch" style="background:#5eead4"></span>Bernoulli convolution histogram</span>
+    <span><span class="swatch" style="background:#f59e0b"></span>Support interval</span>
+    <span><span class="swatch" style="background:#ef4444"></span>Singular/Pisot-like indicator</span>
+  </div>
+  <canvas id="c" width="900" height="500"></canvas>
+  <p style="font-size:.85rem;color:var(--muted);margin-top:.5rem">Conceptual model: (\mu_\lambda) is sampled by (\sum_{k=0}^{K-1}\varepsilon_k\lambda^k) with (K=80). The Pisot score is (\min_{1\le n\le N}|\alpha^n|) for (\alpha=1/\lambda). Small scores indicate Pisot-like singular parameters; quartic Salem cases are included in the theorem but are not detected by this simple score. Constants and rendering are illustrative.</p>
+</div>
+<script>
+const lamSlider=document.getElementById('lam');
+const samplesSlider=document.getElementById('samples');
+const depthSlider=document.getElementById('depth');
+const presetSel=document.getElementById('preset');
+const lamv=document.getElementById('lamv');
+const sampv=document.getElementById('sampv');
+const depthv=document.getElementById('depthv');
+const slam=document.getElementById('slam');
+const salp=document.getElementById('salp');
+const sdim=document.getElementById('sdim');
+const sscore=document.getElementById('sscore');
+const sclass=document.getElementById('sclass');
+const ssup=document.getElementById('ssup');
+
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+function resizeCanvas(){ canvas.width=Math.max(300,canvas.clientWidth); canvas.height=500; }
+window.addEventListener('resize',function(){ resizeCanvas(); render(); });
+resizeCanvas();
+
+function fmt(x){
+  if(!isFinite(x)) return '—';
+  if(x>=1e6 || (Math.abs(x)<1e-4 && x!==0)) return x.toExponential(3);
+  return x.toFixed(5);
+}
+
+function pisotScore(alpha,N){
+  let minDist=1;
+  let x=1;
+  for(let n=1;n<=N;n++){
+    x*=alpha;
+    const d=Math.abs(x-Math.round(x));
+    if(d<minDist) minDist=d;
+    if(!isFinite(x)) break;
+  }
+  return minDist;
+}
+
+function sampleConvolution(lam,nSamples){
+  const K=80;
+  const pts=new Array(nSamples);
+  const halfWidth=1/(1-lam);
+  for(let i=0;i<nSamples;i++){
+    let x=0, pow=1;
+    for(let k=0;k<K;k++){
+      x += (Math.random()<0.5 ? 1 : -1)*pow;
+      pow*=lam;
+    }
+    pts[i]=x;
+  }
+  return {pts,halfWidth};
+}
+
+function classify(lam,score){
+  if(lam < 0.5 - 1e-9) return 'Singular (d<1)';
+  if(Math.abs(lam-0.5) < 1e-3) return 'Absolutely continuous (uniform)';
+  if(score < 1e-3) return 'Singular (Pisot-like)';
+  return 'Likely absolutely continuous';
+}
+
+let cached=null;
+function render(){
+  const lam=+lamSlider.value;
+  const nSamples=+samplesSlider.value;
+  const N=+depthSlider.value;
+  lamv.textContent=lam.toFixed(3);
+  sampv.textContent=nSamples;
+  depthv.textContent=N;
+
+  const alpha=1/lam;
+  const d=Math.min(1, Math.log(2)/Math.log(alpha));
+  const score=pisotScore(alpha,N);
+  const cls=classify(lam,score);
+  const halfWidth=1/(1-lam);
+  const {pts}=sampleConvolution(lam,nSamples);
+
+  slam.textContent=lam.toFixed(5);
+  salp.textContent=alpha.toFixed(5);
+  sdim.textContent=d.toFixed(5);
+  sscore.textContent=score.toExponential(3);
+  sclass.textContent=cls;
+  ssup.textContent=halfWidth.toFixed(5);
+
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const padL=50,padR=20,padT=20,padB=40;
+  const plotW=W-padL-padR;
+  const plotH=H-padT-padB;
+
+  const xmin=-halfWidth, xmax=halfWidth;
+  function xOf(v){ return padL+(v-xmin)/(xmax-xmin)*plotW; }
+
+  // support interval
+  const ySup=padT+20;
+  ctx.strokeStyle='#f59e0b';
+  ctx.lineWidth=3;
+  ctx.beginPath();
+  ctx.moveTo(xOf(xmin),ySup);
+  ctx.lineTo(xOf(xmax),ySup);
+  ctx.stroke();
+  ctx.fillStyle='rgba(159,176,204,0.9)';
+  ctx.font='12px system-ui';
+  ctx.textAlign='left';
+  ctx.fillText('support [-1/(1-λ), 1/(1-λ)]', padL, padT+8);
+
+  // histogram
+  const bins=120;
+  const counts=new Array(bins).fill(0);
+  for(const x of pts){
+    let idx=Math.floor((x-xmin)/(xmax-xmin)*bins);
+    if(idx<0) idx=0; if(idx>=bins) idx=bins-1;
+    counts[idx]++;
+  }
+  const maxc=Math.max(...counts,1);
+  const baseY=padT+plotH;
+  const histH=plotH*0.85;
+  ctx.fillStyle = (cls.indexOf('Singular')===0) ? '#ef4444' : '#5eead4';
+  const bw=plotW/bins;
+  for(let i=0;i<bins;i++){
+    const bh=(counts[i]/maxc)*histH;
+    ctx.fillRect(padL+i*bw, baseY-bh, Math.max(1,bw-1), bh);
+  }
+
+  // axes
+  ctx.strokeStyle='rgba(159,176,204,0.6)';
+  ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(padL,baseY); ctx.lineTo(padL+plotW,baseY); ctx.stroke();
+  ctx.fillStyle='rgba(159,176,204,0.9)';
+  ctx.font='11px system-ui';
+  ctx.textAlign='center';
+  ctx.fillText(xmin.toFixed(2), padL, baseY+14);
+  ctx.fillText('0', padL+plotW/2, baseY+14);
+  ctx.fillText(xmax.toFixed(2), padL+plotW, baseY+14);
+  ctx.fillText('x', padL+plotW/2, baseY+30);
+
+  // score bar
+  const by=H-8;
+  ctx.fillStyle='rgba(159,176,204,0.9)';
+  ctx.font='12px system-ui';
+  ctx.textAlign='left';
+  ctx.fillText('Pisot score (log scale)', padL, by-14);
+  ctx.fillStyle='#243252';
+  ctx.fillRect(padL, by-8, plotW, 8);
+  ctx.fillStyle='#ef4444';
+  const sw=Math.min(plotW, Math.max(2, ( -Math.log10(Math.max(score,1e-16))/6 )*plotW));
+  ctx.fillRect(padL, by-8, sw, 8);
+}
+
+lamSlider.addEventListener('input', function(){ presetSel.value='custom'; render(); });
+samplesSlider.addEventListener('input', function(){ sampv.textContent=samplesSlider.value; render(); });
+depthSlider.addEventListener('input', function(){ depthv.textContent=depthSlider.value; render(); });
+presetSel.addEventListener('change', function(){
+  if(presetSel.value!=='custom'){
+    lamSlider.value=presetSel.value;
+    render();
+  }
+});
+render();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

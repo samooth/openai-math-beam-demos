@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rokhlin's multiple-mixing problem (conceptual, result 145)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+select{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+input[type=range]{flex:1 1 180px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:460px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+.legend{display:flex;gap:1rem;align-items:center;font-size:.85rem;color:var(--muted);margin:.5rem 0;flex-wrap:wrap}
+.swatch{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:.3rem;vertical-align:middle}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Rokhlin's multiple-mixing problem (conceptual, result 145)</h1>
+  <p>Proves that every invertible mixing probability-preserving transformation is mixing of all finite orders, resolving Rokhlin's multiple-mixing problem for a single transformation. Correlations among any finite collection of measurable sets converge to the product of their measures whenever all pairwise time separations diverge.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Result 145 proves Rokhlin's multiple-mixing conjecture for one transformation: if an invertible probability-preserving map (T) is mixing, then it is mixing of every finite order. Equivalently, for measurable sets (A_1,\dots,A_k) and times (t_i) with all successive gaps (t_{i+1}-t_i\to\infty), one has (\mu(T^{-t_1}A_1\cap\dots\cap T^{-t_k}A_k)\to\prod_{i=1}^k\mu(A_i)). The demo illustrates this decay of multi-set correlations for the doubling map (x\mapsto 2x\bmod 1), a canonical exact mixing system.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Multiple mixing is the natural higher-order analogue of mixing and underlies pointwise multiple ergodic averages, joinings, and higher-order recurrence. Establishing it for an arbitrary single mixing transformation removes the need for stronger hypotheses (such as (K) or Bernoulli) in many arguments and shows that pairwise decorrelation propagates to arbitrary finite collections of observables.</p>
+  </section>
+  <div class="controls">
+    <label for="k">Number of sets k</label>
+    <input id="k" type="range" min="2" max="6" value="3" step="1">
+    <span class="val" id="kval">3</span>
+    <label for="gap">Time gap g</label>
+    <input id="gap" type="range" min="0" max="16" value="4" step="1">
+    <span class="val" id="gapval">4</span>
+  </div>
+  <div class="controls">
+    <label for="w">Set width w</label>
+    <input id="w" type="range" min="0.05" max="0.50" value="0.25" step="0.05">
+    <span class="val" id="wval">0.25</span>
+    <label for="N">Samples</label>
+    <select id="N">
+      <option value="2000">2000</option>
+      <option value="8000" selected>8000</option>
+      <option value="20000">20000</option>
+    </select>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">k</div><div class="value" id="sk">—</div></div>
+    <div class="stat"><div class="label">gap g</div><div class="value" id="sgap">—</div></div>
+    <div class="stat"><div class="label">width w</div><div class="value" id="sw">—</div></div>
+    <div class="stat"><div class="label">samples N</div><div class="value" id="sN">—</div></div>
+    <div class="stat"><div class="label">correlation C_g</div><div class="value" id="scorr">—</div></div>
+    <div class="stat"><div class="label">product w^k</div><div class="value" id="sprod">—</div></div>
+    <div class="stat"><div class="label">ratio C/(w^k)</div><div class="value" id="sratio">—</div></div>
+    <div class="stat"><div class="label">status</div><div class="value" id="sstatus">—</div></div>
+  </div>
+  <div class="legend">
+    <span><span class="swatch" style="background:#ef4444"></span>Multi-set correlation (C_g)</span>
+    <span><span class="swatch" style="background:#5eead4"></span>Product (\prod \mu(A_i)=w^k)</span>
+    <span><span class="swatch" style="background:#f59e0b"></span>Selected gap</span>
+  </div>
+  <canvas id="c" width="900" height="460"></canvas>
+  <p style="font-size:.85rem;color:var(--muted);margin-top:.5rem">Conceptual model: for (A=[0,w)) and the doubling map, (C_g=\mathbb P(x\in A,T^g x\in A,\dots,T^{(k-1)g}x\in A)) estimated by a uniform grid, versus the product (w^k) predicted by multiple mixing as (g\to\infty).</p>
+</div>
+<script>
+const kSlider=document.getElementById('k');
+const gapSlider=document.getElementById('gap');
+const wSlider=document.getElementById('w');
+const NSel=document.getElementById('N');
+
+const kval=document.getElementById('kval');
+const gapval=document.getElementById('gapval');
+const wval=document.getElementById('wval');
+
+const sk=document.getElementById('sk');
+const sgap=document.getElementById('sgap');
+const sw=document.getElementById('sw');
+const sN=document.getElementById('sN');
+const scorr=document.getElementById('scorr');
+const sprod=document.getElementById('sprod');
+const sratio=document.getElementById('sratio');
+const sstatus=document.getElementById('sstatus');
+
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+
+function resizeCanvas(){ canvas.width=Math.max(300,canvas.clientWidth); canvas.height=460; }
+window.addEventListener('resize',function(){ resizeCanvas(); render(); });
+resizeCanvas();
+
+const GMAX=16;
+
+function estimate(gap,k,w,N){
+  let count=0;
+  for(let i=0;i<N;i++){
+    const x=(i+0.5)/N;
+    let ok=true;
+    for(let j=0;j<k;j++){
+      const t=x*Math.pow(2,j*gap);
+      const y=t-Math.floor(t);
+      if(y>=w){ ok=false; break; }
+    }
+    if(ok) count++;
+  }
+  return count/N;
+}
+
+function updateStats(){
+  const k=+kSlider.value;
+  const gap=+gapSlider.value;
+  const w=+wSlider.value;
+  const N=+NSel.value;
+  kval.textContent=k;
+  gapval.textContent=gap;
+  wval.textContent=w.toFixed(2);
+  sk.textContent=k;
+  sgap.textContent=gap;
+  sw.textContent=w.toFixed(2);
+  sN.textContent=N;
+}
+
+function render(){
+  updateStats();
+  const k=+kSlider.value;
+  const gap=+gapSlider.value;
+  const w=+wSlider.value;
+  const N=+NSel.value;
+
+  const curve=[];
+  for(let g=0;g<=GMAX;g++) curve.push(estimate(g,k,w,N));
+  const prod=Math.pow(w,k);
+  const corr=curve[gap];
+
+  scorr.textContent=corr.toFixed(4);
+  sprod.textContent=prod.toFixed(4);
+  sratio.textContent=(corr/prod).toFixed(3);
+  if(gap===0) sstatus.textContent='no separation';
+  else if(Math.abs(corr-prod)<0.02) sstatus.textContent='mixed';
+  else sstatus.textContent='decorrelating';
+
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const padL=60,padR=24,padT=28,padB=44;
+  const plotW=W-padL-padR;
+  const plotH=H-padT-padB;
+
+  // axes
+  ctx.strokeStyle='rgba(159,176,204,0.35)';
+  ctx.lineWidth=1;
+  for(let i=0;i<=5;i++){
+    const y=padT+i*plotH/5;
+    ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(padL+plotW,y); ctx.stroke();
+  }
+  for(let i=0;i<=GMAX;i++){
+    const x=padL+i*plotW/GMAX;
+    ctx.beginPath(); ctx.moveTo(x,padT); ctx.lineTo(x,padT+plotH); ctx.stroke();
+  }
+
+  // product line
+  const py=padT+plotH*(1-prod);
+  ctx.strokeStyle='#5eead4';
+  ctx.lineWidth=2;
+  ctx.setLineDash([6,4]);
+  ctx.beginPath(); ctx.moveTo(padL,py); ctx.lineTo(padL+plotW,py); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // curve
+  ctx.strokeStyle='#ef4444';
+  ctx.lineWidth=2.5;
+  ctx.beginPath();
+  for(let i=0;i<=GMAX;i++){
+    const x=padL+i*plotW/GMAX;
+    const y=padT+plotH*(1-curve[i]);
+    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  }
+  ctx.stroke();
+
+  // selected marker
+  const sx=padL+gap*plotW/GMAX;
+  const sy=padT+plotH*(1-corr);
+  ctx.fillStyle='#f59e0b';
+  ctx.beginPath(); ctx.arc(sx,sy,7,0,Math.PI*2); ctx.fill();
+  ctx.strokeStyle='#fff'; ctx.lineWidth=1.5; ctx.stroke();
+
+  // labels
+  ctx.fillStyle='rgba(159,176,204,0.9)';
+  ctx.font='12px system-ui';
+  ctx.textAlign='center';
+  for(let g=0;g<=GMAX;g+=2) ctx.fillText(g, padL+g*plotW/GMAX, H-padB+18);
+  ctx.textAlign='right';
+  for(let i=0;i<=5;i++){
+    const v=(5-i)/5;
+    ctx.fillText(v.toFixed(1), padL-8, padT+i*plotH/5+4);
+  }
+  ctx.save();
+  ctx.translate(16, padT+plotH/2);
+  ctx.rotate(-Math.PI/2);
+  ctx.textAlign='center';
+  ctx.fillText('correlation',0,0);
+  ctx.restore();
+  ctx.fillText('time gap g', padL+plotW/2, H-8);
+}
+
+kSlider.addEventListener('input',render);
+gapSlider.addEventListener('input',render);
+wSlider.addEventListener('input',render);
+NSel.addEventListener('change',render);
+render();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

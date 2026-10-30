@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sharp three- and four-state reconstruction thresholds (conceptual, result 229)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range]{flex:1 1 160px}
+input[type=number]{width:6rem;padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text)}
+select{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text)}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:auto;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+.legend{display:flex;gap:1rem;align-items:center;font-size:.85rem;color:var(--muted);margin:.5rem 0;flex-wrap:wrap}
+.swatch{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:.3rem;vertical-align:middle}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Sharp three- and four-state reconstruction thresholds (conceptual, result 229)</h1>
+  <p>Conceptual view of broadcasting on a tree: a root spin in $q$ states is propagated with channel parameter $\lambda$, and one asks whether the root can be estimated from the leaves. The sharp threshold is $d\lambda^2>1$.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Studies exact reconstruction thresholds for symmetric three-state and ferromagnetic four-state broadcasting on regular trees ($d\ge2$) and observed Poisson trees (mean $d>1$ and $d>0$, respectively). Reconstruction holds when $d\lambda^2>1$, with nonreconstruction at equality, and the Poisson advantage is averaged over trees and root spins without conditioning on survival. The three-state theorem allows both signs of $\lambda$ and gives the exact weak-recovery threshold for the symmetric three-community stochastic block model.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Identifies the sharp Kesten--Stigum-type phase transition for multi-state channels: above threshold the root leaves a nonvanishing imprint on the leaves, while at or below threshold all information is lost in the limit. This yields the weak-recovery threshold for the symmetric three-community stochastic block model.</p>
+  </section>
+  <div class="controls">
+    <label for="qsel">states $q$</label>
+    <select id="qsel"><option value="3">3</option><option value="4">4</option></select>
+    <label for="b">branching $d$</label>
+    <input id="b" type="range" min="2" max="6" value="3" step="1">
+    <span class="val" id="bval">3</span>
+    <label for="lam">channel $\lambda$</label>
+    <input id="lam" type="number" min="-0.5" max="1" step="0.001" value="0.600">
+    <span class="val" id="lamval">0.600</span>
+  </div>
+  <div class="controls">
+    <label for="depth">depth $L$</label>
+    <input id="depth" type="range" min="1" max="8" value="6" step="1">
+    <span class="val" id="dval">6</span>
+    <label for="trials">trials</label>
+    <input id="trials" type="range" min="100" max="2000" value="500" step="100">
+    <span class="val" id="tval">500</span>
+    <label for="seed">seed</label>
+    <input id="seed" type="number" value="42">
+    <button id="resample">Resample</button>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">states $q$</div><div class="value" id="sq">—</div></div>
+    <div class="stat"><div class="label">branching $d$</div><div class="value" id="sb">—</div></div>
+    <div class="stat"><div class="label">channel $\lambda$</div><div class="value" id="slam">—</div></div>
+    <div class="stat"><div class="label">$d\lambda^2$</div><div class="value" id="prod">—</div></div>
+    <div class="stat"><div class="label">regime</div><div class="value" id="regime">—</div></div>
+    <div class="stat"><div class="label">depth $L$</div><div class="value" id="sdepth">—</div></div>
+    <div class="stat"><div class="label">leaves $d^L$</div><div class="value" id="leaves">—</div></div>
+    <div class="stat"><div class="label">estimated advantage</div><div class="value" id="advstat">—</div></div>
+    <div class="stat"><div class="label">success rate</div><div class="value" id="succstat">—</div></div>
+  </div>
+  <canvas id="signal" width="640" height="360"></canvas>
+  <canvas id="adv" width="640" height="320"></canvas>
+  <div class="legend">
+    <span><span class="swatch" style="background:#22c55e"></span>supercritical growth</span>
+    <span><span class="swatch" style="background:#ef4444"></span>subcritical decay</span>
+    <span><span class="swatch" style="background:#5eead4"></span>threshold $d\lambda^2=1$</span>
+  </div>
+</div>
+<script>
+function mulberry32(a){ a|=0; return function(){ a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+function clamp(x,lo,hi){ return Math.max(lo, Math.min(hi, x)); }
+
+let rng = mulberry32(42);
+
+function aProb(q,lam){ return (1+(q-1)*lam)/q; }
+
+function genLeaf(root,q,lam,rng){
+  if (rng() < aProb(q,lam)) return root;
+  let x = root;
+  while (x === root) x = Math.floor(rng()*q);
+  return x;
+}
+
+function estimateRoot(counts,q,lam){
+  let best = 0;
+  if (lam >= 0) {
+    for (let c=1;c<q;c++) if (counts[c] > counts[best]) best = c;
+  } else {
+    for (let c=1;c<q;c++) if (counts[c] < counts[best]) best = c;
+  }
+  return best;
+}
+
+const qsel = document.getElementById('qsel');
+const bSlider = document.getElementById('b');
+const lamInput = document.getElementById('lam');
+const depthSlider = document.getElementById('depth');
+const trialsSlider = document.getElementById('trials');
+const seedInput = document.getElementById('seed');
+
+function fmt(x){ return (typeof x === 'number') ? x.toFixed(4) : x; }
+
+function params(){
+  const q = parseInt(qsel.value,10);
+  const b = parseInt(bSlider.value,10);
+  const minLam = -1/(q-1);
+  let lam = parseFloat(lamInput.value);
+  if (!isFinite(lam)) lam = 0.5;
+  lam = clamp(lam, minLam, 1);
+  lamInput.value = lam.toFixed(3);
+  const L = parseInt(depthSlider.value,10);
+  const T = parseInt(trialsSlider.value,10);
+  const seed = parseInt(seedInput.value,10) || 42;
+  return {q,b,lam,L,T,seed,minLam};
+}
+
+function runSim(){
+  const {q,b,lam,L,T,seed} = params();
+  rng = mulberry32(seed);
+
+  document.getElementById('bval').textContent = b;
+  document.getElementById('lamval').textContent = lam.toFixed(3);
+  document.getElementById('dval').textContent = L;
+  document.getElementById('tval').textContent = T;
+
+  // simulated depths (cap leaf count)
+  const simDepths = [];
+  let totalLeaves = 0;
+  for (let d=1; d<=L; d++){
+    const n = Math.pow(b,d);
+    if (n > 200000) break;
+    simDepths.push({d,n});
+    totalLeaves += n;
+  }
+  let Tadj = T;
+  if (simDepths.length && totalLeaves*T > 2000000){
+    Tadj = Math.max(50, Math.floor(2000000/(totalLeaves*T)*T));
+  }
+
+  const results = [];
+  for (const {d,n} of simDepths){
+    let succ = 0;
+    for (let t=0; t<Tadj; t++){
+      const root = Math.floor(rng()*q);
+      const counts = new Array(q).fill(0);
+      for (let i=0;i<n;i++){
+        const col = genLeaf(root,q,lam,rng);
+        counts[col]++;
+      }
+      const est = estimateRoot(counts,q,lam);
+      if (est === root) succ++;
+    }
+    results.push({d, n, adv: succ/Tadj - 1/q, succRate: succ/Tadj});
+  }
+
+  const prod = b*lam*lam;
+  let regime = 'critical';
+  if (prod > 1.0005) regime = 'supercritical';
+  else if (prod < 0.9995) regime = 'subcritical';
+
+  document.getElementById('sq').textContent = q;
+  document.getElementById('sb').textContent = b;
+  document.getElementById('slam').textContent = lam.toFixed(4);
+  document.getElementById('prod').textContent = prod.toFixed(4);
+  document.getElementById('regime').textContent = regime;
+  document.getElementById('sdepth').textContent = L;
+  const leaves = Math.pow(b,L);
+  document.getElementById('leaves').textContent = leaves > 1e9 ? leaves.toExponential(2) : Math.round(leaves).toLocaleString();
+  const sel = results.find(r => r.d === L);
+  if (sel){
+    document.getElementById('advstat').textContent = sel.adv.toFixed(4);
+    document.getElementById('succstat').textContent = sel.succRate.toFixed(4);
+  } else {
+    document.getElementById('advstat').textContent = 'not simulated';
+    document.getElementById('succstat').textContent = 'not simulated';
+  }
+
+  drawSignal(b,lam,L);
+  drawAdv(results);
+}
+
+function drawSignal(b,lam,L){
+  const cv = document.getElementById('signal');
+  const ctx = cv.getContext('2d');
+  const W = cv.width, H = cv.height;
+  ctx.clearRect(0,0,W,H);
+  const pad = 52;
+  const xmax = 12;
+  const logp = (b*lam*lam > 0) ? Math.log10(b*lam*lam) : -10;
+  let ymax = 3;
+  for (let d=0; d<=xmax; d++){ ymax = Math.max(ymax, Math.abs(d*logp)); }
+  ymax = Math.max(ymax, 1) + 1;
+  const ymin = -ymax;
+  function X(d){ return pad + (d/xmax)*(W-2*pad); }
+  function Y(v){ return H/2 - (v/ymax)*(H/2 - pad); } // not symmetric? redo below
+  // symmetric around 0:
+  function Y2(v){ return (H-pad) - ((v - ymin)/(ymax - ymin))*(H-2*pad); }
+  // axes
+  ctx.strokeStyle = '#9fb0cc'; ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(pad, H-pad); ctx.lineTo(W-pad, H-pad);
+  ctx.moveTo(pad, pad); ctx.lineTo(pad, H-pad);
+  ctx.stroke();
+  ctx.fillStyle = '#9fb0cc'; ctx.font = '12px system-ui';
+  ctx.fillText('depth L', W-pad-40, H-pad+16);
+  ctx.fillText('log10 signal', 6, pad-8);
+  // threshold line y=0
+  const y0 = Y2(0);
+  ctx.strokeStyle = '#5eead4'; ctx.lineWidth = 2; ctx.setLineDash([6,4]);
+  ctx.beginPath(); ctx.moveTo(pad, y0); ctx.lineTo(W-pad, y0); ctx.stroke();
+  ctx.setLineDash([]);
+  // curve
+  ctx.strokeStyle = (b*lam*lam > 1) ? '#22c55e' : '#ef4444';
+  ctx.lineWidth = 2.5;
+  ctx.beginPath();
+  let started = false;
+  for (let d=0; d<=xmax; d++){
+    const v = d*logp;
+    const clamped = clamp(v, ymin, ymax);
+    if (!started){ ctx.moveTo(X(d), Y2(clamped)); started=true; }
+    else ctx.lineTo(X(d), Y2(clamped));
+  }
+  ctx.stroke();
+  // selected depth marker
+  if (L >=0 && L <= xmax){
+    const v = clamp(L*logp, ymin, ymax);
+    ctx.fillStyle = '#f59e0b';
+    ctx.beginPath(); ctx.arc(X(L), Y2(v), 5, 0, 2*Math.PI); ctx.fill();
+  }
+  // ticks
+  ctx.fillStyle = '#9fb0cc'; ctx.font = '11px system-ui';
+  for (let d=0; d<=xmax; d+=2){
+    ctx.fillText(String(d), X(d)-4, H-pad+14);
+  }
+}
+
+function drawAdv(results){
+  const cv = document.getElementById('adv');
+  const ctx = cv.getContext('2d');
+  const W = cv.width, H = cv.height;
+  ctx.clearRect(0,0,W,H);
+  const pad = 52;
+  const ymin = -0.05, ymax = 0.85;
+  function X(d){
+    const maxX = Math.max(2, results.length? results[results.length-1].d : 8);
+    return pad + ((d-1)/(maxX-1))*(W-2*pad);
+  }
+  function Y(v){ return (H-pad) - ((v-ymin)/(ymax-ymin))*(H-2*pad); }
+  ctx.strokeStyle='#9fb0cc'; ctx.lineWidth=1;
+  ctx.beginPath();
+  ctx.moveTo(pad,H-pad); ctx.lineTo(W-pad,H-pad);
+  ctx.moveTo(pad,pad); ctx.lineTo(pad,H-pad);
+  ctx.stroke();
+  ctx.fillStyle='#9fb0cc'; ctx.font='12px system-ui';
+  ctx.fillText('depth L', W-pad-40, H-pad+16);
+  ctx.fillText('advantage', 6, pad-8);
+  // zero line
+  const y0 = Y(0);
+  ctx.strokeStyle='#5eead4'; ctx.lineWidth=1.5; ctx.setLineDash([6,4]);
+  ctx.beginPath(); ctx.moveTo(pad,y0); ctx.lineTo(W-pad,y0); ctx.stroke();
+  ctx.setLineDash([]);
+  if (!results.length){
+    ctx.fillStyle='#9fb0cc'; ctx.fillText('no simulation', W/2-40, H/2); return;
+  }
+  // line
+  ctx.strokeStyle='#5eead4'; ctx.lineWidth=2;
+  ctx.beginPath();
+  let started=false;
+  for (const r of results){
+    if (!started){ ctx.moveTo(X(r.d),Y(r.adv)); started=true; }
+    else ctx.lineTo(X(r.d),Y(r.adv));
+  }
+  ctx.stroke();
+  for (const r of results){
+    ctx.fillStyle = r.adv > 0.01 ? '#22c55e' : '#ef4444';
+    ctx.beginPath(); ctx.arc(X(r.d),Y(r.adv),4,0,2*Math.PI); ctx.fill();
+  }
+}
+
+bSlider.addEventListener('input', ()=>{ document.getElementById('bval').textContent = bSlider.value; runSim(); });
+qsel.addEventListener('change', runSim);
+lamInput.addEventListener('change', runSim);
+depthSlider.addEventListener('input', ()=>{ document.getElementById('dval').textContent = depthSlider.value; runSim(); });
+trialsSlider.addEventListener('input', ()=>{ document.getElementById('tval').textContent = trialsSlider.value; runSim(); });
+seedInput.addEventListener('change', runSim);
+document.getElementById('resample').addEventListener('click', ()=>{ seedInput.value = Math.floor(Math.random()*1e6); runSim(); });
+
+runSim();
+</script>
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

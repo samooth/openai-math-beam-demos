@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The optimal order of convex-body covering density (conceptual, result 092)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range],select{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+input[type=range]{flex:1 1 180px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:460px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+.toggle{display:inline-flex;align-items:center;gap:.4rem}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>The optimal order of convex-body covering density (conceptual, result 092)</h1>
+  <p>Determines the optimal worst-case covering density as $\Theta(n\log n)$, for both lattice and unrestricted translative coverings. Every convex body in $\mathbb R^n$, $n\ge2$, admits a lattice covering of density at most $Cn\log n$; centrally symmetric examples in every sufficiently large dimension require at least $cn\log n$ even without the lattice restriction, for absolute $c,C>0$.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Determines the optimal worst-case covering density as $\Theta(n\log n)$, for both lattice and unrestricted translative coverings. Every convex body in $\mathbb R^n$, $n\ge2$, admits a lattice covering of density at most $Cn\log n$; centrally symmetric examples in every sufficiently large dimension require at least $cn\log n$ even without the lattice restriction, for absolute $c,C>0$.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Covering density measures how efficiently congruent copies of a convex body can cover Euclidean space; closing the optimal order to $\Theta(n\log n)$ removes exponential gaps in geometry of numbers, with consequences for lattice quantization, coding, and high-dimensional packing/covering trade-offs.</p>
+  </section>
+  <div class="controls">
+    <label for="n">Dimension n</label>
+    <input id="n" type="range" min="2" max="40" value="10" step="1">
+    <span class="val" id="nval">10</span>
+    <label for="cst">Lower constant c</label>
+    <input id="cst" type="range" min="1" max="20" value="5">
+    <span class="val" id="cstval">0.50</span>
+    <label for="Cst">Upper constant C</label>
+    <input id="Cst" type="range" min="10" max="40" value="20">
+    <span class="val" id="Cstval">2.00</span>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Dimension n</div><div class="value" id="nstat">—</div></div>
+    <div class="stat"><div class="label">log n (natural)</div><div class="value" id="logstat">—</div></div>
+    <div class="stat"><div class="label">Lower bound c n log n</div><div class="value" id="lowerstat">—</div></div>
+    <div class="stat"><div class="label">Upper bound C n log n</div><div class="value" id="upperstat">—</div></div>
+    <div class="stat"><div class="label">Ratio C/c</div><div class="value" id="ratiostat">—</div></div>
+    <div class="stat"><div class="label">Order</div><div class="value" id="orderstat">Θ(n log n)</div></div>
+  </div>
+  <canvas id="c" width="900" height="460"></canvas>
+  <p style="font-size:.85rem;color:var(--muted);margin-top:.5rem">Curves show illustrative lower/upper bounds $cn\log n$ and $Cn\log n$; the shaded band is the admissible range. The marker is the selected dimension.</p>
+</div>
+<script>
+const nSlider=document.getElementById('n');
+const cSlider=document.getElementById('cst');
+const CSlider=document.getElementById('Cst');
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+
+const nval=document.getElementById('nval');
+const cstval=document.getElementById('cstval');
+const Cstval=document.getElementById('Cstval');
+const nstat=document.getElementById('nstat');
+const logstat=document.getElementById('logstat');
+const lowerstat=document.getElementById('lowerstat');
+const upperstat=document.getElementById('upperstat');
+const ratiostat=document.getElementById('ratiostat');
+
+function constants(){
+  return { c: +cSlider.value/10, C: +CSlider.value/10 };
+}
+
+function updateVals(){
+  nval.textContent=nSlider.value;
+  cstval.textContent=(+cSlider.value/10).toFixed(2);
+  Cstval.textContent=(+CSlider.value/10).toFixed(2);
+}
+
+function resizeCanvas(){ canvas.width=Math.max(300,canvas.clientWidth); canvas.height=460; }
+window.addEventListener('resize',function(){ resizeCanvas(); render(); });
+resizeCanvas();
+
+function draw(){
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const padL=52,padR=16,padT=24,padB=44;
+  const plotW=W-padL-padR, plotH=H-padT-padB;
+  const nMax=40;
+  const {c,C}=constants();
+  // y max
+  let ymax=0;
+  for(let n=2;n<=nMax;n++){ ymax=Math.max(ymax, C*n*Math.log(n)); }
+  ymax*=1.05;
+
+  const xOf=n=>padL+(n-2)/(nMax-2)*plotW;
+  const yOf=v=>padT+plotH - v/ymax*plotH;
+
+  // axes
+  ctx.strokeStyle='rgba(159,176,204,0.35)'; ctx.lineWidth=1;
+  ctx.beginPath();
+  ctx.moveTo(padL,padT); ctx.lineTo(padL,padT+plotH); ctx.lineTo(padL+plotW,padT+plotH);
+  ctx.stroke();
+  ctx.fillStyle='#9fb0cc'; ctx.font='11px system-ui';
+  ctx.textAlign='center'; ctx.textBaseline='top';
+  for(let n=2;n<=nMax;n+=4){ ctx.fillText(n,xOf(n),padT+plotH+6); }
+  ctx.textAlign='right'; ctx.textBaseline='middle';
+  for(let k=0;k<=4;k++){
+    const v=ymax*k/4; ctx.fillText(v.toFixed(0),padL-6,yOf(v));
+  }
+  ctx.fillStyle='#9fb0cc'; ctx.font='12px system-ui'; ctx.textAlign='center';
+  ctx.fillText('dimension n', padL+plotW/2, H-8);
+  ctx.save(); ctx.translate(14,padT+plotH/2); ctx.rotate(-Math.PI/2); ctx.fillText('covering density',0,0); ctx.restore();
+
+  // shaded band between lower and upper
+  ctx.fillStyle='rgba(94,234,212,0.12)';
+  ctx.beginPath();
+  for(let n=2;n<=nMax;n++){ const x=xOf(n); const y=yOf(c*n*Math.log(n)); if(n===2) ctx.moveTo(x,y); else ctx.lineTo(x,y); }
+  for(let n=nMax;n>=2;n--){ const x=xOf(n); const y=yOf(C*n*Math.log(n)); ctx.lineTo(x,y); }
+  ctx.closePath(); ctx.fill();
+
+  // lower curve
+  ctx.strokeStyle='#f59e0b'; ctx.lineWidth=2;
+  ctx.beginPath();
+  for(let n=2;n<=nMax;n++){ const x=xOf(n), y=yOf(c*n*Math.log(n)); if(n===2) ctx.moveTo(x,y); else ctx.lineTo(x,y); }
+  ctx.stroke();
+  // upper curve
+  ctx.strokeStyle='#ef4444'; ctx.lineWidth=2;
+  ctx.beginPath();
+  for(let n=2;n<=nMax;n++){ const x=xOf(n), y=yOf(C*n*Math.log(n)); if(n===2) ctx.moveTo(x,y); else ctx.lineTo(x,y); }
+  ctx.stroke();
+
+  // legend
+  ctx.font='11px system-ui'; ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+  ctx.fillStyle='#f59e0b'; ctx.fillRect(padL+8,padT+4,12,3); ctx.fillStyle='#9fb0cc'; ctx.fillText('lower c n log n',padL+24,padT+10);
+  ctx.fillStyle='#ef4444'; ctx.fillRect(padL+150,padT+4,12,3); ctx.fillStyle='#9fb0cc'; ctx.fillText('upper C n log n',padL+166,padT+10);
+
+  // marker for selected n
+  const ns=+nSlider.value;
+  const x=xOf(ns);
+  ctx.strokeStyle='rgba(94,234,212,0.6)'; ctx.setLineDash([4,4]); ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(x,padT); ctx.lineTo(x,padT+plotH); ctx.stroke(); ctx.setLineDash([]);
+  // points
+  const yL=yOf(c*ns*Math.log(ns)), yU=yOf(C*ns*Math.log(ns));
+  ctx.fillStyle='#f59e0b'; ctx.beginPath(); ctx.arc(x,yL,5,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle='#ef4444'; ctx.beginPath(); ctx.arc(x,yU,5,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle='#5eead4'; ctx.beginPath(); ctx.arc(x,(yL+yU)/2,6,0,Math.PI*2); ctx.fill();
+}
+
+function updateStats(){
+  const ns=+nSlider.value;
+  const {c,C}=constants();
+  const ln=Math.log(ns);
+  nstat.textContent=ns;
+  logstat.textContent=ln.toFixed(4);
+  lowerstat.textContent=(c*ns*ln).toFixed(3);
+  upperstat.textContent=(C*ns*ln).toFixed(3);
+  ratiostat.textContent=(C/c).toFixed(2);
+}
+
+function render(){
+  updateVals();
+  updateStats();
+  draw();
+}
+
+nSlider.addEventListener('input',render);
+cSlider.addEventListener('input',render);
+CSlider.addEventListener('input',render);
+render();
+</script>
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

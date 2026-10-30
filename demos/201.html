@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A counterexample to Kurosh's division-ring problem (conceptual, result 201)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+select,button{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+input[type=range]{flex:1 1 180px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:460px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button:hover{filter:brightness(1.1)}
+.legend{display:flex;gap:1rem;align-items:center;font-size:.85rem;color:var(--muted);margin:.5rem 0;flex-wrap:wrap}
+.swatch{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:.3rem;vertical-align:middle}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>A counterexample to Kurosh's division-ring problem (conceptual, result 201)</h1>
+  <p>Kurosh asked whether a division ring algebraic over its center is locally finite. Result 201 answers no: there is a countable characteristic-zero division ring (D=F[x,y]), algebraic over its center (F), with ([D:F]=\infty).</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">A division ring (D) is algebraic over its center (F=Z(D)) if every element satisfies a nonzero polynomial in (F[t]). It is locally finite if ([F(S):F]&lt;\infty) for every finite (S\subseteq D). Result 201 constructs a countable characteristic-zero division ring (D=F[x,y]=F(x,y)) in which every element is algebraic over (F), yet ([D:F]=\infty). Thus algebraicity over the center does not imply local finiteness. The construction uses element-dependent polynomial degrees: there is no uniform degree bound, so the positive theorems of Jacobson and Kaplansky (which require bounded degree or a polynomial identity) do not apply. The visualization contrasts a fixed uniform degree bound (D), which forces dimension at most (D^2) over the center, with an unbounded schedule of relations, whose dimensions can grow without bound.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">This settles Kurosh's 1941 problem negatively and separates algebraicity from finite generation/dimension in noncommutative algebra. It clarifies that countability and element-dependent relations are essential for the counterexample, and it complements positive results: Kaplansky's theorem for PI algebras, Jacobson's bounded-degree theorem, and Bell–Drensky–Sharifi's (D^2) bound under a uniform degree. The demo illustrates the conceptual gap between a uniform degree bound (finite dimension) and an unbounded, scheduled sequence of algebraic relations (unbounded dimension).</p>
+  </section>
+  <div class="controls">
+    <label for="regime">Regime</label>
+    <select id="regime">
+      <option value="uniform">Uniform degree bound (positive)</option>
+      <option value="unbounded">Element-dependent (counterexample)</option>
+    </select>
+    <label for="degree">Uniform bound D</label>
+    <input id="degree" type="range" min="1" max="12" value="4" step="1">
+    <span class="val" id="degreeval">4</span>
+    <label for="stage">Stage k</label>
+    <input id="stage" type="range" min="1" max="12" value="4" step="1">
+    <span class="val" id="stageval">4</span>
+  </div>
+  <div class="controls">
+    <button id="auto">Auto-advance</button>
+    <button id="reset">Reset</button>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Regime</div><div class="value" id="sregime">—</div></div>
+    <div class="stat"><div class="label">Stage k</div><div class="value" id="sstage">—</div></div>
+    <div class="stat"><div class="label">Degree bound D_k</div><div class="value" id="sdegree">—</div></div>
+    <div class="stat"><div class="label">Dimension estimate</div><div class="value" id="sdim">—</div></div>
+    <div class="stat"><div class="label">Verdict</div><div class="value" id="sverdict">—</div></div>
+    <div class="stat"><div class="label">Status</div><div class="value" id="sstatus">ready</div></div>
+  </div>
+  <div class="legend">
+    <span><span class="swatch" style="background:#5eead4"></span>uniform bound (D^2)</span>
+    <span><span class="swatch" style="background:#f59e0b"></span>scheduled unbounded growth</span>
+    <span><span class="swatch" style="background:#9fb0cc"></span>current stage</span>
+  </div>
+  <canvas id="c" width="900" height="460"></canvas>
+  <p id="info" style="font-size:.9rem;color:var(--muted);margin-top:.5rem">Conceptual model only: dimensions are illustrative. A uniform degree bound limits dimension to (D^2); an unbounded schedule of element-dependent relations allows growth without bound.</p>
+</div>
+<script>
+const regimeSel=document.getElementById('regime');
+const degreeSlider=document.getElementById('degree');
+const stageSlider=document.getElementById('stage');
+const degreeval=document.getElementById('degreeval');
+const stageval=document.getElementById('stageval');
+const sregime=document.getElementById('sregime');
+const sstage=document.getElementById('sstage');
+const sdegree=document.getElementById('sdegree');
+const sdim=document.getElementById('sdim');
+const sverdict=document.getElementById('sverdict');
+const sstatus=document.getElementById('sstatus');
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+let autoTimer=null;
+
+function cumulativeSquares(k){
+  let s=0;
+  for(let i=1;i<=k;i++) s+=i*i;
+  return s;
+}
+
+function resizeCanvas(){ canvas.width=Math.max(300,canvas.clientWidth); canvas.height=460; }
+
+function draw(){
+  const regime=regimeSel.value;
+  const D=+degreeSlider.value;
+  const k=+stageSlider.value;
+  const uniformDim=D*D;
+  const unboundedDim=cumulativeSquares(k);
+  const currentDim = regime==='uniform' ? uniformDim : unboundedDim;
+  const currentDeg = regime==='uniform' ? D : k;
+
+  // stats
+  degreeval.textContent=D;
+  stageval.textContent=k;
+  sregime.textContent = regime==='uniform' ? 'Uniform bound' : 'Unbounded schedule';
+  sstage.textContent=k;
+  sdegree.textContent = regime==='uniform' ? D : ('≤'+k+' (growing)');
+  sdim.textContent = currentDim.toLocaleString();
+  if(regime==='uniform'){
+    sverdict.textContent='Locally finite: dim ≤ D²';
+    sverdict.style.color='var(--good)';
+  } else {
+    sverdict.textContent='Unbounded: not locally finite';
+    sverdict.style.color='var(--bad)';
+  }
+  sstatus.textContent='stage '+k+' of 12';
+
+  // canvas
+  const W=canvas.width, H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const pad={l:56,r:24,t:24,b:46};
+  const pw=W-pad.l-pad.r, ph=H-pad.t-pad.b;
+  const xmax=12, ymax=Math.max(uniformDim, cumulativeSquares(12), 10)*1.15;
+  function X(x){ return pad.l + (x/ xmax)*pw; }
+  function Y(y){ return pad.t + (1 - y/ymax)*ph; }
+
+  // grid
+  ctx.strokeStyle='#243252'; ctx.lineWidth=1;
+  for(let i=0;i<=6;i++){
+    const xx=pad.l+i*pw/6;
+    const yy=pad.t+i*ph/6;
+    ctx.beginPath(); ctx.moveTo(xx,pad.t); ctx.lineTo(xx,H-pad.b); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(pad.l,yy); ctx.lineTo(W-pad.r,yy); ctx.stroke();
+  }
+  // axes labels
+  ctx.fillStyle='#9fb0cc'; ctx.font='11px system-ui'; ctx.textAlign='center';
+  ctx.fillText('stage k', W/2, H-10);
+  ctx.save(); ctx.translate(14,H/2); ctx.rotate(-Math.PI/2); ctx.fillText('dimension over center',0,0); ctx.restore();
+
+  // uniform curve (horizontal)
+  ctx.strokeStyle='rgba(94,234,212,0.55)'; ctx.lineWidth=2; ctx.setLineDash([6,4]);
+  ctx.beginPath();
+  for(let i=1;i<=12;i++){ const x=X(i), y=Y(uniformDim); if(i===1) ctx.moveTo(x,y); else ctx.lineTo(x,y); }
+  ctx.stroke(); ctx.setLineDash([]);
+  // unbounded curve
+  ctx.strokeStyle='rgba(245,158,11,0.75)'; ctx.lineWidth=2;
+  ctx.beginPath();
+  for(let i=1;i<=12;i++){ const x=X(i), y=Y(cumulativeSquares(i)); if(i===1) ctx.moveTo(x,y); else ctx.lineTo(x,y); }
+  ctx.stroke();
+
+  // highlight current regime curve
+  if(regime==='uniform'){
+    ctx.strokeStyle='#5eead4'; ctx.lineWidth=3;
+    ctx.beginPath();
+    for(let i=1;i<=12;i++){ const x=X(i), y=Y(uniformDim); if(i===1) ctx.moveTo(x,y); else ctx.lineTo(x,y); }
+    ctx.stroke();
+  } else {
+    ctx.strokeStyle='#f59e0b'; ctx.lineWidth=3;
+    ctx.beginPath();
+    for(let i=1;i<=12;i++){ const x=X(i), y=Y(cumulativeSquares(i)); if(i===1) ctx.moveTo(x,y); else ctx.lineTo(x,y); }
+    ctx.stroke();
+  }
+
+  // current stage marker
+  const cx=X(k);
+  const cy=Y(currentDim);
+  ctx.fillStyle='#9fb0cc';
+  ctx.beginPath(); ctx.arc(cx,cy,6,0,Math.PI*2); ctx.fill();
+  ctx.strokeStyle='#ffffff'; ctx.lineWidth=1.5; ctx.stroke();
+
+  // legend in canvas
+  ctx.font='11px system-ui'; ctx.textAlign='left';
+  ctx.fillStyle='#5eead4'; ctx.fillText('uniform: D² = '+uniformDim, pad.l, 16);
+  ctx.fillStyle='#f59e0b'; ctx.fillText('unbounded: Σ i² = '+unboundedDim, pad.l+180, 16);
+}
+
+function update(){ draw(); }
+regimeSel.addEventListener('change', update);
+degreeSlider.addEventListener('input', update);
+stageSlider.addEventListener('input', update);
+document.getElementById('auto').addEventListener('click', ()=>{
+  if(autoTimer){ clearInterval(autoTimer); autoTimer=null; sstatus.textContent='stopped'; return; }
+  sstatus.textContent='auto-running';
+  autoTimer=setInterval(()=>{
+    let k=+stageSlider.value;
+    k = k>=12 ? 1 : k+1;
+    stageSlider.value=k;
+    update();
+  },700);
+});
+document.getElementById('reset').addEventListener('click', ()=>{
+  if(autoTimer){ clearInterval(autoTimer); autoTimer=null; }
+  regimeSel.value='uniform';
+  degreeSlider.value=4;
+  stageSlider.value=4;
+  sstatus.textContent='reset';
+  update();
+});
+window.addEventListener('resize', ()=>{ resizeCanvas(); update(); });
+resizeCanvas();
+update();
+</script>
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Power savings for planar halving lines and k-sets (conceptual, result 183)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+select,button,input[type=checkbox]{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+input[type=range]{flex:1 1 180px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:520px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+.legend{display:flex;gap:1rem;align-items:center;font-size:.85rem;color:var(--muted);margin:.5rem 0;flex-wrap:wrap}
+.swatch{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:.3rem;vertical-align:middle}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Power savings for planar halving lines and k-sets (conceptual, result 183)</h1>
+  <p>Interactive illustration: for a small planar point set, count halving pairs and k-sets exactly and compare with the classical (O(n^{4/3})) and (O(n(k+1)^{1/3})) bounds.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">For an even set of \(n\) points in the plane with no three collinear, a halving pair is a pair whose line leaves \((n-2)/2\) points in each open half-plane. Result 183 proves an absolute power saving: the number of halving pairs is \(O(n^{4/3-\varepsilon})\) for some \(\varepsilon>0\), improving the classical \(O(n^{4/3})\) bound. More generally, for \(1\le k\le n/2\), the number of strictly separable \(k\)-subsets is \(O(n(k+1)^{1/3-\varepsilon_0})\) with an absolute \(\varepsilon_0>0). The proof is nonquantitative: the constants and positive exponents are existential. The uniform bound holds over all ranks (k), not only the middle rank.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">This is the first improvement of the exponent in the planar halving-line and (k)-set problem beyond the (4/3) barrier. It matters for combinatorial geometry, for the complexity of planar arrangements and levels, and for understanding balanced separations. The demo computes exact counts for small point sets; it does not reproduce the nonquantitative asymptotic constants.</p>
+  </section>
+  <div class="controls">
+    <label for="n">Points n</label>
+    <select id="n">
+      <option value="4">4</option>
+      <option value="6">6</option>
+      <option value="8" selected>8</option>
+      <option value="10">10</option>
+    </select>
+    <label for="k">k</label>
+    <input id="k" type="range" min="1" max="4" value="2" step="1">
+    <span class="val" id="kval">2</span>
+    <label for="seed">Seed</label>
+    <input id="seed" type="range" min="1" max="999" value="17" step="1">
+    <span class="val" id="seedval">17</span>
+  </div>
+  <div class="controls">
+    <label><input id="showhalving" type="checkbox" checked> Show halving lines</label>
+    <button id="regen">Regenerate</button>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">n</div><div class="value" id="sn">—</div></div>
+    <div class="stat"><div class="label">Halving pairs h(P)</div><div class="value" id="sh">—</div></div>
+    <div class="stat"><div class="label">Selected k</div><div class="value" id="sk">—</div></div>
+    <div class="stat"><div class="label"># k-sets</div><div class="value" id="sks">—</div></div>
+    <div class="stat"><div class="label">Dey bound n(k+1)^{1/3}</div><div class="value" id="sdey">—</div></div>
+    <div class="stat"><div class="label">Ratio #/bound</div><div class="value" id="sratio">—</div></div>
+  </div>
+  <div class="legend">
+    <span><span class="swatch" style="background:#5eead4"></span>point</span>
+    <span><span class="swatch" style="background:#f59e0b"></span>halving line</span>
+    <span><span class="swatch" style="background:#22c55e"></span>selected k bar</span>
+  </div>
+  <canvas id="c" width="900" height="520"></canvas>
+  <p id="info" style="font-size:.9rem;color:var(--muted);margin-top:.5rem">Left: point set and halving lines. Right: number of k-sets for each k.</p>
+</div>
+<script>
+const nSel=document.getElementById('n');
+const kSlider=document.getElementById('k');
+const seedSlider=document.getElementById('seed');
+const kval=document.getElementById('kval');
+const seedval=document.getElementById('seedval');
+const sn=document.getElementById('sn');
+const sh=document.getElementById('sh');
+const sk=document.getElementById('sk');
+const sks=document.getElementById('sks');
+const sdey=document.getElementById('sdey');
+const sratio=document.getElementById('sratio');
+const showHalving=document.getElementById('showhalving');
+const regen=document.getElementById('regen');
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+const info=document.getElementById('info');
+
+function mulberry(a){ return function(){ a=(a*1664525+1013904223)>>>0; return a/4294967296; }; }
+
+function genPoints(n,seed){
+  const rnd=mulberry(seed*131+7);
+  const pts=[];
+  let attempts=0;
+  while(pts.length<n && attempts<20000){
+    attempts++;
+    const x=(rnd()-0.5)*2;
+    const y=(rnd()-0.5)*2;
+    if(x*x+y*y>0.95*0.95) continue;
+    let ok=true;
+    for(const p of pts){
+      const dx=p.x-x, dy=p.y-y;
+      if(Math.hypot(dx,dy)<0.12){ ok=false; break; }
+    }
+    if(!ok) continue;
+    for(let i=0;i<pts.length && ok;i++){
+      for(let j=i+1;j<pts.length;j++){
+        const a=Math.abs((pts[j].x-pts[i].x)*(y-pts[i].y)-(pts[j].y-pts[i].y)*(x-pts[i].x));
+        if(a<1e-9){ ok=false; break; }
+      }
+      if(!ok) break;
+    }
+    if(ok) pts.push({x,y});
+  }
+  if(pts.length<n){
+    // fallback regular polygon
+    for(let i=0;i<n;i++){
+      const a=2*Math.PI*i/n;
+      pts.push({x:0.7*Math.cos(a), y:0.7*Math.sin(a)});
+    }
+  }
+  return pts;
+}
+
+function combinations(arr,k){
+  const res=[];
+  function rec(start,acc){
+    if(acc.length===k){ res.push(acc.slice()); return; }
+    for(let i=start;i<arr.length;i++){
+      acc.push(arr[i]);
+      rec(i+1,acc);
+      acc.pop();
+    }
+  }
+  rec(0,[]);
+  return res;
+}
+
+function convexHull(pts){
+  if(pts.length<=1) return pts.slice();
+  const sorted=pts.slice().sort((a,b)=>a.x-b.x||a.y-b.y);
+  const cross=(o,a,b)=>(a.x-o.x)*(b.y-o.y)-(a.y-o.y)*(b.x-o.x);
+  const lower=[];
+  for(const p of sorted){
+    while(lower.length>=2 && cross(lower[lower.length-2],lower[lower.length-1],p)<=0) lower.pop();
+    lower.push(p);
+  }
+  const upper=[];
+  for(let i=sorted.length-1;i>=0;i--){
+    const p=sorted[i];
+    while(upper.length>=2 && cross(upper[upper.length-2],upper[upper.length-1],p)<=0) upper.pop();
+    upper.push(p);
+  }
+  lower.pop(); upper.pop();
+  return lower.concat(upper);
+}
+
+function orient(a,b,c){ return (b.x-a.x)*(c.y-a.y)-(b.y-a.y)*(c.x-a.x); }
+function onSegment(a,b,c){
+  return Math.abs(orient(a,b,c))<1e-9 &&
+    Math.min(a.x,b.x)-1e-9 <= c.x && c.x <= Math.max(a.x,b.x)+1e-9 &&
+    Math.min(a.y,b.y)-1e-9 <= c.y && c.y <= Math.max(a.y,b.y)+1e-9;
+}
+function segIntersect(a,b,c,d){
+  const d1=orient(c,d,a), d2=orient(c,d,b), d3=orient(a,b,c), d4=orient(a,b,d);
+  if(((d1>0)!==(d2>0)) && ((d3>0)!==(d4>0))) return true;
+  if(onSegment(c,d,a)||onSegment(c,d,b)||onSegment(a,b,c)||onSegment(a,b,d)) return true;
+  return false;
+}
+function pointInConv(poly,p){
+  if(poly.length===0) return false;
+  if(poly.length===1) return Math.hypot(poly[0].x-p.x,poly[0].y-p.y)<1e-9;
+  if(poly.length===2) return onSegment(poly[0],poly[1],p);
+  let sign=0;
+  for(let i=0;i<poly.length;i++){
+    const a=poly[i], b=poly[(i+1)%poly.length];
+    const o=orient(a,b,p);
+    if(Math.abs(o)<1e-9){
+      if(onSegment(a,b,p)) return true;
+    } else {
+      const s=o>0?1:-1;
+      if(sign===0) sign=s; else if(sign!==s) return false;
+    }
+  }
+  return true;
+}
+function hullsIntersect(H1,H2){
+  for(const p of H1) if(pointInConv(H2,p)) return true;
+  for(const p of H2) if(pointInConv(H1,p)) return true;
+  for(let i=0;i<H1.length;i++){
+    const a=H1[i], b=H1[(i+1)%H1.length];
+    for(let j=0;j<H2.length;j++){
+      const c=H2[j], d=H2[(j+1)%H2.length];
+      if(segIntersect(a,b,c,d)) return true;
+    }
+  }
+  return false;
+}
+
+function halvingCount(pts){
+  const n=pts.length;
+  if(n<4 || n%2!==0) return 0;
+  const target=(n-2)/2;
+  let count=0;
+  for(let i=0;i<n;i++){
+    for(let j=i+1;j<n;j++){
+      let left=0;
+      for(let kk=0;kk<n;kk++){
+        if(kk===i||kk===j) continue;
+        const cross=(pts[j].x-pts[i].x)*(pts[kk].y-pts[i].y)-(pts[j].y-pts[i].y)*(pts[kk].x-pts[i].x);
+        if(cross>0) left++;
+      }
+      if(left===target) count++;
+    }
+  }
+  return count;
+}
+
+let pts=[], countsAll=[], currentN=8, currentK=2;
+
+function countKSetsAll(pts){
+  const n=pts.length;
+  const idx=[...Array(n).keys()];
+  const counts=new Array(n+1).fill(0);
+  counts[0]=1; counts[n]=1;
+  // enumerate all subsets
+  for(let mask=1;mask<(1<<n)-1;mask++){
+    const S=[], C=[];
+    for(let i=0;i<n;i++){
+      if((mask>>i)&1) S.push(i); else C.push(i);
+    }
+    const k=S.length;
+    if(k===0||k===n) continue;
+    const Sh=convexHull(S.map(i=>pts[i]));
+    const Ch=convexHull(C.map(i=>pts[i]));
+    if(!hullsIntersect(Sh,Ch)) counts[k]++;
+  }
+  return counts;
+}
+
+function update(){
+  currentN=+nSel.value;
+  const seed=+seedSlider.value;
+  pts=genPoints(currentN,seed);
+  seedval.textContent=seed;
+  countsAll=countKSetsAll(pts);
+  currentK=Math.min(currentK, Math.floor(currentN/2));
+  if(currentK<1) currentK=1;
+  kSlider.max=Math.floor(currentN/2);
+  if(+kSlider.value>Math.floor(currentN/2)) kSlider.value=Math.floor(currentN/2);
+  currentK=+kSlider.value;
+  kval.textContent=currentK;
+  const h=halvingCount(pts);
+  sn.textContent=currentN;
+  sh.textContent=h;
+  sk.textContent=currentK;
+  sks.textContent=countsAll[currentK];
+  const dey=currentN*Math.pow(currentK+1,1/3);
+  sdey.textContent=dey.toFixed(2);
+  sratio.textContent=(countsAll[currentK]/dey).toFixed(3);
+  resizeCanvas();
+  draw();
+}
+
+function resizeCanvas(){ canvas.width=Math.max(300, canvas.clientWidth); canvas.height=520; }
+
+function toCanvas(p, region){
+  const [x0,x1,y0,y1]=region;
+  const cx=x0+(p.x+1.2)/(2.4)*(x1-x0);
+  const cy=y1-(p.y+1.2)/(2.4)*(y1-y0);
+  return [cx,cy];
+}
+
+function draw(){
+  const W=canvas.width, H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const left=[40, W/2-30, 40, H-40];
+  const right=[W/2+20, W-30, 40, H-40];
+  // scatter
+  // halving lines
+  if(showHalving.checked){
+    const n=pts.length;
+    const target=(n%2===0)?(n-2)/2:-1;
+    ctx.strokeStyle='#f59e0b';
+    ctx.globalAlpha=0.35;
+    ctx.lineWidth=1.2;
+    for(let i=0;i<n;i++){
+      for(let j=i+1;j<n;j++){
+        let leftc=0;
+        for(let kk=0;kk<n;kk++){
+          if(kk===i||kk===j) continue;
+          const cross=(pts[j].x-pts[i].x)*(pts[kk].y-pts[i].y)-(pts[j].y-pts[i].y)*(pts[kk].x-pts[i].x);
+          if(cross>0) leftc++;
+        }
+        if(leftc===target){
+          const [x1,y1]=toCanvas(pts[i],left);
+          const [x2,y2]=toCanvas(pts[j],left);
+          ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+        }
+      }
+    }
+    ctx.globalAlpha=1;
+  }
+  // points
+  for(let i=0;i<pts.length;i++){
+    const [x,y]=toCanvas(pts[i],left);
+    ctx.beginPath();
+    ctx.arc(x,y,6,0,Math.PI*2);
+    ctx.fillStyle='#5eead4';
+    ctx.fill();
+    ctx.strokeStyle='#0f766e';
+    ctx.lineWidth=1.5;
+    ctx.stroke();
+    ctx.fillStyle='#0b1220';
+    ctx.font='bold 10px ui-monospace,monospace';
+    ctx.textAlign='center';
+    ctx.textBaseline='middle';
+    ctx.fillText(String(i+1),x,y);
+  }
+  // bar chart countsAll
+  const n=pts.length;
+  const maxCount=Math.max(1,...countsAll);
+  const barW=(right[1]-right[0])/(n+1);
+  for(let k=0;k<=n;k++){
+    const val=countsAll[k];
+    const h=(val/maxCount)*(right[3]-right[1]);
+    const x=right[0]+k*barW+barW*0.15;
+    const w=barW*0.7;
+    const y=right[3]-h;
+    ctx.fillStyle=(k===currentK)?'#22c55e':'#1f2a44';
+    ctx.fillRect(x,y,w,h);
+    ctx.strokeStyle='#243252';
+    ctx.lineWidth=1;
+    ctx.strokeRect(x,y,w,h);
+    ctx.fillStyle='#9fb0cc';
+    ctx.font='10px system-ui';
+    ctx.textAlign='center';
+    ctx.textBaseline='top';
+    ctx.fillText(String(k), x+w/2, right[3]+4);
+    if(val>0){
+      ctx.textBaseline='bottom';
+      ctx.fillText(String(val), x+w/2, y-2);
+    }
+  }
+  // axes labels
+  ctx.fillStyle='#9fb0cc';
+  ctx.font='11px system-ui';
+  ctx.textAlign='center';
+  ctx.textBaseline='middle';
+  ctx.fillText('k', (right[0]+right[1])/2, right[3]+22);
+  ctx.save();
+  ctx.translate(right[0]-18, (right[1]+right[3])/2);
+  ctx.rotate(-Math.PI/2);
+  ctx.fillText('# k-sets',0,0);
+  ctx.restore();
+}
+
+nSel.addEventListener('change', update);
+kSlider.addEventListener('input', function(){ currentK=+kSlider.value; kval.textContent=currentK; update(); });
+seedSlider.addEventListener('input', function(){ seedval.textContent=seedSlider.value; });
+showHalving.addEventListener('change', function(){ draw(); });
+regen.addEventListener('click', update);
+window.addEventListener('resize', function(){ resizeCanvas(); draw(); });
+update();
+</script>
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

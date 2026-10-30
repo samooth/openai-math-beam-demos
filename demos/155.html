@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A counterexample to periodic tiling in dimension three (conceptual, result 155)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+select{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+input[type=range]{flex:1 1 180px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:520px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+.legend{display:flex;gap:1rem;align-items:center;font-size:.85rem;color:var(--muted);margin:.5rem 0;flex-wrap:wrap}
+.swatch{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:.3rem;vertical-align:middle}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>A counterexample to periodic tiling in dimension three (conceptual, result 155)</h1>
+  <p>A finite translational tile in $\mathbb Z^3$ tiles space but admits no fully periodic tiling. The demo tests candidate period vectors on a visible patch of a tiling and contrasts a periodic tiling with the aperiodic counterexample.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Constructs a finite translational tile in $\mathbb Z^3$ that tiles space but admits no fully periodic tiling, disproving the periodic tiling conjecture in the smallest possible lattice dimension. Its unit-cube thickening gives the same counterexample in $\mathbb R^3$, even with arbitrary real translation vectors.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Identifies dimension three as the threshold where translational tilings need not be periodic. It separates the existence of a tiling from the existence of a periodic tiling, guides the study of aperiodic translational tiles, and affects decidability and structural questions for tiling problems.</p>
+  </section>
+  <div class="controls">
+    <label for="mode">Tiling mode</label>
+    <select id="mode">
+      <option value="periodic">Periodic tiling</option>
+      <option value="aperiodic">Aperiodic counterexample</option>
+    </select>
+    <label for="z">Slice z</label>
+    <input id="z" type="range" min="-6" max="6" value="0" step="1">
+    <span class="val" id="zval">0</span>
+  </div>
+  <div class="controls">
+    <label for="s">Tile block size</label>
+    <input id="s" type="range" min="1" max="4" value="2" step="1">
+    <span class="val" id="sval">2</span>
+    <label for="n">View half-width N</label>
+    <input id="n" type="range" min="4" max="12" value="8" step="1">
+    <span class="val" id="nval">8</span>
+  </div>
+  <div class="controls">
+    <label for="px">Candidate period x</label>
+    <input id="px" type="range" min="1" max="8" value="4" step="1">
+    <span class="val" id="pxval">4</span>
+    <label for="py">Candidate period y</label>
+    <input id="py" type="range" min="1" max="8" value="4" step="1">
+    <span class="val" id="pyval">4</span>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Mode</div><div class="value" id="smode">—</div></div>
+    <div class="stat"><div class="label">Slice z</div><div class="value" id="sz">—</div></div>
+    <div class="stat"><div class="label">Tile block size</div><div class="value" id="ss">—</div></div>
+    <div class="stat"><div class="label">Candidate period</div><div class="value" id="speriod">—</div></div>
+    <div class="stat"><div class="label">Cells tested</div><div class="value" id="scells">—</div></div>
+    <div class="stat"><div class="label">Mismatches</div><div class="value" id="smism">—</div></div>
+    <div class="stat"><div class="label">Patch invariant?</div><div class="value" id="sinv">—</div></div>
+    <div class="stat"><div class="label">Tiling type</div><div class="value" id="stype">—</div></div>
+  </div>
+  <div class="legend">
+    <span><span class="swatch" style="background:#5eead4"></span>Tile class A</span>
+    <span><span class="swatch" style="background:#f59e0b"></span>Tile class B</span>
+    <span><span class="swatch" style="background:#ef4444"></span>Tile class C</span>
+    <span><span class="swatch" style="background:#22c55e"></span>Tile class D</span>
+  </div>
+  <canvas id="c" width="900" height="520"></canvas>
+  <p style="font-size:.85rem;color:var(--muted);margin-top:.5rem">Conceptual model: cells are grouped into translates of one tile. In periodic mode the tile classes repeat under the candidate period; in the aperiodic mode no small period makes the patch invariant. A finite patch cannot prove aperiodicity, but the mismatch count indicates whether the candidate period is compatible.</p>
+</div>
+<script>
+const modeSel=document.getElementById('mode');
+const zSlider=document.getElementById('z');
+const sSlider=document.getElementById('s');
+const nSlider=document.getElementById('n');
+const pxSlider=document.getElementById('px');
+const pySlider=document.getElementById('py');
+
+const zval=document.getElementById('zval');
+const sval=document.getElementById('sval');
+const nval=document.getElementById('nval');
+const pxval=document.getElementById('pxval');
+const pyval=document.getElementById('pyval');
+
+const smode=document.getElementById('smode');
+const sz=document.getElementById('sz');
+const ss=document.getElementById('ss');
+const speriod=document.getElementById('speriod');
+const scells=document.getElementById('scells');
+const smism=document.getElementById('smism');
+const sinv=document.getElementById('sinv');
+const stype=document.getElementById('stype');
+
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+
+function resizeCanvas(){ canvas.width=Math.max(300,canvas.clientWidth); canvas.height=520; }
+window.addEventListener('resize',function(){ resizeCanvas(); render(); });
+resizeCanvas();
+
+const PALETTE=['#5eead4','#f59e0b','#ef4444','#22c55e','#3b82f6','#a855f7','#eab308','#ec4899'];
+
+function hash3(x,y,z){
+  let h = (x*73856093) ^ (y*19349663) ^ (z*83492791);
+  h = (h ^ (h >>> 16)) >>> 0;
+  return h;
+}
+
+function tileClass(x,y,z,mode,s){
+  const bx=Math.floor(x/s), by=Math.floor(y/s), bz=Math.floor(z/s);
+  if(mode==='periodic'){
+    const p=4;
+    const ix=((bx%p)+p)%p, iy=((by%p)+p)%p, iz=((bz%p)+p)%p;
+    return (ix + iy*4 + iz*16) % PALETTE.length;
+  }
+  return hash3(bx,by,bz) % PALETTE.length;
+}
+
+function render(){
+  const mode=modeSel.value;
+  const z=+zSlider.value;
+  const s=+sSlider.value;
+  const N=+nSlider.value;
+  const px=+pxSlider.value;
+  const py=+pySlider.value;
+
+  zval.textContent=z;
+  sval.textContent=s;
+  nval.textContent=N;
+  pxval.textContent=px;
+  pyval.textContent=py;
+
+  smode.textContent=mode==='periodic'?'Periodic':'Aperiodic';
+  sz.textContent=z;
+  ss.textContent=s;
+  speriod.textContent='('+px+','+py+')';
+  stype.textContent=mode==='periodic'?'Periodic tiling':'No fully periodic tiling';
+
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const pad=24;
+  const cells=2*N+1;
+  const cellSize=Math.floor(Math.min((W-2*pad)/cells,(H-2*pad)/cells));
+  const gridW=cells*cellSize;
+  const gridH=cells*cellSize;
+  const ox=Math.floor((W-gridW)/2);
+  const oy=Math.floor((H-gridH)/2);
+
+  let tested=0,mism=0;
+  for(let iy=0;iy<cells;iy++){
+    for(let ix=0;ix<cells;ix++){
+      const x=ix-N, y=iy-N;
+      const cls=tileClass(x,y,z,mode,s);
+      ctx.fillStyle=PALETTE[cls];
+      ctx.fillRect(ox+ix*cellSize, oy+iy*cellSize, cellSize-1, cellSize-1);
+      // candidate period test
+      if(ix+px<cells && iy+py<cells){
+        tested++;
+        const cls2=tileClass(x+px,y+py,z,mode,s);
+        if(cls!==cls2) mism++;
+      }
+    }
+  }
+  // grid lines
+  ctx.strokeStyle='rgba(159,176,204,0.25)';
+  ctx.lineWidth=1;
+  for(let i=0;i<=cells;i++){
+    ctx.beginPath(); ctx.moveTo(ox+i*cellSize,oy); ctx.lineTo(ox+i*cellSize,oy+gridH); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(ox,oy+i*cellSize); ctx.lineTo(ox+gridW,oy+i*cellSize); ctx.stroke();
+  }
+
+  scells.textContent=tested;
+  smism.textContent=mism;
+  const inv = mism===0 ? 'Yes (on patch)' : 'No';
+  sinv.textContent=inv;
+  sinv.className='value '+(mism===0?'good':'bad');
+  smism.className='value '+(mism===0?'good':'bad');
+}
+
+modeSel.addEventListener('change',render);
+zSlider.addEventListener('input',render);
+sSlider.addEventListener('input',render);
+nSlider.addEventListener('input',render);
+pxSlider.addEventListener('input',render);
+pySlider.addEventListener('input',render);
+render();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

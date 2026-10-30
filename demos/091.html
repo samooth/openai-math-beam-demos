@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Logarithmic and L_p Brunn-Minkowski inequalities (conceptual, result 091)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+label{color:var(--muted);font-size:.85rem}
+input[type=range],select{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+input[type=range]{flex:1 1 180px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:460px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Logarithmic and L_p Brunn-Minkowski inequalities (conceptual, result 091)</h1>
+  <p>For origin-symmetric convex bodies K,L in R^n, logarithmic and L_p combinations have volume bounded below by the corresponding interpolation of volumes.</p>
+
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Proves the logarithmic Brunn-Minkowski inequality for origin-symmetric convex bodies in every dimension, and the scalar-dilation B-conjecture for all even log-concave Radon measures. For Lebesgue volume it also proves the additive L_p Brunn-Minkowski inequality for full-dimensional origin-symmetric convex bodies throughout 0&lt;p&lt;1. Neither boundary smoothness nor coordinatewise unconditionality is assumed.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">This resolves the logarithmic Brunn-Minkowski conjecture and the B-conjecture, giving a common interpolation framework between classical Brunn-Minkowski and Minkowski addition. It has consequences for convex geometry, isoperimetric-type inequalities, and the geometry of log-concave measures.</p>
+  </section>
+
+  <div class="controls">
+    <label for="view">View</label>
+    <select id="view">
+      <option value="overlay">Overlay</option>
+      <option value="K">K only</option>
+      <option value="L">L only</option>
+      <option value="classical">Classical Minkowski</option>
+      <option value="log">Logarithmic</option>
+      <option value="lp">L_p</option>
+    </select>
+
+    <label for="ka">K semi-axis x</label>
+    <input id="ka" type="range" min="5" max="25" value="16">
+    <span class="val" id="kaval">1.60</span>
+
+    <label for="kb">K semi-axis y</label>
+    <input id="kb" type="range" min="5" max="25" value="10">
+    <span class="val" id="kbval">1.00</span>
+
+    <label for="la">L semi-axis x</label>
+    <input id="la" type="range" min="5" max="25" value="12">
+    <span class="val" id="laval">1.20</span>
+
+    <label for="lb">L semi-axis y</label>
+    <input id="lb" type="range" min="5" max="25" value="18">
+    <span class="val" id="lbval">1.80</span>
+
+    <label for="rot">L rotation (deg)</label>
+    <input id="rot" type="range" min="0" max="90" value="30">
+    <span class="val" id="rotval">30</span>
+
+    <label for="t">t</label>
+    <input id="t" type="range" min="0" max="100" value="50">
+    <span class="val" id="tval">0.50</span>
+
+    <label for="p">p (L_p)</label>
+    <input id="p" type="range" min="5" max="95" value="50">
+    <span class="val" id="pval">0.50</span>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="label">Area K</div><div class="value" id="ak">—</div></div>
+    <div class="stat"><div class="label">Area L</div><div class="value" id="al">—</div></div>
+    <div class="stat"><div class="label">Selected area</div><div class="value" id="asel">—</div></div>
+    <div class="stat"><div class="label">Classical gap</div><div class="value" id="gcls">—</div></div>
+    <div class="stat"><div class="label">Logarithmic gap</div><div class="value" id="glog">—</div></div>
+    <div class="stat"><div class="label">L_p gap</div><div class="value" id="glp">—</div></div>
+  </div>
+
+  <canvas id="c" width="900" height="460"></canvas>
+  <p style="font-size:.85rem;color:var(--muted);margin-top:.5rem">Areas are computed from support functions. Classical gap is sqrt(A_combo) - ((1-t) sqrt(A_K)+t sqrt(A_L)). Logarithmic gap is A_combo - A_K^(1-t) A_L^t. L_p gap is A_combo^(p/2) - ((1-t) A_K^(p/2)+t A_L^(p/2)).</p>
+</div>
+
+<script>
+const viewSel=document.getElementById('view');
+const ka=document.getElementById('ka'), kb=document.getElementById('kb');
+const la=document.getElementById('la'), lb=document.getElementById('lb');
+const rot=document.getElementById('rot'), tSl=document.getElementById('t'), pSl=document.getElementById('p');
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+
+const kaval=document.getElementById('kaval');
+const kbval=document.getElementById('kbval');
+const laval=document.getElementById('laval');
+const lbval=document.getElementById('lbval');
+const rotval=document.getElementById('rotval');
+const tval=document.getElementById('tval');
+const pval=document.getElementById('pval');
+
+const akEl=document.getElementById('ak');
+const alEl=document.getElementById('al');
+const aselEl=document.getElementById('asel');
+const gclsEl=document.getElementById('gcls');
+const glogEl=document.getElementById('glog');
+const glpEl=document.getElementById('glp');
+
+const TWO_PI=Math.PI*2;
+
+function hEllipse(theta,a,b,rotDeg){
+  const phi=rotDeg*Math.PI/180;
+  const u=theta-phi;
+  return Math.sqrt(a*a*Math.cos(u)*Math.cos(u)+b*b*Math.sin(u)*Math.sin(u));
+}
+function hK(theta){ return hEllipse(theta, +ka.value/10, +kb.value/10, 0); }
+function hL(theta){ return hEllipse(theta, +la.value/10, +lb.value/10, +rot.value); }
+
+function hClassical(theta){
+  const t=+tSl.value/100;
+  return (1-t)*hK(theta)+t*hL(theta);
+}
+function hLog(theta){
+  const t=+tSl.value/100;
+  return Math.pow(hK(theta),1-t)*Math.pow(hL(theta),t);
+}
+function hLp(theta){
+  const t=+tSl.value/100;
+  const p=+pSl.value/100;
+  return Math.pow((1-t)*Math.pow(hK(theta),p)+t*Math.pow(hL(theta),p), 1/p);
+}
+
+function areaFromH(hfun){
+  const N=1440;
+  const dtheta=TWO_PI/N;
+  let sum=0;
+  for(let i=0;i<N;i++){
+    const th=i*dtheta;
+    const h=hfun(th);
+    const eps=1e-5;
+    const hp=hfun(th+eps), hm=hfun(th-eps);
+    const dh=(hp-hm)/(2*eps);
+    sum += (h*h - dh*dh);
+  }
+  return 0.5*sum*dtheta;
+}
+
+function boundaryPoints(hfun, N){
+  N=N||360;
+  const pts=[];
+  for(let i=0;i<N;i++){
+    const th=i*TWO_PI/N;
+    const h=hfun(th);
+    const eps=1e-5;
+    const hp=hfun(th+eps), hm=hfun(th-eps);
+    const dh=(hp-hm)/(2*eps);
+    const n=[Math.cos(th),Math.sin(th)];
+    const tt=[-Math.sin(th),Math.cos(th)];
+    pts.push([h*n[0]+dh*tt[0], h*n[1]+dh*tt[1]]);
+  }
+  return pts;
+}
+
+let cachedBounds=null;
+function commonBounds(){
+  // bounds across K,L,selected
+  const sets=[boundaryPoints(hK,120), boundaryPoints(hL,120)];
+  const v=viewSel.value;
+  let hf=null;
+  if(v==='classical') hf=hClassical;
+  else if(v==='log') hf=hLog;
+  else if(v==='lp') hf=hLp;
+  else if(v==='overlay') hf=hLog;
+  if(hf) sets.push(boundaryPoints(hf,120));
+  let minx=Infinity,maxx=-Infinity,miny=Infinity,maxy=-Infinity;
+  for(const s of sets) for(const [x,y] of s){ if(x<minx)minx=x; if(x>maxx)maxx=x; if(y<miny)miny=y; if(y>maxy)maxy=y; }
+  const cx=(minx+maxx)/2, cy=(miny+maxy)/2;
+  const sx=(maxx-minx)||1, sy=(maxy-miny)||1;
+  return {minx,maxx,miny,maxy,cx,cy,sx,sy};
+}
+
+function toScreen(x,y,b){
+  const W=canvas.width,H=canvas.height;
+  const pad=28;
+  const scale=Math.min((W-2*pad)/b.sx,(H-2*pad)/b.sy)*0.92;
+  const cx=W/2, cy=H/2;
+  return [cx+(x-b.cx)*scale, cy+(y-b.cy)*scale];
+}
+
+function updateLabels(){
+  kaval.textContent=(+ka.value/10).toFixed(2);
+  kbval.textContent=(+kb.value/10).toFixed(2);
+  laval.textContent=(+la.value/10).toFixed(2);
+  lbval.textContent=(+lb.value/10).toFixed(2);
+  rotval.textContent=rot.value;
+  tval.textContent=(+tSl.value/100).toFixed(2);
+  pval.textContent=(+pSl.value/100).toFixed(2);
+}
+
+function updateStats(){
+  updateLabels();
+  const AK=areaFromH(hK);
+  const AL=areaFromH(hL);
+  const AC=areaFromH(hClassical);
+  const ALog=areaFromH(hLog);
+  const ALp=areaFromH(hLp);
+  const t=+tSl.value/100;
+  const p=+pSl.value/100;
+
+  akEl.textContent=AK.toFixed(4);
+  alEl.textContent=AL.toFixed(4);
+
+  const v=viewSel.value;
+  let Asel=AK;
+  if(v==='L') Asel=AL;
+  else if(v==='classical') Asel=AC;
+  else if(v==='log') Asel=ALog;
+  else if(v==='lp') Asel=ALp;
+  else if(v==='overlay') Asel=ALog;
+  aselEl.textContent=Asel.toFixed(4);
+
+  const classicalGap=Math.sqrt(AC) - ((1-t)*Math.sqrt(AK)+t*Math.sqrt(AL));
+  const logGap=ALog - Math.pow(AK,1-t)*Math.pow(AL,t);
+  const lpGap=Math.pow(ALp,p/2) - ((1-t)*Math.pow(AK,p/2)+t*Math.pow(AL,p/2));
+
+  gclsEl.textContent=classicalGap.toFixed(6);
+  glogEl.textContent=logGap.toFixed(6);
+  glpEl.textContent=lpGap.toFixed(6);
+
+  // color gaps
+  for(const [el,val] of [[gclsEl,classicalGap],[glogEl,logGap],[glpEl,lpGap]]){
+    el.style.color = val>=-1e-9 ? 'var(--good)' : 'var(--bad)';
+  }
+}
+
+function render(){
+  updateStats();
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const b=commonBounds();
+  const v=viewSel.value;
+  const t=+tSl.value/100;
+
+  // faint K,L outlines
+  if(v!=='K' && v!=='L'){
+    drawPoly(hK,b,'rgba(159,176,204,0.45)',1.5,false);
+    drawPoly(hL,b,'rgba(159,176,204,0.45)',1.5,false);
+  }
+
+  if(v==='K'){
+    drawPoly(hK,b,'rgba(94,234,212,0.9)',2.5,false);
+  } else if(v==='L'){
+    drawPoly(hL,b,'rgba(96,165,250,0.9)',2.5,false);
+  } else if(v==='classical'){
+    drawPoly(hClassical,b,'rgba(167,139,250,0.85)',2.5,true);
+  } else if(v==='log'){
+    drawPoly(hLog,b,'rgba(251,191,36,0.85)',2.5,true);
+  } else if(v==='lp'){
+    drawPoly(hLp,b,'rgba(244,114,182,0.85)',2.5,true);
+  } else {
+    // overlay: K,L faint already; draw log combo filled
+    drawPoly(hLog,b,'rgba(251,191,36,0.35)',2,true);
+  }
+
+  // origin
+  const [ox,oy]=toScreen(0,0,b);
+  ctx.strokeStyle='#f59e0b'; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.arc(ox,oy,6,0,TWO_PI); ctx.stroke();
+}
+
+// drawPoly color handling: fillAlpha true means fill with alpha; color string uses ALPHA placeholder? We passed rgba with alpha already. Adjust drawPoly to not replace ALPHA.
+// Redefine drawPoly cleanly:
+function drawPoly(hfun,b,color,lineWidth,fill){
+  const pts=boundaryPoints(hfun,360);
+  ctx.beginPath();
+  for(let i=0;i<pts.length;i++){
+    const [x,y]=pts[i];
+    const [px,py]=toScreen(x,y,b);
+    if(i===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+  }
+  ctx.closePath();
+  if(fill){
+    ctx.fillStyle=color;
+    ctx.fill();
+  }
+  ctx.strokeStyle=color;
+  ctx.lineWidth=lineWidth;
+  ctx.stroke();
+}
+
+// fix color strings: drawPoly uses same color for stroke/fill. For outlines we pass rgba alpha .45; okay.
+
+function resizeCanvas(){ canvas.width=Math.max(300,canvas.clientWidth); canvas.height=460; }
+window.addEventListener('resize',function(){ resizeCanvas(); render(); });
+resizeCanvas();
+
+viewSel.addEventListener('change',render);
+ka.addEventListener('input',render);
+kb.addEventListener('input',render);
+la.addEventListener('input',render);
+lb.addEventListener('input',render);
+rot.addEventListener('input',render);
+tSl.addEventListener('input',render);
+pSl.addEventListener('input',render);
+
+render();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

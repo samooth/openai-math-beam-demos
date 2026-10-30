@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The blockwise Alperin weight conjecture (conceptual, result 202)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+select{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+table{width:100%;border-collapse:collapse;font-size:.9rem}
+th,td{padding:.4rem .5rem;border-bottom:1px solid var(--border);text-align:left}
+th{color:var(--muted);font-weight:600}
+td.num{font-family:ui-monospace,monospace}
+.badge{display:inline-block;padding:.15rem .5rem;border-radius:6px;font-size:.75rem;font-weight:700}
+.ok{color:var(--good)} .bad{color:var(--bad)}
+canvas{width:100%;height:320px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>The blockwise Alperin weight conjecture (conceptual, result 202)</h1>
+  <p>For a finite group $G$ and prime $p$, each $p$-block $B$ has irreducible Brauer characters and $B$-weights. The conjecture says their counts coincide: $k(B)=w(B)$.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Proves the numerical blockwise Alperin weight conjecture for every finite group and every prime $p$: for each $p$-block $B$, the number of irreducible Brauer characters in $B$ equals the number of conjugacy classes of $B$-weights.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Gives a uniform counting formula for blocks in modular representation theory and supports blockwise invariants, defect groups, and the broader Alperin weight program.</p>
+  </section>
+  <div class="controls">
+    <label for="grp">Group</label>
+    <select id="grp">
+      <option value="S3">S_3</option>
+      <option value="A4">A_4</option>
+      <option value="D8">D_8</option>
+      <option value="Q8">Q_8</option>
+      <option value="Cp">C_p (cyclic p-group)</option>
+    </select>
+    <label for="prm">Prime</label>
+    <select id="prm">
+      <option value="2">2</option>
+      <option value="3">3</option>
+      <option value="5">5</option>
+    </select>
+    <label for="blk">Block</label>
+    <select id="blk"></select>
+    <button id="anim">Animate bijection</button>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Group order</div><div class="value" id="order">—</div></div>
+    <div class="stat"><div class="label">Defect group</div><div class="value" id="defect">—</div></div>
+    <div class="stat"><div class="label">k(B) Brauer chars</div><div class="value" id="kval">—</div></div>
+    <div class="stat"><div class="label">w(B) weights</div><div class="value" id="wval">—</div></div>
+    <div class="stat"><div class="label">Equality</div><div class="value" id="eqval">—</div></div>
+  </div>
+  <canvas id="cv" width="900" height="320"></canvas>
+  <table>
+    <thead><tr><th>Block</th><th>Defect group</th><th>k(B)</th><th>w(B)</th><th>Status</th></tr></thead>
+    <tbody id="tbody"></tbody>
+  </table>
+</div>
+<script>
+const DATA = {
+  S3: { order:6, primes:{
+    2: [
+      {name:"Principal block", defect:"C_2", k:1, w:1},
+      {name:"Defect-zero block", defect:"1", k:1, w:1}
+    ],
+    3: [
+      {name:"Principal block", defect:"C_3", k:2, w:2}
+    ]
+  }},
+  A4: { order:12, primes:{
+    2: [{name:"Principal block", defect:"V_4", k:3, w:3}],
+    3: [
+      {name:"Principal block", defect:"C_3", k:1, w:1},
+      {name:"Defect-zero block", defect:"1", k:1, w:1}
+    ]
+  }},
+  D8: { order:8, primes:{ 2:[{name:"Principal block", defect:"D_8", k:1, w:1}] }},
+  Q8: { order:8, primes:{ 2:[{name:"Principal block", defect:"Q_8", k:1, w:1}] }},
+  Cp: { order:0, primes:{} }
+};
+
+function blocksFor(grp, p) {
+  if (grp === "Cp") {
+    const pp = +p;
+    return [{name:"Principal block", defect:"C_"+pp, k:1, w:1}];
+  }
+  const g = DATA[grp];
+  if (!g || !g.primes[p]) return [];
+  return g.primes[p];
+}
+
+function populateBlocks() {
+  const grp = document.getElementById('grp').value;
+  const p = document.getElementById('prm').value;
+  const bs = blocksFor(grp, p);
+  const sel = document.getElementById('blk');
+  sel.innerHTML = '';
+  bs.forEach((b,i) => {
+    const o = document.createElement('option');
+    o.value = i; o.textContent = b.name; sel.appendChild(o);
+  });
+  renderTable();
+  updateStats();
+}
+
+function renderTable() {
+  const grp = document.getElementById('grp').value;
+  const p = document.getElementById('prm').value;
+  const bs = blocksFor(grp, p);
+  const tb = document.getElementById('tbody');
+  tb.innerHTML = '';
+  bs.forEach(b => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = '<td>'+b.name+'</td><td>'+b.defect+'</td><td class="num">'+b.k+'</td><td class="num">'+b.w+'</td><td class="'+(b.k===b.w?'ok':'bad')+'">'+(b.k===b.w?'equal':'mismatch')+'</td>';
+    tb.appendChild(tr);
+  });
+}
+
+function updateStats() {
+  const grp = document.getElementById('grp').value;
+  const p = document.getElementById('prm').value;
+  const bs = blocksFor(grp, p);
+  const idx = +document.getElementById('blk').value || 0;
+  const b = bs[idx] || bs[0];
+  if (grp === "Cp") {
+    document.getElementById('order').textContent = p;
+  } else {
+    document.getElementById('order').textContent = DATA[grp].order;
+  }
+  document.getElementById('defect').textContent = b ? b.defect : '—';
+  document.getElementById('kval').textContent = b ? b.k : '—';
+  document.getElementById('wval').textContent = b ? b.w : '—';
+  document.getElementById('eqval').textContent = b ? (b.k===b.w ? 'k=w' : 'k≠w') : '—';
+  draw(0);
+}
+
+let animT = 0;
+function draw(t) {
+  const grp = document.getElementById('grp').value;
+  const p = document.getElementById('prm').value;
+  const bs = blocksFor(grp, p);
+  const idx = +document.getElementById('blk').value || 0;
+  const b = bs[idx] || bs[0];
+  const k = b ? b.k : 0, w = b ? b.w : 0;
+  const cv = document.getElementById('cv');
+  const ctx = cv.getContext('2d');
+  const W = cv.width, H = cv.height;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--text') || '#e6edf7';
+  const n = Math.max(k,w,1);
+  const leftX = W*0.25, rightX = W*0.75;
+  const top = 40, bottom = H-40;
+  function yPos(i,total){ return top + (bottom-top)*(i+0.5)/total; }
+  // labels
+  ctx.font = '16px system-ui';
+  ctx.textAlign = 'center';
+  ctx.fillText('Irreducible Brauer chars k(B)='+k, leftX, 24);
+  ctx.fillText('B-weights w(B)='+w, rightX, 24);
+  const prog = (t===undefined?1:t);
+  for (let i=0;i<k;i++){
+    ctx.beginPath();
+    ctx.arc(leftX, yPos(i,k), 10, 0, Math.PI*2);
+    ctx.fillStyle = '#5eead4';
+    ctx.fill();
+    ctx.fillStyle = '#0b1220';
+    ctx.font='10px monospace';
+    ctx.fillText('χ'+(i+1), leftX, yPos(i,k)+3);
+  }
+  for (let j=0;j<w;j++){
+    ctx.beginPath();
+    ctx.arc(rightX, yPos(j,w), 10, 0, Math.PI*2);
+    ctx.fillStyle = '#f59e0b';
+    ctx.fill();
+    ctx.fillStyle = '#0b1220';
+    ctx.font='10px monospace';
+    ctx.fillText('ζ'+(j+1), rightX, yPos(j,w)+3);
+  }
+  const m = Math.min(k,w);
+  const pairs = Math.round(prog*m);
+  ctx.strokeStyle = 'rgba(94,234,212,0.6)';
+  ctx.lineWidth = 2;
+  for (let i=0;i<pairs;i++){
+    ctx.beginPath();
+    ctx.moveTo(leftX+12, yPos(i,k));
+    ctx.lineTo(rightX-12, yPos(i,w));
+    ctx.stroke();
+  }
+  ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--muted') || '#9fb0cc';
+  ctx.font='14px system-ui';
+  ctx.textAlign='center';
+  ctx.fillText('Conjecture: a bijection between the two sets', W/2, H-12);
+}
+
+document.getElementById('grp').addEventListener('change', populateBlocks);
+document.getElementById('prm').addEventListener('change', populateBlocks);
+document.getElementById('blk').addEventListener('change', updateStats);
+document.getElementById('anim').addEventListener('click', () => {
+  let t0 = performance.now();
+  function step(now){
+    const e = (now-t0)/700;
+    const t = Math.min(1, e);
+    draw(t);
+    if (t < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+});
+
+populateBlocks();
+</script>
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

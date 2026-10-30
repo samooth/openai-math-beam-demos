@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Exponential state costs for two-way automata (conceptual, result 129)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range],select{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+input[type=range]{flex:1 1 180px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:460px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+.legend{display:flex;gap:1rem;align-items:center;font-size:.85rem;color:var(--muted);margin:.5rem 0;flex-wrap:wrap}
+.swatch{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:.3rem;vertical-align:middle}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Exponential state costs for two-way automata (conceptual, result 129)</h1>
+  <p>For two-way nondeterministic finite automata, complementation and determinization can require exponentially many states; the alphabet must grow with the automaton size. The same phenomenon occurs for two-way deterministic recognition of one-way nondeterministic languages.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">For every $n\ge4$, there is an explicit $n$-state two-way nondeterministic finite automaton whose complement requires at least $\frac12 2^{\lfloor (n-4)/127\rfloor}-1$ states. For the same relational languages and every $n\ge131$, every equivalent deterministic two-way automaton requires at least $\frac12 2^{\lfloor (n-4)/127\rfloor}$ states. Thus neither complementation nor determinization has a polynomial state bound uniform over alphabets. Separately, for every $h\ge2$ there is a one-way nondeterministic automaton with $h+3$ states whose language requires exponentially many states for two-way deterministic recognition: any deterministic recognizer with $s$ states satisfies $2^{\lfloor (h-2)/31\rfloor}\le 4(s+2)^2$, with the sharper factor $4(s+1)^2$ under one acceptance convention.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">This resolves the Sakoda--Sipser state-succinctness question over growing finite alphabets and rules out polynomial state bounds independent of alphabet size for both complementation and determinization. It shows that two-way nondeterminism is exponentially more state-efficient than two-way determinism or complementation, and that alphabet growth is essential to the lower bound.</p>
+  </section>
+  <div class="controls">
+    <label for="mode">View</label>
+    <select id="mode">
+      <option value="comp" selected>Complementation / determinization vs n</option>
+      <option value="live">Two-way deterministic liveness vs h</option>
+    </select>
+  </div>
+  <div class="controls" id="ctrlComp">
+    <label for="n">States n</label>
+    <input id="n" type="range" min="4" max="1000" value="131" step="1">
+    <span class="val" id="nval">131</span>
+    <label for="nmax">Plot max n</label>
+    <input id="nmax" type="range" min="100" max="1000" value="500" step="50">
+    <span class="val" id="nmaxval">500</span>
+  </div>
+  <div class="controls" id="ctrlLive" style="display:none">
+    <label for="h">Parameter h</label>
+    <input id="h" type="range" min="2" max="200" value="33" step="1">
+    <span class="val" id="hval">33</span>
+    <label for="hmax">Plot max h</label>
+    <input id="hmax" type="range" min="50" max="300" value="200" step="10">
+    <span class="val" id="hmaxval">200</span>
+  </div>
+  <div class="stats" id="statsComp">
+    <div class="stat"><div class="label">n</div><div class="value" id="sn">—</div></div>
+    <div class="stat"><div class="label">Exponent floor((n-4)/127)</div><div class="value" id="se">—</div></div>
+    <div class="stat"><div class="label">Complement lower bound</div><div class="value" id="scomp">—</div></div>
+    <div class="stat"><div class="label">Determinization lower bound</div><div class="value" id="sdet">—</div></div>
+    <div class="stat"><div class="label">Polynomial n^2</div><div class="value" id="spoly2">—</div></div>
+    <div class="stat"><div class="label">Polynomial n^3</div><div class="value" id="spoly3">—</div></div>
+  </div>
+  <div class="stats" id="statsLive" style="display:none">
+    <div class="stat"><div class="label">h</div><div class="value" id="sh">—</div></div>
+    <div class="stat"><div class="label">NFA states h+3</div><div class="value" id="snfa">—</div></div>
+    <div class="stat"><div class="label">Exponent floor((h-2)/31)</div><div class="value" id="seh">—</div></div>
+    <div class="stat"><div class="label">2^exponent</div><div class="value" id="spow">—</div></div>
+    <div class="stat"><div class="label">s lower bound (factor 4(s+2)^2)</div><div class="value" id="ss2">—</div></div>
+    <div class="stat"><div class="label">s lower bound (factor 4(s+1)^2)</div><div class="value" id="ss1">—</div></div>
+  </div>
+  <div class="legend" id="legend"></div>
+  <canvas id="c" width="900" height="460"></canvas>
+  <p style="font-size:.85rem;color:var(--muted);margin-top:.5rem">State counts are lower bounds from the explicit constructions. The plots use base-2 logarithms so exponential growth appears as a rising step.</p>
+</div>
+<script>
+function fmtInt(x){
+  if(!isFinite(x)) return '∞';
+  if(x>=1e15) return x.toExponential(3);
+  return Math.round(x).toLocaleString();
+}
+
+function compData(n){
+  const e=Math.floor((n-4)/127);
+  const pow=Math.pow(2,e);
+  return {e, comp:0.5*pow-1, det:0.5*pow};
+}
+
+function liveData(h){
+  const e=Math.floor((h-2)/31);
+  const pow=Math.pow(2,e);
+  const s2=Math.max(0, Math.ceil(Math.sqrt(pow/4)-2));
+  const s1=Math.max(0, Math.ceil(Math.sqrt(pow/4)-1));
+  return {e, pow, s2, s1};
+}
+
+const modeSel=document.getElementById('mode');
+const nSlider=document.getElementById('n');
+const nmaxSlider=document.getElementById('nmax');
+const hSlider=document.getElementById('h');
+const hmaxSlider=document.getElementById('hmax');
+const nval=document.getElementById('nval');
+const nmaxval=document.getElementById('nmaxval');
+const hval=document.getElementById('hval');
+const hmaxval=document.getElementById('hmaxval');
+
+const ctrlComp=document.getElementById('ctrlComp');
+const ctrlLive=document.getElementById('ctrlLive');
+const statsComp=document.getElementById('statsComp');
+const statsLive=document.getElementById('statsLive');
+
+const sn=document.getElementById('sn');
+const se=document.getElementById('se');
+const scomp=document.getElementById('scomp');
+const sdet=document.getElementById('sdet');
+const spoly2=document.getElementById('spoly2');
+const spoly3=document.getElementById('spoly3');
+
+const sh=document.getElementById('sh');
+const snfa=document.getElementById('snfa');
+const seh=document.getElementById('seh');
+const spow=document.getElementById('spow');
+const ss2=document.getElementById('ss2');
+const ss1=document.getElementById('ss1');
+
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+const legend=document.getElementById('legend');
+
+let mode='comp', n=131, nmax=500, h=33, hmax=200;
+
+function resizeCanvas(){ canvas.width=Math.max(300,canvas.clientWidth); canvas.height=460; }
+
+function drawAxes(W,H,padL,padR,padT,padB,xlabel,ylabel,xmin,xmax,ymin,ymax,ticksX,ticksY){
+  const plotW=W-padL-padR, plotH=H-padT-padB;
+  ctx.strokeStyle='rgba(159,176,204,0.35)';
+  ctx.lineWidth=1;
+  for(let i=0;i<=ticksY;i++){
+    const y=padT+i*plotH/ticksY;
+    ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(padL+plotW,y); ctx.stroke();
+  }
+  for(let i=0;i<=ticksX;i++){
+    const x=padL+i*plotW/ticksX;
+    ctx.beginPath(); ctx.moveTo(x,padT); ctx.lineTo(x,padT+plotH); ctx.stroke();
+  }
+  ctx.fillStyle='rgba(159,176,204,0.9)';
+  ctx.font='12px system-ui';
+  ctx.textAlign='center';
+  const xs=Array.from({length:ticksX+1},(_,i)=>xmin+(xmax-xmin)*i/ticksX);
+  for(const t of xs){
+    const x=padL+(t-xmin)/(xmax-xmin)*plotW;
+    ctx.fillText(Math.round(t).toString(), x, H-padB+18);
+  }
+  ctx.textAlign='right';
+  for(let i=0;i<=ticksY;i++){
+    const v=ymax-(ymax-ymin)*i/ticksY;
+    const y=padT+i*plotH/ticksY;
+    ctx.fillText(v.toFixed(1), padL-8, y+4);
+  }
+  ctx.save();
+  ctx.translate(16, padT+plotH/2);
+  ctx.rotate(-Math.PI/2);
+  ctx.textAlign='center';
+  ctx.fillText(ylabel,0,0);
+  ctx.restore();
+  ctx.textAlign='center';
+  ctx.fillText(xlabel, padL+plotW/2, H-8);
+  return {plotW,plotH};
+}
+
+function drawComp(){
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const padL=56,padR=20,padT=30,padB=46;
+  const xmin=4, xmax=nmax;
+  let ymax=1;
+  for(let nn=4; nn<=xmax; nn+=Math.max(1,Math.floor((xmax-4)/200))){
+    const d=compData(nn);
+    ymax=Math.max(ymax, Math.log2(Math.max(1,d.comp)), Math.log2(Math.max(1,d.det)), Math.log2(nn*nn), Math.log2(nn*nn*nn));
+  }
+  const dmax=compData(xmax);
+  ymax=Math.max(ymax, Math.log2(Math.max(1,dmax.det)), Math.log2(xmax*xmax*xmax));
+  ymax+=2;
+  const ymin=0;
+  const {plotW,plotH}=drawAxes(W,H,padL,padR,padT,padB,'n (states of 2NFA)','log2(states)',xmin,xmax,ymin,ymax,5,5);
+  function xOf(v){ return padL+(v-xmin)/(xmax-xmin)*plotW; }
+  function yOf(v){ return padT+plotH - (v-ymin)/(ymax-ymin)*plotH; }
+
+  // polynomial n^2
+  ctx.strokeStyle='#9fb0cc'; ctx.lineWidth=1.5; ctx.setLineDash([6,4]);
+  ctx.beginPath();
+  for(let nn=xmin; nn<=xmax; nn++){
+    const x=xOf(nn), y=yOf(Math.log2(nn*nn));
+    if(nn===xmin) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  }
+  ctx.stroke();
+  // polynomial n^3
+  ctx.strokeStyle='#7c8db5'; ctx.lineWidth=1.5;
+  ctx.beginPath();
+  for(let nn=xmin; nn<=xmax; nn++){
+    const x=xOf(nn), y=yOf(Math.log2(nn*nn*nn));
+    if(nn===xmin) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  }
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // complement
+  ctx.strokeStyle='#f59e0b'; ctx.lineWidth=2.5;
+  ctx.beginPath();
+  for(let nn=xmin; nn<=xmax; nn++){
+    const dd=compData(nn);
+    const x=xOf(nn), y=yOf(Math.log2(Math.max(1,dd.comp)));
+    if(nn===xmin) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  }
+  ctx.stroke();
+  // determinization
+  ctx.strokeStyle='#5eead4'; ctx.lineWidth=2.5;
+  ctx.beginPath();
+  for(let nn=xmin; nn<=xmax; nn++){
+    const dd=compData(nn);
+    const x=xOf(nn), y=yOf(Math.log2(Math.max(1,dd.det)));
+    if(nn===xmin) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  }
+  ctx.stroke();
+
+  // current
+  const xc=xOf(n);
+  ctx.strokeStyle='rgba(255,255,255,0.35)'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(xc,padT); ctx.lineTo(xc,padT+plotH); ctx.stroke();
+  const dd=compData(n);
+  ctx.fillStyle='#f59e0b'; ctx.beginPath(); ctx.arc(xc,yOf(Math.log2(Math.max(1,dd.comp))),5,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle='#5eead4'; ctx.beginPath(); ctx.arc(xc,yOf(Math.log2(Math.max(1,dd.det))),5,0,Math.PI*2); ctx.fill();
+
+  ctx.font='12px system-ui'; ctx.textAlign='left';
+  ctx.fillStyle='#f59e0b'; ctx.fillText('Complement lower bound', padL+8, padT+16);
+  ctx.fillStyle='#5eead4'; ctx.fillText('Determinization lower bound', padL+8, padT+34);
+  ctx.fillStyle='#9fb0cc'; ctx.fillText('Polynomial n^2', padL+8, padT+52);
+  ctx.fillStyle='#7c8db5'; ctx.fillText('Polynomial n^3', padL+8, padT+70);
+}
+
+function drawLive(){
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const padL=56,padR=20,padT=30,padB=46;
+  const xmin=2, xmax=hmax;
+  let ymax=1;
+  for(let hh=2; hh<=xmax; hh+=Math.max(1,Math.floor((xmax-2)/200))){
+    const d=liveData(hh);
+    ymax=Math.max(ymax, Math.log2(Math.max(1,d.s2+1)), Math.log2(Math.max(1,d.s1+1)), Math.log2(hh*hh));
+  }
+  const dmax=liveData(xmax);
+  ymax=Math.max(ymax, Math.log2(Math.max(1,dmax.s2+1)), Math.log2(xmax*xmax));
+  ymax+=2;
+  const ymin=0;
+  const {plotW,plotH}=drawAxes(W,H,padL,padR,padT,padB,'h (NFA has h+3 states)','log2(s)',xmin,xmax,ymin,ymax,5,5);
+  function xOf(v){ return padL+(v-xmin)/(xmax-xmin)*plotW; }
+  function yOf(v){ return padT+plotH - (v-ymin)/(ymax-ymin)*plotH; }
+
+  // polynomial h^2
+  ctx.strokeStyle='#9fb0cc'; ctx.lineWidth=1.5; ctx.setLineDash([6,4]);
+  ctx.beginPath();
+  for(let hh=xmin; hh<=xmax; hh++){
+    const x=xOf(hh), y=yOf(Math.log2(hh*hh));
+    if(hh===xmin) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  }
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // s lower bound factor (s+2)
+  ctx.strokeStyle='#f59e0b'; ctx.lineWidth=2.5;
+  ctx.beginPath();
+  for(let hh=xmin; hh<=xmax; hh++){
+    const d=liveData(hh);
+    const x=xOf(hh), y=yOf(Math.log2(Math.max(1,d.s2+1)));
+    if(hh===xmin) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  }
+  ctx.stroke();
+  // sharper (s+1)
+  ctx.strokeStyle='#5eead4'; ctx.lineWidth=2.5;
+  ctx.beginPath();
+  for(let hh=xmin; hh<=xmax; hh++){
+    const d=liveData(hh);
+    const x=xOf(hh), y=yOf(Math.log2(Math.max(1,d.s1+1)));
+    if(hh===xmin) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  }
+  ctx.stroke();
+
+  const xc=xOf(h);
+  ctx.strokeStyle='rgba(255,255,255,0.35)'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(xc,padT); ctx.lineTo(xc,padT+plotH); ctx.stroke();
+  const dd=liveData(h);
+  ctx.fillStyle='#f59e0b'; ctx.beginPath(); ctx.arc(xc,yOf(Math.log2(Math.max(1,dd.s2+1))),5,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle='#5eead4'; ctx.beginPath(); ctx.arc(xc,yOf(Math.log2(Math.max(1,dd.s1+1))),5,0,Math.PI*2); ctx.fill();
+
+  ctx.font='12px system-ui'; ctx.textAlign='left';
+  ctx.fillStyle='#f59e0b'; ctx.fillText('s lower bound: 4(s+2)^2', padL+8, padT+16);
+  ctx.fillStyle='#5eead4'; ctx.fillText('s lower bound: 4(s+1)^2', padL+8, padT+34);
+  ctx.fillStyle='#9fb0cc'; ctx.fillText('Polynomial h^2', padL+8, padT+52);
+}
+
+function updateStats(){
+  if(mode==='comp'){
+    const d=compData(n);
+    nval.textContent=n;
+    nmaxval.textContent=nmax;
+    sn.textContent=n;
+    se.textContent=d.e;
+    scomp.textContent=fmtInt(d.comp);
+    sdet.textContent=fmtInt(d.det);
+    spoly2.textContent=fmtInt(n*n);
+    spoly3.textContent=fmtInt(n*n*n);
+  } else {
+    const d=liveData(h);
+    hval.textContent=h;
+    hmaxval.textContent=hmax;
+    sh.textContent=h;
+    snfa.textContent=h+3;
+    seh.textContent=d.e;
+    spow.textContent=fmtInt(d.pow);
+    ss2.textContent=fmtInt(d.s2);
+    ss1.textContent=fmtInt(d.s1);
+  }
+}
+
+function render(){
+  updateStats();
+  if(mode==='comp') drawComp(); else drawLive();
+}
+
+modeSel.addEventListener('change',function(){
+  mode=modeSel.value;
+  if(mode==='comp'){
+    ctrlComp.style.display='';
+    ctrlLive.style.display='none';
+    statsComp.style.display='';
+    statsLive.style.display='none';
+  } else {
+    ctrlComp.style.display='none';
+    ctrlLive.style.display='';
+    statsComp.style.display='none';
+    statsLive.style.display='';
+  }
+  legend.innerHTML='';
+  render();
+});
+nSlider.addEventListener('input',function(){ n=+nSlider.value; render(); });
+nmaxSlider.addEventListener('input',function(){ nmax=+nmaxSlider.value; render(); });
+hSlider.addEventListener('input',function(){ h=+hSlider.value; render(); });
+hmaxSlider.addEventListener('input',function(){ hmax=+hmaxSlider.value; render(); });
+
+window.addEventListener('resize',function(){ resizeCanvas(); render(); });
+resizeCanvas();
+render();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

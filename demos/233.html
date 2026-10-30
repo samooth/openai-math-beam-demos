@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The joint critical Ashkin–Teller scaling limit (conceptual, result 233)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+select,button{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+input[type=range]{flex:1 1 160px}
+input[type=number]{width:6rem;padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text)}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:auto;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+.legend{display:flex;gap:1rem;align-items:center;font-size:.85rem;color:var(--muted);margin:.5rem 0;flex-wrap:wrap}
+.swatch{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:.3rem;vertical-align:middle}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>The joint critical Ashkin–Teller scaling limit (conceptual, result 233)</h1>
+  <p>Conceptual view of the critical Ashkin–Teller model: a height field with wired primal and free dual boundaries, whose level-set loops are the primal and dual current clusters, moving along the critical line to the four-state Potts endpoint.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Identifies the joint scaling limit of Ashkin–Teller heights and both complete current-cluster collections throughout the critical line, including the four-state Potts endpoint. In bounded Jordan domains with admissible lattice approximations and wired primal/free dual boundaries, the height converges to the predicted Gaussian free field, and the clusters to canonical recursive sets of that same field, retaining every nesting depth.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Shows that the discrete height and both primal and dual current clusters have one joint continuum limit: the height becomes a Gaussian free field, while the clusters become the canonical nested loop ensembles determined by that field. This keeps all nesting depths and extends across the critical line to the four-state Potts case, unifying height, cluster, and conformal-loop descriptions of critical Ashkin–Teller models.</p>
+  </section>
+  <div class="controls">
+    <label for="u">critical coordinate (u)</label>
+    <input id="u" type="range" min="0" max="1" value="0.35" step="0.01">
+    <span class="val" id="uval">0.35</span>
+    <label for="amp">boundary amplitude</label>
+    <input id="amp" type="range" min="0.5" max="2" value="1" step="0.01">
+    <span class="val" id="aval">1.00</span>
+  </div>
+  <div class="controls">
+    <label for="N">grid size (N)</label>
+    <input id="N" type="range" min="24" max="64" value="48" step="2">
+    <span class="val" id="nval">48</span>
+    <label for="depth">nesting depth</label>
+    <input id="depth" type="range" min="2" max="12" value="6" step="1">
+    <span class="val" id="dval">6</span>
+    <label for="rough">roughness</label>
+    <input id="rough" type="range" min="0.5" max="2" value="1" step="0.01">
+    <span class="val" id="rval">1.00</span>
+  </div>
+  <div class="controls">
+    <label for="seed">seed</label>
+    <input id="seed" type="number" value="7">
+    <button id="resample">Resample</button>
+    <label><input type="checkbox" id="showH" checked> height</label>
+    <label><input type="checkbox" id="showP" checked> primal clusters</label>
+    <label><input type="checkbox" id="showD" checked> dual clusters</label>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Critical coordinate</div><div class="value" id="us">—</div></div>
+    <div class="stat"><div class="label">Regime</div><div class="value" id="regime">—</div></div>
+    <div class="stat"><div class="label">Boundary amplitude</div><div class="value" id="as">—</div></div>
+    <div class="stat"><div class="label">Height range</div><div class="value" id="rng">—</div></div>
+    <div class="stat"><div class="label">Grid (N)</div><div class="value" id="ns">—</div></div>
+    <div class="stat"><div class="label">Contours drawn</div><div class="value" id="cs">—</div></div>
+  </div>
+  <canvas id="field" width="720" height="540"></canvas>
+  <div class="legend">
+    <span><span class="swatch" style="background:#3b82f6"></span>low height</span>
+    <span><span class="swatch" style="background:#f8fafc"></span>zero</span>
+    <span><span class="swatch" style="background:#ef4444"></span>high height</span>
+    <span><span class="swatch" style="background:#fde047"></span>primal cluster</span>
+    <span><span class="swatch" style="background:#38bdf8"></span>dual cluster</span>
+  </div>
+</div>
+<script>
+function mulberry32(a){ a|=0; return function(){ a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+function randn(rng){ let u=0,v=0; while(u===0) u=rng(); while(v===0) v=rng(); return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v); }
+
+let rng = mulberry32(7);
+let H = [];
+let noise = [];
+
+const uSlider = document.getElementById('u');
+const ampSlider = document.getElementById('amp');
+const NSlider = document.getElementById('N');
+const depthSlider = document.getElementById('depth');
+const roughSlider = document.getElementById('rough');
+const seedInput = document.getElementById('seed');
+const fieldCanvas = document.getElementById('field');
+const fctx = fieldCanvas.getContext('2d');
+const showHBox = document.getElementById('showH');
+const showPBox = document.getElementById('showP');
+const showDBox = document.getElementById('showD');
+
+const contourColors = ['#fde047','#fb923c','#f87171','#c084fc','#38bdf8','#34d399','#f472b6','#a3e635','#e5e7eb','#facc15','#22d3ee','#fb7185'];
+
+function resample(){
+  const seed = parseInt(seedInput.value,10) || 7;
+  rng = mulberry32(seed);
+  const N = parseInt(NSlider.value,10);
+  const u = parseFloat(uSlider.value);
+  const A = parseFloat(ampSlider.value);
+  const rough = parseFloat(roughSlider.value);
+  H = Array.from({length:N+1}, ()=>Array(N+1).fill(0));
+  noise = Array.from({length:N+1}, ()=>Array(N+1).fill(0));
+  for(let i=0;i<=N;i++) for(let j=0;j<=N;j++) noise[i][j] = randn(rng);
+  for(let i=0;i<=N;i++){
+    H[0][i] = A;
+    H[N][i] = -A;
+  }
+  for(let j=0;j<=N;j++){
+    H[j][0] = 0;
+    H[j][N] = 0;
+  }
+  const noiseScale = (0.16 + 0.20*u) * rough;
+  const iters = 280;
+  for(let t=0;t<iters;t++){
+    for(let i=1;i<N;i++){
+      for(let j=1;j<N;j++){
+        H[i][j] = 0.25*(H[i-1][j]+H[i+1][j]+H[i][j-1]+H[i][j+1]) + noiseScale*noise[i][j]/Math.sqrt(N);
+      }
+    }
+  }
+  updateStats();
+  draw();
+}
+
+function contourSegments(H,N,level){
+  const segs=[];
+  for(let i=0;i<N;i++){
+    for(let j=0;j<N;j++){
+      const a=H[i][j], b=H[i+1][j], c=H[i][j+1], d=H[i+1][j+1];
+      const pts=[];
+      if((a<level)!==(b<level)){ pts.push({x:i+(level-a)/(b-a), y:j}); }
+      if((c<level)!==(d<level)){ pts.push({x:i+(level-c)/(d-c), y:j+1}); }
+      if((a<level)!==(c<level)){ pts.push({x:i, y:j+(level-a)/(c-a)}); }
+      if((b<level)!==(d<level)){ pts.push({x:i+1, y:j+(level-b)/(d-b)}); }
+      if(pts.length===2){
+        segs.push([pts[0],pts[1]]);
+      } else if(pts.length===4){
+        segs.push([pts[0],pts[1]]);
+        segs.push([pts[2],pts[3]]);
+      }
+    }
+  }
+  return segs;
+}
+
+function updateStats(){
+  const u = parseFloat(uSlider.value);
+  const A = parseFloat(ampSlider.value);
+  const N = parseInt(NSlider.value,10);
+  const depth = parseInt(depthSlider.value,10);
+  document.getElementById('uval').textContent = u.toFixed(2);
+  document.getElementById('aval').textContent = A.toFixed(2);
+  document.getElementById('nval').textContent = N.toString();
+  document.getElementById('dval').textContent = depth.toString();
+  document.getElementById('rval').textContent = parseFloat(roughSlider.value).toFixed(2);
+  document.getElementById('us').textContent = u.toFixed(2);
+  document.getElementById('as').textContent = A.toFixed(2);
+  document.getElementById('ns').textContent = N.toString();
+  let regime = 'critical line';
+  if(u < 0.2) regime = 'Ising-like end';
+  else if(u > 0.8) regime = '4-state Potts end';
+  else regime = 'Ashkin–Teller critical';
+  document.getElementById('regime').textContent = regime;
+  let mn = Infinity, mx = -Infinity;
+  for(let i=0;i<H.length;i++) for(let j=0;j<H[i].length;j++){ if(H[i][j]<mn) mn=H[i][j]; if(H[i][j]>mx) mx=H[i][j]; }
+  document.getElementById('rng').textContent = mn.toFixed(2)+' to '+mx.toFixed(2);
+}
+
+function colorFor(v, mn, mx){
+  const t = (v-mn)/(mx-mn || 1);
+  const r = Math.round(255*(0.15 + 0.85*t));
+  const g = Math.round(255*(0.15 + 0.35*(1-Math.abs(2*t-1))));
+  const b = Math.round(255*(0.95 - 0.85*t));
+  return 'rgb('+r+','+g+','+b+')';
+}
+
+function draw(){
+  const N = H.length-1;
+  const W = fieldCanvas.width, Hc = fieldCanvas.height;
+  fctx.clearRect(0,0,W,Hc);
+  const pad = 20;
+  const cell = Math.min((W-2*pad)/N, (Hc-2*pad)/N);
+  const ox = (W - cell*N)/2;
+  const oy = (Hc - cell*N)/2;
+  const showH = showHBox.checked;
+  const showP = showPBox.checked;
+  const showD = showDBox.checked;
+  const depth = parseInt(depthSlider.value,10);
+  const A = parseFloat(ampSlider.value);
+
+  if(showH){
+    let mn = Infinity, mx = -Infinity;
+    for(let i=0;i<=N;i++) for(let j=0;j<=N;j++){ if(H[i][j]<mn) mn=H[i][j]; if(H[i][j]>mx) mx=H[i][j]; }
+    for(let i=0;i<N;i++){
+      for(let j=0;j<N;j++){
+        const v = 0.25*(H[i][j]+H[i+1][j]+H[i][j+1]+H[i+1][j+1]);
+        fctx.fillStyle = colorFor(v, mn, mx);
+        fctx.fillRect(ox + i*cell, oy + (N-1-j)*cell, cell+0.5, cell+0.5);
+      }
+    }
+  } else {
+    fctx.fillStyle = 'rgba(30,41,59,0.6)';
+    fctx.fillRect(ox, oy, N*cell, N*cell);
+  }
+
+  fctx.strokeStyle = 'rgba(159,176,204,0.35)';
+  fctx.lineWidth = 1;
+  fctx.strokeRect(ox, oy, N*cell, N*cell);
+
+  const levelsCount = Math.max(2, depth);
+  const levels = [];
+  for(let k=1;k<=levelsCount;k++){
+    levels.push(-A + (2*A*k)/(levelsCount+1));
+  }
+
+  let contoursDrawn = 0;
+  if(showP){
+    for(let li=0;li<levels.length;li++){
+      const L = levels[li];
+      const segs = contourSegments(H,N,L);
+      contoursDrawn += segs.length;
+      fctx.strokeStyle = contourColors[li % contourColors.length];
+      fctx.lineWidth = 2;
+      fctx.beginPath();
+      for(const s of segs){
+        const x1 = ox + s[0].x*cell;
+        const y1 = oy + (N - s[0].y)*cell;
+        const x2 = ox + s[1].x*cell;
+        const y2 = oy + (N - s[1].y)*cell;
+        fctx.moveTo(x1,y1);
+        fctx.lineTo(x2,y2);
+      }
+      fctx.stroke();
+    }
+  }
+
+  if(showD){
+    fctx.setLineDash([6,4]);
+    for(let li=0;li<levels.length;li++){
+      const L = levels[li];
+      const segs = contourSegments(H,N,L);
+      fctx.strokeStyle = contourColors[li % contourColors.length];
+      fctx.globalAlpha = 0.7;
+      fctx.lineWidth = 1.5;
+      fctx.beginPath();
+      for(const s of segs){
+        const x1 = ox + (s[0].x+0.5)*cell;
+        const y1 = oy + (N - (s[0].y+0.5))*cell;
+        const x2 = ox + (s[1].x+0.5)*cell;
+        const y2 = oy + (N - (s[1].y+0.5))*cell;
+        fctx.moveTo(x1,y1);
+        fctx.lineTo(x2,y2);
+      }
+      fctx.stroke();
+    }
+    fctx.setLineDash([]);
+    fctx.globalAlpha = 1;
+  }
+
+  document.getElementById('cs').textContent = contoursDrawn.toString();
+}
+
+uSlider.addEventListener('input', ()=>{ document.getElementById('uval').textContent = parseFloat(uSlider.value).toFixed(2); });
+ampSlider.addEventListener('input', ()=>{ document.getElementById('aval').textContent = parseFloat(ampSlider.value).toFixed(2); });
+NSlider.addEventListener('input', ()=>{ document.getElementById('nval').textContent = NSlider.value; });
+depthSlider.addEventListener('input', ()=>{ document.getElementById('dval').textContent = depthSlider.value; });
+roughSlider.addEventListener('input', ()=>{ document.getElementById('rval').textContent = parseFloat(roughSlider.value).toFixed(2); });
+seedInput.addEventListener('change', resample);
+document.getElementById('resample').addEventListener('click', ()=>{ seedInput.value = Math.floor(Math.random()*1e6); resample(); });
+
+uSlider.addEventListener('change', resample);
+ampSlider.addEventListener('change', resample);
+NSlider.addEventListener('change', resample);
+depthSlider.addEventListener('change', resample);
+roughSlider.addEventListener('change', resample);
+showHBox.addEventListener('change', draw);
+showPBox.addEventListener('change', draw);
+showDBox.addEventListener('change', draw);
+
+resample();
+</script>
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

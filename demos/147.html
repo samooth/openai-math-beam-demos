@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The near-boundary Birkhoff conjecture (conceptual, result 147)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+select{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+input[type=range]{flex:1 1 180px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:460px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+.legend{display:flex;gap:1rem;align-items:center;font-size:.85rem;color:var(--muted);margin:.5rem 0;flex-wrap:wrap}
+.swatch{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:.3rem;vertical-align:middle}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>The near-boundary Birkhoff conjecture (conceptual, result 147)</h1>
+  <p>A smooth strictly convex planar billiard is an ellipse whenever a full grazing annulus near its boundary is continuously foliated by invariant curves of the billiard map, equivalently by a continuous collar of smooth convex caustics.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">A planar billiard is strictly convex, smooth, and of positive curvature. Result 147 proves near-boundary rigidity: if a full grazing annulus (a thin region adjacent to the boundary) is continuously foliated by individually invariant essential curves of the billiard map, then the boundary is an ellipse. Equivalently, a continuous physical collar of smooth closed convex caustics near the boundary suffices. Thus local integrable structure at the boundary propagates to the global elliptical shape, resolving the near-boundary case of the Birkhoff conjecture.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">This identifies ellipses as the only convex billiards admitting a continuous caustic collar near the boundary, sharpening the link between caustic families, integrability, and spectral/length rigidity. It informs inverse billiard problems, stability of nearly elliptical tables, and the classification of integrable convex billiards.</p>
+  </section>
+  <div class="controls">
+    <label for="shape">Table shape</label>
+    <select id="shape">
+      <option value="ellipse">Ellipse</option>
+      <option value="perturbed">Perturbed convex</option>
+    </select>
+    <label for="ecc">Eccentricity e</label>
+    <input id="ecc" type="range" min="0" max="0.85" value="0.5" step="0.01">
+    <span class="val" id="eccval">0.50</span>
+    <label for="delta">Perturbation δ</label>
+    <input id="delta" type="range" min="0" max="0.18" value="0.12" step="0.01">
+    <span class="val" id="deltaval">0.12</span>
+  </div>
+  <div class="controls">
+    <label for="mode">Azimuthal mode m</label>
+    <input id="mode" type="range" min="2" max="8" value="3" step="1">
+    <span class="val" id="modeval">3</span>
+    <label for="depth">Grazing depth</label>
+    <input id="depth" type="range" min="0.05" max="0.40" value="0.20" step="0.01">
+    <span class="val" id="depthval">0.20</span>
+    <label for="fol">Foliation</label>
+    <select id="fol">
+      <option value="on">On</option>
+      <option value="off">Off</option>
+    </select>
+    <label for="anim">Animate ray</label>
+    <select id="anim">
+      <option value="on">On</option>
+      <option value="off">Off</option>
+    </select>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Shape</div><div class="value" id="sshape">—</div></div>
+    <div class="stat"><div class="label">Convex</div><div class="value" id="sconv">—</div></div>
+    <div class="stat"><div class="label">Min curvature</div><div class="value" id="scurv">—</div></div>
+    <div class="stat"><div class="label">Grazing annulus</div><div class="value" id="sann">—</div></div>
+    <div class="stat"><div class="label">Caustic collar</div><div class="value" id="scaust">—</div></div>
+    <div class="stat"><div class="label">Foliated</div><div class="value" id="sfol">—</div></div>
+    <div class="stat"><div class="label">Rigidity conclusion</div><div class="value" id="srigid">—</div></div>
+    <div class="stat"><div class="label">Ray speed</div><div class="value" id="sspeed">—</div></div>
+  </div>
+  <div class="legend">
+    <span><span class="swatch" style="background:#5eead4"></span>Billiard boundary</span>
+    <span><span class="swatch" style="background:#f59e0b"></span>Grazing annulus / caustics</span>
+    <span><span class="swatch" style="background:#ef4444"></span>Billiard ray</span>
+    <span><span class="swatch" style="background:#22c55e"></span>Foliation (ellipse)</span>
+  </div>
+  <canvas id="c" width="900" height="460"></canvas>
+  <p style="font-size:.85rem;color:var(--muted);margin-top:.5rem">Conceptual model: a convex table and its specular billiard flow. For an ellipse, nested confocal caustics foliate a grazing annulus, forcing rigidity; for a perturbed convex table, the caustic collar breaks. Constants and geometry are illustrative.</p>
+</div>
+<script>
+const shapeSel=document.getElementById('shape');
+const eccSlider=document.getElementById('ecc');
+const deltaSlider=document.getElementById('delta');
+const modeSlider=document.getElementById('mode');
+const depthSlider=document.getElementById('depth');
+const folSel=document.getElementById('fol');
+const animSel=document.getElementById('anim');
+
+const eccval=document.getElementById('eccval');
+const deltaval=document.getElementById('deltaval');
+const modeval=document.getElementById('modeval');
+const depthval=document.getElementById('depthval');
+
+const sshape=document.getElementById('sshape');
+const sconv=document.getElementById('sconv');
+const scurv=document.getElementById('scurv');
+const sann=document.getElementById('sann');
+const scaust=document.getElementById('scaust');
+const sfol=document.getElementById('sfol');
+const srigid=document.getElementById('srigid');
+const sspeed=document.getElementById('sspeed');
+
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+
+function resizeCanvas(){ canvas.width=Math.max(300,canvas.clientWidth); canvas.height=460; }
+window.addEventListener('resize',function(){ resizeCanvas(); });
+resizeCanvas();
+
+const N=180;
+let boundary=[];
+let trail=[];
+let pos={x:0.3,y:0.1};
+let vel={x:0.012,y:0.007};
+
+function params(){
+  return {
+    shape: shapeSel.value,
+    e: +eccSlider.value,
+    delta: +deltaSlider.value,
+    m: +modeSlider.value,
+    depth: +depthSlider.value,
+    fol: folSel.value,
+    anim: animSel.value
+  };
+}
+
+function buildBoundary(p){
+  const pts=[];
+  if(p.shape==='ellipse'){
+    const a=1, b=Math.sqrt(Math.max(1e-6,1-p.e*p.e));
+    for(let i=0;i<N;i++){
+      const t=2*Math.PI*i/N;
+      pts.push({x:a*Math.cos(t), y:b*Math.sin(t)});
+    }
+  } else {
+    for(let i=0;i<N;i++){
+      const t=2*Math.PI*i/N;
+      const r=1+p.delta*Math.cos(p.m*t);
+      pts.push({x:r*Math.cos(t), y:r*Math.sin(t)});
+    }
+  }
+  return pts;
+}
+
+function cross(ax,ay,bx,by){ return ax*by-ay*bx; }
+
+function curvatureAndConvex(pts){
+  let minK=Infinity;
+  let convex=true;
+  const n=pts.length;
+  let sign=0;
+  for(let i=0;i<n;i++){
+    const p0=pts[(i-1+n)%n];
+    const p1=pts[i];
+    const p2=pts[(i+1)%n];
+    const v1={x:p1.x-p0.x, y:p1.y-p0.y};
+    const v2={x:p2.x-p1.x, y:p2.y-p1.y};
+    const c=cross(v1.x,v1.y,v2.x,v2.y);
+    if(sign===0) sign = c>=0?1:-1;
+    else if((c>=0?1:-1)!==sign && Math.abs(c)>1e-12) convex=false;
+    const len1=Math.hypot(v1.x,v1.y);
+    const len2=Math.hypot(v2.x,v2.y);
+    const avg=(len1+len2)/2;
+    const k = Math.abs(c)/(len1*len2*avg+1e-9);
+    if(k<minK) minK=k;
+  }
+  if(!isFinite(minK)) minK=0;
+  return {minK, convex};
+}
+
+function transform(pt,W,H){
+  // scale
+  let maxR=1;
+  for(const q of boundary){ maxR=Math.max(maxR,Math.hypot(q.x,q.y)); }
+  const scale=Math.min(W,H)*0.36/maxR;
+  return {x: W/2 + pt.x*scale, y: H/2 - pt.y*scale, scale};
+}
+
+function drawBoundary(W,H){
+  ctx.strokeStyle='#5eead4';
+  ctx.lineWidth=2.5;
+  ctx.beginPath();
+  for(let i=0;i<boundary.length;i++){
+    const q=transform(boundary[i],W,H);
+    if(i===0) ctx.moveTo(q.x,q.y); else ctx.lineTo(q.x,q.y);
+  }
+  ctx.closePath();
+  ctx.stroke();
+  // fill
+  ctx.fillStyle='rgba(94,234,212,0.06)';
+  ctx.beginPath();
+  for(let i=0;i<boundary.length;i++){
+    const q=transform(boundary[i],W,H);
+    if(i===0) ctx.moveTo(q.x,q.y); else ctx.lineTo(q.x,q.y);
+  }
+  ctx.closePath();
+  ctx.fill();
+}
+
+function drawAnnulus(p,W,H){
+  const depth=p.depth;
+  // inner boundary = boundary scaled by (1-depth)
+  ctx.beginPath();
+  for(let i=0;i<boundary.length;i++){
+    const q=transform({x:boundary[i].x*(1-depth), y:boundary[i].y*(1-depth)},W,H);
+    if(i===0) ctx.moveTo(q.x,q.y); else ctx.lineTo(q.x,q.y);
+  }
+  ctx.closePath();
+  // outer
+  ctx.moveTo(transform(boundary[0],W,H).x, transform(boundary[0],W,H).y);
+  // use path with outer then inner reversed
+  const outer=[];
+  for(let i=0;i<boundary.length;i++) outer.push(transform(boundary[i],W,H));
+  const inner=[];
+  for(let i=boundary.length-1;i>=0;i--) inner.push(transform({x:boundary[i].x*(1-depth), y:boundary[i].y*(1-depth)},W,H));
+  ctx.beginPath();
+  outer.forEach((q,i)=> i===0?ctx.moveTo(q.x,q.y):ctx.lineTo(q.x,q.y));
+  ctx.closePath();
+  inner.forEach((q,i)=> i===0?ctx.moveTo(q.x,q.y):ctx.lineTo(q.x,q.y));
+  ctx.closePath();
+  ctx.fillStyle='rgba(245,158,11,0.12)';
+  ctx.fill('evenodd');
+}
+
+function drawFoliation(p,W,H){
+  if(p.fol!=='on') return;
+  const depth=p.depth;
+  const levels=6;
+  if(p.shape==='ellipse'){
+    const e=p.e;
+    const a=1, b=Math.sqrt(Math.max(1e-6,1-e*e));
+    const c=Math.sqrt(Math.max(0,a*a-b*b));
+    for(let L=1;L<=levels;L++){
+      const u=L/(levels+1);
+      const aa=1 - u*depth*0.9;
+      if(aa*aa < c*c+1e-9) continue;
+      const bb=Math.sqrt(Math.max(1e-9,aa*aa-c*c));
+      ctx.strokeStyle='rgba(34,197,94,0.55)';
+      ctx.lineWidth=1.2;
+      ctx.setLineDash([]);
+      ctx.beginPath();
+      for(let i=0;i<N;i++){
+        const t=2*Math.PI*i/N;
+        const q=transform({x:aa*Math.cos(t), y:bb*Math.sin(t)},W,H);
+        if(i===0) ctx.moveTo(q.x,q.y); else ctx.lineTo(q.x,q.y);
+      }
+      ctx.closePath();
+      ctx.stroke();
+    }
+  } else {
+    // broken foliation: draw offset curves but mark discontinuities
+    for(let L=1;L<=levels;L++){
+      const u=L/(levels+1);
+      const scale=1 - u*depth*0.9;
+      ctx.strokeStyle='rgba(245,158,11,0.45)';
+      ctx.lineWidth=1.2;
+      ctx.setLineDash([4,4]);
+      ctx.beginPath();
+      for(let i=0;i<N;i++){
+        const t=2*Math.PI*i/N;
+        const r=1+p.delta*Math.cos(p.m*t);
+        const q=transform({x:scale*r*Math.cos(t), y:scale*r*Math.sin(t)},W,H);
+        if(i===0) ctx.moveTo(q.x,q.y); else ctx.lineTo(q.x,q.y);
+      }
+      ctx.closePath();
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+    // break markers
+    ctx.fillStyle='#ef4444';
+    for(let k=0;k<8;k++){
+      const t=2*Math.PI*k/8;
+      const r=1+p.delta*Math.cos(p.m*t);
+      const u=0.5;
+      const scale=1-u*depth*0.9;
+      const q=transform({x:scale*r*Math.cos(t), y:scale*r*Math.sin(t)},W,H);
+      ctx.beginPath(); ctx.arc(q.x,q.y,3,0,Math.PI*2); ctx.fill();
+    }
+  }
+}
+
+function reflect(d, nx,ny){
+  const dot=d.x*nx+d.y*ny;
+  return {x:d.x-2*dot*nx, y:d.y-2*dot*ny};
+}
+
+function segIntersect(px,py,dx,dy, ax,ay,bx,by){
+  // ray p + t d, segment a->b. return t or null
+  const rx=dx, ry=dy;
+  const sx=bx-ax, sy=by-ay;
+  const crossr=rx*sy-ry*sx;
+  if(Math.abs(crossr)<1e-12) return null;
+  const t=((ax-px)*sy-(ay-py)*sx)/crossr;
+  const u=((ax-px)*ry-(ay-py)*rx)/crossr;
+  if(t>1e-9 && u>=-1e-9 && u<=1+1e-9) return t;
+  return null;
+}
+
+function stepRay(dt){
+  const W=canvas.width,H=canvas.height;
+  const tf0=transform({x:0,y:0},W,H);
+  // We work in model coords; need scale. Use transform scale from boundary max.
+  let maxR=1;
+  for(const q of boundary) maxR=Math.max(maxR,Math.hypot(q.x,q.y));
+  const scale=Math.min(W,H)*0.36/maxR;
+  // convert pos/vel model<->screen? Easier: work in model coords and scale at draw.
+  // pos, vel are model coords.
+  let remaining=dt;
+  let guard=0;
+  while(remaining>0 && guard<5){
+    guard++;
+    // find nearest boundary hit
+    let bestT=Infinity, bestEdge=-1;
+    for(let i=0;i<boundary.length;i++){
+      const a=boundary[i];
+      const b=boundary[(i+1)%boundary.length];
+      const t=segIntersect(pos.x,pos.y,vel.x,vel.y,a.x,a.y,b.x,b.y);
+      if(t!==null && t<bestT){ bestT=t; bestEdge=i; }
+    }
+    if(bestT<remaining && bestEdge>=0){
+      // move to hit
+      pos.x += vel.x*bestT;
+      pos.y += vel.y*bestT;
+      remaining -= bestT;
+      const a=boundary[bestEdge];
+      const b=boundary[(bestEdge+1)%boundary.length];
+      const ex=b.x-a.x, ey=b.y-a.y;
+      // outward normal (ey,-ex) normalized
+      const len=Math.hypot(ex,ey);
+      const nx=ey/len, ny=-ex/len;
+      vel=reflect(vel,nx,ny);
+      // nudge inside
+      pos.x += vel.x*1e-6;
+      pos.y += vel.y*1e-6;
+    } else {
+      pos.x += vel.x*remaining;
+      pos.y += vel.y*remaining;
+      remaining=0;
+    }
+  }
+}
+
+function drawRay(W,H){
+  // draw trail
+  ctx.strokeStyle='#ef4444';
+  ctx.lineWidth=2;
+  ctx.beginPath();
+  for(let i=0;i<trail.length;i++){
+    const q=transform(trail[i],W,H);
+    if(i===0) ctx.moveTo(q.x,q.y); else ctx.lineTo(q.x,q.y);
+  }
+  const q=transform(pos,W,H);
+  ctx.lineTo(q.x,q.y);
+  ctx.stroke();
+  ctx.fillStyle='#ef4444';
+  ctx.beginPath(); ctx.arc(q.x,q.y,5,0,Math.PI*2); ctx.fill();
+}
+
+function updateStats(p,cc){
+  eccval.textContent=p.e.toFixed(2);
+  deltaval.textContent=p.delta.toFixed(2);
+  modeval.textContent=p.m;
+  depthval.textContent=p.depth.toFixed(2);
+  sshape.textContent = p.shape==='ellipse'?'Ellipse':'Perturbed convex';
+  sconv.textContent = cc.convex?'Yes':'No';
+  scurv.textContent = cc.minK.toFixed(3);
+  const foliated = (p.shape==='ellipse') && (p.fol==='on');
+  sann.textContent = foliated?'Foliated':'Not foliated';
+  scaust.textContent = foliated?'Continuous collar':'Broken collar';
+  sfol.textContent = foliated?'Yes':'No';
+  srigid.textContent = foliated?'Ellipse (rigidity)':'Not forced';
+  sspeed.textContent = Math.hypot(vel.x,vel.y).toFixed(4);
+}
+
+let running=true;
+function render(){
+  const p=params();
+  boundary=buildBoundary(p);
+  const cc=curvatureAndConvex(boundary);
+  updateStats(p,cc);
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle=getComputedStyle(document.documentElement).getPropertyValue('--card').trim()||'#16203a';
+  ctx.fillRect(0,0,W,H);
+  drawAnnulus(p,W,H);
+  drawFoliation(p,W,H);
+  drawBoundary(W,H);
+  drawRay(W,H);
+}
+
+function loop(){
+  if(params().anim==='on'){
+    stepRay(0.02);
+    trail.push({x:pos.x,y:pos.y});
+    if(trail.length>400) trail.shift();
+  }
+  render();
+  requestAnimationFrame(loop);
+}
+
+// init pos
+pos={x:0.3,y:0.1}; vel={x:0.012,y:0.007};
+
+shapeSel.addEventListener('change',()=>{ trail=[]; });
+eccSlider.addEventListener('input',()=>{ trail=[]; });
+deltaSlider.addEventListener('input',()=>{ trail=[]; });
+modeSlider.addEventListener('input',()=>{ trail=[]; });
+depthSlider.addEventListener('input',()=>{});
+folSel.addEventListener('change',()=>{});
+animSel.addEventListener('change',()=>{});
+
+loop();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

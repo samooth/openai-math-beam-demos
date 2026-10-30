@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>An L^3 bound for the trilinear Hilbert transform (conceptual, result 086)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range]{flex:1 1 220px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:440px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+select{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text)}
+.toggle{display:inline-flex;align-items:center;gap:.4rem}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>An L^3 bound for the trilinear Hilbert transform (conceptual, result 086)</h1>
+  <p>The principal-value trilinear transform with shifts (x-t), (x-2t), (x-3t) is bounded from (L^3(R)^3) to (L^1(R)). It resolves the (L^3) exponent case of the standard conjecture for slopes 1, 2, 3.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">For Schwartz functions (f_1,f_2,f_3:\mathbb R\to\mathbb C), define (T(f_1,f_2,f_3)(x)=\operatorname{p.v.}\int_{\mathbb R} f_1(x-t)f_2(x-2t)f_3(x-3t)\frac{dt}{t}). The result proves (|T(f_1,f_2,f_3)|_{L^1(\mathbb R)}\le C\prod_{j=1}^3|f_j|_{L^3(\mathbb R)}), so (T) extends boundedly from (L^3(\mathbb R)^3) to (L^1(\mathbb R)). This is the (L^3\times L^3\times L^3\to L^1) case of the standard trilinear Hilbert transform conjecture for fixed slopes 1, 2, 3.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">The transform is a model multilinear singular integral. The proof must organize cancellation across scales while quadratic phases persist, since coefficients such as ((-1,3,-3,1)) annihilate constants, linear, and quadratic terms. The estimate underpins multilinear harmonic analysis and the study of multiple ergodic averages, where the same trilinear structure appears.</p>
+  </section>
+  <div class="controls">
+    <label for="p1">Exponent p1</label>
+    <input id="p1" type="range" min="20" max="60" value="30" step="1">
+    <span class="val" id="p1val">3.0</span>
+    <label for="p2">Exponent p2</label>
+    <input id="p2" type="range" min="20" max="60" value="30" step="1">
+    <span class="val" id="p2val">3.0</span>
+    <label for="p3">Exponent p3</label>
+    <input id="p3" type="range" min="20" max="60" value="30" step="1">
+    <span class="val" id="p3val">3.0</span>
+    <label for="t">Scale t</label>
+    <input id="t" type="range" min="1" max="100" value="20" step="1">
+    <span class="val" id="tval">0.20</span>
+    <label for="view">View</label>
+    <select id="view">
+      <option value="kernel" selected>Kernel</option>
+      <option value="inputs">Inputs</option>
+      <option value="inv">Invariants</option>
+    </select>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">p1</div><div class="value" id="p1stat">—</div></div>
+    <div class="stat"><div class="label">p2</div><div class="value" id="p2stat">—</div></div>
+    <div class="stat"><div class="label">p3</div><div class="value" id="p3stat">—</div></div>
+    <div class="stat"><div class="label">Sum 1/pj</div><div class="value" id="sumstat">—</div></div>
+    <div class="stat"><div class="label">Implied 1/p</div><div class="value" id="pstat">—</div></div>
+    <div class="stat"><div class="label">L^3 endpoint?</div><div class="value" id="endstat">—</div></div>
+    <div class="stat"><div class="label">Scale t</div><div class="value" id="tstat">—</div></div>
+    <div class="stat"><div class="label">Cancellation</div><div class="value" id="cancstat">—</div></div>
+  </div>
+  <canvas id="c" width="900" height="440"></canvas>
+</div>
+<script>
+const p1Slider=document.getElementById('p1');
+const p2Slider=document.getElementById('p2');
+const p3Slider=document.getElementById('p3');
+const tSlider=document.getElementById('t');
+const viewSel=document.getElementById('view');
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+
+const p1val=document.getElementById('p1val');
+const p2val=document.getElementById('p2val');
+const p3val=document.getElementById('p3val');
+const tval=document.getElementById('tval');
+const p1stat=document.getElementById('p1stat');
+const p2stat=document.getElementById('p2stat');
+const p3stat=document.getElementById('p3stat');
+const sumstat=document.getElementById('sumstat');
+const pstat=document.getElementById('pstat');
+const endstat=document.getElementById('endstat');
+const tstat=document.getElementById('tstat');
+const cancstat=document.getElementById('cancstat');
+
+let state={};
+
+function updateState(){
+  const p1=+p1Slider.value/10;
+  const p2=+p2Slider.value/10;
+  const p3=+p3Slider.value/10;
+  const t=+tSlider.value/100;
+  const view=viewSel.value;
+  const sum=1/p1+1/p2+1/p3;
+  const implied=sum>0?1/sum:Infinity;
+  const endpoint=(Math.abs(p1-3)<1e-9 && Math.abs(p2-3)<1e-9 && Math.abs(p3-3)<1e-9);
+  const cancel='c=(-1,3,-3,1)';
+  state={p1,p2,p3,t,view,sum,implied,endpoint,cancel};
+}
+
+function updateStats(){
+  const s=state;
+  p1val.textContent=s.p1.toFixed(1);
+  p2val.textContent=s.p2.toFixed(1);
+  p3val.textContent=s.p3.toFixed(1);
+  tval.textContent=s.t.toFixed(2);
+  p1stat.textContent=s.p1.toFixed(2);
+  p2stat.textContent=s.p2.toFixed(2);
+  p3stat.textContent=s.p3.toFixed(2);
+  sumstat.textContent=s.sum.toFixed(4);
+  pstat.textContent=isFinite(s.implied)?s.implied.toFixed(4):'∞';
+  endstat.textContent=s.endpoint?'Yes':'No';
+  endstat.className='value '+(s.endpoint?'ok':'warn');
+  tstat.textContent=s.t.toFixed(3);
+  cancstat.textContent=s.cancel;
+}
+
+function resizeCanvas(){ canvas.width=Math.max(300,canvas.clientWidth); canvas.height=440; }
+window.addEventListener('resize',function(){ resizeCanvas(); render(); });
+resizeCanvas();
+
+function drawKernel(W,H,s){
+  const cx=W/2, cy=H/2+40;
+  const L=W*0.42;
+  ctx.strokeStyle='rgba(159,176,204,0.35)'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(cx-L,cy); ctx.lineTo(cx+L,cy); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx,cy-180); ctx.lineTo(cx,cy+180); ctx.stroke();
+  ctx.fillStyle='#9fb0cc'; ctx.font='11px system-ui'; ctx.textAlign='center';
+  ctx.fillText('t', cx+L+8, cy+4);
+  ctx.fillStyle='#9fb0cc'; ctx.font='11px system-ui'; ctx.textAlign='right';
+  ctx.fillText('1/t', cx-6, cy-185);
+
+  const eps=0.04;
+  ctx.strokeStyle='#5eead4'; ctx.lineWidth=2;
+  ctx.beginPath();
+  for(let i=-L;i<=L;i++){
+    if(Math.abs(i)<2) continue;
+    const tt=(i/L)*3;
+    const val=1/tt;
+    const px=cx+i, py=cy-val*40;
+    if(i===-Math.floor(L)) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+  }
+  ctx.stroke();
+  ctx.strokeStyle='#f59e0b'; ctx.lineWidth=1.5; ctx.setLineDash([5,4]);
+  ctx.beginPath();
+  for(let i=-L;i<=L;i++){
+    const tt=(i/L)*3;
+    if(Math.abs(tt)<eps) continue;
+    const val=1/tt;
+    const px=cx+i, py=cy-val*40;
+    if(i===-Math.floor(L)) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+  }
+  ctx.setLineDash([]);
+  ctx.stroke();
+  ctx.fillStyle='#9fb0cc'; ctx.font='12px system-ui'; ctx.textAlign='center';
+  ctx.fillText('principal value: symmetric cancellation at t=0', cx, H-40);
+  ctx.fillStyle=s.endpoint?'#22c55e':'#f59e0b';
+  ctx.font='12px system-ui'; ctx.textAlign='center';
+  ctx.fillText(s.endpoint?'L^3 endpoint selected':'Exponents off L^3 endpoint', cx, H-18);
+}
+
+function drawInputs(W,H,s){
+  const cx=W/2, cy=H/2+60;
+  const L=W*0.42;
+  ctx.strokeStyle='rgba(159,176,204,0.35)'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(cx-L,cy); ctx.lineTo(cx+L,cy); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx,cy-200); ctx.lineTo(cx,cy+80); ctx.stroke();
+  ctx.fillStyle='#9fb0cc'; ctx.font='11px system-ui'; ctx.textAlign='center';
+  ctx.fillText('t', cx+L+8, cy+4);
+
+  const t=s.t;
+  const colors=['#5eead4','#f59e0b','#ef4444'];
+  const shifts=[1,2,3];
+  for(let j=0;j<3;j++){
+    ctx.strokeStyle=colors[j]; ctx.lineWidth=2;
+    ctx.beginPath();
+    for(let i=-L;i<=L;i+=2){
+      const tt=(i/L)*3;
+      const val=Math.exp(-Math.pow(tt-shifts[j]*t,2)/(2*0.35*0.35));
+      const px=cx+i, py=cy-val*150;
+      if(i===-Math.floor(L)) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+    }
+    ctx.stroke();
+  }
+  ctx.fillStyle='#9fb0cc'; ctx.font='11px system-ui'; ctx.textAlign='left';
+  ctx.fillText('f1(x-t)', cx-L, cy-185);
+  ctx.fillStyle='#f59e0b'; ctx.fillText('f2(x-2t)', cx-L, cy-170);
+  ctx.fillStyle='#ef4444'; ctx.fillText('f3(x-3t)', cx-L, cy-155);
+
+  const prod=[];
+  for(let i=-L;i<=L;i+=2){
+    const tt=(i/L)*3;
+    let v=1;
+    for(let j=0;j<3;j++) v*=Math.exp(-Math.pow(tt-shifts[j]*t,2)/(2*0.35*0.35));
+    prod.push({i,v});
+  }
+  ctx.strokeStyle='#e6edf7'; ctx.lineWidth=2.5;
+  ctx.beginPath();
+  prod.forEach((pt,k)=>{
+    const px=cx+pt.i, py=cy-pt.v*150;
+    if(k===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+  });
+  ctx.stroke();
+  ctx.fillStyle='#e6edf7'; ctx.font='12px system-ui'; ctx.textAlign='center';
+  ctx.fillText('product f1(x-t)f2(x-2t)f3(x-3t)', cx, H-40);
+  ctx.fillStyle='#9fb0cc'; ctx.font='12px system-ui'; ctx.textAlign='center';
+  ctx.fillText('scale t='+s.t.toFixed(2), cx, H-18);
+}
+
+function drawInv(W,H,s){
+  const x=40,y=50,dy=24;
+  const lines=[
+    'Result 086 — An L^3 bound for the trilinear Hilbert transform',
+    'Operator: T(f1,f2,f3)(x)=p.v. ∫ f1(x-t)f2(x-2t)f3(x-3t) dt/t',
+    'Estimate: ||T(f1,f2,f3)||_{L^1} ≤ C ∏ ||fj||_{L^3}',
+    'Slopes: 1, 2, 3',
+    'Cancellation coefficient: (-1,3,-3,1) annihilates degrees 0,1,2',
+    'Chosen exponents: p1='+s.p1.toFixed(2)+', p2='+s.p2.toFixed(2)+', p3='+s.p3.toFixed(2),
+    'Sum 1/pj = '+s.sum.toFixed(4)+'; implied output exponent p = '+(isFinite(s.implied)?s.implied.toFixed(4):'∞'),
+    'L^3 endpoint: '+(s.endpoint?'yes':'no'),
+    'Scale t = '+s.t.toFixed(3),
+    'Interpretation: multilinear singular integral bounded at sharp L^3 exponents.',
+  ];
+  ctx.fillStyle='#e6edf7'; ctx.font='14px system-ui'; ctx.textAlign='left';
+  lines.forEach((l,i)=>{
+    if(i===0){ ctx.fillStyle='#5eead4'; ctx.font='16px system-ui'; }
+    else { ctx.fillStyle='#e6edf7'; ctx.font='14px system-ui'; }
+    ctx.fillText(l, x, y+i*dy);
+  });
+  const cx0=W-170, cy0=H/2;
+  ctx.strokeStyle='#5eead4'; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.arc(cx0,cy0,62,0,Math.PI*2); ctx.stroke();
+  ctx.beginPath(); ctx.arc(cx0,cy0,30,0,Math.PI*2); ctx.stroke();
+  ctx.fillStyle='rgba(94,234,212,0.15)';
+  ctx.beginPath(); ctx.arc(cx0,cy0,62,0,Math.PI*2); ctx.arc(cx0,cy0,30,0,Math.PI*2,true); ctx.closePath(); ctx.fill();
+  ctx.fillStyle='#9fb0cc'; ctx.font='11px system-ui'; ctx.textAlign='center';
+  ctx.fillText('scale shell', cx0, cy0+84);
+}
+
+function render(){
+  updateState();
+  updateStats();
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  if(state.view==='kernel') drawKernel(W,H,state);
+  else if(state.view==='inputs') drawInputs(W,H,state);
+  else drawInv(W,H,state);
+}
+
+p1Slider.addEventListener('input',render);
+p2Slider.addEventListener('input',render);
+p3Slider.addEventListener('input',render);
+tSlider.addEventListener('input',render);
+viewSel.addEventListener('change',render);
+render();
+
+function tick(){ if(state.view==='inputs') render(); requestAnimationFrame(tick); }
+requestAnimationFrame(tick);
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

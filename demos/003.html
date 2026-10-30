@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quasi-Riemann hypothesis — interactive demo</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range]{flex:1 1 260px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:8ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:460px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block;cursor:ew-resize}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+.legend{display:flex;flex-wrap:wrap;gap:1rem;margin:.5rem 0 1rem;font-size:.85rem;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:.4rem}
+.swatch{width:14px;height:14px;border-radius:3px;border:1px solid var(--border)}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Quasi-Riemann hypothesis: zero-free region Re s &gt; 7/8</h1>
+  <p>Every Dirichlet L-function, including ζ(s), is zero-free in the half-plane Re s &gt; 7/8. Drag the vertical line or use the slider to set the real-part threshold; the shaded region is the zero-free half-plane.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">A uniform zero-free region for all Dirichlet L-functions. The same half-plane holds for finite-order Hecke L-functions over Q(√−3); a companion gives an alternate proof for Re s &gt; 11/12. Landau–Siegel zeros are uniformly excluded.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Zero-free regions control the error term in the prime number theorem, nonvanishing of L-values, and class-number bounds. A uniform 7/8 threshold gives strong unconditional control of prime distribution and gaps.</p>
+  </section>
+  <div class="controls">
+    <label for="thr">Threshold Re s</label>
+    <input id="thr" type="range" min="0.5" max="1.0" value="0.875" step="0.001">
+    <span class="val" id="thrval">0.875</span>
+    <button id="p78">7/8</button>
+    <button id="p1112">11/12</button>
+    <label style="display:flex;align-items:center;gap:.4rem"><input id="showalt" type="checkbox" checked> show 11/12</label>
+    <label style="display:flex;align-items:center;gap:.4rem"><input id="showzeros" type="checkbox" checked> show ζ zeros</label>
+  </div>
+  <div class="legend">
+    <span><span class="swatch" style="background:rgba(94,234,212,0.18)"></span>critical strip 0&lt;Re s&lt;1</span>
+    <span><span class="swatch" style="background:rgba(34,197,94,0.22)"></span>zero-free region Re s &gt; threshold</span>
+    <span><span class="swatch" style="background:#f87171"></span>nontrivial zeros of ζ (Re = 1/2)</span>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Threshold (drag line)</div><div class="value" id="tstat">0.875000</div></div>
+    <div class="stat"><div class="label">Alternate proof</div><div class="value">11/12 ≈ 0.916667</div></div>
+    <div class="stat"><div class="label">Zeros in shaded region</div><div class="value">0 (by theorem)</div></div>
+    <div class="stat"><div class="label">Critical line</div><div class="value">Re s = 1/2</div></div>
+  </div>
+  <canvas id="c" width="900" height="460"></canvas>
+</div>
+<script>
+const zeros = [14.1347,21.0220,25.0109,30.4249,32.9351,37.5862,40.9187,43.3271,48.0052,49.7738,52.9703,56.4462,59.3470,60.8318,65.1125,67.0798,69.5464,72.0672,75.7047,77.1448,79.3374,82.9104,84.7355,87.4253,88.8091,92.4919,94.6513,95.8706,98.8312,101.3179,103.7255,105.4466,107.1686,111.0295,111.8747,114.3202,116.2267,118.7908,121.3701,122.9468,124.2568,127.5167,129.5787,131.0877,133.4977,134.7565,138.1160,139.7362,141.1237,143.1118];
+const thrSlider = document.getElementById('thr');
+const thrVal = document.getElementById('thrval');
+const tstat = document.getElementById('tstat');
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+const showAlt = document.getElementById('showalt');
+const showZeros = document.getElementById('showzeros');
+
+const xmin=-0.15, xmax=1.2, ymin=-52, ymax=52;
+let threshold = 0.875;
+let dragging = false;
+
+function resizeCanvas(){ canvas.width = Math.max(300, canvas.clientWidth); canvas.height = 460; }
+window.addEventListener('resize', function(){ resizeCanvas(); draw(); });
+resizeCanvas();
+
+function X(re){ const W=canvas.width, padL=60, padR=20, plotW=W-padL-padR; return padL + plotW*(re-xmin)/(xmax-xmin); }
+function Y(im){ const H=canvas.height, padT=20, padB=36, plotH=H-padT-padB; return padT + plotH*(1 - (im-ymin)/(ymax-ymin)); }
+
+function draw(){
+  const W=canvas.width, H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const padL=60, padR=20, padT=20, padB=36;
+  const plotW=W-padL-padR, plotH=H-padT-padB;
+  // critical strip
+  ctx.fillStyle='rgba(94,234,212,0.10)';
+  ctx.fillRect(X(0), padT, X(1)-X(0), plotH);
+  // zero-free region
+  const xT = X(threshold);
+  ctx.fillStyle='rgba(34,197,94,0.22)';
+  ctx.fillRect(xT, padT, W-padR-xT, plotH);
+  // alternate line marker
+  if (showAlt.checked){
+    const xa = X(11/12);
+    ctx.fillStyle='rgba(251,191,36,0.10)';
+    ctx.fillRect(xa, padT, W-padR-xa, plotH);
+  }
+  // grid
+  ctx.strokeStyle='rgba(159,176,204,0.12)'; ctx.lineWidth=1;
+  for(let re=0; re<=1; re+=0.25){
+    const x=X(re); ctx.beginPath(); ctx.moveTo(x,padT); ctx.lineTo(x,H-padB); ctx.stroke();
+  }
+  for(let im=-50; im<=50; im+=10){
+    const y=Y(im); ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(W-padR,y); ctx.stroke();
+  }
+  // axes
+  ctx.strokeStyle='#475569'; ctx.lineWidth=1.5;
+  ctx.beginPath(); ctx.moveTo(padL,H-padB); ctx.lineTo(W-padR,H-padB); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(padL,padT); ctx.lineTo(padL,H-padB); ctx.stroke();
+  ctx.fillStyle='#9fb0cc'; ctx.font='12px system-ui';
+  ctx.fillText('Re s', W/2-18, H-8);
+  ctx.save(); ctx.translate(16,H/2+24); ctx.rotate(-Math.PI/2); ctx.fillText('Im s',0,0); ctx.restore();
+  // tick labels
+  ctx.font='11px system-ui';
+  for(let re=0; re<=1; re+=0.5){
+    ctx.fillText(re.toFixed(1), X(re)-8, H-padB+16);
+  }
+  for(let im=-40; im<=40; im+=20){
+    ctx.fillText(im, padL-28, Y(im)+4);
+  }
+  // critical line
+  ctx.strokeStyle='rgba(94,234,212,0.9)'; ctx.setLineDash([6,6]); ctx.lineWidth=2;
+  ctx.beginPath(); ctx.moveTo(X(0.5),padT); ctx.lineTo(X(0.5),H-padB); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle='#5eead4'; ctx.font='11px system-ui';
+  ctx.fillText('Re=1/2', X(0.5)+4, padT+12);
+  // alternate threshold line
+  if (showAlt.checked){
+    ctx.strokeStyle='rgba(251,191,36,0.9)'; ctx.setLineDash([4,4]); ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.moveTo(X(11/12),padT); ctx.lineTo(X(11/12),H-padB); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle='#fbbf24'; ctx.fillText('11/12', X(11/12)+4, padT+26);
+  }
+  // threshold line (draggable)
+  ctx.strokeStyle='#22c55e'; ctx.lineWidth=2.5;
+  ctx.beginPath(); ctx.moveTo(xT,padT); ctx.lineTo(xT,H-padB); ctx.stroke();
+  // handle
+  ctx.fillStyle='#22c55e';
+  ctx.beginPath(); ctx.arc(xT, padT+10, 6, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle='#0b1220'; ctx.font='10px system-ui'; ctx.fillText('▼', xT-4, padT+13);
+  ctx.fillStyle='#22c55e'; ctx.font='11px system-ui';
+  ctx.fillText('threshold', xT+8, padT+12);
+  // zeros
+  if (showZeros.checked){
+    ctx.fillStyle='#f87171';
+    zeros.forEach(im=>{
+      if (Math.abs(im) > 52) return;
+      ctx.beginPath(); ctx.arc(X(0.5), Y(im), 3, 0, Math.PI*2); ctx.fill();
+      ctx.beginPath(); ctx.arc(X(0.5), Y(-im), 3, 0, Math.PI*2); ctx.fill();
+    });
+  }
+}
+
+function setThreshold(v){
+  threshold = Math.max(0.5, Math.min(1.0, v));
+  thrSlider.value = threshold.toFixed(3);
+  thrVal.textContent = threshold.toFixed(3);
+  tstat.textContent = threshold.toFixed(6);
+  draw();
+}
+
+thrSlider.addEventListener('input', function(){ setThreshold(+this.value); });
+document.getElementById('p78').addEventListener('click', ()=>setThreshold(7/8));
+document.getElementById('p1112').addEventListener('click', ()=>setThreshold(11/12));
+showAlt.addEventListener('change', draw);
+showZeros.addEventListener('change', draw);
+
+// dragging
+function reFromX(px){
+  const rect=canvas.getBoundingClientRect();
+  const mx=px-rect.left;
+  const W=canvas.width, padL=60, padR=20, plotW=W-padL-padR;
+  const re = xmin + (mx-padL)/plotW*(xmax-xmin);
+  return re;
+}
+canvas.addEventListener('mousedown', function(e){
+  const rect=canvas.getBoundingClientRect();
+  const mx=e.clientX-rect.left;
+  const xT=X(threshold);
+  if (Math.abs(mx-xT) <= 10){ dragging=true; }
+  else { setThreshold(reFromX(e.clientX)); dragging=true; }
+});
+window.addEventListener('mousemove', function(e){
+  if (!dragging) return;
+  setThreshold(reFromX(e.clientX));
+});
+window.addEventListener('mouseup', function(){ dragging=false; });
+
+setThreshold(7/8);
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

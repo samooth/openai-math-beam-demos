@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Modularity over imaginary quadratic fields — interactive demo (result 030)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range]{flex:1 1 220px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:360px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+select{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text)}
+table{width:100%;border-collapse:collapse;font-size:.82rem}
+th,td{padding:.3rem .4rem;border-bottom:1px solid var(--border);text-align:left}
+th{color:var(--muted);font-weight:600}
+td.num{font-family:ui-monospace,monospace}
+.badge{display:inline-block;padding:.15rem .5rem;border-radius:6px;font-size:.75rem;font-weight:700}
+.split{color:var(--good)} .inert{color:var(--warn)} .ram{color:var(--bad)}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Modularity over imaginary quadratic fields (result 030)</h1>
+  <p>Elliptic curve (E: y^2 = x^3 + a x + b) over an imaginary quadratic field (K=\mathbb Q(\sqrt D)). The demo computes local Hecke parameters (a_{\mathfrak p}=q+1-#E(\mathbb F_q)) for unramified primes; modularity says these are the eigenvalues of a Bianchi modular form.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Proves the modularity conjecture for elliptic curves over imaginary quadratic fields: every elliptic curve over every imaginary quadratic field is modular, with matching local parameters at every place.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Equates (L(E/K,s)) with the L-function of an automorphic representation of (\mathrm{GL}_2(\mathbb A_K)); local factors, including bad and archimedean places, agree. This links arithmetic of elliptic curves over imaginary quadratic fields to Bianchi modular forms and the Langlands program.</p>
+  </section>
+  <div class="controls">
+    <label for="field">Field (K)</label>
+    <select id="field">
+      <option value="-3">Q(sqrt-3)  D=-3</option>
+      <option value="-4" selected>Q(sqrt-1)  D=-4</option>
+      <option value="-7">Q(sqrt-7)  D=-7</option>
+      <option value="-8">Q(sqrt-2)  D=-8</option>
+      <option value="-11">Q(sqrt-11) D=-11</option>
+      <option value="-19">Q(sqrt-19) D=-19</option>
+      <option value="-43">Q(sqrt-43) D=-43</option>
+      <option value="-67">Q(sqrt-67) D=-67</option>
+      <option value="-163">Q(sqrt-163) D=-163</option>
+    </select>
+    <label for="a">a</label>
+    <input id="a" type="range" min="-6" max="6" value="-1" step="1">
+    <span class="val" id="aval">-1</span>
+    <label for="b">b</label>
+    <input id="b" type="range" min="-6" max="6" value="0" step="1">
+    <span class="val" id="bval">0</span>
+    <label for="P">primes up to</label>
+    <input id="P" type="range" min="11" max="97" value="61" step="6">
+    <span class="val" id="Pval">61</span>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Field discriminant D</div><div class="value" id="Dstat">—</div></div>
+    <div class="stat"><div class="label">Curve discriminant</div><div class="value" id="disc">—</div></div>
+    <div class="stat"><div class="label">Good split primes</div><div class="value" id="nsplit">—</div></div>
+    <div class="stat"><div class="label">Good inert primes</div><div class="value" id="ninert">—</div></div>
+    <div class="stat"><div class="label">Ramified/bad skipped</div><div class="value" id="nskip">—</div></div>
+    <div class="stat"><div class="label">Max |a_q|/(2√q)</div><div class="value" id="maxnorm">—</div></div>
+  </div>
+  <div class="legend">
+    <span><span class="swatch" style="background:#22c55e"></span>split (q=p)</span>
+    <span><span class="swatch" style="background:#f59e0b"></span>inert (q=p²)</span>
+    <span><span class="swatch" style="background:#ef4444"></span>ramified/bad (skipped)</span>
+  </div>
+  <canvas id="c" width="900" height="360"></canvas>
+  <section class="box">
+    <h3>Local parameters (unramified primes)</h3>
+    <div id="tablewrap" style="overflow:auto;max-height:360px"></div>
+  </section>
+</div>
+<script>
+const fieldSel=document.getElementById('field');
+const aSlider=document.getElementById('a');
+const bSlider=document.getElementById('b');
+const PSlider=document.getElementById('P');
+const aval=document.getElementById('aval');
+const bval=document.getElementById('bval');
+const Pval=document.getElementById('Pval');
+const Dstat=document.getElementById('Dstat');
+const discEl=document.getElementById('disc');
+const nsplitEl=document.getElementById('nsplit');
+const ninertEl=document.getElementById('ninert');
+const nskipEl=document.getElementById('nskip');
+const maxnormEl=document.getElementById('maxnorm');
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+const tablewrap=document.getElementById('tablewrap');
+
+function resizeCanvas(){ canvas.width=Math.max(300,canvas.clientWidth); canvas.height=360; }
+window.addEventListener('resize',function(){ resizeCanvas(); update(); });
+resizeCanvas();
+
+function sievePrimes(n){
+  const isComp=new Uint8Array(n+1);
+  const primes=[];
+  for(let i=2;i<=n;i++){
+    if(!isComp[i]){ primes.push(i); for(let j=i*i;j<=n;j+=i) isComp[j]=1; }
+  }
+  return primes;
+}
+
+function legendre(x,p){
+  x=((x%p)+p)%p;
+  if(x===0) return 0;
+  let r=1, base=x, exp=(p-1)/2;
+  while(exp>0){ if(exp&1) r=r*base%p; base=base*base%p; exp>>=1; }
+  if(r===p-1) return -1;
+  return 1;
+}
+
+// splitting type using discriminant D (negative)
+function splitType(D,p){
+  if(D % p === 0) return 'ramified';
+  if(p===2){
+    // Kronecker (D/2) for odd D; if D even, 2 ramified
+    if(D % 2 === 0) return 'ramified';
+    const r = ((D%8)+8)%8;
+    if(r===1 || r===7) return 'split';
+    return 'inert';
+  }
+  const leg = legendre(D % p, p);
+  if(leg===1) return 'split';
+  if(leg===-1) return 'inert';
+  return 'ramified';
+}
+
+function modp(x,p){ return ((x%p)+p)%p; }
+
+function apSplit(a,b,p){
+  let s=0;
+  for(let x=0;x<p;x++){
+    const fx=modp(x*x*x + a*x + b, p);
+    s += legendre(fx,p);
+  }
+  return -s; // a_p
+}
+
+function findNonsquare(p){
+  for(let d=2; d<p; d++){
+    if(legendre(d,p)===-1) return d;
+  }
+  return -1;
+}
+
+// field F_p^2 element as [u,v] with s^2 = delta (nonsquare)
+function fmul(x,y,delta,p){
+  return [(x[0]*y[0] + x[1]*y[1]*delta)%p,
+          (x[0]*y[1] + x[1]*y[0])%p];
+}
+function fadd(x,y,p){
+  return [(x[0]+y[0])%p, (x[1]+y[1])%p];
+}
+function fscalarMul(k,x,p){
+  return [modp(k*x[0],p), modp(k*x[1],p)];
+}
+function fpow(el, exp, delta, p){
+  let res=[1,0], base=[el[0],el[1]];
+  while(exp>0){
+    if(exp&1) res=fmul(res,base,delta,p);
+    base=fmul(base,base,delta,p);
+    exp>>=1;
+  }
+  return res;
+}
+function feqOne(el){ return el[0]===1 && el[1]===0; }
+function feqZero(el){ return el[0]===0 && el[1]===0; }
+
+function apInert(a,b,p){
+  const delta=findNonsquare(p);
+  if(delta<0) return 0;
+  const q=p*p;
+  let N=0;
+  for(let u=0;u<p;u++){
+    for(let v=0;v<p;v++){
+      const x=[u,v];
+      // x^3
+      const x2=fmul(x,x,delta,p);
+      const x3=fmul(x2,x,delta,p);
+      const ax=fscalarMul(a,x,p);
+      const fx=fadd(fadd(x3,ax,p), [modp(b,p),0], p);
+      if(feqZero(fx)){
+        N += 1;
+      } else {
+        const pe=fpow(fx, (q-1)/2, delta, p);
+        if(feqOne(pe)) N += 2;
+      }
+    }
+  }
+  N += 1; // point at infinity
+  return q + 1 - N;
+}
+
+function discCurve(a,b){
+  return -16*(4*a*a*a + 27*b*b);
+}
+
+let rows=[];
+
+function update(){
+  const D=+fieldSel.value;
+  const a=+aSlider.value;
+  const b=+bSlider.value;
+  const P=+PSlider.value;
+  aval.textContent=a;
+  bval.textContent=b;
+  Pval.textContent=P;
+  Dstat.textContent=D;
+  const dc=discCurve(a,b);
+  discEl.textContent=dc;
+
+  const primes=sievePrimes(P);
+  rows=[];
+  let nsplit=0, ninert=0, nskip=0;
+  let maxNorm=0;
+  for(const p of primes){
+    if(p<5) { nskip++; continue; }
+    const st=splitType(D,p);
+    if(dc % p === 0){ nskip++; rows.push({p,type:'bad',q:null,aq:null,reason:'bad reduction'}); continue; }
+    if(st==='ramified'){ nskip++; rows.push({p,type:'ramified',q:null,aq:null,reason:'ramified'}); continue; }
+    if(st==='split'){
+      const aq=apSplit(a,b,p);
+      const q=p;
+      const norm=Math.abs(aq)/(2*Math.sqrt(q));
+      if(norm>maxNorm) maxNorm=norm;
+      nsplit++;
+      rows.push({p,type:'split',q,aq,norm});
+    } else {
+      const aq=apInert(a,b,p);
+      const q=p*p;
+      const norm=Math.abs(aq)/(2*Math.sqrt(q));
+      if(norm>maxNorm) maxNorm=norm;
+      ninert++;
+      rows.push({p,type:'inert',q,aq,norm});
+    }
+  }
+  nsplitEl.textContent=nsplit;
+  ninertEl.textContent=ninert;
+  nskipEl.textContent=nskip;
+  maxnormEl.textContent=maxNorm.toFixed(3);
+
+  // table
+  let html='<table><thead><tr><th>p</th><th>type</th><th>q</th><th>a_q</th><th>|a_q|/(2√q)</th></tr></thead><tbody>';
+  for(const r of rows){
+    if(r.type==='split' || r.type==='inert'){
+      const cls = r.type==='split'?'split':'inert';
+      html += '<tr><td class="num">'+r.p+'</td><td class="'+cls+'">'+r.type+'</td><td class="num">'+r.q+'</td><td class="num">'+r.aq+'</td><td class="num">'+r.norm.toFixed(3)+'</td></tr>';
+    } else {
+      html += '<tr><td class="num">'+r.p+'</td><td class="ram">'+r.type+'</td><td>—</td><td>—</td><td>—</td></tr>';
+    }
+  }
+  html+='</tbody></table>';
+  tablewrap.innerHTML=html;
+
+  draw(D,rows);
+}
+
+function draw(D,rows){
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const padL=50,padR=20,padT=24,padB=44;
+  const plotW=W-padL-padR, plotH=H-padT-padB;
+  // axes
+  ctx.strokeStyle='rgba(159,176,204,0.35)';
+  ctx.lineWidth=1;
+  ctx.beginPath();
+  ctx.moveTo(padL,padT); ctx.lineTo(padL,padT+plotH); ctx.lineTo(padL+plotW,padT+plotH); ctx.stroke();
+  // zero line
+  const zeroY=padT+plotH/2;
+  ctx.strokeStyle='rgba(159,176,204,0.25)';
+  ctx.setLineDash([4,4]);
+  ctx.beginPath(); ctx.moveTo(padL,zeroY); ctx.lineTo(padL+plotW,zeroY); ctx.stroke();
+  ctx.setLineDash([]);
+  // bounds
+  ctx.fillStyle='#9fb0cc'; ctx.font='10px system-ui'; ctx.textAlign='right';
+  ctx.fillText('+1', padL-6, padT+6);
+  ctx.fillText('0', padL-6, zeroY+4);
+  ctx.fillText('-1', padL-6, padT+plotH);
+  ctx.textAlign='center';
+  ctx.fillText('prime p', padL+plotW/2, H-10);
+
+  const good=rows.filter(r=>r.type==='split'||r.type==='inert');
+  if(good.length===0) return;
+  const minP=good[0].p, maxP=good[good.length-1].p;
+  const span=Math.max(1,maxP-minP);
+  for(const r of good){
+    const signed = r.aq/(2*Math.sqrt(r.q));
+    const x=padL + ((r.p-minP)/span)*plotW;
+    const y=zeroY - signed*(plotH/2);
+    ctx.fillStyle = r.type==='split' ? '#22c55e' : '#f59e0b';
+    ctx.beginPath(); ctx.arc(x,y,5,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#9fb0cc'; ctx.font='9px system-ui'; ctx.textAlign='center';
+    ctx.fillText(String(r.p), x, padT+plotH+14);
+  }
+  // title
+  ctx.fillStyle='#9fb0cc'; ctx.font='11px system-ui'; ctx.textAlign='left';
+  ctx.fillText('Normalized Hecke eigenvalues a_q/(2√q) for D='+D, padL, padT-6);
+}
+
+fieldSel.addEventListener('change',update);
+aSlider.addEventListener('input',update);
+bSlider.addEventListener('input',update);
+PSlider.addEventListener('input',update);
+update();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Euclidean Steinitz–Bergström bound (conceptual, result 097)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range],select,input[type=number]{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+input[type=range]{flex:1 1 180px}
+input[type=number]{width:6rem}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:420px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+.toggle{display:inline-flex;align-items:center;gap:.4rem}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>The Euclidean Steinitz–Bergström bound (conceptual, result 097)</h1>
+  <p>Any finite sequence in the Euclidean unit ball of (\mathbb R^d) admits signs keeping every partial sum within (C\sqrt d), independently of length. Zero-sum families can be reordered with the same bound on unsigned partial sums; the optimal order is (S_2(d)=\Theta(\sqrt d)).</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Proves that any finite sequence in the Euclidean unit ball of (\mathbb R^d) admits signs keeping every partial sum within (C\sqrt d), independently of length. Consequently every zero-sum family can be reordered with the same bound on unsigned partial sums. A matching lower bound gives the optimal order (S_2(d)=\Theta(\sqrt d)). The formalized result is existential and does not supply an online algorithm.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">The bound is dimension-optimal for Euclidean partial sums, improving the classical Steinitz bound of order (O(d)). It underlies vector balancing, discrepancy theory, and combinatorial optimization, and motivates algorithmic and high-dimensional variants where constructive bounds remain open.</p>
+  </section>
+  <div class="controls">
+    <label for="mode">Mode</label>
+    <select id="mode">
+      <option value="signed">Signed sums</option>
+      <option value="reorder">Zero-sum reorder</option>
+    </select>
+    <label for="method">Method</label>
+    <select id="method"></select>
+    <label for="d">Dimension d</label>
+    <input id="d" type="range" min="2" max="20" value="8" step="1">
+    <span class="val" id="dval">8</span>
+    <label for="n">Vectors n</label>
+    <input id="n" type="range" min="20" max="200" value="80" step="10">
+    <span class="val" id="nval">80</span>
+    <label for="C">Constant C</label>
+    <input id="C" type="range" min="10" max="50" value="20" step="1">
+    <span class="val" id="Cval">2.0</span>
+    <label for="seed">Seed</label>
+    <input id="seed" type="number" value="1" min="1" step="1">
+    <button id="regen">Regenerate</button>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Dimension d</div><div class="value" id="st_d">—</div></div>
+    <div class="stat"><div class="label">Vectors n</div><div class="value" id="st_n">—</div></div>
+    <div class="stat"><div class="label">Bound C√d</div><div class="value" id="st_bound">—</div></div>
+    <div class="stat"><div class="label">Max prefix norm</div><div class="value" id="st_max">—</div></div>
+    <div class="stat"><div class="label">Ratio max/bound</div><div class="value" id="st_ratio">—</div></div>
+    <div class="stat"><div class="label">Prefixes within bound</div><div class="value" id="st_within">—</div></div>
+    <div class="stat"><div class="label">Final sum norm</div><div class="value" id="st_final">—</div></div>
+    <div class="stat"><div class="label">Vector norm max</div><div class="value" id="st_vnorm">—</div></div>
+  </div>
+  <canvas id="c" width="900" height="420"></canvas>
+  <p style="font-size:.85rem;color:var(--muted);margin-top:.5rem">Prefix norms (|P_k|) are plotted against step (k); the horizontal line is (C\sqrt d). Signed mode assigns (\pm 1); reorder mode permutes a zero-sum family.</p>
+</div>
+<script>
+const modeSel=document.getElementById('mode');
+const methodSel=document.getElementById('method');
+const dSlider=document.getElementById('d');
+const nSlider=document.getElementById('n');
+const CSlider=document.getElementById('C');
+const seedInput=document.getElementById('seed');
+const regenBtn=document.getElementById('regen');
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+
+const dval=document.getElementById('dval');
+const nval=document.getElementById('nval');
+const Cval=document.getElementById('Cval');
+
+const st_d=document.getElementById('st_d');
+const st_n=document.getElementById('st_n');
+const st_bound=document.getElementById('st_bound');
+const st_max=document.getElementById('st_max');
+const st_ratio=document.getElementById('st_ratio');
+const st_within=document.getElementById('st_within');
+const st_final=document.getElementById('st_final');
+const st_vnorm=document.getElementById('st_vnorm');
+
+let vectors=[];
+let prefix=[];
+
+function mulberry32(a){ a|=0; return function(){ a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; };
+function randn(rng){
+  let u=0,v=0;
+  while(u===0) u=rng();
+  while(v===0) v=rng();
+  return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);
+}
+function randVec(d,rng){
+  const v=new Array(d);
+  let norm=0;
+  for(let i=0;i<d;i++){ v[i]=randn(rng); norm+=v[i]*v[i]; }
+  norm=Math.sqrt(norm);
+  const u=Math.pow(rng(),1/d);
+  for(let i=0;i<d;i++) v[i]=v[i]/norm*u;
+  return v;
+}
+function neg(v){ return v.map(x=>-x); }
+function zeros(d){ return new Array(d).fill(0); }
+function add(a,b){ const r=new Array(a.length); for(let i=0;i<a.length;i++) r[i]=a[i]+b[i]; return r; }
+function norm(v){ let s=0; for(let i=0;i<v.length;i++) s+=v[i]*v[i]; return Math.sqrt(s); }
+function shuffle(arr,rng){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(rng()*(i+1)); const t=arr[i]; arr[i]=arr[j]; arr[j]=t; } return arr; }
+
+function updateMethods(){
+  const mode=modeSel.value;
+  methodSel.innerHTML='';
+  const opts = mode==='signed'
+    ? [['random','Random signs'],['greedy','Greedy signs']]
+    : [['random','Random order'],['greedy','Greedy reorder']];
+  for(const [val,label] of opts){
+    const o=document.createElement('option'); o.value=val; o.textContent=label; methodSel.appendChild(o);
+  }
+  methodSel.value=opts[0][0];
+}
+
+function generate(){
+  const d=+dSlider.value;
+  const n=+nSlider.value;
+  const seed=+seedInput.value||1;
+  const rng=mulberry32(seed);
+  vectors=[];
+  if(modeSel.value==='signed'){
+    for(let i=0;i<n;i++) vectors.push(randVec(d,rng));
+  } else {
+    const m=Math.floor(n/2);
+    for(let i=0;i<m;i++){
+      const v=randVec(d,rng);
+      vectors.push(v);
+      vectors.push(neg(v));
+    }
+    if(vectors.length<n) vectors.push(zeros(d));
+  }
+  compute(rng);
+}
+
+function compute(rng){
+  if(!rng) rng=mulberry32(+seedInput.value||1);
+  const d=+dSlider.value;
+  const n=vectors.length;
+  const mode=modeSel.value;
+  const method=methodSel.value;
+  const C=+CSlider.value/10;
+  const bound=C*Math.sqrt(d);
+  let order=Array.from({length:n},(_,i)=>i);
+  let signs=null;
+
+  if(mode==='signed'){
+    if(method==='random'){
+      signs=order.map(()=> (rng()<0.5?-1:1));
+    } else {
+      signs=[];
+      let cur=zeros(d);
+      for(let i=0;i<n;i++){
+        const v=vectors[i];
+        const plus=norm(add(cur,v));
+        const minus=norm(add(cur,v.map(x=>-x)));
+        if(plus<=minus){ signs.push(1); cur=add(cur,v); }
+        else { signs.push(-1); cur=add(cur,v.map(x=>-x)); }
+      }
+    }
+  } else {
+    if(method==='random'){
+      shuffle(order,rng);
+    } else {
+      const remaining=order.slice();
+      const chosen=[];
+      let cur=zeros(d);
+      while(remaining.length){
+        let bestIdx=0, bestNorm=Infinity;
+        for(let i=0;i<remaining.length;i++){
+          const cand=norm(add(cur,vectors[remaining[i]]));
+          if(cand<bestNorm){ bestNorm=cand; bestIdx=i; }
+        }
+        const idx=remaining.splice(bestIdx,1)[0];
+        chosen.push(idx);
+        cur=add(cur,vectors[idx]);
+      }
+      order=chosen;
+    }
+  }
+
+  prefix=[0];
+  let cur=zeros(d);
+  let maxVnorm=0;
+  for(const v of vectors) maxVnorm=Math.max(maxVnorm,norm(v));
+  if(mode==='signed'){
+    for(let i=0;i<n;i++){
+      const s=signs[i];
+      cur=add(cur, vectors[i].map(x=>x*s));
+      prefix.push(norm(cur));
+    }
+  } else {
+    for(let i=0;i<n;i++){
+      cur=add(cur, vectors[order[i]]);
+      prefix.push(norm(cur));
+    }
+  }
+  const finalNorm=norm(cur);
+  const maxPrefix=Math.max(...prefix);
+  const within=prefix.filter(x=>x<=bound+1e-9).length;
+
+  dval.textContent=d;
+  nval.textContent=n;
+  Cval.textContent=C.toFixed(1);
+  st_d.textContent=d;
+  st_n.textContent=n;
+  st_bound.textContent=bound.toFixed(3);
+  st_max.textContent=maxPrefix.toFixed(3);
+  st_ratio.textContent=(maxPrefix/bound).toFixed(3);
+  st_within.textContent=within+'/'+prefix.length;
+  st_final.textContent=finalNorm.toFixed(3);
+  st_vnorm.textContent=maxVnorm.toFixed(3);
+
+  draw(bound);
+}
+
+function draw(bound){
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const padL=44,padR=16,padT=16,padB=34;
+  const pw=W-padL-padR, ph=H-padT-padB;
+  const n=prefix.length-1;
+  const ymax=Math.max(bound, Math.max(...prefix))*1.12 + 1e-6;
+  const ymin=0;
+
+  ctx.strokeStyle='rgba(159,176,204,0.35)';
+  ctx.lineWidth=1;
+  for(let i=0;i<=5;i++){
+    const y=padT+ph*(1-i/5);
+    ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(W-padR,y); ctx.stroke();
+    const val=ymin+(ymax-ymin)*i/5;
+    ctx.fillStyle='#9fb0cc'; ctx.font='11px ui-monospace,monospace';
+    ctx.textAlign='right'; ctx.fillText(val.toFixed(2),padL-6,y+4);
+  }
+  ctx.textAlign='center';
+  for(let i=0;i<=5;i++){
+    const x=padL+pw*i/5;
+    const idx=Math.round(n*i/5);
+    ctx.fillStyle='#9fb0cc'; ctx.font='11px ui-monospace,monospace';
+    ctx.fillText(idx, x, H-padB+16);
+  }
+
+  const by=padT+ph*(1-bound/ymax);
+  ctx.strokeStyle='#f59e0b'; ctx.lineWidth=2;
+  ctx.setLineDash([6,4]);
+  ctx.beginPath(); ctx.moveTo(padL,by); ctx.lineTo(W-padR,by); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle='#f59e0b'; ctx.font='12px system-ui,sans-serif'; ctx.textAlign='left';
+  ctx.fillText('C√d', padL+4, by-6);
+
+  ctx.strokeStyle='#5eead4'; ctx.lineWidth=2;
+  ctx.beginPath();
+  for(let i=0;i<prefix.length;i++){
+    const x=padL+pw*(i/n);
+    const y=padT+ph*(1-prefix[i]/ymax);
+    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  }
+  ctx.stroke();
+
+  ctx.fillStyle='#5eead4';
+  for(let i=0;i<prefix.length;i+=Math.max(1,Math.floor(prefix.length/60))){
+    const x=padL+pw*(i/n);
+    const y=padT+ph*(1-prefix[i]/ymax);
+    ctx.beginPath(); ctx.arc(x,y,2.5,0,Math.PI*2); ctx.fill();
+  }
+}
+
+function resizeCanvas(){ canvas.width=Math.max(300,canvas.clientWidth); }
+window.addEventListener('resize',function(){ resizeCanvas(); if(prefix.length) compute(mulberry32(+seedInput.value||1)); });
+resizeCanvas();
+
+modeSel.addEventListener('change',function(){ updateMethods(); generate(); });
+methodSel.addEventListener('change',generate);
+dSlider.addEventListener('input',function(){ dval.textContent=dSlider.value; generate(); });
+nSlider.addEventListener('input',function(){ nval.textContent=nSlider.value; generate(); });
+CSlider.addEventListener('input',function(){ Cval.textContent=(+CSlider.value/10).toFixed(1); if(prefix.length) compute(mulberry32(+seedInput.value||1)); });
+seedInput.addEventListener('change',generate);
+regenBtn.addEventListener('click',generate);
+
+updateMethods();
+generate();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

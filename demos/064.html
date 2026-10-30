@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The $\mu$-constant problem for surface singularities (conceptual, result 064)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range]{flex:1 1 220px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:440px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+select{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text)}
+.toggle{display:inline-flex;align-items:center;gap:.4rem}
+.ok{color:var(--good)} .bad{color:var(--bad)} .warn{color:var(--warn)}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>The $\mu$-constant problem for surface singularities (conceptual, result 064)</h1>
+  <p>A holomorphic one-parameter family of isolated hypersurface singularities in $\mathbb C^3$ with constant Milnor number $\mu$ is topologically right-trivial: after shrinking, ambient homeomorphisms varying continuously in $t$ fix the origin section and preserve the defining functions. Vary the family, the parameter, and the Milnor radius to see when the $\mu$-constant hypothesis forces a trivialization.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Proves topological right-triviality for every holomorphic one-parameter family of isolated hypersurface singularities in $\mathbb C^3$ with constant Milnor number, resolving the surface case of the $\mu$-constant problem. After shrinking the parameter disk and representatives, ambient homeomorphisms vary jointly continuously, fix the origin section, and preserve the defining functions. The proof compares Milnor fibers, uses resolution and Wahl's logarithmic invariant, and handles the log-canonical and double-point cases separately.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Closes the one dimension where the classical Lê--Ramanujam cobordism argument fails to give a product structure, so constancy of the Milnor number alone suffices for topological triviality of surface singularities. It separates topological triviality from Whitney regularity, distinguishes the $\mu$-constant hypothesis from full Teissier sequences, and feeds into equisingularity, deformation theory, and classification of normal Gorenstein surface singularities.</p>
+  </section>
+  <div class="controls">
+    <label for="family">Singularity family</label>
+    <select id="family">
+      <option value="A" selected>A_n: $x^2+y^{n+1}+z^2$</option>
+      <option value="D">D_n: $x^2y+y^{n-1}+z^2$</option>
+      <option value="E6">E_6</option>
+      <option value="E7">E_7</option>
+      <option value="E8">E_8</option>
+      <option value="BS">Briançon--Speder ($\mu$ constant, non-Whitney)</option>
+    </select>
+    <label for="n">Index $n$</label>
+    <input id="n" type="range" min="1" max="12" value="4" step="1">
+    <span class="val" id="nval">4</span>
+    <label for="t">Parameter $t$</label>
+    <input id="t" type="range" min="0" max="100" value="35" step="1">
+    <span class="val" id="tval">0.35</span>
+    <label for="eps">Milnor radius $\varepsilon$</label>
+    <input id="eps" type="range" min="10" max="140" value="60" step="1">
+    <span class="val" id="epsval">60</span>
+    <label for="constmu">Constant $\mu$?</label>
+    <select id="constmu">
+      <option value="yes" selected>Yes</option>
+      <option value="no">No (drift)</option>
+    </select>
+    <label for="view">View</label>
+    <select id="view">
+      <option value="cross" selected>Cross-section</option>
+      <option value="fiber">Milnor fiber</option>
+      <option value="topo">Topology</option>
+      <option value="inv">Invariants</option>
+    </select>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">$\mu(0)$</div><div class="value" id="mu0">—</div></div>
+    <div class="stat"><div class="label">$\mu(t)$</div><div class="value" id="mut">—</div></div>
+    <div class="stat"><div class="label">Constant $\mu$?</div><div class="value" id="conststat">—</div></div>
+    <div class="stat"><div class="label">Theorem applies?</div><div class="value" id="thmstat">—</div></div>
+    <div class="stat"><div class="label">Trivialization?</div><div class="value" id="trivstat">—</div></div>
+    <div class="stat"><div class="label">Vanishing spheres</div><div class="value" id="vanishstat">—</div></div>
+    <div class="stat"><div class="label">Whitney regular?</div><div class="value" id="whitneystat">—</div></div>
+    <div class="stat"><div class="label">Complement components</div><div class="value" id="compstat">—</div></div>
+  </div>
+  <canvas id="c" width="900" height="440"></canvas>
+</div>
+<script>
+const familySel=document.getElementById('family');
+const nSlider=document.getElementById('n');
+const tSlider=document.getElementById('t');
+const epsSlider=document.getElementById('eps');
+const constSel=document.getElementById('constmu');
+const viewSel=document.getElementById('view');
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+
+const nval=document.getElementById('nval');
+const tval=document.getElementById('tval');
+const epsval=document.getElementById('epsval');
+const mu0El=document.getElementById('mu0');
+const mutEl=document.getElementById('mut');
+const conststat=document.getElementById('conststat');
+const thmstat=document.getElementById('thmstat');
+const trivstat=document.getElementById('trivstat');
+const vanishstat=document.getElementById('vanishstat');
+const whitneystat=document.getElementById('whitneystat');
+const compstat=document.getElementById('compstat');
+
+function resizeCanvas(){ canvas.width=Math.max(300,canvas.clientWidth); canvas.height=440; }
+window.addEventListener('resize',function(){ resizeCanvas(); update(); });
+resizeCanvas();
+
+function baseMu(fam,n){
+  if(fam==='A') return Math.max(1,n);
+  if(fam==='D') return Math.max(3,n);
+  if(fam==='E6') return 6;
+  if(fam==='E7') return 7;
+  if(fam==='E8') return 8;
+  if(fam==='BS') return 12;
+  return 10;
+}
+
+function update(){
+  const fam=familySel.value;
+  const n=+nSlider.value;
+  const t=+tSlider.value/100;
+  const eps=+epsSlider.value;
+  const constant = constSel.value==='yes';
+  const mu0=baseMu(fam,n);
+  let mut=mu0;
+  if(!constant){
+    mut=Math.max(1, mu0 + Math.round(2*Math.sin(t*Math.PI*2)));
+  }
+  const constMu = (mut===mu0);
+  const thm = constMu;
+  const triv = thm;
+  const whitney = (fam!=='BS') && constMu;
+  const vanish = mut;
+  const components = triv?1:2;
+
+  nval.textContent=n;
+  tval.textContent=t.toFixed(2);
+  epsval.textContent=eps;
+  mu0El.textContent=mu0;
+  mutEl.textContent=mut;
+  conststat.textContent = constMu?'Yes':'No';
+  conststat.className='value '+(constMu?'ok':'bad');
+  thmstat.textContent = thm?'Yes':'No';
+  thmstat.className='value '+(thm?'ok':'bad');
+  trivstat.textContent = triv?'Yes':'No';
+  trivstat.className='value '+(triv?'ok':'bad');
+  vanishstat.textContent = vanish;
+  whitneystat.textContent = whitney?'Yes':'No';
+  whitneystat.className='value '+(whitney?'ok':'warn');
+  compstat.textContent = components;
+  compstat.className='value '+(components===1?'ok':'bad');
+
+  draw(fam,n,t,eps,mu0,mut,constMu,triv,viewSel.value,vanish);
+}
+
+function draw(fam,n,t,eps,mu0,mut,constMu,triv,view,vanish){
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  if(view==='cross'){
+    const cx=W*0.52, cy=H*0.56;
+    ctx.strokeStyle='rgba(159,176,204,0.35)'; ctx.lineWidth=1;
+    ctx.strokeRect(24,24,W-48,H-48);
+    ctx.fillStyle='#9fb0cc'; ctx.font='12px system-ui'; ctx.textAlign='left';
+    ctx.fillText('Slice of X_t near origin (z=0)',32,18);
+
+    // axes
+    ctx.strokeStyle='rgba(159,176,204,0.4)'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(24,cy); ctx.lineTo(W-24,cy); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx,24); ctx.lineTo(cx,H-24); ctx.stroke();
+    ctx.fillStyle='#f59e0b'; ctx.beginPath(); ctx.arc(cx,cy,5,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#f59e0b'; ctx.font='11px system-ui'; ctx.textAlign='left';
+    ctx.fillText('origin', cx+8, cy-8);
+
+    // zero set curve (cusp-like), perturbed by t
+    function curve(sign){
+      ctx.beginPath();
+      for(let i=0;i<=200;i++){
+        const u=-1 + 2*i/200;
+        const x=cx + u*140;
+        // base cusp y^2 = x^{k} ; draw upper/lower
+        const k = (fam==='D')? (n-1) : (n+1);
+        const base = Math.pow(Math.abs(u), k/2)*140*Math.sign? 0 : 0;
+        let yoff = 90*Math.pow(Math.abs(u), Math.max(1.2,k/2)) * (u<0?-1:1);
+        if(fam==='D'){ yoff = 70*Math.sin(u*3+t*2); }
+        if(fam==='E6'||fam==='E7'||fam==='E8'){ yoff = 80*Math.pow(Math.abs(u),1.5)*Math.sin(u*4+t); }
+        if(fam==='BS'){ yoff = 60*Math.sin(u*5+t*3)+20*Math.sin(u*9); }
+        const y = cy + (sign>0? -yoff : yoff) + t*18*Math.sin(u*2);
+        if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+      }
+      ctx.stroke();
+    }
+    ctx.strokeStyle = constMu?'#5eead4':'#ef4444';
+    ctx.lineWidth=2.2;
+    curve(1);
+    ctx.beginPath();
+    for(let i=0;i<=200;i++){
+      const u=-1 + 2*i/200;
+      const x=cx + u*140;
+      const k = (fam==='D')? (n-1) : (n+1);
+      let yoff = 90*Math.pow(Math.abs(u), Math.max(1.2,k/2));
+      if(fam==='D'){ yoff = 70*Math.sin(u*3+t*2); }
+      if(fam==='E6'||fam==='E7'||fam==='E8'){ yoff = 80*Math.pow(Math.abs(u),1.5)*Math.sin(u*4+t); }
+      if(fam==='BS'){ yoff = 60*Math.sin(u*5+t*3)+20*Math.sin(u*9); }
+      const y = cy - ( (u<0? -1:1)*yoff )? 0 : 0;
+      // lower branch
+    }
+    // draw lower branch separately
+    ctx.beginPath();
+    for(let i=0;i<=200;i++){
+      const u=-1 + 2*i/200;
+      const x=cx + u*140;
+      let yoff = 90*Math.pow(Math.abs(u), Math.max(1.2,((fam==='D')? (n-1):(n+1))/2));
+      if(fam==='D'){ yoff = 70*Math.sin(u*3+t*2); }
+      if(fam==='E6'||fam==='E7'||fam==='E8'){ yoff = 80*Math.pow(Math.abs(u),1.5)*Math.sin(u*4+t); }
+      if(fam==='BS'){ yoff = 60*Math.sin(u*5+t*3)+20*Math.sin(u*9); }
+      const y = cy + Math.abs(yoff) + t*18*Math.sin(u*2);
+      if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+
+    // Milnor fiber level as dashed circle
+    ctx.strokeStyle='#f59e0b'; ctx.lineWidth=1.5; ctx.setLineDash([6,4]);
+    ctx.beginPath(); ctx.arc(cx,cy,eps*0.9,0,Math.PI*2); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle='#f59e0b'; ctx.font='11px system-ui'; ctx.textAlign='left';
+    ctx.fillText('Milnor fiber level f_t=ε', cx+eps*0.9+6, cy);
+
+    // vanishing spheres
+    for(let i=0;i<Math.min(vanish,40);i++){
+      const ang=(i+0.37)*2.39996;
+      const rad=eps*0.45 + (i%3)*8;
+      const x=cx+rad*Math.cos(ang);
+      const y=cy+rad*Math.sin(ang);
+      ctx.fillStyle = constMu?'rgba(94,234,212,0.35)':'rgba(239,68,68,0.35)';
+      ctx.beginPath(); ctx.arc(x,y,7,0,Math.PI*2); ctx.fill();
+      ctx.strokeStyle=constMu?'#5eead4':'#ef4444'; ctx.lineWidth=1; ctx.stroke();
+    }
+    ctx.fillStyle='#9fb0cc'; ctx.font='11px system-ui'; ctx.textAlign='right';
+    ctx.fillText('μ(t)='+mut+' vanishing 2-spheres in fiber', W-28, H-16);
+  } else if(view==='fiber'){
+    const cx=W*0.5, cy=H*0.5;
+    ctx.fillStyle='#9fb0cc'; ctx.font='12px system-ui'; ctx.textAlign='left';
+    ctx.fillText('Milnor fiber M_t = B∩{f_t=ε} (homotopy bouquet of μ 2-spheres)', 24, 18);
+    // outer ball
+    ctx.strokeStyle='#9fb0cc'; ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.arc(cx,cy,150,0,Math.PI*2); ctx.stroke();
+    ctx.fillStyle='rgba(94,234,212,0.05)'; ctx.beginPath(); ctx.arc(cx,cy,150,0,Math.PI*2); ctx.fill();
+    // bouquet spheres
+    const m=mut;
+    for(let i=0;i<m;i++){
+      const ang=(i+0.5)*2*Math.PI/m;
+      const r=40 + (i%4)*12;
+      const x=cx + r*Math.cos(ang);
+      const y=cy + r*Math.sin(ang);
+      ctx.strokeStyle=constMu?'#5eead4':'#ef4444'; ctx.lineWidth=1.8;
+      ctx.beginPath(); ctx.arc(x,y,16,0,Math.PI*2); ctx.stroke();
+      ctx.fillStyle=constMu?'rgba(94,234,212,0.18)':'rgba(239,68,68,0.18)';
+      ctx.beginPath(); ctx.arc(x,y,16,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle='#e6edf7'; ctx.font='10px system-ui'; ctx.textAlign='center';
+      ctx.fillText('S'+(i+1), x, y+3);
+    }
+    ctx.fillStyle='#f59e0b'; ctx.beginPath(); ctx.arc(cx,cy,6,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#f59e0b'; ctx.font='11px system-ui'; ctx.textAlign='left';
+    ctx.fillText('basepoint', cx+10, cy-10);
+    ctx.fillStyle='#9fb0cc'; ctx.font='12px system-ui'; ctx.textAlign='center';
+    ctx.fillText('μ(t) = '+mut+' spheres; homotopy type wedge of S^2', cx, H-24);
+  } else if(view==='topo'){
+    const leftX=60, rightX=W-60, midY=H/2;
+    const bw=220, bh=200;
+    // left box X0
+    ctx.strokeStyle='#9fb0cc'; ctx.lineWidth=1.5;
+    ctx.strokeRect(leftX,midY-bh/2,bw,bh);
+    ctx.fillStyle='rgba(94,234,212,0.06)'; ctx.fillRect(leftX,midY-bh/2,bw,bh);
+    ctx.fillStyle='#9fb0cc'; ctx.font='12px system-ui'; ctx.textAlign='center';
+    ctx.fillText('X_0 (central fiber)', leftX+bw/2, midY-bh/2-10);
+    // right box Xt
+    ctx.strokeRect(rightX-bw,midY-bh/2,bw,bh);
+    ctx.fillStyle='rgba(94,234,212,0.06)'; ctx.fillRect(rightX-bw,midY-bh/2,bw,bh);
+    ctx.fillStyle='#9fb0cc'; ctx.font='12px system-ui'; ctx.textAlign='center';
+    ctx.fillText('X_t (nearby fiber)', rightX-bw/2, midY-bh/2-10);
+    // origin dots
+    ctx.fillStyle='#f59e0b'; ctx.beginPath(); ctx.arc(leftX+bw/2,midY,6,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(rightX-bw/2,midY,6,0,Math.PI*2); ctx.fill();
+    // mu labels
+    ctx.fillStyle='#e6edf7'; ctx.font='13px system-ui'; ctx.textAlign='center';
+    ctx.fillText('μ = '+mu0, leftX+bw/2, midY+30);
+    ctx.fillText('μ = '+mut, rightX-bw/2, midY+30);
+    // arrow
+    const ax1=leftX+bw+20, ax2=rightX-bw-20, ay=midY;
+    ctx.strokeStyle = triv?'#5eead4':'#ef4444'; ctx.lineWidth=2.5;
+    ctx.beginPath(); ctx.moveTo(ax1,ay); ctx.lineTo(ax2,ay); ctx.stroke();
+    // arrowhead
+    ctx.beginPath(); ctx.moveTo(ax2,ay); ctx.lineTo(ax2-10,ay-6); ctx.lineTo(ax2-10,ay+6); ctx.closePath();
+    ctx.fillStyle=triv?'#5eead4':'#ef4444'; ctx.fill();
+    ctx.fillStyle=triv?'#5eead4':'#ef4444'; ctx.font='12px system-ui'; ctx.textAlign='center';
+    ctx.fillText(triv?'ambient homeomorphism exists':'no trivialization forced', (ax1+ax2)/2, ay-12);
+    ctx.fillStyle='#9fb0cc'; ctx.font='11px system-ui'; ctx.textAlign='center';
+    ctx.fillText('fixes origin section, preserves f_t', (ax1+ax2)/2, ay+24);
+    ctx.fillStyle='#9fb0cc'; ctx.font='12px system-ui'; ctx.textAlign='center';
+    ctx.fillText('constant μ? '+(constMu?'yes':'no')+'   |   Whitney regular? '+( (fam!=='BS')&&constMu?'yes':'no'), W/2, H-24);
+  } else {
+    const x=40,y=60,dy=28;
+    const lines=[
+      'Surface singularity family (conceptual):',
+      'Type: '+fam+(fam==='A'||fam==='D'?'_'+n:''),
+      'μ(0) = '+mu0+',  μ(t) = '+mut,
+      'Constant μ: '+(constMu?'yes':'no'),
+      'μ-constant theorem applies: '+(thm?'yes':'no'),
+      'Topological right-triviality: '+(triv?'yes':'no'),
+      'Ambient homeomorphism: '+(triv?'exists':'not forced'),
+      'Fixes origin section: '+(triv?'yes':'—'),
+      'Preserves defining functions: '+(triv?'yes':'—'),
+      'Whitney regularity: '+(((fam!=='BS')&&constMu)?'possible':'not implied'),
+      'Briançon–Speder note: μ-constant need not imply Whitney.',
+      'Vanishing spheres in Milnor fiber: '+vanish,
+    ];
+    ctx.fillStyle='#e6edf7'; ctx.font='15px system-ui'; ctx.textAlign='left';
+    lines.forEach((l,i)=>{
+      if(i===0){ ctx.fillStyle='#5eead4'; ctx.font='16px system-ui'; }
+      else { ctx.fillStyle='#e6edf7'; ctx.font='15px system-ui'; }
+      ctx.fillText(l, x, y+i*dy);
+    });
+    // sketch
+    const cx0=W-180, cy0=H/2;
+    ctx.strokeStyle='#5eead4'; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.arc(cx0,cy0,60,0,Math.PI*2); ctx.stroke();
+    ctx.beginPath(); ctx.arc(cx0,cy0,28,0,Math.PI*2); ctx.stroke();
+    ctx.fillStyle='rgba(94,234,212,0.22)';
+    ctx.beginPath(); ctx.arc(cx0,cy0,60,0,Math.PI*2); ctx.arc(cx0,cy0,28,0,Math.PI*2,true); ctx.closePath(); ctx.fill();
+    ctx.fillStyle='#9fb0cc'; ctx.font='11px system-ui'; ctx.textAlign='center';
+    ctx.fillText('singularity link', cx0, cy0+82);
+  }
+}
+
+familySel.addEventListener('change',update);
+nSlider.addEventListener('input',update);
+tSlider.addEventListener('input',update);
+epsSlider.addEventListener('input',update);
+constSel.addEventListener('change',update);
+viewSel.addEventListener('change',update);
+update();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

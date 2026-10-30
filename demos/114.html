@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Approximate counting of common integer polymatroid bases (conceptual, result 114)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range]{flex:1 1 180px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:460px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+select{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text)}
+.toggle{display:inline-flex;align-items:center;gap:.4rem}
+.legend{display:flex;gap:1rem;align-items:center;font-size:.85rem;color:var(--muted);margin:.5rem 0;flex-wrap:wrap}
+.swatch{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:.3rem;vertical-align:middle}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Approximate counting of common integer polymatroid bases (conceptual, result 114)</h1>
+  <p>A fully polynomial randomized approximation scheme counts common integer bases of two integral polymatroids of equal total rank, using exact rank-value oracles. Binary capacities are handled directly. This demo illustrates the matroid special case: common spanning trees of two graphs on the same vertex and edge sets.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">For $E=\{1,\dots,n\}$, two normalized nondecreasing submodular rank functions $r_1,r_2:2^E\to\mathbb Z_{\ge0}$ with common total rank $R=r_1(E)=r_2(E)$ define the common bases $\Omega=\{x\in\mathbb Z_{\ge0}^E:x(E)=R,;x(A)\le r_i(A) \forall A\subseteq E, i=1,2\}$. The FPRAS outputs $\hat Z$ with $(1-\varepsilon)Z\le \hat Z\le(1+\varepsilon)Z$ with probability at least $1-\delta$, and outputs $0$ whenever $Z=0$. Costs are polynomial in $n$, the binary encoding length, $\varepsilon^{-1}$, and $\log(\delta^{-1})$. Capacities are encoded in binary and are not expanded into labelled copies. In the matroid case, bases are sets of rank size; here they are common spanning trees of two graphs sharing one edge set.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">This unifies matroid intersection with capacitated allocation problems and gives the first polynomial-time randomized approximation for counting common bases under binary-encoded submodular constraints. It avoids the exponential blowup of expanding capacities into labelled elements and preserves each integer vector with weight one. The companion results cover common matroid bases and cell-bounded contingency tables; the present reduction integrates out all but polynomially many discrete variables and verifies the needed quadratic inequalities.</p>
+  </section>
+  <div class="controls">
+    <label for="n">Vertices n</label>
+    <input id="n" type="range" min="3" max="6" value="5" step="1">
+    <span class="val" id="nval">5</span>
+    <label for="p1">Extra edge prob. G1</label>
+    <input id="p1" type="range" min="0" max="0.8" value="0.45" step="0.01">
+    <span class="val" id="p1val">0.45</span>
+    <label for="p2">Extra edge prob. G2</label>
+    <input id="p2" type="range" min="0" max="0.8" value="0.45" step="0.01">
+    <span class="val" id="p2val">0.45</span>
+  </div>
+  <div class="controls">
+    <label for="K">Monte Carlo samples K</label>
+    <input id="K" type="range" min="1000" max="20000" value="5000" step="1000">
+    <span class="val" id="Kval">5000</span>
+    <button id="regen">Regenerate graphs</button>
+    <button id="showtree">Show a common base</button>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Vertices n</div><div class="value" id="sn">—</div></div>
+    <div class="stat"><div class="label">Ground edges m</div><div class="value" id="sm">—</div></div>
+    <div class="stat"><div class="label">Rank r=n-1</div><div class="value" id="sr">—</div></div>
+    <div class="stat"><div class="label">Exact count Z</div><div class="value" id="sZ">—</div></div>
+    <div class="stat"><div class="label">Monte Carlo hits</div><div class="value" id="shits">—</div></div>
+    <div class="stat"><div class="label">Estimate \hat Z</div><div class="value" id="sest">—</div></div>
+    <div class="stat"><div class="label">Relative error</div><div class="value" id="serr">—</div></div>
+  </div>
+  <div class="legend">
+    <span><span class="swatch" style="background:#5eead4"></span>Both graphs</span>
+    <span><span class="swatch" style="background:#60a5fa"></span>G1 only</span>
+    <span><span class="swatch" style="background:#f59e0b"></span>G2 only</span>
+    <span><span class="swatch" style="background:#475569"></span>Neither</span>
+    <span><span class="swatch" style="background:#22c55e"></span>Highlighted common base</span>
+  </div>
+  <canvas id="c" width="900" height="460"></canvas>
+  <p style="font-size:.85rem;color:var(--muted);margin-top:.5rem">Conceptual model: common bases of two graphic matroids. Exact enumeration is feasible for small $n$; the FPRAS replaces it by sampling random $r$-subsets and scaling by $\binom{m}{r}$.</p>
+</div>
+<script>
+const nSlider=document.getElementById('n');
+const p1Slider=document.getElementById('p1');
+const p2Slider=document.getElementById('p2');
+const KSlider=document.getElementById('K');
+const nval=document.getElementById('nval');
+const p1val=document.getElementById('p1val');
+const p2val=document.getElementById('p2val');
+const Kval=document.getElementById('Kval');
+
+const sn=document.getElementById('sn');
+const sm=document.getElementById('sm');
+const sr=document.getElementById('sr');
+const sZ=document.getElementById('sZ');
+const shits=document.getElementById('shits');
+const sest=document.getElementById('sest');
+const serr=document.getElementById('serr');
+
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+
+let allEdges=[], present1=[], present2=[], foundBase=null, highlight=false;
+let exactZ=0, hits=0, estimate=0, K=5000;
+
+function resizeCanvas(){ canvas.width=Math.max(300,canvas.clientWidth); canvas.height=460; }
+window.addEventListener('resize',function(){ resizeCanvas(); render(); });
+resizeCanvas();
+
+function edgesOf(n){
+  const e=[];
+  for(let i=0;i<n;i++) for(let j=i+1;j<n;j++) e.push([i,j]);
+  return e;
+}
+
+function randomTreeEdges(n, pool){
+  const uf=Array.from({length:n},(_,i)=>i);
+  function find(x){ while(uf[x]!==x){uf[x]=uf[uf[x]];x=uf[x];} return x; }
+  const order=pool.slice().sort(()=>Math.random()-0.5);
+  const chosen=[];
+  for(const e of order){
+    const [u,v]=e;
+    if(find(u)!==find(v)){ uf[find(u)]=find(v); chosen.push(e); if(chosen.length===n-1) break; }
+  }
+  return chosen;
+}
+
+function generate(){
+  const n=+nSlider.value;
+  const p1=+p1Slider.value;
+  const p2=+p2Slider.value;
+  allEdges=edgesOf(n);
+  const m=allEdges.length;
+  const tree=randomTreeEdges(n, allEdges);
+  const treeSet=new Set(tree.map(e=>e.join(',')));
+  present1=allEdges.map(e=>treeSet.has(e.join(',')) || Math.random()<p1);
+  present2=allEdges.map(e=>treeSet.has(e.join(',')) || Math.random()<p2);
+  // exact count
+  const r=n-1;
+  const idx=Array.from({length:m},(_,i)=>i);
+  let count=0;
+  foundBase=null;
+  // enumerate combinations of size r
+  const combo=[];
+  function rec(start){
+    if(combo.length===r){
+      // check tree in both
+      if(isTree(combo,present1,n) && isTree(combo,present2,n)){
+        count++;
+        if(!foundBase) foundBase=combo.slice();
+      }
+      return;
+    }
+    for(let i=start;i<m;i++){
+      combo.push(i);
+      rec(i+1);
+      combo.pop();
+    }
+  }
+  rec(0);
+  exactZ=count;
+  // sample
+  K=+KSlider.value;
+  sample();
+  updateStats();
+  render();
+}
+
+function isTree(subset, present, n){
+  for(const i of subset) if(!present[i]) return false;
+  const uf=Array.from({length:n},(_,i)=>i);
+  function find(x){ while(uf[x]!==x){uf[x]=uf[uf[x]];x=uf[x];} return x; }
+  let comp=n;
+  for(const i of subset){
+    const [u,v]=allEdges[i];
+    if(find(u)===find(v)) return false;
+    uf[find(u)]=find(v);
+    comp--;
+  }
+  return comp===1;
+}
+
+function randomSubset(m,r){
+  const idx=Array.from({length:m},(_,i)=>i);
+  for(let i=0;i<r;i++){
+    const j=i+Math.floor(Math.random()*(m-i));
+    [idx[i],idx[j]]=[idx[j],idx[i]];
+  }
+  return idx.slice(0,r).sort((a,b)=>a-b);
+}
+
+function sample(){
+  K=+KSlider.value;
+  const m=allEdges.length;
+  const r=+nSlider.value-1;
+  const totalComb = binom(m,r);
+  let c=0;
+  for(let t=0;t<K;t++){
+    const sub=randomSubset(m,r);
+    if(isTree(sub,present1,+nSlider.value) && isTree(sub,present2,+nSlider.value)) c++;
+  }
+  hits=c;
+  estimate = totalComb * c / K;
+}
+
+function binom(n,k){
+  if(k<0||k>n) return 0;
+  let res=1;
+  for(let i=1;i<=k;i++) res=res*(n-k+i)/i;
+  return res;
+}
+
+function updateStats(){
+  const n=+nSlider.value;
+  const m=allEdges.length;
+  const r=n-1;
+  nval.textContent=n;
+  p1val.textContent=(+p1Slider.value).toFixed(2);
+  p2val.textContent=(+p2Slider.value).toFixed(2);
+  Kval.textContent=K;
+  sn.textContent=n;
+  sm.textContent=m;
+  sr.textContent=r;
+  sZ.textContent=exactZ;
+  shits.textContent=hits+' / '+K;
+  sest.textContent=estimate.toFixed(1);
+  if(exactZ>0) serr.textContent=(Math.abs(estimate-exactZ)/exactZ*100).toFixed(1)+'%';
+  else serr.textContent=exactZ===0?'n/a':'n/a';
+}
+
+function render(){
+  const n=+nSlider.value;
+  const m=allEdges.length;
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  // layout vertices on circle
+  const cx=W/2, cy=H/2, rad=Math.min(W,H)*0.38;
+  const pos=[];
+  for(let i=0;i<n;i++){
+    const a=-Math.PI/2 + 2*Math.PI*i/n;
+    pos.push([cx+rad*Math.cos(a), cy+rad*Math.sin(a)]);
+  }
+  // draw edges
+  for(let idx=0;idx<m;idx++){
+    const [u,v]=allEdges[idx];
+    const [x1,y1]=pos[u], [x2,y2]=pos[v];
+    const both=present1[idx]&&present2[idx];
+    const g1=present1[idx], g2=present2[idx];
+    let color='#475569', width=1, dash=[4,4];
+    if(g1&&g2){ color='#5eead4'; width=2.2; dash=[]; }
+    else if(g1&&!g2){ color='#60a5fa'; width=1.8; dash=[]; }
+    else if(!g1&&g2){ color='#f59e0b'; width=1.8; dash=[]; }
+    else { color='#475569'; width=1; dash=[3,4]; }
+    // highlight common base
+    if(highlight && foundBase && foundBase.indexOf(idx)!==-1){
+      color='#22c55e'; width=3.2; dash=[];
+    }
+    ctx.strokeStyle=color;
+    ctx.lineWidth=width;
+    ctx.setLineDash(dash);
+    ctx.beginPath();
+    ctx.moveTo(x1,y1);
+    ctx.lineTo(x2,y2);
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+  // vertices
+  for(let i=0;i<n;i++){
+    ctx.fillStyle='#e6edf7';
+    ctx.beginPath();
+    ctx.arc(pos[i][0],pos[i][1],12,0,Math.PI*2);
+    ctx.fill();
+    ctx.fillStyle='#0b1220';
+    ctx.font='bold 12px system-ui';
+    ctx.textAlign='center';
+    ctx.textBaseline='middle';
+    ctx.fillText(String(i), pos[i][0], pos[i][1]);
+  }
+}
+
+nSlider.addEventListener('input',function(){ nval.textContent=nSlider.value; generate(); });
+p1Slider.addEventListener('input',function(){ p1val.textContent=(+p1Slider.value).toFixed(2); generate(); });
+p2Slider.addEventListener('input',function(){ p2val.textContent=(+p2Slider.value).toFixed(2); generate(); });
+KSlider.addEventListener('input',function(){ Kval.textContent=KSlider.value; sample(); updateStats(); });
+document.getElementById('regen').addEventListener('click',generate);
+document.getElementById('showtree').addEventListener('click',function(){ highlight=!highlight; render(); });
+
+generate();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

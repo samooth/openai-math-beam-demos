@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Courtade–Kumar and Hellinger conjectures (conceptual, result 119)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range],select{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+input[type=range]{flex:1 1 180px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:6ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:460px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+.legend{display:flex;gap:1rem;align-items:center;font-size:.85rem;color:var(--muted);margin:.5rem 0;flex-wrap:wrap}
+.swatch{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:.3rem;vertical-align:middle}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>The Courtade–Kumar and Hellinger conjectures (conceptual, result 119)</h1>
+  <p>For Boolean functions of independent uniform bits, a single coordinate retains the most mutual information after independent bit-flip noise; the Hellinger profile loss is also maximized by a signed coordinate for every output bias and noise correlation. Explore the Hellinger loss, the retained mutual information, and the bias refinement.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">The formalization proves sharp contraction of the information carried by a binary channel under independent symmetric noise on a uniform discrete cube. At each fixed initial information level, a noisy coordinate channel attains the maximum retained information. It proves the Courtade–Kumar inequality $I(f(X);Y)\le 1-h_2(\varepsilon)$ in bits at crossover probability $0\le\varepsilon\le 1/2$, where $h_2$ is binary entropy, with a coordinate and its complement attaining equality. It also proves the Hellinger conjecture: for every Boolean $f:\{-1,1\}^n\to\{-1,1\}$ with mean $m$ and every $\rho\in[-1,1]$, $\sqrt{1-m^2}-\mathbb E\sqrt{1-(T_\rho f)^2}\le 1-\sqrt{1-\rho^2}$, with equality for signed coordinates. The refined Boolean bound accounts for output bias, with strict improvement for nonconstant biased outputs at nonzero noise correlation, together with a selected mean-dependent entropy-production inequality.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">This settles the optimal Boolean function for information retention under bit-flip noise and gives the exact Hellinger-profile extremal. Removing the balancedness restriction handles arbitrary output bias and all noise correlations, strengthening the implication to the Courtade–Kumar information bound. The mean-dependent entropy-production inequality controls instantaneous information loss along the noise semigroup and underlies the dimension induction.</p>
+  </section>
+  <div class="controls">
+    <label for="view">View</label>
+    <select id="view">
+      <option value="hellinger" selected>Hellinger loss vs noise</option>
+      <option value="information">Retained information vs noise</option>
+      <option value="bias">Bias refinement of bound</option>
+    </select>
+    <label for="func">Function</label>
+    <select id="func">
+      <option value="dictator" selected>Dictator (signed coordinate)</option>
+      <option value="parity">Parity</option>
+      <option value="majority">Majority</option>
+      <option value="and">AND (all +1)</option>
+      <option value="constant">Constant +1</option>
+    </select>
+    <label for="n">Dimension n</label>
+    <input id="n" type="range" min="1" max="8" value="4" step="1">
+    <span class="val" id="nval">4</span>
+    <label for="eps">Crossover ε</label>
+    <input id="eps" type="range" min="0" max="0.5" value="0.15" step="0.005">
+    <span class="val" id="epsval">0.150</span>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Function</div><div class="value" id="sfunc">—</div></div>
+    <div class="stat"><div class="label">Dimension n</div><div class="value" id="sn">—</div></div>
+    <div class="stat"><div class="label">Mean m</div><div class="value" id="sm">—</div></div>
+    <div class="stat"><div class="label">Noise ρ</div><div class="value" id="srho">—</div></div>
+    <div class="stat"><div class="label">Retained info (bits)</div><div class="value" id="sinfo">—</div></div>
+    <div class="stat"><div class="label">Universal bound (bits)</div><div class="value" id="suniv">—</div></div>
+    <div class="stat"><div class="label">Refined bound (bits)</div><div class="value" id="sref">—</div></div>
+    <div class="stat"><div class="label">Hellinger loss</div><div class="value" id="shell">—</div></div>
+    <div class="stat"><div class="label">Hellinger bound</div><div class="value" id="shellb">—</div></div>
+  </div>
+  <div class="legend" id="legend"></div>
+  <canvas id="c" width="900" height="460"></canvas>
+  <p style="font-size:.85rem;color:var(--muted);margin-top:.5rem">Exact enumeration over $\{-1,1\}^n$ for the selected Boolean function. Hellinger loss uses $H(t)=\sqrt{1-t^2}$; information is in bits.</p>
+</div>
+<script>
+const L=Math.log(2);
+function binEntNats(t){
+  const p=(1+t)/2, q=(1-t)/2;
+  let h=0;
+  if(p>0) h -= p*Math.log(p);
+  if(q>0) h -= q*Math.log(q);
+  return h;
+}
+function psi(t){ return L - binEntNats(t); }
+function rOfInfo(I){
+  let lo=0, hi=1;
+  for(let i=0;i<80;i++){
+    const mid=(lo+hi)/2;
+    if(psi(mid) < I) lo=mid; else hi=mid;
+  }
+  return (lo+hi)/2;
+}
+function Hsq(t){ return Math.sqrt(Math.max(0,1-t*t)); }
+
+let popcount=[];
+function buildPopcount(N){
+  popcount=new Array(N);
+  for(let i=0;i<N;i++){
+    let c=0,x=i;
+    while(x){ c+=x&1; x>>=1; }
+    popcount[i]=c;
+  }
+}
+
+function makeF(n,type){
+  const N=1<<n;
+  const f=new Int8Array(N);
+  for(let i=0;i<N;i++){
+    const bits=[];
+    for(let j=0;j<n;j++) bits.push((i>>j)&1 ? 1 : -1);
+    let val=1;
+    if(type==='dictator') val = (n>0? bits[0] : 1);
+    else if(type==='parity'){ val=1; for(const b of bits) val*=b; }
+    else if(type==='majority'){ let s=0; for(const b of bits) s+=b; val = s>=0 ? 1 : -1; }
+    else if(type==='and'){ val = bits.every(b=>b===1) ? 1 : -1; }
+    else if(type==='constant'){ val=1; }
+    f[i]=val;
+  }
+  return f;
+}
+
+function compute(eps,f,n){
+  const N=f.length;
+  const rho=1-2*eps;
+  const wpc=new Float64Array(n+1);
+  for(let p=0;p<=n;p++) wpc[p]=Math.pow(eps,p)*Math.pow(1-eps,n-p);
+  const T=new Float64Array(N);
+  for(let i=0;i<N;i++){
+    let s=0;
+    for(let mask=0;mask<N;mask++) s += wpc[popcount[mask]]*f[i^mask];
+    T[i]=s;
+  }
+  let sumB=0,sumH=0;
+  for(let i=0;i<N;i++){ sumB+=binEntNats(T[i]); sumH+=Hsq(T[i]); }
+  const m=f.reduce((a,b)=>a+b,0)/N;
+  const avgB=sumB/N, avgH=sumH/N;
+  const retainedNats=binEntNats(m)-avgB;
+  const hellLoss=Hsq(m)-avgH;
+  const rm=rOfInfo(binEntNats(m));
+  const refined=psi(Math.abs(rho)*rm)/L;
+  const universal=psi(Math.abs(rho))/L;
+  const hellBound=1-Hsq(rho);
+  return {m, retainedBits:retainedNats/L, hellLoss, rm, refined, universal, hellBound, rho};
+}
+
+const viewSel=document.getElementById('view');
+const funcSel=document.getElementById('func');
+const nSlider=document.getElementById('n');
+const epsSlider=document.getElementById('eps');
+const nval=document.getElementById('nval');
+const epsval=document.getElementById('epsval');
+
+const sfunc=document.getElementById('sfunc');
+const sn=document.getElementById('sn');
+const sm=document.getElementById('sm');
+const srho=document.getElementById('srho');
+const sinfo=document.getElementById('sinfo');
+const suniv=document.getElementById('suniv');
+const sref=document.getElementById('sref');
+const shell=document.getElementById('shell');
+const shellb=document.getElementById('shellb');
+
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+const legend=document.getElementById('legend');
+
+let currentType='dictator', n=4, eps=0.15, view='hellinger';
+
+function nameOf(t){
+  return {dictator:'Dictator',parity:'Parity',majority:'Majority',and:'AND',constant:'Constant'}[t];
+}
+
+function resizeCanvas(){ canvas.width=Math.max(300,canvas.clientWidth); canvas.height=460; }
+
+function updateStats(){
+  const f=makeF(n,currentType);
+  const st=compute(eps,f,n);
+  nval.textContent=n;
+  epsval.textContent=eps.toFixed(3);
+  sfunc.textContent=nameOf(currentType);
+  sn.textContent=n;
+  sm.textContent=st.m.toFixed(4);
+  srho.textContent=st.rho.toFixed(4);
+  sinfo.textContent=st.retainedBits.toFixed(4);
+  suniv.textContent=st.universal.toFixed(4);
+  sref.textContent=st.refined.toFixed(4);
+  shell.textContent=st.hellLoss.toFixed(4);
+  shellb.textContent=st.hellBound.toFixed(4);
+}
+
+function drawAxes(W,H,padL,padR,padT,padB,xlabel,ylabel,xmin,xmax,ymin,ymax,ticksX,ticksY){
+  const plotW=W-padL-padR, plotH=H-padT-padB;
+  ctx.strokeStyle='rgba(159,176,204,0.35)';
+  ctx.lineWidth=1;
+  for(let i=0;i<=ticksY;i++){
+    const y=padT+i*plotH/ticksY;
+    ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(padL+plotW,y); ctx.stroke();
+  }
+  for(let i=0;i<=ticksX;i++){
+    const x=padL+i*plotW/ticksX;
+    ctx.beginPath(); ctx.moveTo(x,padT); ctx.lineTo(x,padT+plotH); ctx.stroke();
+  }
+  ctx.fillStyle='rgba(159,176,204,0.9)';
+  ctx.font='12px system-ui';
+  ctx.textAlign='center';
+  for(const t of ticksX? Array.from({length:ticksX+1},(_,i)=>xmin+(xmax-xmin)*i/ticksX) : []){
+    const x=padL+(t-xmin)/(xmax-xmin)*plotW;
+    ctx.fillText(t.toFixed(2), x, H-padB+18);
+  }
+  ctx.textAlign='right';
+  for(let i=0;i<=ticksY;i++){
+    const v=ymax-(ymax-ymin)*i/ticksY;
+    const y=padT+i*plotH/ticksY;
+    ctx.fillText(v.toFixed(2), padL-8, y+4);
+  }
+  ctx.save();
+  ctx.translate(16, padT+plotH/2);
+  ctx.rotate(-Math.PI/2);
+  ctx.textAlign='center';
+  ctx.fillText(ylabel,0,0);
+  ctx.restore();
+  ctx.fillText(xlabel, padL+plotW/2, H-8);
+  return {plotW,plotH};
+}
+
+function drawHellinger(f,n){
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const padL=52,padR=20,padT=30,padB=46;
+  const M=50;
+  const xs=[]; const ys=[]; const yb=[];
+  for(let i=0;i<=M;i++){
+    const e=i/M*0.5;
+    const st=compute(e,f,n);
+    xs.push(e); ys.push(st.hellLoss); yb.push(st.hellBound);
+  }
+  const {plotW,plotH}=drawAxes(W,H,padL,padR,padT,padB,'crossover ε','loss',0,0.5,0,1,5,5);
+  function xOf(e){ return padL+e/0.5*plotW; }
+  function yOf(v){ return padT+plotH - v*plotH; }
+  // bound
+  ctx.strokeStyle='#5eead4'; ctx.lineWidth=2.5;
+  ctx.beginPath();
+  for(let i=0;i<=M;i++){ const x=xOf(xs[i]), y=yOf(yb[i]); if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y); }
+  ctx.stroke();
+  // actual
+  ctx.strokeStyle='#f59e0b'; ctx.lineWidth=2.5;
+  ctx.beginPath();
+  for(let i=0;i<=M;i++){ const x=xOf(xs[i]), y=yOf(ys[i]); if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y); }
+  ctx.stroke();
+  // current
+  const xc=xOf(eps);
+  ctx.strokeStyle='rgba(255,255,255,0.35)'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(xc,padT); ctx.lineTo(xc,padT+plotH); ctx.stroke();
+  const st=compute(eps,f,n);
+  ctx.fillStyle='#f59e0b'; ctx.beginPath(); ctx.arc(xc,yOf(st.hellLoss),5,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle='#5eead4'; ctx.beginPath(); ctx.arc(xc,yOf(st.hellBound),5,0,Math.PI*2); ctx.fill();
+  // legend inside
+  ctx.font='12px system-ui'; ctx.textAlign='left';
+  ctx.fillStyle='#f59e0b'; ctx.fillText('Actual Hellinger loss', padL+8, padT+16);
+  ctx.fillStyle='#5eead4'; ctx.fillText('Bound 1-sqrt(1-ρ²)', padL+8, padT+34);
+}
+
+function drawInfo(f,n){
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const padL=52,padR=20,padT=30,padB=46;
+  const M=50;
+  const xs=[]; const ya=[]; const yu=[]; const yr=[];
+  for(let i=0;i<=M;i++){
+    const e=i/M*0.5;
+    const st=compute(e,f,n);
+    xs.push(e); ya.push(st.retainedBits); yu.push(st.universal); yr.push(st.refined);
+  }
+  const {plotW,plotH}=drawAxes(W,H,padL,padR,padT,padB,'crossover ε','mutual information (bits)',0,0.5,0,1,5,5);
+  function xOf(e){ return padL+e/0.5*plotW; }
+  function yOf(v){ return padT+plotH - v*plotH; }
+  // universal
+  ctx.strokeStyle='#ef4444'; ctx.lineWidth=2;
+  ctx.beginPath();
+  for(let i=0;i<=M;i++){ const x=xOf(xs[i]), y=yOf(yu[i]); if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y); }
+  ctx.stroke();
+  // refined
+  ctx.strokeStyle='#5eead4'; ctx.lineWidth=2;
+  ctx.beginPath();
+  for(let i=0;i<=M;i++){ const x=xOf(xs[i]), y=yOf(yr[i]); if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y); }
+  ctx.stroke();
+  // actual
+  ctx.strokeStyle='#f59e0b'; ctx.lineWidth=2.5;
+  ctx.beginPath();
+  for(let i=0;i<=M;i++){ const x=xOf(xs[i]), y=yOf(ya[i]); if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y); }
+  ctx.stroke();
+  const xc=xOf(eps);
+  ctx.strokeStyle='rgba(255,255,255,0.35)'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(xc,padT); ctx.lineTo(xc,padT+plotH); ctx.stroke();
+  const st=compute(eps,f,n);
+  ctx.fillStyle='#f59e0b'; ctx.beginPath(); ctx.arc(xc,yOf(st.retainedBits),5,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle='#5eead4'; ctx.beginPath(); ctx.arc(xc,yOf(st.refined),5,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle='#ef4444'; ctx.beginPath(); ctx.arc(xc,yOf(st.universal),5,0,Math.PI*2); ctx.fill();
+  ctx.font='12px system-ui'; ctx.textAlign='left';
+  ctx.fillStyle='#f59e0b'; ctx.fillText('Actual retained info', padL+8, padT+16);
+  ctx.fillStyle='#5eead4'; ctx.fillText('Refined bound', padL+8, padT+34);
+  ctx.fillStyle='#ef4444'; ctx.fillText('Universal bound', padL+8, padT+52);
+}
+
+function drawBias(eps){
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const padL=52,padR=20,padT=30,padB=46;
+  const M=200;
+  const rho=1-2*eps;
+  const universal=psi(Math.abs(rho))/L;
+  const ms=[]; const ys=[];
+  for(let i=0;i<=M;i++){
+    const m=-0.99+1.98*i/M;
+    const rm=rOfInfo(binEntNats(m));
+    ms.push(m); ys.push(psi(Math.abs(rho)*rm)/L);
+  }
+  const {plotW,plotH}=drawAxes(W,H,padL,padR,padT,padB,'output mean m','bound (bits)',-1,1,0,1,5,5);
+  function xOf(mv){ return padL+(mv+1)/2*plotW; }
+  function yOf(v){ return padT+plotH - v*plotH; }
+  // universal horizontal
+  ctx.strokeStyle='#ef4444'; ctx.lineWidth=2;
+  ctx.beginPath();
+  ctx.moveTo(padL,yOf(universal)); ctx.lineTo(padL+plotW,yOf(universal)); ctx.stroke();
+  // refined curve
+  ctx.strokeStyle='#5eead4'; ctx.lineWidth=2.5;
+  ctx.beginPath();
+  for(let i=0;i<=M;i++){ const x=xOf(ms[i]), y=yOf(ys[i]); if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y); }
+  ctx.stroke();
+  // selected function marker
+  const f=makeF(n,currentType);
+  const st=compute(eps,f,n);
+  const xc=xOf(st.m);
+  ctx.strokeStyle='rgba(255,255,255,0.35)'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(xc,padT); ctx.lineTo(xc,padT+plotH); ctx.stroke();
+  ctx.fillStyle='#f59e0b'; ctx.beginPath(); ctx.arc(xc,yOf(st.refined),6,0,Math.PI*2); ctx.fill();
+  ctx.font='12px system-ui'; ctx.textAlign='left';
+  ctx.fillStyle='#5eead4'; ctx.fillText('Refined bound ψ(|ρ|r_m)/L', padL+8, padT+16);
+  ctx.fillStyle='#ef4444'; ctx.fillText('Universal bound ψ(|ρ|)/L', padL+8, padT+34);
+  ctx.fillStyle='#f59e0b'; ctx.fillText('Selected function', padL+8, padT+52);
+}
+
+function render(){
+  buildPopcount(1<<n);
+  updateStats();
+  const f=makeF(n,currentType);
+  if(view==='hellinger') drawHellinger(f,n);
+  else if(view==='information') drawInfo(f,n);
+  else drawBias(eps);
+}
+
+viewSel.addEventListener('change',function(){ view=viewSel.value; legend.innerHTML=''; render(); });
+funcSel.addEventListener('change',function(){ currentType=funcSel.value; render(); });
+nSlider.addEventListener('input',function(){ n=+nSlider.value; buildPopcount(1<<n); render(); });
+epsSlider.addEventListener('input',function(){ eps=+epsSlider.value; render(); });
+
+window.addEventListener('resize',function(){ resizeCanvas(); render(); });
+resizeCanvas();
+buildPopcount(1<<n);
+render();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>

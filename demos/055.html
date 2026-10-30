@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Toda's Gepner conjecture and large-volume stability (conceptual, result 055)</title>
+<style>
+:root { --bg:#0b1220; --panel:#111a2e; --card:#16203a; --text:#e6edf7; --muted:#9fb0cc; --accent:#5eead4; --border:#243252; --chip:#1f2a44; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f8fc; --panel:#fff; --card:#fff; --text:#0f172a; --muted:#475569; --accent:#0f766e; --border:#dbe3f0; --chip:#eef2f7; --good:#16a34a; --warn:#d97706; --bad:#dc2626; } }
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,sans-serif;font-size:20px;background:var(--bg);color:var(--text)}
+.wrap{width:100%;max-width:100%;margin:0 auto;padding:1rem}
+h1{font-size:1.4rem;margin:.25rem 0}
+p{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0}
+input[type=range]{flex:1 1 180px}
+.val{font-family:ui-monospace,monospace;color:var(--accent);min-width:5ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+.stat .label{color:var(--muted);font-size:.8rem} .stat .value{font-size:1.05rem;font-weight:600;font-family:ui-monospace,monospace}
+canvas{width:100%;height:420px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:block}
+.back{display:inline-block;margin-bottom:1rem;color:var(--accent);text-decoration:none}
+section.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin:1rem 0}
+section.box h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--accent)}
+button{padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer}
+button:hover{filter:brightness(1.1)}
+select{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--chip);color:var(--text)}
+table{width:100%;border-collapse:collapse;font-size:.82rem}
+th,td{padding:.3rem .4rem;border-bottom:1px solid var(--border);text-align:left}
+th{color:var(--muted);font-weight:600}
+td.num{font-family:ui-monospace,monospace}
+.badge{display:inline-block;padding:.15rem .5rem;border-radius:6px;font-size:.75rem;font-weight:700}
+.ok{color:var(--good)} .warn{color:var(--warn)} .bad{color:var(--bad)}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1.2rem;align-items:start;margin-top:1rem}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.left,.right{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.right{position:sticky;top:1rem}
+.wrap{max-width:100%}
+
+* { scrollbar-width: thin; scrollbar-color: var(--accent) var(--chip); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--chip); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+/* responsive safety (auto-injected) */
+html,body{max-width:100%;overflow-x:hidden;}
+.wrap,.layout,.left,.right,section.box,canvas,.stats{max-width:100%;overflow-x:auto;min-width:0;}
+mjx-container{max-width:100%!important;overflow-x:auto;overflow-y:hidden;}
+table{display:block;max-width:100%;overflow-x:auto;}
+.controls{flex-wrap:wrap;}
+img,canvas,svg{max-width:100%;height:auto;}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'], ['(',')']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="../vendor/mathjax/tex-chtml.js" async></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage('closeDemo','*');return false;}">← Back to catalog</a>
+  <h1>Toda's Gepner conjecture and large-volume stability (conceptual, result 055)</h1>
+  <p>For a smooth complex quintic threefold, Toda's Gepner conjecture asks for a numerical Bridgeland stability condition with phase shift (2/5). More generally, on smooth projective threefolds with trivial canonical bundle, numerical stability conditions exist at sufficiently large volume with central charges built from the ordinary or square-root Todd class. Tune the parameters below to see when the Gepner phase and large-volume stability hold.</p>
+  <section class="box">
+    <h3>Context</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Proves Toda's Gepner conjecture for every smooth complex quintic threefold, constructing a numerical Bridgeland stability condition with the prescribed phase shift (2/5). Also constructs numerical Bridgeland stability conditions at every sufficiently large volume on all smooth projective complex threefolds with trivial canonical bundle, with the exact ordinary and square-root-Todd central charges.</p>
+  </section>
+  <section class="box">
+    <h3>Relevance</h3>
+    <p style="margin:0;font-size:1.05rem;line-height:1.6">Supplies the stability conditions needed to define Donaldson--Thomas invariants and Gepner-point moduli on Calabi--Yau threefolds. The phase shift (2/5) matches the quintic's Gepner point, while the large-volume construction gives a concrete chamber for wall-crossing and enumerative invariants on CY threefolds with trivial canonical bundle.</p>
+  </section>
+  <div class="controls">
+    <label for="manifold">Manifold</label>
+    <select id="manifold">
+      <option value="quintic" selected>Smooth quintic threefold</option>
+      <option value="cy">CY threefold (trivial (K_X))</option>
+    </select>
+    <label for="charge">Central charge</label>
+    <select id="charge">
+      <option value="ord" selected>Ordinary Todd</option>
+      <option value="sqrt">Square-root Todd</option>
+    </select>
+  </div>
+  <div class="controls">
+    <label for="t">Volume (t)</label>
+    <input id="t" type="range" min="0.5" max="6" value="2" step="0.1">
+    <span class="val" id="tval">2.0</span>
+    <label for="phi">Phase shift (\phi)</label>
+    <input id="phi" type="range" min="0" max="1" value="0.4" step="0.01">
+    <span class="val" id="phival">0.40</span>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Volume (t)</div><div class="value" id="tst">—</div></div>
+    <div class="stat"><div class="label">Phase shift (\phi)</div><div class="value" id="phist">—</div></div>
+    <div class="stat"><div class="label">Central charge (Z)</div><div class="value" id="zst">—</div></div>
+    <div class="stat"><div class="label">Mass (|Z|)</div><div class="value" id="massst">—</div></div>
+    <div class="stat"><div class="label">Phase (\arg Z)</div><div class="value" id="argst">—</div></div>
+    <div class="stat"><div class="label">Stability</div><div class="value" id="stabst">—</div></div>
+  </div>
+  <canvas id="c" width="900" height="420"></canvas>
+  <section class="box">
+    <h3>Examples</h3>
+    <table>
+      <thead><tr><th>Manifold</th><th>Charge</th><th>Volume</th><th>Stability</th></tr></thead>
+      <tbody>
+        <tr><td>Quintic threefold</td><td class="num">Ordinary Todd</td><td class="num">any</td><td class="ok">Gepner phase (2/5)</td></tr>
+        <tr><td>CY threefold</td><td class="num">Ordinary Todd</td><td class="num">large (t)</td><td class="ok">Stable</td></tr>
+        <tr><td>CY threefold</td><td class="num">Square-root Todd</td><td class="num">larger (t)</td><td class="warn">Stable at higher volume</td></tr>
+        <tr><td>Small volume</td><td class="num">either</td><td class="num">(t<1.5\)</td><td class="bad">Not large-volume</td></tr>
+      </tbody>
+    </table>
+  </section>
+</div>
+<script>
+const manifoldSel=document.getElementById('manifold');
+const chargeSel=document.getElementById('charge');
+const tSlider=document.getElementById('t');
+const phiSlider=document.getElementById('phi');
+const tval=document.getElementById('tval');
+const phival=document.getElementById('phival');
+const tst=document.getElementById('tst');
+const phist=document.getElementById('phist');
+const zst=document.getElementById('zst');
+const massst=document.getElementById('massst');
+const argst=document.getElementById('argst');
+const stabst=document.getElementById('stabst');
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+
+function resizeCanvas(){ canvas.width=Math.max(300,canvas.clientWidth); canvas.height=420; }
+window.addEventListener('resize',function(){ resizeCanvas(); update(); });
+resizeCanvas();
+
+function centralCharge(t,charge){
+  const base=t*t*t/6 - 0.5;
+  if(charge==='sqrt'){
+    const re=Math.sqrt(Math.max(base,0));
+    const im=t*t/2;
+    return {re:re,im:im};
+  }
+  return {re:base,im:t*t/2};
+}
+
+function threshold(charge){
+  return charge==='sqrt' ? 2.2 : 1.5;
+}
+
+function update(){
+  const manifold=manifoldSel.value;
+  const charge=chargeSel.value;
+  const t=+tSlider.value;
+  const phi=+phiSlider.value;
+  tval.textContent=t.toFixed(1);
+  phival.textContent=phi.toFixed(2);
+  tst.textContent=t.toFixed(2);
+  phist.textContent=phi.toFixed(2);
+  const z=centralCharge(t,charge);
+  zst.textContent=z.re.toFixed(2)+' + '+z.im.toFixed(2)+'i';
+  const mass=Math.hypot(z.re,z.im);
+  massst.textContent=mass.toFixed(3);
+  const arg=Math.atan2(z.im,z.re);
+  argst.textContent=arg.toFixed(3);
+  let stable=false;
+  let label='—';
+  if(manifold==='quintic'){
+    stable=Math.abs(phi-0.4)<0.051;
+    label=stable?'Gepner phase achieved':'Phase mismatch';
+  } else {
+    stable=t>=threshold(charge);
+    label=stable?'Large-volume stable':'Below volume threshold';
+  }
+  stabst.textContent=label;
+  stabst.className='value '+(stable?'ok':'bad');
+  draw(z,stable,manifold,charge,t,phi);
+}
+
+function draw(z,stable,manifold,charge,t,phi){
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const cx=W/2, cy=H/2;
+  const scale=Math.min(W,H)/12;
+  // axes
+  ctx.strokeStyle='rgba(159,176,204,0.4)'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(0,cy); ctx.lineTo(W,cy); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx,0); ctx.lineTo(cx,H); ctx.stroke();
+  ctx.fillStyle='#9fb0cc'; ctx.font='12px system-ui'; ctx.textAlign='center';
+  ctx.fillText('Re Z', W-30, cy-6);
+  ctx.fillText('Im Z', cx+26, 14);
+  // stable region shading: right half-plane
+  ctx.fillStyle=stable?'rgba(34,197,94,0.08)':'rgba(239,68,68,0.06)';
+  ctx.fillRect(cx,cy-Math.min(W,H)*0.45, W-cx, Math.min(W,H)*0.9);
+  // central charge arrow
+  const x=cx+z.re*scale;
+  const y=cy-z.im*scale;
+  ctx.strokeStyle=stable?'#22c55e':'#ef4444'; ctx.lineWidth=3;
+  ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(x,y); ctx.stroke();
+  // arrowhead
+  const ang=Math.atan2(y-cy,x-cx);
+  ctx.beginPath();
+  ctx.moveTo(x,y);
+  ctx.lineTo(x-10*Math.cos(ang-0.4), y-10*Math.sin(ang-0.4));
+  ctx.lineTo(x-10*Math.cos(ang+0.4), y-10*Math.sin(ang+0.4));
+  ctx.closePath(); ctx.fillStyle=stable?'#22c55e':'#ef4444'; ctx.fill();
+  ctx.fillStyle='#e6edf7'; ctx.font='13px system-ui'; ctx.textAlign='left';
+  ctx.fillText('Z = '+z.re.toFixed(2)+' + '+z.im.toFixed(2)+'i', 12, H-26);
+  ctx.fillStyle='#9fb0cc'; ctx.font='12px system-ui'; ctx.textAlign='center';
+  const msg=manifold==='quintic' ? ('Gepner target phase 2/5 = 0.40; current '+phi.toFixed(2)) : ('Volume threshold '+threshold(charge).toFixed(1)+'; current '+t.toFixed(1));
+  ctx.fillText(msg, cx, H-8);
+}
+
+manifoldSel.addEventListener('change',function(){ update(); });
+chargeSel.addEventListener('change',function(){ update(); });
+tSlider.addEventListener('input',function(){ update(); });
+phiSlider.addEventListener('input',function(){ update(); });
+update();
+</script>
+
+<script>
+(function(){
+  var wrap=document.querySelector('.wrap');
+  if(!wrap) return;
+  var sides=[].slice.call(wrap.children).filter(function(el){
+    return el.tagName==='SECTION' && /Context|Relevance/i.test(el.textContent||'');
+  });
+  if(!sides.length) return;
+  var left=document.createElement('div'); left.className='left';
+  var right=document.createElement('div'); right.className='right';
+  [].slice.call(wrap.children).forEach(function(el){
+    if(sides.indexOf(el)!==-1) right.appendChild(el); else left.appendChild(el);
+  });
+  var layout=document.createElement('div'); layout.className='layout';
+  layout.appendChild(left); layout.appendChild(right);
+  wrap.appendChild(layout);
+})();
+</script>
+</body>
+</html>
