@@ -1,5 +1,7 @@
 {
   "name": "math-demos",
   "private": true,
-  "scripts": {}
+  "scripts": {
+    "build": "python3 build_demo.py"
+  }
 }

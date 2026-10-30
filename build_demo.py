@@ -321,6 +321,26 @@ html.theme-dark {
   padding: .4rem .7rem; border-radius: 8px; border: 1px solid var(--border);
   background: var(--chip); color: var(--text); cursor: pointer; font-size: .85rem;
 }
+/* Mobile menu */
+.menu-toggle {
+  display: none;
+  padding: .4rem .6rem; border-radius: 8px; border: 1px solid var(--border);
+  background: var(--chip); color: var(--text); cursor: pointer; font-size: 1rem;
+}
+.header-panel {
+  display: contents;
+}
+@media (max-width: 640px) {
+  .menu-toggle { display: inline-flex; align-items: center; gap: .35rem; }
+  .header-panel {
+    display: block; max-height: 0; overflow: hidden; opacity: 0;
+    transition: max-height .35s ease, opacity .25s ease, margin .25s ease;
+  }
+  header.open .header-panel {
+    max-height: 60vh; opacity: 1; margin-top: .5rem; overflow-y: auto;
+  }
+  header.open .menu-toggle { background: var(--accent); color: #00130f; }
+}
 /* Mobile responsiveness improvements */
 @media (max-width: 640px) {
   header { padding: .6rem .9rem; }
@@ -465,8 +485,11 @@ window.MathJax = {
     <button id="surprise" class="surprise" type="button">Surprise me</button>
     <button id="themeToggle" class="theme-toggle" type="button" title="Toggle theme">Theme</button>
     <span id="count"></span>
+    <button id="menuToggle" class="menu-toggle" type="button" aria-expanded="false" aria-controls="headerPanel">☰ Filters</button>
   </div>
-  <div id="chips"></div>
+  <div id="headerPanel" class="header-panel">
+    <div id="chips"></div>
+  </div>
 </header>
 <main>
   <section class="hero">
@@ -642,6 +665,17 @@ grid.addEventListener('click', (e) => {
   if (d.demo) { window.location.href = d.demo; }
   else { openDemo(d); }
 });
+// Mobile menu toggle
+const menuToggle = document.getElementById('menuToggle');
+const headerEl = document.querySelector('header');
+if (menuToggle && headerEl) {
+  menuToggle.addEventListener('click', () => {
+    const open = headerEl.classList.toggle('open');
+    menuToggle.setAttribute('aria-expanded', String(open));
+    menuToggle.textContent = open ? '✕ Close' : '☰ Menu';
+  });
+}
+
 // Theme toggle
 const themeToggle = document.getElementById('themeToggle');
 function applyTheme(t){
